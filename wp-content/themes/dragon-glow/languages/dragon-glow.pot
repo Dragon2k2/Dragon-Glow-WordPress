@@ -1,0 +1,713 @@
+# Dragon Glow WordPress Theme
+# Copyright (C) 2026 Dragon Glow Studio
+# This file is distributed under the GNU General Public License v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dragon Glow 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-12 02:00+0700\n"
+"PO-Revision-Date: 2026-06-12 02:00+0700\n"
+"Last-Translator: Dragon Glow Studio\n"
+"Language-Team: Dragon Glow Studio\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Home"
+msgstr ""
+
+msgid "Shop"
+msgstr ""
+
+msgid "Our Story"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Cart"
+msgstr ""
+
+msgid "Wishlist"
+msgstr ""
+
+msgid "Glow with the Power of Nature"
+msgstr ""
+
+msgid "Premium skincare rituals meticulously crafted with ethereal botanicals for a luminous, transcendent complexion."
+msgstr ""
+
+msgid "Shop Now"
+msgstr ""
+
+msgid "Discover the Ritual"
+msgstr ""
+
+msgid "100% Vegan"
+msgstr ""
+
+msgid "Cruelty-Free"
+msgstr ""
+
+msgid "Free Shipping $75+"
+msgstr ""
+
+msgid "30-Day Returns"
+msgstr ""
+
+msgid "Shop by Category"
+msgstr ""
+
+msgid "Glow Favorites"
+msgstr ""
+
+msgid "Our community's most-loved essentials for a radiant daily ritual."
+msgstr ""
+
+msgid "View All Products"
+msgstr ""
+
+msgid "View product"
+msgstr ""
+
+msgid "Quick Add"
+msgstr ""
+
+msgid "View Options"
+msgstr ""
+
+msgid "Sale"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Bestseller"
+msgstr ""
+
+msgid "Add to Bag"
+msgstr ""
+
+msgid "Save to Wishlist"
+msgstr ""
+
+msgid "Saved to Wishlist"
+msgstr ""
+
+msgid "Add to Wishlist"
+msgstr ""
+
+msgid "Removed from wishlist"
+msgstr ""
+
+msgid "Added to wishlist"
+msgstr ""
+
+msgid "Invalid product."
+msgstr ""
+
+msgid "Invalid cart item."
+msgstr ""
+
+msgid "Item removed from cart."
+msgstr ""
+
+msgid "Could not remove item."
+msgstr ""
+
+msgid "Added to bag!"
+msgstr ""
+
+msgid "Please select options for this product."
+msgstr ""
+
+msgid "Could not add to cart."
+msgstr ""
+
+msgid "Join the Ritual"
+msgstr ""
+
+msgid "Subscribe to receive exclusive offers, early access to new products, and luminous skincare secrets delivered to your inbox."
+msgstr ""
+
+msgid "Enter your email"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "By subscribing, you agree to our Privacy Policy. Unsubscribe anytime."
+msgstr ""
+
+msgid "Your email address"
+msgstr ""
+
+msgid "Join"
+msgstr ""
+
+msgid "Thank you for joining the ritual!"
+msgstr ""
+
+msgid "You are already subscribed!"
+msgstr ""
+
+msgid "Please enter a valid email address."
+msgstr ""
+
+msgid "Your Ritual Cart"
+msgstr ""
+
+msgid "Your bag is empty"
+msgstr ""
+
+msgid "Looks like you haven't added any products to your ritual cart yet. Let's change that!"
+msgstr ""
+
+msgid "Continue Shopping"
+msgstr ""
+
+msgid "Popular Right Now"
+msgstr ""
+
+msgid "Checkout"
+msgstr ""
+
+msgid "Information"
+msgstr ""
+
+msgid "Shipping"
+msgstr ""
+
+msgid "Payment"
+msgstr ""
+
+msgid "Order Summary"
+msgstr ""
+
+msgid "Secure 256-bit SSL encryption"
+msgstr ""
+
+msgid "30-Day Returns"
+msgstr ""
+
+msgid "Thank You for Your Order!"
+msgstr ""
+
+msgid "Payment Failed"
+msgstr ""
+
+msgid "Order Number"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Payment Method"
+msgstr ""
+
+msgid "Billing Address"
+msgstr ""
+
+msgid "Shipping Address"
+msgstr ""
+
+msgid "Items"
+msgstr ""
+
+msgid "View Order Details"
+msgstr ""
+
+msgid "My Account"
+msgstr ""
+
+msgid "Sign In"
+msgstr ""
+
+msgid "Create Account"
+msgstr ""
+
+msgid "Email address"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Remember me"
+msgstr ""
+
+msgid "Forgot password?"
+msgstr ""
+
+msgid "Create a strong password"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Or continue with"
+msgstr ""
+
+msgid "Hello, %s!"
+msgstr ""
+
+msgid "Welcome back to your luminous skincare journey."
+msgstr ""
+
+msgid "Recent Orders"
+msgstr ""
+
+msgid "View All"
+msgstr ""
+
+msgid "My Orders"
+msgstr ""
+
+msgid "Addresses"
+msgstr ""
+
+msgid "Account Details"
+msgstr ""
+
+msgid "Edit Profile"
+msgstr ""
+
+msgid "Sign Out"
+msgstr ""
+
+msgid "Edit Account"
+msgstr ""
+
+msgid "My Wishlist"
+msgstr ""
+
+msgid "%d item saved"
+msgid_plural "%d items saved"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Your wishlist is empty"
+msgstr ""
+
+msgid "Save your favorite products here so you can easily find them later. Start exploring our collection!"
+msgstr ""
+
+msgid "Back to Home"
+msgstr ""
+
+msgid "Out of Stock"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Ingredients"
+msgstr ""
+
+msgid "How to Use"
+msgstr ""
+
+msgid "Reviews (%d)"
+msgstr ""
+
+msgid "Share Your Experience"
+msgstr ""
+
+msgid "Your Rating"
+msgstr ""
+
+msgid "Review Title"
+msgstr ""
+
+msgid "Your Review"
+msgstr ""
+
+msgid "Submit Review"
+msgstr ""
+
+msgid "Login to leave a review."
+msgstr ""
+
+msgid "Customer Reviews"
+msgstr ""
+
+msgid "Verified Purchase"
+msgstr ""
+
+msgid "Based on %d review"
+msgid_plural "Based on %d reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Be the first to review this product!"
+msgstr ""
+
+msgid "You May Also Love"
+msgstr ""
+
+msgid "Related Products"
+msgstr ""
+
+msgid "Filter Sidebar"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "All Products"
+msgstr ""
+
+msgid "Price"
+msgstr ""
+
+msgid "Min"
+msgstr ""
+
+msgid "Max"
+msgstr ""
+
+msgid "Skin Type"
+msgstr ""
+
+msgid "Dry Skin"
+msgstr ""
+
+msgid "Oily Skin"
+msgstr ""
+
+msgid "Normal Skin"
+msgstr ""
+
+msgid "Sensitive Skin"
+msgstr ""
+
+msgid "Combination"
+msgstr ""
+
+msgid "Concerns"
+msgstr ""
+
+msgid "Hydration"
+msgstr ""
+
+msgid "Anti-Aging"
+msgstr ""
+
+msgid "Brightening"
+msgstr ""
+
+msgid "Acne & Pores"
+msgstr ""
+
+msgid "Redness & Sensitivity"
+msgstr ""
+
+msgid "Dullness"
+msgstr ""
+
+msgid "Brand"
+msgstr ""
+
+msgid "Clear All Filters"
+msgstr ""
+
+msgid "Active filters:"
+msgstr ""
+
+msgid "Price: $%1$s - $%2$s"
+msgstr ""
+
+msgid "Remove price filter"
+msgstr ""
+
+msgid "Remove skin type filter"
+msgstr ""
+
+msgid "Remove concern filter"
+msgstr ""
+
+msgid "Remove sort filter"
+msgstr ""
+
+msgid "Clear All"
+msgstr ""
+
+msgid "Sort By"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Popularity"
+msgstr ""
+
+msgid "Rating"
+msgstr ""
+
+msgid "Newest"
+msgstr ""
+
+msgid "Price: Low to High"
+msgstr ""
+
+msgid "Price: High to Low"
+msgstr ""
+
+msgid "Showing %1$s of %2$s products"
+msgstr ""
+
+msgid "Nothing Found"
+msgstr ""
+
+msgid "It seems we can't find what you're looking for."
+msgstr ""
+
+msgid "Return Home"
+msgstr ""
+
+msgid "Skip to content"
+msgstr ""
+
+msgid "All rights reserved."
+msgstr ""
+
+msgid "Privacy Policy"
+msgstr ""
+
+msgid "Terms of Service"
+msgstr ""
+
+msgid "Our Philosophy"
+msgstr ""
+
+msgid "Where Science Meets Nature"
+msgstr ""
+
+msgid "Dragon Glow was born from a simple belief: that true radiance comes from harmonizing the wisdom of ancient botanicals with cutting-edge skincare science. Each formula in our collection represents thousands of hours of research, testing, and refinement."
+msgstr ""
+
+msgid "We source only the finest ethereal botanicals from sustainable farms around the world, ensuring that every product delivers visible results while honoring our commitment to the planet."
+msgstr ""
+
+msgid "Natural"
+msgstr ""
+
+msgid "Parabens"
+msgstr ""
+
+msgid "Happy Customers"
+msgstr ""
+
+msgid "Discover Our Story"
+msgstr ""
+
+msgid "Customer Love"
+msgstr ""
+
+msgid "Real Results, Real Glow"
+msgstr ""
+
+msgid "Join thousands of happy customers who have transformed their skincare routines with Dragon Glow."
+msgstr ""
+
+msgid "Reviewing:"
+msgstr ""
+
+msgid "Verified Buyer"
+msgstr ""
+
+msgid "Join the Glow Community"
+msgstr ""
+
+msgid "Follow our journey and share your rituals. Tag us to be featured!"
+msgstr ""
+
+msgid "@dragonglow"
+msgstr ""
+
+msgid "Follow Us on Instagram"
+msgstr ""
+
+msgid "Get in Touch"
+msgstr ""
+
+msgid "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+msgstr ""
+
+msgid "Email Us"
+msgstr ""
+
+msgid "Call Us"
+msgstr ""
+
+msgid "Mon-Fri, 9am-5pm EST"
+msgstr ""
+
+msgid "Visit Us"
+msgstr ""
+
+msgid "Send us a Message"
+msgstr ""
+
+msgid "Your Name"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Send Message"
+msgstr ""
+
+msgid "Your message has been sent. We'll be in touch within 24 hours!"
+msgstr ""
+
+msgid "There was an error sending your message. Please try again."
+msgstr ""
+
+msgid "Frequently Asked Questions"
+msgstr ""
+
+msgid "Find quick answers to common questions about our products and services."
+msgstr ""
+
+msgid "What is your return policy?"
+msgstr ""
+
+msgid "We offer a 30-day satisfaction guarantee. If you're not completely satisfied with your purchase, return the product for a full refund. Simply contact our support team to initiate the return process."
+msgstr ""
+
+msgid "How long does shipping take?"
+msgstr ""
+
+msgid "Standard shipping takes 3-5 business days within the continental US. Express shipping (1-2 days) is available at checkout. International shipping typically takes 7-14 business days depending on the destination."
+msgstr ""
+
+msgid "Are your products vegan and cruelty-free?"
+msgstr ""
+
+msgid "Yes! All Dragon Glow products are 100% vegan and cruelty-free. We never test on animals and only use ingredients that align with our ethical values."
+msgstr ""
+
+msgid "Can I use multiple products together?"
+msgstr ""
+
+msgid "Absolutely! Our products are designed to work synergistically. We recommend starting with a cleanser, followed by serum, then moisturizer. Check individual product pages for specific layering instructions."
+msgstr ""
+
+msgid "How do I find the right products for my skin?"
+msgstr ""
+
+msgid "Take our skin quiz on the homepage for personalized recommendations, or contact our skincare specialists for one-on-one guidance. We're here to help you build the perfect routine."
+msgstr ""
+
+msgid "A journey of discovery, craftsmanship, and an unwavering commitment to revealing your skin's natural radiance."
+msgstr ""
+
+msgid "Empowering Radiance Through Nature"
+msgstr ""
+
+msgid "Our Core Values"
+msgstr ""
+
+msgid "Every decision we make is guided by these principles."
+msgstr ""
+
+msgid "Pure Ingredients"
+msgstr ""
+
+msgid "We source only the finest natural and organic ingredients, avoiding harmful chemicals and synthetic additives."
+msgstr ""
+
+msgid "Innovation"
+msgstr ""
+
+msgid "We combine ancient botanical wisdom with cutting-edge skincare science for optimal results."
+msgstr ""
+
+msgid "Ethical Practices"
+msgstr ""
+
+msgid "100% cruelty-free and vegan, with sustainable packaging and responsible sourcing."
+msgstr ""
+
+msgid "Customer Love"
+msgstr ""
+
+msgid "Your satisfaction is our priority. We stand behind every product with our 30-day guarantee."
+msgstr ""
+
+msgid "Our Journey"
+msgstr ""
+
+msgid "From a small vision to a beloved skincare brand."
+msgstr ""
+
+msgid "The Beginning"
+msgstr ""
+
+msgid "2019"
+msgstr ""
+
+msgid "First Products"
+msgstr ""
+
+msgid "2020"
+msgstr ""
+
+msgid "Launched our initial line of serums and moisturizers to overwhelming customer response."
+msgstr ""
+
+msgid "Going Global"
+msgstr ""
+
+msgid "2022"
+msgstr ""
+
+msgid "Expanded to serve customers in over 50 countries with localized experiences."
+msgstr ""
+
+msgid "Award Winners"
+msgstr ""
+
+msgid "2024"
+msgstr ""
+
+msgid "Recognized as Best Skincare Brand by Beauty Industry Awards."
+msgstr ""
+
+msgid "The Future"
+msgstr ""
+
+msgid "2026"
+msgstr ""
+
+msgid "Continuing to innovate with sustainable packaging and new product lines."
+msgstr ""
+
+msgid "Ready to Start Your Journey?"
+msgstr ""
+
+msgid "Experience the transformative power of Dragon Glow products and discover your own luminous radiance."
+msgstr ""
+
+msgid "Scroll"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Explore collection"
+msgstr ""

@@ -1,0 +1,92 @@
+/* =========================================
+   DRAGON GLOW — SINGLE PRODUCT PAGE STYLES
+   Loaded only on is_product() pages
+   Depends on: main.css (tokens, .glass-card), Tailwind (utilities)
+   ========================================= */
+
+/* ── Decorative background blobs ── */
+.dg-product-blob {
+	position: absolute;
+	z-index: -1;
+	filter: blur(60px);
+	opacity: 0.3;
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+/* ── Primary CTA — gradient glow (used by add-to-cart + sticky bar) ── */
+.btn-primary-glow {
+	background: linear-gradient(135deg, #f4c2c2 0%, #ffdad9 100%);
+	border-bottom: 2px solid #e9c349;
+	color: #734e4e;
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.btn-primary-glow:hover {
+	box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
+	transform: translateY(-1px);
+}
+
+/* ── Gallery thumbnails — active state (initial) ──
+   product.js also toggles Tailwind border/opacity classes on click;
+   .is-active is the initial-state fallback. */
+.dg-thumb-btn {
+	transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+.dg-thumb-btn.is-active {
+	border-color: #735c00;
+	opacity: 1;
+}
+
+/* ── Main product image fade transition (driven by product.js) ── */
+#dg-main-image {
+	transition: opacity 0.15s ease;
+}
+
+/* ── Size selector buttons ── */
+.dg-size-btn {
+	transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.dg-size-btn.is-active {
+	border-color: #735c00;
+	background-color: rgba(212, 175, 55, 0.1);
+	color: #735c00;
+	font-weight: 700;
+}
+
+/* ── Sticky add-to-bag bar ──
+   product.js adds .shadow-lg after 600px scroll; transition is on the
+   base element so the slide-in animates smoothly. */
+#product-info {
+	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Related product card hover effect ── */
+.dg-related-card .dg-related-quick-view {
+	opacity: 0;
+	transform: translateY(12px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.dg-related-card:hover .dg-related-quick-view {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── Star rating — golden (overrides .material-symbols-outlined default) ── */
+.dg-stars .material-symbols-outlined {
+	color: #f1ca50;
+	font-size: 20px;
+}
+
+/* ── Tab navigation fallback (product-tabs.php drives via JS) ── */
+.dg-tab-btn {
+	padding: 1rem 0;
+	margin-right: 2rem;
+	border-bottom: 2px solid transparent;
+	white-space: nowrap;
+	transition: color 0.2s ease, border-color 0.2s ease;
+}
+.dg-tab-btn.is-active {
+	color: #735c00;
+	font-weight: 700;
+	border-bottom-color: #f1ca50;
+}

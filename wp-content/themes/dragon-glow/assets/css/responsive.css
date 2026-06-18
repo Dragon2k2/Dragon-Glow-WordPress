@@ -1,0 +1,470 @@
+/* =========================================
+   DRAGON GLOW — RESPONSIVE CSS
+   Mobile and tablet breakpoints
+   Version: 1.0.0
+   ========================================= */
+
+/* =========================================
+   1. BASE RESPONSIVE
+   ========================================= */
+
+/* Large screens */
+@media (min-width: 1536px) {
+    :root {
+        --container-max: 1400px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .container,
+    .max-w-container-max {
+        max-width: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+/* =========================================
+   2. TYPOGRAPHY RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .text-display-lg {
+        font-size: 40px !important;
+        line-height: 1.1 !important;
+    }
+
+    .text-headline-lg {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+
+    .text-headline-md {
+        font-size: 24px !important;
+        line-height: 1.3 !important;
+    }
+
+    .font-headline.text-headline-lg {
+        font-size: 28px !important;
+    }
+}
+
+/* =========================================
+   3. HEADER / NAV RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .glass-nav {
+        position: sticky;
+    }
+
+    .glass-nav > div {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
+    /* Hide desktop menu items on mobile */
+    .glass-nav .hidden.md\:flex {
+        display: none !important;
+    }
+
+    /* Show mobile menu toggle */
+    .glass-nav button#dg-mobile-menu-toggle {
+        display: flex !important;
+    }
+
+    /* Mobile menu styling */
+    #dg-mobile-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(251, 249, 245, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(212, 194, 194, 0.3);
+        box-shadow: 0 4px 20px rgba(123, 84, 85, 0.1);
+    }
+
+    #dg-mobile-menu.hidden {
+        display: none;
+    }
+
+    #dg-mobile-menu ul {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    #dg-mobile-menu a {
+        display: block;
+        padding: 0.75rem 1.25rem;
+        color: #1b1c1a;
+        border-radius: 0.5rem;
+    }
+
+    #dg-mobile-menu a:hover {
+        background: rgba(244, 194, 194, 0.3);
+    }
+}
+
+/* =========================================
+   4. HERO SECTION RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 70vh;
+    }
+
+    .hero-content {
+        max-width: 100%;
+    }
+
+    /* Stack CTA buttons */
+    .hero-cta {
+        flex-direction: column;
+    }
+
+    .hero-cta a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* =========================================
+   5. GRID RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .grid {
+        gap: 1rem;
+    }
+}
+
+/* Product grid */
+@media (max-width: 640px) {
+    .products-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* =========================================
+   6. FOOTER RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* =========================================
+   7. CART RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .woocommerce-cart table.cart {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .woocommerce-cart table.cart thead {
+        display: none;
+    }
+
+    .woocommerce-cart table.cart tbody tr {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e4e2de;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
+    .woocommerce-cart table.cart td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        padding: 0.5rem 0;
+    }
+
+    .woocommerce-cart table.cart td::before {
+        content: attr(data-title);
+        font-weight: 600;
+        color: #504444;
+    }
+
+    .woocommerce-cart table.cart .product-thumbnail {
+        display: none;
+    }
+}
+
+/* =========================================
+   8. CHECKOUT RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .woocommerce-checkout .col2-set {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .woocommerce-checkout .col-1,
+    .woocommerce-checkout .col-2 {
+        width: 100%;
+        float: none;
+    }
+
+    /* Stepper */
+    .checkout-stepper {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .checkout-stepper > div {
+        flex-shrink: 0;
+    }
+}
+
+/* =========================================
+   9. SINGLE PRODUCT RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .single-product-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .single-product-grid .sticky-top {
+        position: relative !important;
+        top: 0 !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .single-product-gallery {
+        margin-left: -1.25rem;
+        margin-right: -1.25rem;
+    }
+}
+
+/* =========================================
+   10. BUTTON RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .btn-primary,
+    .btn-ghost {
+        padding: 14px 28px;
+        font-size: 0.875rem;
+    }
+}
+
+/* =========================================
+   11. FILTER SIDEBAR RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .shop-sidebar {
+        display: none;
+    }
+
+    .shop-sidebar.mobile-open {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 400px;
+        background: #fbf9f5;
+        z-index: 9999;
+        overflow-y: auto;
+        padding: 1.5rem;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* =========================================
+   12. TESTIMONIALS RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* =========================================
+   13. INSTAGRAM GRID RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .instagram-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* =========================================
+   14. BRAND STORY RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .brand-story-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .brand-story-image {
+        order: -1;
+    }
+}
+
+/* =========================================
+   15. CONTACT FORM RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .contact-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* =========================================
+   16. ABOUT PAGE TIMELINE RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+    .timeline::before {
+        display: none;
+    }
+
+    .timeline-item {
+        padding-left: 0 !important;
+    }
+
+    .timeline-item .center-dot {
+        display: none;
+    }
+}
+
+/* =========================================
+   17. ACCOUNT PAGE RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .myaccount-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .woocommerce-MyAccount-navigation ul {
+        flex-direction: column;
+    }
+
+    .woocommerce-MyAccount-navigation ul li a {
+        border-radius: 0.5rem !important;
+    }
+}
+
+/* =========================================
+   18. CAROUSEL RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .product-carousel {
+        margin-left: -1.25rem;
+        margin-right: -1.25rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}
+
+/* =========================================
+   19. NEWSLETTER RESPONSIVE
+   ========================================= */
+
+@media (max-width: 640px) {
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-form input {
+        width: 100%;
+    }
+}
+
+/* =========================================
+   20. UTILITY CLASSES
+   ========================================= */
+
+@media (max-width: 768px) {
+    .md\:hidden {
+        display: block;
+    }
+
+    .md\:flex {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) {
+    .md\:hidden {
+        display: none;
+    }
+
+    .md\:flex {
+        display: flex;
+    }
+}
+
+/* =========================================
+   21. PRINT STYLES
+   ========================================= */
+
+@media print {
+    .glass-nav,
+    .ethereal-blob,
+    footer,
+    #dg-mobile-menu,
+    .mobile-filter-toggle,
+    .btn-primary,
+    .btn-ghost {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    a {
+        color: black;
+        text-decoration: underline;
+    }
+}

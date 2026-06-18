@@ -1,0 +1,152 @@
+/*
+Theme Name:  Dragon Glow
+Theme URI:   https://dragonglow.com
+Description: Luxury skincare e-commerce theme with Luminous Ethereal design system. WooCommerce integrated.
+Version:     1.0.0
+Author:      Dragon Glow Studio
+Author URI:  https://dragonglow.com
+Text Domain: dragon-glow
+Domain Path: /languages
+Requires at least: 6.4
+Tested up to:      6.7
+Requires PHP:      8.0
+WC tested up to:   9.0
+License:     GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-menu, editor-style, featured-images, threaded-comments, translation-ready
+*/
+
+/* =========================================
+   DRAGON GLOW — BASE RESET & VARIABLES
+   Design System: Luminous Ethereal
+   ========================================= */
+
+/* CSS Custom Properties */
+:root {
+    --color-primary: #7b5455;
+    --color-on-primary: #ffffff;
+    --color-primary-container: #f4c2c2;
+    --color-on-primary-container: #734e4e;
+    --color-secondary: #5c5d6e;
+    --color-on-secondary: #ffffff;
+    --color-secondary-container: #e1e1f5;
+    --color-on-secondary-container: #626374;
+    --color-tertiary: #735c00;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #f1ca50;
+    --color-on-tertiary-container: #6b5500;
+    --color-background: #fbf9f5;
+    --color-on-background: #1b1c1a;
+    --color-surface: #fbf9f5;
+    --color-surface-container: #efeeea;
+    --color-surface-container-high: #eae8e4;
+    --color-on-surface: #1b1c1a;
+    --color-on-surface-variant: #504444;
+    --color-outline: #827473;
+    --color-outline-variant: #d4c2c2;
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+}
+
+/* Base Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-on-background);
+    background-color: var(--color-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
+    color: var(--color-primary);
+}
+
+p {
+    margin: 0 0 1rem 0;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-on-primary-container);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul, ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 0 64px;
+    }
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+}

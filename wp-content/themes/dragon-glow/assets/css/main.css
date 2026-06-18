@@ -1,0 +1,588 @@
+/* =========================================
+   DRAGON GLOW — MAIN CSS
+   Design System: Luminous Ethereal
+   Version: 1.0.0
+   ========================================= */
+
+/* =========================================
+   1. TAILWIND CONFIG VIA CDN
+   (handled in inc/enqueue.php inline script)
+   ========================================= */
+
+/* =========================================
+   2. BASE STYLES
+   ========================================= */
+
+/* Selection */
+::selection {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* =========================================
+   3. GLASSMORPHISM COMPONENTS
+   ========================================= */
+
+.glass-nav {
+    background: rgba(255, 255, 255, 0.40);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.40);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.50);
+    box-shadow: 0 4px 30px rgba(123, 84, 85, 0.05);
+}
+
+.product-card-glass {
+    background: rgba(255, 255, 255, 0.60);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.40);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card-glass:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -15px rgba(123, 84, 85, 0.10);
+}
+
+.glass-sidebar {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid rgba(255, 255, 255, 0.30);
+}
+
+.glass-panel {
+    background: rgba(255, 255, 255, 0.50);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* =========================================
+   4. ETHEREAL BLOB DECORATIONS
+   ========================================= */
+
+.ethereal-blob {
+    position: fixed;
+    filter: blur(100px);
+    z-index: -1;
+    opacity: 0.4;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* =========================================
+   5. SCROLL REVEAL ANIMATION
+   ========================================= */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   6. FLOAT ANIMATION
+   ========================================= */
+
+@keyframes float {
+    0%   { transform: translateY(0px) rotate(0deg); }
+    50%  { transform: translateY(-20px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.6; }
+}
+
+.animate-pulse {
+    animation: pulse-slow 4s ease-in-out infinite;
+}
+
+/* =========================================
+   7. INPUT ETHereal STYLE
+   ========================================= */
+
+.input-ethereal {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #d4c2c2;
+    border-radius: 0;
+    padding: 12px 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.input-ethereal:focus {
+    border-bottom: 2px solid #735c00;
+    box-shadow: none;
+}
+
+/* =========================================
+   8. BUTTONS
+   ========================================= */
+
+/* Primary Button */
+.btn-primary {
+    background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
+    border-bottom: 2px solid #735c00;
+    color: #734e4e;
+    padding: 16px 40px;
+    border-radius: 9999px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #734e4e;
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+/* Ghost Button */
+.btn-ghost {
+    background: transparent;
+    border: 1px solid #735c00;
+    color: #735c00;
+    padding: 16px 40px;
+    border-radius: 9999px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.btn-ghost:hover {
+    background: #735c00;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* =========================================
+   9. PRODUCT BADGES / CHIPS
+   ========================================= */
+
+.badge-new {
+    background: #f1ca50;
+    color: #6b5500;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-block;
+}
+
+.badge-bestseller {
+    background: #e1e1f5;
+    color: #626374;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-block;
+}
+
+.badge-vegan {
+    background: #c8e6c9;
+    color: #2e7d32;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-block;
+}
+
+.badge-limited {
+    background: #fff3e0;
+    color: #e65100;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-block;
+}
+
+/* =========================================
+   10. ACCORDION (FAQ)
+   ========================================= */
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 500px;
+    padding-bottom: 1.5rem;
+}
+
+.accordion-item.active .arrow {
+    transform: rotate(180deg);
+}
+
+/* =========================================
+   11. CHECKOUT STEPPER
+   ========================================= */
+
+.step-active {
+    background: rgba(244, 194, 194, 0.30);
+    border-color: #7b5455 !important;
+    color: #7b5455;
+}
+
+.step-inactive {
+    border-color: #d4c2c2;
+    color: #827473;
+}
+
+.step-done {
+    background: #7b5455;
+    border-color: #7b5455;
+    color: #ffffff;
+}
+
+/* =========================================
+   12. CUSTOM SCROLLBAR
+   ========================================= */
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #d4c2c2;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #7b5455;
+}
+
+/* =========================================
+   13. MATERIAL SYMBOLS
+   ========================================= */
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+}
+
+/* =========================================
+   14. WOOCOMMERCE BASE STYLES
+   ========================================= */
+
+.woocommerce-notices-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce-message,
+.woocommerce-info {
+    background: #e1e1f5;
+    border-top-color: #7b5455;
+    color: #1b1c1a;
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+}
+
+.woocommerce-error {
+    background: #ffdad6;
+    border-top-color: #ba1a1a;
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+}
+
+.wc-block-components-notice-banner {
+    border-radius: 1rem;
+}
+
+/* =========================================
+   15. FORM STYLES
+   ========================================= */
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+}
+
+/* =========================================
+   16. LINE CLAMP UTILITIES
+   ========================================= */
+
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* =========================================
+   17. PROSE STYLES (for content)
+   ========================================= */
+
+.prose {
+    max-width: 65ch;
+}
+
+.prose p {
+    margin-bottom: 1em;
+}
+
+.prose h2 {
+    font-family: 'Playfair Display', serif;
+    color: #7b5455;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+}
+
+.prose h3 {
+    font-family: 'Playfair Display', serif;
+    color: #7b5455;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.prose ul,
+.prose ol {
+    list-style: disc;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+.prose li {
+    margin-bottom: 0.25em;
+}
+
+/* =========================================
+   18. SEARCH FORM STYLES
+   ========================================= */
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-form .search-field {
+    padding: 8px 12px;
+    border: 1px solid #d4c2c2;
+    border-radius: 9999px;
+    background: transparent;
+    font-size: 14px;
+    width: 200px;
+    transition: width 0.3s, border-color 0.3s;
+}
+
+.search-form .search-field:focus {
+    width: 280px;
+    border-color: #7b5455;
+    outline: none;
+}
+
+.search-form .search-submit {
+    margin-left: -40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #827473;
+}
+
+.search-form .search-submit:hover {
+    color: #7b5455;
+}
+
+/* =========================================
+   19. TABLE STYLES
+   ========================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e4e2de;
+}
+
+table th {
+    font-weight: 600;
+    color: #504444;
+}
+
+/* =========================================
+   20. UTILITY CLASSES
+   ========================================= */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.not-style-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* =========================================
+   21. GROUP HOVER STATES
+   ========================================= */
+
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+}
+
+.group:hover .group-hover\:translate-y-0 {
+    transform: translateY(0);
+}
+
+/* =========================================
+   22. TRANSITIONS
+   ========================================= */
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+}
+
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+/* =========================================
+   23. SKIP LINK
+   ========================================= */
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.skip-link:focus {
+    display: block;
+    left: 6px;
+    top: 6px;
+    width: auto;
+    height: auto;
+    padding: 12px 24px;
+    background: #7b5455;
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+/* =========================================
+   24. NAV ACTIVE STATE
+   ========================================= */
+
+.glass-nav ul li.current-menu-item > a span,
+.glass-nav ul li.current_page_item > a span {
+    border-bottom: 2px solid #C9A84C;
+    padding-bottom: 2px;
+    color: #C9A84C;
+}
+
+/* =========================================
+   25. REVEAL ON SCROLL ANIMATION
+   ========================================= */
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
