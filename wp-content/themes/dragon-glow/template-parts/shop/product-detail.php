@@ -390,7 +390,7 @@ if ( ! empty( $p['img_main'] ) ) {
 							<h3 class="font-headline text-lg text-on-surface group-hover:text-primary transition-colors mb-1">
 								<?php echo esc_html( $rp['name'] ); ?>
 							</h3>
-							<p class="dg-related-price text-sm font-bold text-primary"><?php echo esc_html( $rp['price'] ); ?></p>
+							<p class="dg-related-price text-sm text-primary"><?php echo esc_html( $rp['price'] ); ?></p>
 						</a>
 					</article>
 				<?php endforeach; ?>
