@@ -167,7 +167,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			</div>
 
 			<!-- Price -->
-			<div class="font-headline text-headline-md font-bold text-primary">
+			<div class="dg-detail-price text-headline-md text-primary">
 				<?php echo esc_html( $p['price'] ); ?>
 			</div>
 
@@ -390,7 +390,7 @@ if ( ! empty( $p['img_main'] ) ) {
 							<h3 class="font-headline text-lg text-on-surface group-hover:text-primary transition-colors mb-1">
 								<?php echo esc_html( $rp['name'] ); ?>
 							</h3>
-							<p class="text-sm font-bold text-primary"><?php echo esc_html( $rp['price'] ); ?></p>
+							<p class="dg-related-price text-sm font-bold text-primary"><?php echo esc_html( $rp['price'] ); ?></p>
 						</a>
 					</article>
 				<?php endforeach; ?>
@@ -465,7 +465,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			     class="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
 			<div class="min-w-0">
 				<p class="font-bold text-sm text-primary truncate"><?php echo esc_html( $p['name'] ); ?></p>
-				<p class="text-sm text-on-surface-variant"><?php echo esc_html( $p['price'] ); ?></p>
+				<p class="dg-sticky-price text-sm text-on-surface-variant"><?php echo esc_html( $p['price'] ); ?></p>
 			</div>
 		</div>
 		<button type="button"

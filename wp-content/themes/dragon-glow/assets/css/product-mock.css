@@ -36,3 +36,24 @@
 	transform: translateY(100%);
 	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ── Hero price — Bodoni Moda, đồng bộ với .dg-product-price ở trang Shop ── */
+.dg-detail-price {
+	font-family: 'Bodoni Moda', Georgia, serif;
+	font-style: italic;
+	font-weight: 600;
+}
+
+/* ── Related products price ── */
+.dg-related-price {
+	font-family: 'Bodoni Moda', Georgia, serif;
+	font-style: italic;
+	font-weight: 600;
+}
+
+/* ── Sticky bar price ── */
+.dg-sticky-price {
+	font-family: 'Bodoni Moda', Georgia, serif;
+	font-style: italic;
+	font-weight: 600;
+}

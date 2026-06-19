@@ -1,0 +1,90 @@
+/* =========================================
+   DRAGON GLOW — OUR STORY PAGE STYLES
+   Loaded only on Our Story page
+   Depends on: main.css (tokens, animations), Tailwind (utilities)
+   ========================================= */
+
+/* =========================================
+   1. STORY SECTION — CARD & BENTO BACKGROUNDS
+   ========================================= */
+
+/* Luminous Heritage card background */
+.dg-story-card-bg {
+    background-color: #f4f3f1;
+}
+
+/* Bento light background (Cruelty-Free card) */
+.dg-story-bento-light {
+    background-color: #f4f3f1;
+}
+
+/* Bento lightest background (Minimalist Luxury card) */
+.dg-story-bento-lightest {
+    background-color: #fdfcf9;
+}
+
+/* Bento dark background (Clinical Trust card) */
+.dg-story-bento-dark {
+    background-color: #705a00;
+}
+
+/* Alchemy section white background */
+.dg-story-section-white {
+    background-color: #ffffff;
+}
+
+/* Story card border */
+.dg-story-card-border {
+    border-color: #e3e2e0;
+}
+
+/* =========================================
+   2. STORY SECTION — EYEBROW TEXT
+   ========================================= */
+
+/* Eyebrow label: uppercase 12px, tight leading, wide tracking */
+.dg-story-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    line-height: 1;
+}
+
+/* Hero eyebrow — slightly wider tracking for display */
+.dg-story-eyebrow-hero {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    line-height: 1;
+}
+
+/* =========================================
+   3. STORY SECTION — DECORATIVE ELEMENTS
+   ========================================= */
+
+/* Luminous Heritage card shadow */
+.dg-story-card-shadow {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+}
+
+/* Decorative offset border behind Luminous Heritage card */
+.dg-story-card-offset-border {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    z-index: -1;
+}
+
+/* Ingredient image: partial grayscale on default, full color on hover */
+.dg-story-img-ingredients {
+    filter: grayscale(30%);
+    transition: filter 0.7s ease;
+}
+.dg-story-img-ingredients:hover {
+    filter: grayscale(0%);
+}

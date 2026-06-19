@@ -193,39 +193,6 @@ get_header();
     </section>
 </main>
 
-<style>
-    /* Text glow effect */
-    .text-glow {
-        text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
-    }
-
-    /* Input focus line animation */
-    .input-focus-line {
-        position: relative;
-    }
-    .input-focus-line::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 1px;
-        background: #775a19;
-        transition: all 0.4s ease;
-        transform: translateX(-50%);
-    }
-    .input-focus-line:focus-within::after {
-        width: 100%;
-    }
-
-    /* Floating label styles */
-    .input-focus-line:focus-within label,
-    .input-focus-line:not(:placeholder-shown) label {
-        transform: translateY(-24px) scale(0.85) !important;
-        color: #775a19 !important;
-    }
-</style>
-
 <script>
 (function() {
     // Contact form submission with states

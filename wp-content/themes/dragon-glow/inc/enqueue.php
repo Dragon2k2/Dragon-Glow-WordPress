@@ -92,7 +92,27 @@ function dg_enqueue_assets(): void {
         );
     }
 
-    // Tailwind CSS CDN (load in head for immediate parsing)
+    // Our Story page specific styles
+    if ( is_page_template( 'page-templates/template-our-story.php' ) ) {
+        wp_enqueue_style(
+            'dg-our-story',
+            DG_URI . '/assets/css/our-story.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
+    // Contact page specific styles
+    if ( is_page_template( 'page-templates/template-contact.php' ) ) {
+        wp_enqueue_style(
+            'dg-contact',
+            DG_URI . '/assets/css/contact.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
+	// Tailwind CSS CDN (load in head for immediate parsing)
     wp_enqueue_script(
         'tailwindcss',
         'https://cdn.tailwindcss.com?plugins=forms',
