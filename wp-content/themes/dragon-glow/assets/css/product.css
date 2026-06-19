@@ -71,12 +71,6 @@
 	transform: translateY(0);
 }
 
-/* ── Star rating — golden (overrides .material-symbols-outlined default) ── */
-.dg-stars .material-symbols-outlined {
-	color: #f1ca50;
-	font-size: 20px;
-}
-
 /* ── Tab navigation fallback (product-tabs.php drives via JS) ── */
 .dg-tab-btn {
 	padding: 1rem 0;

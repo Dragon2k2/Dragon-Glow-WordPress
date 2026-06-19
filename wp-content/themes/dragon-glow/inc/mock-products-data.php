@@ -311,15 +311,20 @@ $mock_products_data = array(
 
 // ── Shared helper: render 5-star rating (Material Symbols, golden color) ──
 // Used by both the shop grid (via dg_render_stars fallback) and the detail page.
+//
+// Font-variation-settings and font-size are controlled via CSS custom properties
+// defined in main.css (.dg-stars .material-symbols-outlined). Each star span
+// gets a short inline style that sets --dg-star-fill (0 / 0.5 / 1) and
+// --dg-star-size; the color is inherited from the CSS class.
 if ( ! function_exists( 'dg_mock_stars' ) ) :
 	function dg_mock_stars( float $rating, string $size = '20px' ): string {
 		$html = '<div class="flex items-center gap-0.5 dg-stars">';
 		for ( $s = 1; $s <= 5; $s++ ) {
-			$fill  = ( $s <= floor( $rating ) ) ? '1' : ( ( $s - 0.5 <= $rating ) ? '0.5' : '0' );
-			$style = sprintf( 'color:#f1ca50;font-size:%s;font-variation-settings:\'FILL\' %s;', esc_attr( $size ), esc_attr( $fill ) );
+			$fill = ( $s <= floor( $rating ) ) ? '1' : ( ( $s - 0.5 <= $rating ) ? '0.5' : '0' );
 			$html .= sprintf(
-				'<span class="material-symbols-outlined" style="%s">star</span>',
-				$style
+				'<span class="material-symbols-outlined" style="--dg-star-fill:%s;--dg-star-size:%s;">star</span>',
+				esc_attr( $fill ),
+				esc_attr( $size )
 			);
 		}
 		$html .= '</div>';

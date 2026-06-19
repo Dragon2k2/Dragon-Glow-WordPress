@@ -18,12 +18,12 @@ defined( 'ABSPATH' ) || exit;
 function dg_star_rating( float $rating = 5.0, int $count = 0 ): void {
     $rating = max( 0, min( 5, $rating ) );
     ?>
-    <div class="flex items-center gap-0.5 text-tertiary-container">
+    <div class="flex items-center gap-0.5 text-tertiary-container dg-stars">
         <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
             <?php
             $fill = $i <= $rating ? '1' : '0';
             printf(
-                '<span class="material-symbols-outlined text-[16px]" style="font-variation-settings:\'FILL\' %s">star</span>',
+                '<span class="material-symbols-outlined text-[16px]" style="--dg-star-fill:%s">star</span>',
                 esc_attr( $fill )
             );
             ?>

@@ -208,7 +208,7 @@ $review_count = get_comments( array(
                                 <div class="flex gap-2" id="review-stars">
                                     <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
                                         <button type="button" class="text-2xl text-outline-variant hover:text-tertiary transition-colors" data-rating="<?php echo esc_attr( $i ); ?>">
-                                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0">star</span>
+                                            <span class="material-symbols-outlined" style="--dg-star-fill:0">star</span>
                                         </button>
                                     <?php endfor; ?>
                                 </div>
@@ -343,11 +343,11 @@ document.addEventListener('DOMContentLoaded', function() {
         stars.forEach(function(star, index) {
             const icon = star.querySelector('.material-symbols-outlined');
             if (index < rating) {
-                icon.style.fontVariationSettings = "'FILL' 1";
+                icon.style.setProperty('--dg-star-fill', '1');
                 icon.classList.remove('text-outline-variant');
                 icon.classList.add('text-tertiary');
             } else {
-                icon.style.fontVariationSettings = "'FILL' 0";
+                icon.style.setProperty('--dg-star-fill', '0');
                 icon.classList.add('text-outline-variant');
                 icon.classList.remove('text-tertiary');
             }

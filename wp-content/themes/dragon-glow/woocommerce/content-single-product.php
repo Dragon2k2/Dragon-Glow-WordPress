@@ -169,7 +169,7 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 			<div class="flex items-center gap-0.5">
 				<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
 					<?php $fill = ( $s <= $rating ) ? '1' : '0'; ?>
-					<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' <?php echo esc_attr( $fill ); ?>">star</span>
+					<span class="material-symbols-outlined" style="--dg-star-fill:<?php echo esc_attr( $fill ); ?>">star</span>
 				<?php endfor; ?>
 			</div>
 			<a href="#product-tabs" class="text-sm text-on-surface-variant hover:text-primary transition-colors">
@@ -295,8 +295,7 @@ if ( $related_ids ) :
      Sticky Add-to-Bag Bar (fixed bottom, shown on scroll)
      ===================================================== -->
 <div id="product-info"
-     class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl translate-y-full transition-transform duration-500"
-     style="transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);">
+     class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl translate-y-full transition-transform duration-500">
 	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex items-center gap-4">
 		<div class="flex items-center gap-3 flex-1 min-w-0">
 			<img src="<?php echo esc_url( $main_image_url ); ?>"

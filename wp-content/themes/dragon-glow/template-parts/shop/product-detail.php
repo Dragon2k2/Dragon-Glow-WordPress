@@ -405,8 +405,7 @@ if ( ! empty( $p['img_main'] ) ) {
      class="fixed inset-0 z-[9999] flex items-center justify-center hidden"
      role="dialog"
      aria-modal="true"
-     aria-label="<?php esc_attr_e( 'Image viewer', 'dragon-glow' ); ?>"
-     style="background:rgba(0,0,0,0.55);transition:opacity 0.3s cubic-bezier(0.16,1,0.3,1);">
+     aria-label="<?php esc_attr_e( 'Image viewer', 'dragon-glow' ); ?>">
 	<!-- Overlay click area -->
 	<div id="dg-lightbox-overlay"
 	     class="absolute inset-0 bg-black/90 backdrop-blur-xs cursor-zoom-out"
@@ -440,13 +439,11 @@ if ( ! empty( $p['img_main'] ) ) {
 	</button>
 
 	<!-- Image container -->
-	<div class="relative z-10 max-w-[92vw] max-h-[92vh] flex items-center justify-center"
-	     style="transition:opacity 0.25s cubic-bezier(0.16,1,0.3,1);">
+	<div id="dg-lightbox-image-container" class="relative z-10 max-w-[92vw] max-h-[92vh] flex items-center justify-center">
 		<img id="dg-lightbox-image"
 		     src=""
 		     alt="<?php echo esc_attr( $p['name'] ); ?>"
 		     class="max-w-full max-h-[92vh] object-contain rounded-2xl shadow-2xl select-none"
-		     style="transition:opacity 0.2s ease;"
 		     draggable="false" />
 	</div>
 
@@ -460,8 +457,7 @@ if ( ! empty( $p['img_main'] ) ) {
 
 <!-- ===== Sticky Bar (visible on scroll) ===== -->
 <div id="dg-sticky-bar"
-     class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl"
-     style="transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);">
+     class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl">
 	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex items-center gap-4">
 		<div class="flex items-center gap-3 flex-1 min-w-0">
 			<img src="<?php echo esc_url( $p['img_main'] ); ?>"

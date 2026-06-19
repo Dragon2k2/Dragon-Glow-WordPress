@@ -319,6 +319,16 @@ html {
     vertical-align: middle;
 }
 
+/* ── Star rating — golden (shared, used by both mock & WooCommerce product pages) ──
+   Color is fixed; fill is controlled via --dg-star-fill custom property.
+   dg_mock_stars() passes style="--dg-star-fill:{fill}" inline; the FILL
+   font-variation-setting reads the custom property value. */
+.dg-stars .material-symbols-outlined {
+    color: #f1ca50;
+    font-size: 20px;
+    font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
 /* =========================================
    14. WOOCOMMERCE BASE STYLES
    ========================================= */

@@ -81,6 +81,17 @@ function dg_enqueue_assets(): void {
         );
     }
 
+    // Mock product detail page styles (standalone, non-WooCommerce)
+    // Detected by the dg_product query string param (same condition used by setup.php).
+    if ( ! empty( $_GET['dg_product'] ) ) {
+        wp_enqueue_style(
+            'dg-product-mock',
+            DG_URI . '/assets/css/product-mock.css',
+            array( 'dg-main', 'dg-product' ),
+            DG_VERSION
+        );
+    }
+
     // Tailwind CSS CDN (load in head for immediate parsing)
     wp_enqueue_script(
         'tailwindcss',

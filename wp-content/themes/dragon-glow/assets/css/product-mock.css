@@ -1,0 +1,38 @@
+/* =========================================
+   DRAGON GLOW — MOCK PRODUCT DETAIL STYLES
+   Loaded only on the mock product detail page
+   (template-parts/shop/product-detail.php)
+   NOT loaded on is_product() pages.
+
+   Depends on: main.css (tokens, .glass-card),
+   product.css (.dg-thumb-btn, .dg-size-btn, .dg-stars,
+   .dg-tab-btn, .dg-related-card, .btn-primary-glow),
+   Tailwind (utilities).
+   ========================================= */
+
+/* ── Lightbox — overlay & backdrop ──
+   product-detail.php uses dgOpenLightbox() / dgCloseLightbox() to toggle
+   opacity via JS. The cubic-bezier on the container controls the fade speed. */
+#dg-lightbox {
+	background: rgba(0, 0, 0, 0.55);
+	transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Lightbox image container — fade transition on open/close ── */
+#dg-lightbox-image-container {
+	transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Lightbox inner image — crossfade on navigation (dgLightboxNav) ── */
+#dg-lightbox-image {
+	transition: opacity 0.2s ease;
+}
+
+/* ── Sticky bar — slide in/out from bottom ──
+   transform is set inline at 100% initially by PHP; JS sets it to 0
+   when scroll > 600px (dg-sticky-bar scroll handler). The cubic-bezier
+   on this element gives the slide the signature "spring" feel. */
+#dg-sticky-bar {
+	transform: translateY(100%);
+	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
