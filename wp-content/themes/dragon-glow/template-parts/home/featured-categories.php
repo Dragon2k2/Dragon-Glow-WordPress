@@ -14,37 +14,37 @@ $categories = array(
         'name'        => __( 'Cleansers', 'dragon-glow' ),
         'tag'         => __( 'Gentle', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-cleansers.jpg' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'cleansers', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'cleansers', 'product_cat' ) : '#',
     ),
     array(
         'name'        => __( 'Serums', 'dragon-glow' ),
         'tag'         => __( 'Potent', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-serums.webp' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'serums', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'serums', 'product_cat' ) : '#',
     ),
     array(
         'name'        => __( 'Moisturizers', 'dragon-glow' ),
         'tag'         => __( 'Hydrate', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-moisturizers.webp' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'moisturizers', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'moisturizers', 'product_cat' ) : '#',
     ),
     array(
         'name'        => __( 'Blush', 'dragon-glow' ),
         'tag'         => __( 'Glow', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-blush.webp' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'blush', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'blush', 'product_cat' ) : '#',
     ),
     array(
         'name'        => __( 'Sun Care', 'dragon-glow' ),
         'tag'         => __( 'Protect', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-sun-care.webp' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'sun-care', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'sun-care', 'product_cat' ) : '#',
     ),
     array(
         'name'        => __( 'Lip Color', 'dragon-glow' ),
         'tag'         => __( 'Nourish', 'dragon-glow' ),
         'image'       => get_theme_file_uri( 'assets/images/home/category-lip-color.webp' ),
-        'link'        => class_exists( 'WooCommerce' ) ? get_term_link( 'lip-color', 'product_cat' ) : '#',
+        'link'        => dg_is_woocommerce_active() ? get_term_link( 'lip-color', 'product_cat' ) : '#',
     ),
 );
 ?>

@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  *                    a recognized mock product.
  */
 function dg_get_or_create_mock_shadow_product( string $slug ): ?int {
-	if ( ! class_exists( 'WooCommerce' ) ) {
+	if ( ! dg_is_woocommerce_active() ) {
 		return null;
 	}
 

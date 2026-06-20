@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$shop_url = class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : '#';
+$shop_url = dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#';
 $about_url = get_permalink( get_page_by_path( 'our-story' ) ) ?: '#';
 $contact_url = get_permalink( get_page_by_path( 'contact' ) ) ?: '#';
 ?>

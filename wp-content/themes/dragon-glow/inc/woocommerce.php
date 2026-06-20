@@ -9,8 +9,8 @@
 defined( 'ABSPATH' ) || exit;
 
 // Bail if WooCommerce is not active
-if ( ! class_exists( 'WooCommerce' ) ) {
-    return;
+if ( ! dg_is_woocommerce_active() ) {
+	return;
 }
 
 /**

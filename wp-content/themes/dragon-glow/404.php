@@ -43,7 +43,7 @@ get_header();
                 <span class="material-symbols-outlined align-middle mr-2">home</span>
                 <?php esc_html_e( 'Back to Home', 'dragon-glow' ); ?>
             </a>
-            <?php $shop_url = class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : '#'; ?>
+            <?php $shop_url = dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#'; ?>
             <a href="<?php echo esc_url( $shop_url ); ?>" class="btn-ghost">
                 <?php esc_html_e( 'Browse Products', 'dragon-glow' ); ?>
             </a>

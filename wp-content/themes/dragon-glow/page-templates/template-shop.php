@@ -23,7 +23,7 @@ require_once get_template_directory() . '/inc/mock-products-data.php';
 get_header();
 
 $page_title = get_the_title() ?: __( 'The Collection', 'dragon-glow' );
-$shop_url   = class_exists( 'WooCommerce' )
+$shop_url   = dg_is_woocommerce_active()
 	? get_permalink( wc_get_page_id( 'shop' ) )
 	: home_url( '/shop/' );
 ?>
@@ -39,7 +39,7 @@ $shop_url   = class_exists( 'WooCommerce' )
 	<!-- Active filter tags (driven by URL params) -->
 	<?php get_template_part( 'template-parts/shop/active-filters' ); ?>
 
-	<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+	<?php if ( dg_is_woocommerce_active() ) : ?>
 
 		<?php
 		// Sort dropdown + result count row
@@ -258,7 +258,7 @@ $shop_url   = class_exists( 'WooCommerce' )
 				$is_dark    = ( 'right' === $p['badge_pos'] );
 				$pos_class  = $is_dark ? 'absolute top-4 right-4 z-10' : 'absolute top-4 left-4 z-10';
 				// Query-string URL — không cần rewrite, không conflict với WC.
-				$shop_base  = class_exists( 'WooCommerce' )
+				$shop_base  = dg_is_woocommerce_active()
 					? get_permalink( wc_get_page_id( 'shop' ) )
 					: home_url( '/shop/' );
 				$card_url   = add_query_arg( 'dg_product', sanitize_title( $p['name'] ), $shop_base );

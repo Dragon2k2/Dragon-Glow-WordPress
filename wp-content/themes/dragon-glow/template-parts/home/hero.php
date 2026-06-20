@@ -12,7 +12,7 @@ $hero_image  = get_theme_mod( 'dg_hero_image', get_template_directory_uri() . '/
 $hero_title  = get_theme_mod( 'dg_hero_title', __( 'Glow with the Power of Nature', 'dragon-glow' ) );
 $hero_sub    = get_theme_mod( 'dg_hero_subtitle', __( 'Premium skincare rituals meticulously crafted with ethereal botanicals for a luminous, transcendent complexion. Elevate your daily routine into a sacred moment of self-love.', 'dragon-glow' ) );
 $cta1_text   = get_theme_mod( 'dg_cta1_text', __( 'Shop Now', 'dragon-glow' ) );
-$cta1_url    = get_theme_mod( 'dg_cta1_url', class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : '#' );
+$cta1_url    = get_theme_mod( 'dg_cta1_url', dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#' );
 $cta2_text   = get_theme_mod( 'dg_cta2_text', __( 'Discover the Ritual', 'dragon-glow' ) );
 $cta2_url    = get_theme_mod( 'dg_cta2_url', get_permalink( get_page_by_path( 'our-story' ) ) ?: home_url( '/our-story/' ) );
 ?>

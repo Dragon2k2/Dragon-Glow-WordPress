@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $product_id  = get_the_ID();
-$_product    = class_exists( 'WooCommerce' ) ? wc_get_product( $product_id ) : null;
+$_product    = dg_is_woocommerce_active() ? wc_get_product( $product_id ) : null;
 if ( ! $_product ) {
 	return;
 }

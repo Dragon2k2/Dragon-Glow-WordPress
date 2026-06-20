@@ -213,13 +213,16 @@ if ( ! empty( $p['img_main'] ) ) {
 			<!-- CTAs -->
 			<div class="flex flex-col sm:flex-row gap-4 pt-2" id="dg-cta-row">
 				<button type="button"
+				        data-add-to-bag="1"
+				        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
 				        class="btn-primary-glow flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
 					<span class="material-symbols-outlined">shopping_bag</span>
 					<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
 				</button>
 				<button type="button"
 				        id="dg-buy-now-btn"
-				        data-current-slug="<?php echo esc_attr( $current_slug ); ?>"
+				        data-buy-now="1"
+				        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
 				        class="flex-1 py-4 rounded-2xl bg-primary text-on-primary font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
 					<span class="material-symbols-outlined dg-buy-now-icon">bolt</span>
 					<span class="dg-buy-now-label"><?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?></span>
@@ -352,7 +355,7 @@ if ( ! empty( $p['img_main'] ) ) {
 				<?php esc_html_e( 'Reviews are shown for verified purchases.', 'dragon-glow' ); ?>
 				<?php
 				// Safe WooCommerce guard — fallback to standard WP login URL when WC is inactive.
-				$login_url = class_exists( 'WooCommerce' ) && function_exists( 'wc_get_page_permalink' )
+				$login_url = dg_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' )
 					? wc_get_page_permalink( 'myaccount' )
 					: wp_login_url( get_permalink() );
 				?>
@@ -374,7 +377,7 @@ if ( ! empty( $p['img_main'] ) ) {
 				<?php foreach ( $related as $rel_slug => $rp ) : ?>
 					<article class="dg-related-card group">
 						<?php
-						$rel_shop_base = class_exists( 'WooCommerce' )
+						$rel_shop_base = dg_is_woocommerce_active()
 							? get_permalink( wc_get_page_id( 'shop' ) )
 							: home_url( '/shop/' );
 						$rel_url       = add_query_arg( 'dg_product', $rel_slug, $rel_shop_base );
@@ -482,22 +485,6 @@ if ( ! empty( $p['img_main'] ) ) {
 		});
 	});
 
-	// ── Quantity stepper ──
-	var qty = 1;
-	var qtyDisplay = document.getElementById('dg-qty-display');
-	var minusBtn = document.getElementById('dg-qty-minus');
-	var plusBtn = document.getElementById('dg-qty-plus');
-	if (minusBtn) {
-		minusBtn.addEventListener('click', function () {
-			if (qty > 1) { qty--; if (qtyDisplay) { qtyDisplay.textContent = qty; } }
-		});
-	}
-	if (plusBtn) {
-		plusBtn.addEventListener('click', function () {
-			qty++; if (qtyDisplay) { qtyDisplay.textContent = qty; }
-		});
-	}
-
 	// ── Size selector ──
 	document.querySelectorAll('.dg-size-btn').forEach(function (btn) {
 		btn.addEventListener('click', function () {
@@ -509,79 +496,6 @@ if ( ! empty( $p['img_main'] ) ) {
 			this.classList.remove('border-outline-variant/30', 'text-on-surface-variant');
 		});
 	});
-
-	// ── Buy Now button ──
-	var buyNowBtn = document.getElementById('dg-buy-now-btn');
-	if (buyNowBtn) {
-		buyNowBtn.addEventListener('click', function () {
-			var btn = this;
-			var noticeEl = document.getElementById('dg-buy-now-notice');
-			var iconEl = btn.querySelector('.dg-buy-now-icon');
-			var labelEl = btn.querySelector('.dg-buy-now-label');
-			var slug = btn.dataset.currentSlug;
-
-			// Collect selected size from the active size button.
-			var activeSizeEl = document.querySelector('.dg-size-btn.is-active');
-			var size = activeSizeEl ? activeSizeEl.textContent.trim() : '';
-			var quantity = parseInt(qtyDisplay ? qtyDisplay.textContent : '1', 10) || 1;
-
-			// Disable + show loading state.
-			btn.disabled = true;
-			if (iconEl) { iconEl.textContent = 'sync'; iconEl.classList.add('animate-spin'); }
-			if (labelEl) { labelEl.textContent = '<?php echo esc_js( __( 'Processing...', 'dragon-glow' ) ); ?>'; }
-			if (noticeEl) { noticeEl.classList.add('hidden'); }
-
-			var formData = new FormData();
-			formData.append('action', 'dg_ajax_buy_now');
-			formData.append('nonce', dgAjax.nonce);
-			formData.append('slug', slug);
-			formData.append('size', size);
-			formData.append('quantity', quantity);
-
-			fetch(dgAjax.url, {
-				method: 'POST',
-				body: formData,
-				credentials: 'same-origin'
-			})
-			.then(function (r) { return r.json(); })
-			.then(function (data) {
-				if (data.success && data.data && data.data.redirect) {
-					// Show preview notice if this is a mock product.
-					if (data.data.preview_notice) {
-						if (noticeEl) {
-							noticeEl.textContent = data.data.preview_notice;
-							noticeEl.classList.remove('hidden');
-						}
-						// Redirect after brief delay so the notice is readable.
-						setTimeout(function () {
-							window.location.href = data.data.redirect;
-						}, 2000);
-					} else {
-						window.location.href = data.data.redirect;
-					}
-				} else {
-					// Re-enable button and show error.
-					btn.disabled = false;
-					if (iconEl) { iconEl.textContent = 'bolt'; iconEl.classList.remove('animate-spin'); }
-					if (labelEl) { labelEl.textContent = '<?php echo esc_js( __( 'Buy Now', 'dragon-glow' ) ); ?>'; }
-					if (noticeEl) {
-						noticeEl.textContent = (data.data && data.data.message) ? data.data.message : '<?php echo esc_js( __( 'Something went wrong. Please try again.', 'dragon-glow' ) ); ?>';
-						noticeEl.classList.remove('hidden');
-					}
-				}
-			})
-			.catch(function () {
-				// Network or parse error — re-enable button.
-				btn.disabled = false;
-				if (iconEl) { iconEl.textContent = 'bolt'; iconEl.classList.remove('animate-spin'); }
-				if (labelEl) { labelEl.textContent = '<?php echo esc_js( __( 'Buy Now', 'dragon-glow' ) ); ?>'; }
-				if (noticeEl) {
-					noticeEl.textContent = '<?php echo esc_js( __( 'Something went wrong. Please try again.', 'dragon-glow' ) ); ?>';
-					noticeEl.classList.remove('hidden');
-				}
-			});
-		});
-	}
 
 	// ── Gallery thumbnail swap ──
 	window.dgChangeImage = function (btn) {

@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $cart_count = 0;
-if ( class_exists( 'WooCommerce' ) && isset( WC()->cart ) ) {
+if ( dg_is_woocommerce_active() && isset( WC()->cart ) ) {
     $cart_count = WC()->cart->get_cart_contents_count();
 }
 ?>
@@ -38,7 +38,7 @@ if ( class_exists( 'WooCommerce' ) && isset( WC()->cart ) ) {
                 ) );
             } else {
                 // Fallback menu items
-                $shop_url = class_exists( 'WooCommerce' )
+                $shop_url = dg_is_woocommerce_active()
                     ? get_permalink( wc_get_page_id( 'shop' ) )
                     : ( get_permalink( get_page_by_path( 'shop' ) ) ?: home_url( '/shop/' ) );
                 $our_story_page = get_page_by_path( 'our-story' );
@@ -66,7 +66,7 @@ if ( class_exists( 'WooCommerce' ) && isset( WC()->cart ) ) {
 
 
             <!-- Account -->
-            <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) : wp_login_url() ); ?>"
+            <a href="<?php echo esc_url( dg_is_woocommerce_active() ? get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) : wp_login_url() ); ?>"
                class="p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
                aria-label="<?php esc_attr_e( 'Account', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">person</span>
@@ -87,7 +87,7 @@ if ( class_exists( 'WooCommerce' ) && isset( WC()->cart ) ) {
 
             <!-- Cart -->
             <?php
-            $cart_url = class_exists( 'WooCommerce' )
+            $cart_url = dg_is_woocommerce_active()
                 ? wc_get_cart_url()
                 : home_url( '/cart/' );
             ?>

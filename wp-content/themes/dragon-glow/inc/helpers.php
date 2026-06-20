@@ -9,6 +9,50 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Check if WooCommerce is active.
+ *
+ * Single source of truth for WooCommerce availability checks throughout the theme.
+ * Use this instead of repeated class_exists('WooCommerce') checks.
+ *
+ * @return bool
+ */
+function dg_is_woocommerce_active(): bool {
+	return class_exists( 'WooCommerce' );
+}
+
+/**
+ * Get the URL of the internal mock checkout page.
+ *
+ * @return string
+ */
+function dg_get_mock_checkout_url(): string {
+	// Check for a published page using the mock checkout template.
+	$pages = get_posts(
+		array(
+			'post_type'      => 'page',
+			'posts_per_page' => 1,
+			'meta_key'       => '_wp_page_template',
+			'meta_value'     => 'page-templates/template-mock-checkout.php',
+			'post_status'    => 'publish',
+		)
+	);
+
+	if ( ! empty( $pages ) ) {
+		return get_permalink( $pages[0] );
+	}
+
+	$fallback = get_page_by_path( 'mock-checkout' );
+	if ( $fallback ) {
+		return get_permalink( $fallback );
+	}
+
+	return home_url( '/shop/' );
+}
+
+/**
+ * Check if the current page is the mock checkout page.
+
+/**
  * Render star rating HTML.
  *
  * @param float $rating Rating value (0-5).
@@ -146,11 +190,11 @@ function dg_get_product_categories(): array {
  * @return string
  */
 function dg_format_price( float $price ): string {
-    if ( class_exists( 'WooCommerce' ) ) {
-        return wc_price( $price );
-    }
+	if ( dg_is_woocommerce_active() ) {
+		return wc_price( $price );
+	}
 
-    return '$' . number_format( $price, 2 );
+	return '$' . number_format( $price, 2 );
 }
 
 /**
@@ -185,11 +229,11 @@ function dg_get_mod( string $key, $default = null ) {
  * @return bool
  */
 function dg_is_woocommerce_page(): bool {
-    if ( ! class_exists( 'WooCommerce' ) ) {
-        return false;
-    }
+	if ( ! dg_is_woocommerce_active() ) {
+		return false;
+	}
 
-    return is_shop() || is_product_category() || is_product() || is_cart() || is_checkout() || is_account_page();
+	return is_shop() || is_product_category() || is_product() || is_cart() || is_checkout() || is_account_page();
 }
 
 /**
@@ -278,4 +322,18 @@ function dg_get_product_primary_category( int $product_id ) {
     }
 
     return $categories[0];
+}
+
+/**
+ * Check if the current page is the mock checkout page.
+ *
+ * @return bool
+ */
+function dg_is_mock_checkout_page(): bool {
+	if ( ! empty( $_GET['dg_mock_checkout'] ) && '1' === $_GET['dg_mock_checkout'] ) {
+		return true;
+	}
+
+	$template = get_post_meta( get_queried_object_id(), '_wp_page_template', true );
+	return 'page-templates/template-mock-checkout.php' === $template;
 }

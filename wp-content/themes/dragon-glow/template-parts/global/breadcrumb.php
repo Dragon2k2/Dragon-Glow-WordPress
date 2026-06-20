@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$wc = class_exists( 'WooCommerce' );
+$wc = dg_is_woocommerce_active();
 ?>
 <nav class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mb-8 flex-wrap" aria-label="Breadcrumb">
     <a href="<?php echo esc_url( home_url( '/' ) ); ?>"

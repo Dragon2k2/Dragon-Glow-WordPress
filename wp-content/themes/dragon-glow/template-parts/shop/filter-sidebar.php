@@ -14,21 +14,21 @@
 defined( 'ABSPATH' ) || exit;
 
 // Determine shop URL
-$shop_url = class_exists( 'WooCommerce' )
+$shop_url = dg_is_woocommerce_active()
 	? get_permalink( wc_get_page_id( 'shop' ) )
 	: home_url( '/shop/' );
 
 // Current category (WC only)
 $current_category    = null;
 $current_category_id = 0;
-if ( class_exists( 'WooCommerce' ) ) {
+if ( dg_is_woocommerce_active() ) {
 	$current_category    = get_queried_object();
 	$current_category_id = is_product_category() ? $current_category->term_id : 0;
 }
 
 // Top-level product categories (WC only)
 $categories = array();
-if ( class_exists( 'WooCommerce' ) ) {
+if ( dg_is_woocommerce_active() ) {
 	$categories = get_terms( array(
 		'taxonomy'   => 'product_cat',
 		'hide_empty' => true,
@@ -52,7 +52,7 @@ $skin_types = array(
 			<?php esc_html_e( 'Categories', 'dragon-glow' ); ?>
 		</h3>
 		<ul class="space-y-3">
-			<?php if ( class_exists( 'WooCommerce' ) && ! empty( $categories ) ) : ?>
+			<?php if ( dg_is_woocommerce_active() && ! empty( $categories ) ) : ?>
 				<?php foreach ( $categories as $category ) : ?>
 					<?php
 					$is_active    = $current_category_id === $category->term_id;

@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Only run if WooCommerce is active
-if ( ! class_exists( 'WooCommerce' ) ) {
+if ( ! dg_is_woocommerce_active() ) {
     return;
 }
 
@@ -222,7 +222,7 @@ $fallback_products = array(
         </div>
 
         <!-- View All Link -->
-        <?php $shop_url = class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : '#'; ?>
+        <?php $shop_url = dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#'; ?>
         <div class="text-center mt-12 reveal">
             <a href="<?php echo esc_url( $shop_url ); ?>" class="btn-ghost">
                 <?php esc_html_e( 'View All Products', 'dragon-glow' ); ?>

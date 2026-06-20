@@ -48,7 +48,7 @@ function dg_enqueue_assets(): void {
     );
 
     // WooCommerce custom CSS (chỉ load khi có WooCommerce)
-    if ( class_exists( 'WooCommerce' ) ) {
+    if ( dg_is_woocommerce_active() ) {
         wp_enqueue_style(
             'dg-woocommerce',
             DG_URI . '/assets/css/woocommerce-custom.css',
@@ -139,7 +139,7 @@ function dg_enqueue_assets(): void {
     );
 
     // Page-specific JS (WooCommerce conditionals)
-    if ( class_exists( 'WooCommerce' ) ) {
+    if ( dg_is_woocommerce_active() ) {
         if ( is_product() ) {
             wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main' ), DG_VERSION, true );
         }
@@ -164,7 +164,25 @@ function dg_enqueue_assets(): void {
     wp_localize_script( 'dg-main', 'dgAjax', array(
         'url'   => admin_url( 'admin-ajax.php' ),
         'nonce' => wp_create_nonce( 'dg_nonce' ),
+        'i18n'  => array(
+            'Processing...'    => __( 'Processing...', 'dragon-glow' ),
+            'Buy Now'         => __( 'Buy Now', 'dragon-glow' ),
+            'Something went wrong. Please try again.' => __( 'Something went wrong. Please try again.', 'dragon-glow' ),
+            'Network error. Please check your connection and try again.' => __( 'Network error. Please check your connection and try again.', 'dragon-glow' ),
+            'Network error.'  => __( 'Network error.', 'dragon-glow' ),
+            'Added!'          => __( 'Added!', 'dragon-glow' ),
+            'Could not add to bag.' => __( 'Could not add to bag.', 'dragon-glow' ),
+        ),
     ) );
+
+    // Buy Now handler — loads on any page with Buy Now buttons (product detail, shop).
+    wp_enqueue_script(
+        'dg-buy-now',
+        DG_URI . '/assets/js/buy-now.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
 
     // Add inline Tailwind config
     $tailwind_config = dg_get_tailwind_config();
@@ -290,7 +308,7 @@ JS;
  */
 function dg_dequeue_unnecessary(): void {
     // Remove WooCommerce block styles if not needed
-    if ( class_exists( 'WooCommerce' ) && ! is_checkout() && ! is_cart() ) {
+    if ( dg_is_woocommerce_active() && ! is_checkout() && ! is_cart() ) {
         wp_dequeue_style( 'wc-block-style' );
     }
 }

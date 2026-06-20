@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Check if WooCommerce is active
-if ( ! class_exists( 'WooCommerce' ) ) {
+if ( ! dg_is_woocommerce_active() ) {
     get_header();
     ?>
     <main id="main-content">
@@ -46,7 +46,7 @@ $shop_url = get_permalink( wc_get_page_id( 'shop' ) );
         <p class="text-on-surface-variant text-body-lg mb-12">
             <?php
             printf(
-                esc_html( _n( '%d item saved', '%d items saved', count( $wishlist ), 'dragon-glow' ),
+                esc_html( _n( '%d item saved', '%d items saved', count( $wishlist ), 'dragon-glow' ) ),
                 count( $wishlist )
             );
             ?>

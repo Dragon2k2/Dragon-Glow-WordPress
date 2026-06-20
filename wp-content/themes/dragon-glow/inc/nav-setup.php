@@ -55,7 +55,7 @@ function dg_register_default_menu_pages(): void {
 
     // --- Shop (WooCommerce) ---
     $shop_page_id = 0;
-    if ( class_exists( 'WooCommerce' ) ) {
+    if ( dg_is_woocommerce_active() ) {
         $shop_page_id = wc_get_page_id( 'shop' );
     }
     if ( $shop_page_id <= 0 ) {
