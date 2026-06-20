@@ -149,7 +149,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			<?php endif; ?>
 
 		<!-- Title -->
-		<h1 class="dg-product-title text-headline-lg text-primary leading-tight font-display">
+		<h1 class="dg-product-title text-headline-lg text-primary leading-tight font-display italic">
 			<?php echo esc_html( $p['name'] ); ?>
 		</h1>
 
@@ -387,7 +387,7 @@ if ( ! empty( $p['img_main'] ) ) {
 									</span>
 								</div>
 							</div>
-							<h3 class="font-headline text-lg text-on-surface group-hover:text-primary transition-colors mb-1">
+							<h3 class="font-headline text-lg text-on-surface group-hover:text-primary transition-colors mb-1 italic">
 								<?php echo esc_html( $rp['name'] ); ?>
 							</h3>
 							<p class="dg-related-price text-sm text-primary font-serif"><?php echo esc_html( $rp['price'] ); ?></p>
@@ -455,26 +455,6 @@ if ( ! empty( $p['img_main'] ) ) {
 	</div>
 </div>
 
-<!-- ===== Sticky Bar (visible on scroll) ===== -->
-<div id="dg-sticky-bar"
-     class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl">
-	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex items-center gap-4">
-		<div class="flex items-center gap-3 flex-1 min-w-0">
-			<img src="<?php echo esc_url( $p['img_main'] ); ?>"
-			     alt=""
-			     class="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
-			<div class="min-w-0">
-				<p class="font-bold text-sm text-primary truncate"><?php echo esc_html( $p['name'] ); ?></p>
-				<p class="dg-sticky-price text-sm text-on-surface-variant font-serif"><?php echo esc_html( $p['price'] ); ?></p>
-			</div>
-		</div>
-		<button type="button"
-		        class="btn-primary-glow px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-widest whitespace-nowrap">
-			<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
-		</button>
-	</div>
-</div>
-
 <script>
 (function () {
 	'use strict';
@@ -525,18 +505,6 @@ if ( ! empty( $p['img_main'] ) ) {
 			this.classList.remove('border-outline-variant/30', 'text-on-surface-variant');
 		});
 	});
-
-	// ── Sticky bar on scroll ──
-	var stickyBar = document.getElementById('dg-sticky-bar');
-	if (stickyBar) {
-		window.addEventListener('scroll', function () {
-			if (window.scrollY > 600) {
-				stickyBar.style.transform = 'translateY(0)';
-			} else {
-				stickyBar.style.transform = 'translateY(100%)';
-			}
-		}, { passive: true });
-	}
 
 	// ── Gallery thumbnail swap ──
 	window.dgChangeImage = function (btn) {

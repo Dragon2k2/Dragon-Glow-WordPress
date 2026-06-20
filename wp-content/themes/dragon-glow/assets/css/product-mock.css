@@ -28,14 +28,6 @@
 	transition: opacity 0.2s ease;
 }
 
-/* ── Sticky bar — slide in/out from bottom ──
-   transform is set inline at 100% initially by PHP; JS sets it to 0
-   when scroll > 600px (dg-sticky-bar scroll handler). The cubic-bezier
-   on this element gives the slide the signature "spring" feel. */
-#dg-sticky-bar {
-	transform: translateY(100%);
-	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 /* ── Hero price — Bodoni Moda, đồng bộ với .dg-product-price ở trang Shop ── */
 .dg-detail-price {
@@ -51,9 +43,3 @@
 	font-weight: 600 !important;
 }
 
-/* ── Sticky bar price ── */
-.dg-sticky-price {
-	font-family: 'Bodoni Moda', Georgia, serif !important;
-	font-style: italic !important;
-	font-weight: 600 !important;
-}
