@@ -246,7 +246,7 @@ tailwind.config = {
         "section-gap":          "120px",
       },
       fontFamily: {
-        display:            ['"Playfair Display"', 'serif'],
+        display:            ['"Playfair Display"', 'Georgia', 'serif'],
         headline:           ['"Playfair Display"', 'serif'],
         "display-lg":       ['"Playfair Display"', 'serif'],
         "headline-lg":      ['"Playfair Display"', 'serif'],
@@ -257,6 +257,7 @@ tailwind.config = {
         "label-sm":         ['"Montserrat"', 'sans-serif'],
         label:              ['"Montserrat"', 'sans-serif'],
         body:               ['"Montserrat"', 'sans-serif'],
+        serif:              ['"Bodoni Moda"', 'Georgia', 'serif'],
       },
       fontSize: {
         "display-lg":         ["64px", { lineHeight: "1.1", fontWeight: "700", letterSpacing: "-0.02em" }],

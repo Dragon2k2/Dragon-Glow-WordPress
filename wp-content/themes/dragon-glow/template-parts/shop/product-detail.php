@@ -148,10 +148,10 @@ if ( ! empty( $p['img_main'] ) ) {
 				</div>
 			<?php endif; ?>
 
-			<!-- Title -->
-			<h1 class="font-headline text-headline-lg text-primary leading-tight">
-				<?php echo esc_html( $p['name'] ); ?>
-			</h1>
+		<!-- Title -->
+		<h1 class="dg-product-title text-headline-lg text-primary leading-tight font-display">
+			<?php echo esc_html( $p['name'] ); ?>
+		</h1>
 
 			<!-- Rating -->
 			<div class="flex items-center gap-3 flex-wrap">
@@ -167,7 +167,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			</div>
 
 			<!-- Price -->
-			<div class="dg-detail-price text-headline-md text-primary">
+			<div class="dg-detail-price text-headline-md text-primary font-serif">
 				<?php echo esc_html( $p['price'] ); ?>
 			</div>
 
@@ -390,7 +390,7 @@ if ( ! empty( $p['img_main'] ) ) {
 							<h3 class="font-headline text-lg text-on-surface group-hover:text-primary transition-colors mb-1">
 								<?php echo esc_html( $rp['name'] ); ?>
 							</h3>
-							<p class="dg-related-price text-sm text-primary"><?php echo esc_html( $rp['price'] ); ?></p>
+							<p class="dg-related-price text-sm text-primary font-serif"><?php echo esc_html( $rp['price'] ); ?></p>
 						</a>
 					</article>
 				<?php endforeach; ?>
@@ -465,7 +465,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			     class="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
 			<div class="min-w-0">
 				<p class="font-bold text-sm text-primary truncate"><?php echo esc_html( $p['name'] ); ?></p>
-				<p class="dg-sticky-price text-sm text-on-surface-variant"><?php echo esc_html( $p['price'] ); ?></p>
+				<p class="dg-sticky-price text-sm text-on-surface-variant font-serif"><?php echo esc_html( $p['price'] ); ?></p>
 			</div>
 		</div>
 		<button type="button"

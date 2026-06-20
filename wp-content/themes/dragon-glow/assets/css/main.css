@@ -596,3 +596,18 @@ table th {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* =========================================
+   26. BODONI MODA PRICE FONT OVERRIDE
+   =========================================
+
+   Tailwind's font-serif utility (Step 1 + Step 2) covers the primary path.
+   This CSS rule acts as a belt-and-suspenders fallback: it applies regardless
+   of Tailwind CDN build order, cache state, or any future config changes.
+   Using !important ensures this survives any conflicting utility cascades.
+*/
+.dg-detail-price,
+.dg-related-price,
+.dg-sticky-price {
+    font-family: 'Bodoni Moda', Georgia, serif !important;
+}
