@@ -21,5 +21,6 @@ require_once DG_DIR . '/inc/enqueue.php';
 require_once DG_DIR . '/inc/woocommerce.php';
 require_once DG_DIR . '/inc/widgets.php';
 require_once DG_DIR . '/inc/ajax-handlers.php';
+require_once DG_DIR . '/inc/mock-product-sync.php';
 require_once DG_DIR . '/inc/helpers.php';
 require_once DG_DIR . '/inc/shop-customizer.php';

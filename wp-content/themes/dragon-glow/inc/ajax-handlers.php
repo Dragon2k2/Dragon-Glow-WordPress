@@ -8,9 +8,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// Bail if WooCommerce is not active for wishlist functionality
-$wc_active = class_exists( 'WooCommerce' );
-
 /**
  * Handle wishlist toggle.
  *
@@ -181,7 +178,7 @@ add_action( 'wp_ajax_nopriv_dg_contact_form', 'dg_handle_contact' );
 function dg_ajax_add_to_cart(): void {
     check_ajax_referer( 'dg_nonce', 'nonce' );
 
-    if ( ! $wc_active ) {
+    if ( ! class_exists( 'WooCommerce' ) ) {
         wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
     }
 
@@ -232,7 +229,7 @@ add_action( 'wp_ajax_nopriv_dg_ajax_add_to_cart', 'dg_ajax_add_to_cart' );
 function dg_ajax_buy_now(): void {
 	check_ajax_referer( 'dg_nonce', 'nonce' );
 
-	if ( ! $wc_active ) {
+	if ( ! class_exists( 'WooCommerce' ) ) {
 		wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
 	}
 
@@ -344,13 +341,35 @@ function dg_ajax_buy_now(): void {
 		return;
 	}
 
-	// No real product found — this is a demo-only mock entry.
-	// Redirect to the shop page with a friendly notice so the visitor isn't left
-	// on a dead end, and the front-end can surface the message as a notice.
+	// No real WC product with this slug exists directly.  Try to get-or-create a
+	// hidden shadow product that backs this mock catalog entry.
+	$shadow_id = dg_get_or_create_mock_shadow_product( $slug );
+
+	if ( $shadow_id ) {
+		// Shadow product found/created — add it to the cart and go to checkout.
+		$cart_item_data = array();
+		if ( ! empty( $size ) ) {
+			$cart_item_data['dg_selected_size'] = $size;
+		}
+
+		$added = WC()->cart->add_to_cart( $shadow_id, $quantity, 0, array(), $cart_item_data );
+
+		if ( $added ) {
+			wp_send_json_success( array(
+				'redirect'  => wc_get_checkout_url(),
+				'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
+			) );
+		} else {
+			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'dragon-glow' ) ) );
+		}
+		return;
+	}
+
+	// Slug is not a recognized mock product — fall back to the preview notice.
 	$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 
 	wp_send_json_success( array(
-		'redirect'        => $shop_url,
+		'redirect'       => $shop_url,
 		'preview_notice' => __( 'This item is a preview and is not yet available for purchase.', 'dragon-glow' ),
 	) );
 }
@@ -365,7 +384,7 @@ add_action( 'wp_ajax_nopriv_dg_ajax_buy_now', 'dg_ajax_buy_now' );
 function dg_ajax_remove_from_cart(): void {
     check_ajax_referer( 'dg_nonce', 'nonce' );
 
-    if ( ! $wc_active ) {
+    if ( ! class_exists( 'WooCommerce' ) ) {
         wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
     }
 
@@ -396,7 +415,7 @@ add_action( 'wp_ajax_dg_ajax_remove_from_cart', 'dg_ajax_remove_from_cart' );
 function dg_ajax_update_cart(): void {
     check_ajax_referer( 'dg_nonce', 'nonce' );
 
-    if ( ! $wc_active ) {
+    if ( ! class_exists( 'WooCommerce' ) ) {
         wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
     }
 
