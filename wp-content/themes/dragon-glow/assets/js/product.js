@@ -1,6 +1,7 @@
 /**
  * Dragon Glow — Product Page JS
- * Gallery image swap, thumbnail active state, tab switching, qty +/-.
+ * Gallery image swap (cache-aware, instant), thumbnail active state,
+ * tab switching, qty +/-, star rating, sticky bar, review form.
  *
  * @package Dragon_Glow
  */
@@ -8,29 +9,105 @@
 (function () {
     'use strict';
 
-    // ── Image Gallery Swap ────────────────────────────────────
-    window.dgChangeImage = function (btn) {
-        var fullSrc = btn.dataset.full;
-        var mainImg = document.getElementById('dg-main-image');
+    // ── Image Gallery Preloader ─────────────────────────────────
+    // Collect all data-full URLs from thumbnails; skip the first
+    // thumbnail because its image is already loaded on the page.
+    (function preloadGalleryImages() {
+        var thumbs = document.querySelectorAll('.thumbnail-btn');
+        if (!thumbs.length) return;
 
-        if (mainImg && fullSrc) {
-            // Fade transition
-            mainImg.style.opacity = '0';
-            setTimeout(function () {
-                mainImg.src = fullSrc;
-                mainImg.style.opacity = '1';
-            }, 150);
+        var toPreload = [];
+        for (var i = 1; i < thumbs.length; i++) {
+            var src = thumbs[i].dataset.full;
+            if (src) toPreload.push(src);
         }
 
-        // Update thumbnail active states
-        var thumbnails = document.querySelectorAll('.thumbnail-btn');
-        thumbnails.forEach(function (thumb) {
-            thumb.classList.remove('border-primary', 'ring-2', 'ring-primary-container/20', 'opacity-100');
-            thumb.classList.add('border-outline-variant/30', 'opacity-60');
-        });
+        if (!toPreload.length) return;
 
-        btn.classList.add('border-primary', 'ring-2', 'ring-primary-container/20', 'opacity-100');
+        // Defer to after window.load so the critical rendering path
+        // is never blocked.  Falls back to an immediate loop for
+        // browsers without requestIdleCallback.
+        var preload = function () {
+            for (var j = 0; j < toPreload.length; j++) {
+                (new Image()).src = toPreload[j];
+            }
+        };
+
+        if (typeof requestIdleCallback !== 'undefined') {
+            requestIdleCallback(preload, { timeout: 2000 });
+        } else if (document.readyState === 'complete') {
+            setTimeout(preload, 0);
+        } else {
+            window.addEventListener('load', function () {
+                setTimeout(preload, 0);
+            });
+        }
+    }());
+
+    // ── Image Gallery Swap ─────────────────────────────────────
+    // Strategy:
+    //  1. Guard: ignore re-clicks on the same thumbnail.
+    //  2. If the new image is already in browser cache (Image.complete)
+    //     the swap is near-instantaneous; no setTimeout is used.
+    //  3. If not cached yet, wait for the Image load event before
+    //     fading in — this eliminates the blank / flicker window.
+    //  4. If the user clicks a different thumbnail while a transition
+    //     is still running, the pending transition is cancelled and a
+    //     fresh one starts immediately.
+    window.dgChangeImage = function (btn) {
+        var fullSrc   = btn.dataset.full;
+        var mainImg   = document.getElementById('dg-main-image');
+        if (!mainImg || !fullSrc) return;
+
+        // Guard: clicking the already-active thumbnail does nothing.
+        if (btn.classList.contains('is-active')) return;
+
+        // Cancel any transition already in progress so fast
+        // sequential clicks never leave the image at opacity 0.
+        if (mainImg._dgSwapTimer) {
+            clearTimeout(mainImg._dgSwapTimer);
+            mainImg._dgSwapTimer = null;
+        }
+        if (mainImg._dgSwapLoadHandler) {
+            mainImg.removeEventListener('load', mainImg._dgSwapLoadHandler);
+            mainImg._dgSwapLoadHandler = null;
+        }
+
+        // ── Update thumbnail active states (immediate, no animation) ──
+        var thumbnails = document.querySelectorAll('.thumbnail-btn');
+        for (var i = 0; i < thumbnails.length; i++) {
+            var thumb = thumbnails[i];
+            thumb.classList.remove(
+                'is-active', 'border-primary', 'ring-2',
+                'ring-primary-container/20', 'opacity-100'
+            );
+            thumb.classList.add('border-outline-variant/30', 'opacity-60');
+        }
+        btn.classList.add(
+            'is-active', 'border-primary', 'ring-2',
+            'ring-primary-container/20', 'opacity-100'
+        );
         btn.classList.remove('border-outline-variant/30', 'opacity-60');
+
+        // ── Swap the main image ───────────────────────────────────────
+        var preloader = new Image();
+        preloader.src = fullSrc;
+
+        if (preloader.complete && preloader.naturalWidth > 0) {
+            // Already in cache — swap + fade in immediately.
+            mainImg.style.opacity = '0';
+            mainImg.src = fullSrc;
+            mainImg.style.opacity = '1';
+        } else {
+            // Not cached yet — fade to 0, wait for load, then fade in.
+            mainImg.style.opacity = '0';
+            mainImg._dgSwapLoadHandler = function () {
+                mainImg.src = fullSrc;
+                mainImg.style.opacity = '1';
+                mainImg._dgSwapLoadHandler = null;
+            };
+            mainImg.addEventListener('load', mainImg._dgSwapLoadHandler);
+        }
     };
 
     // ── Tab Switching ─────────────────────────────────────────

@@ -39,7 +39,7 @@
 
 /* ── Main product image fade transition (driven by product.js) ── */
 #dg-main-image {
-	transition: opacity 0.15s ease;
+	transition: opacity 0.15s ease-out;
 }
 
 /* ── Size selector buttons ── */
