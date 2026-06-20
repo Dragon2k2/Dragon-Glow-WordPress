@@ -221,6 +221,143 @@ add_action( 'wp_ajax_dg_ajax_add_to_cart', 'dg_ajax_add_to_cart' );
 add_action( 'wp_ajax_nopriv_dg_ajax_add_to_cart', 'dg_ajax_add_to_cart' );
 
 /**
+ * AJAX: Buy Now — add an item to the cart and send the client straight to checkout.
+ *
+ * Handles two sources:
+ *  - Real WooCommerce products (product_id posted directly).
+ *  - Mock product-detail pages (only a slug is available; no real product may exist).
+ *
+ * @return void
+ */
+function dg_ajax_buy_now(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	if ( ! $wc_active ) {
+		wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
+	}
+
+	$product_id = absint( $_POST['product_id'] ?? 0 );
+	$slug       = sanitize_text_field( $_POST['slug'] ?? '' );
+	$size       = sanitize_text_field( $_POST['size'] ?? '' );
+	$quantity   = absint( $_POST['quantity'] ?? 1 );
+
+	// Resolve product — either posted directly or looked up via slug.
+	if ( $product_id ) {
+		$product = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Product not found.', 'dragon-glow' ) ) );
+			return; // unreachable — wp_send_json_error() exits, but aids static analysis.
+		}
+
+		// Variable products require size selection — redirect to product page.
+		if ( 'variable' === $product->get_type() ) {
+			wp_send_json_error( array(
+				'message'  => __( 'Please select product options before purchasing.', 'dragon-glow' ),
+				'redirect' => get_permalink( $product_id ),
+			) );
+		}
+
+		$added = WC()->cart->add_to_cart( $product_id, $quantity );
+
+		if ( $added ) {
+			wp_send_json_success( array(
+				'redirect'  => wc_get_checkout_url(),
+				'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
+			) );
+		} else {
+			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'dragon-glow' ) ) );
+		}
+		return;
+	}
+
+	// ── Slug-based lookup (mock product page) ──
+	if ( empty( $slug ) ) {
+		wp_send_json_error( array( 'message' => __( 'Product not specified.', 'dragon-glow' ) ) );
+	}
+
+	// Attempt to resolve the slug to a real WooCommerce product.
+	$real_product = get_page_by_path( $slug, OBJECT, 'product' );
+
+	if ( $real_product ) {
+		$product = wc_get_product( $real_product->ID );
+
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Product not found.', 'dragon-glow' ) ) );
+		}
+
+		if ( 'variable' === $product->get_type() && ! empty( $size ) ) {
+			// Try to match the size string to a variation attribute.
+			$variations = $product->get_available_variations();
+			$matched_variation_id = 0;
+
+			foreach ( $variations as $variation ) {
+				$variation_obj = wc_get_product( $variation['variation_id'] );
+				if ( ! $variation_obj ) {
+					continue;
+				}
+				$attrs = $variation_obj->get_attributes();
+				foreach ( $attrs as $attr_name => $attr_value ) {
+					// Attribute values may be stored with or without 'pa_' prefix.
+					$attr_value_clean = strtolower( trim( $attr_value ) );
+					$size_clean      = strtolower( trim( $size ) );
+					if ( $attr_value_clean === $size_clean ) {
+						$matched_variation_id = $variation['variation_id'];
+						break 2;
+					}
+				}
+			}
+
+			if ( $matched_variation_id ) {
+				$added = WC()->cart->add_to_cart(
+					$product->get_id(),
+					$quantity,
+					$matched_variation_id
+				);
+			} else {
+				// No matching variation — redirect to the product page so the
+				// customer can pick a valid combination.
+				wp_send_json_error( array(
+					'message'  => __( 'The selected size is not available. Please choose a different size.', 'dragon-glow' ),
+					'redirect' => get_permalink( $product->get_id() ),
+				) );
+			}
+		} elseif ( 'variable' === $product->get_type() ) {
+			// Variable but no size provided — redirect to product page.
+			wp_send_json_error( array(
+				'message'  => __( 'Please select a size before purchasing.', 'dragon-glow' ),
+				'redirect' => get_permalink( $product->get_id() ),
+			) );
+		} else {
+			// Simple product.
+			$added = WC()->cart->add_to_cart( $product->get_id(), $quantity );
+		}
+
+		if ( $added ) {
+			wp_send_json_success( array(
+				'redirect'  => wc_get_checkout_url(),
+				'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
+			) );
+		} else {
+			wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'dragon-glow' ) ) );
+		}
+		return;
+	}
+
+	// No real product found — this is a demo-only mock entry.
+	// Redirect to the shop page with a friendly notice so the visitor isn't left
+	// on a dead end, and the front-end can surface the message as a notice.
+	$shop_url = class_exists( 'WooCommerce' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+
+	wp_send_json_success( array(
+		'redirect'        => $shop_url,
+		'preview_notice' => __( 'This item is a preview and is not yet available for purchase.', 'dragon-glow' ),
+	) );
+}
+add_action( 'wp_ajax_dg_ajax_buy_now', 'dg_ajax_buy_now' );
+add_action( 'wp_ajax_nopriv_dg_ajax_buy_now', 'dg_ajax_buy_now' );
+
+/**
  * AJAX: Remove from cart.
  *
  * @return void

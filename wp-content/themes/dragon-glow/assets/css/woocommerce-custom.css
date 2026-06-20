@@ -673,3 +673,261 @@
     width: 100%;
     max-width: 300px;
 }
+
+/* =========================================
+   18. CHECKOUT REDESIGN
+   ========================================= */
+
+/* ── Step panes ── */
+.dg-step-pane {
+    animation: dgFadeIn 0.3s ease-out;
+}
+
+@keyframes dgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Form inputs (underlined minimal style for checkout) ── */
+.woocommerce-checkout .form-row input.input-text,
+.woocommerce-checkout .form-row input[type="email"],
+.woocommerce-checkout .form-row input[type="tel"],
+.woocommerce-checkout .form-row input[type="text"],
+.woocommerce-checkout .form-row select,
+.woocommerce-checkout .form-row textarea {
+    width: 100%;
+    padding: 0.625rem 0;
+    border: none;
+    border-bottom: 1.5px solid #d0c5af;
+    border-radius: 0;
+    background: transparent;
+    font-size: 1rem;
+    color: #1c1b1b;
+    transition: border-color 0.2s;
+    box-shadow: none;
+}
+
+.woocommerce-checkout .form-row input.input-text:focus,
+.woocommerce-checkout .form-row input[type="email"]:focus,
+.woocommerce-checkout .form-row input[type="tel"]:focus,
+.woocommerce-checkout .form-row input[type="text"]:focus,
+.woocommerce-checkout .form-row select:focus,
+.woocommerce-checkout .form-row textarea:focus {
+    outline: none;
+    border-bottom-color: #735c00;
+    box-shadow: none;
+}
+
+.woocommerce-checkout .form-row input.input-text.invalid,
+.woocommerce-checkout .form-row input[type="email"].invalid,
+.woocommerce-checkout .form-row input[type="tel"].invalid,
+.woocommerce-checkout .form-row input[type="text"].invalid,
+.woocommerce-checkout .form-row select.invalid,
+.woocommerce-checkout .form-row textarea.invalid {
+    border-bottom-color: #ba1a1a;
+}
+
+.woocommerce-checkout .form-row input.input-text.valid,
+.woocommerce-checkout .form-row input[type="email"].valid,
+.woocommerce-checkout .form-row input[type="tel"].valid,
+.woocommerce-checkout .form-row input[type="text"].valid,
+.woocommerce-checkout .form-row select.valid,
+.woocommerce-checkout .form-row textarea.valid {
+    border-bottom-color: #4caf50;
+}
+
+/* ── Labels in checkout ── */
+.woocommerce-checkout .form-row label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #4d4635;
+    margin-bottom: 0.375rem;
+    padding: 0;
+    display: block;
+}
+
+/* ── Clear floats on two-column checkout fields ── */
+.woocommerce-checkout .col2-set .col-1,
+.woocommerce-checkout .col2-set .col-2 {
+    width: 100%;
+    float: none;
+    padding: 0;
+}
+
+/* ── Payment methods in Step 2 ── */
+#dg-payment-section .woocommerce-checkout-payment {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+#dg-payment-section #payment {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+#dg-payment-section #payment ul.payment_methods {
+    border: none;
+    border-bottom: 1.5px solid #e5e2e1;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    list-style: none;
+}
+
+#dg-payment-section #payment ul.payment_methods li {
+    padding: 0.875rem 0;
+    border-bottom: 1px solid #e5e2e1;
+}
+
+#dg-payment-section #payment ul.payment_methods li:last-child {
+    border-bottom: none;
+}
+
+#dg-payment-section #payment ul.payment_methods li .payment_method {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+#dg-payment-section #payment ul.payment_methods li .payment_method.selected-payment {
+    background-color: rgba(115, 92, 0, 0.06);
+}
+
+#dg-payment-section #payment ul.payment_methods li input[type="radio"] {
+    accent-color: #735c00;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+#dg-payment-section #payment ul.payment_methods li label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1c1b1b;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Payment method description */
+#dg-payment-section #payment ul.payment_methods li .payment_method input[type="radio"] + label + .payment_box,
+#dg-payment-section #payment ul.payment_methods li .payment_method input[type="radio"] + label:after {
+    display: none;
+}
+
+/* Payment box (extra fields like credit card inputs) */
+#dg-payment-section #payment div.payment_box {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0.5rem 0 0 2.25rem;
+    font-size: 0.875rem;
+    color: #4d4635;
+}
+
+#dg-payment-section #payment div.payment_box p {
+    margin: 0 0 0.5rem;
+}
+
+/* Place Order button in Step 2 (moved via JS) */
+#dg-payment-section #payment div.place-order {
+    padding: 1.5rem 0 0;
+}
+
+#dg-payment-section #payment #place_order,
+#dg-payment-section #payment .woocommerce-privacy-policy-text + .button {
+    background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
+    border: none;
+    border-bottom: 2px solid #735c00;
+    color: #4a2e2e;
+    padding: 1.125rem 2.5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+#dg-payment-section #payment #place_order:hover,
+#dg-payment-section #payment .woocommerce-privacy-policy-text + .button:hover {
+    box-shadow: 0 0 24px rgba(244, 194, 194, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Review step: selected-payment visual */
+.selected-payment .payment_method {
+    border: 1.5px solid #735c00;
+}
+
+/* ── Coupon / promo code ── */
+.woocommerce-checkout .woocommerce-form-coupon {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon input.input-text {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.625rem 1rem;
+    border: 1.5px solid #d0c5af;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    color: #1c1b1b;
+    background: #ffffff;
+    transition: border-color 0.2s;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon input.input-text:focus {
+    outline: none;
+    border-color: #735c00;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon button {
+    background: transparent;
+    border: 1.5px solid #735c00;
+    color: #735c00;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon button:hover {
+    background: #735c00;
+    color: #ffffff;
+}
+
+/* ── Continue / Back buttons in step panes ── */
+.dg-step-next {
+    cursor: pointer;
+}
+
+.dg-step-back {
+    cursor: pointer;
+}
+
+/* ── Review step panes ── */
+#dg-review-shipping p,
+#dg-review-payment p {
+    margin: 0;
+    line-height: 1.6;
+}
