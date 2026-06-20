@@ -13,17 +13,21 @@
    2. BASE STYLES
    ========================================= */
 
-/* Selection */
+/* ── Site-wide text selection & copy ──────────────────────── */
+/* Toàn site luôn cho phép bôi đen & copy text — không override user-select ở nơi khác */
+html, body {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection highlight color */
 ::selection {
     background-color: var(--color-primary-container);
     color: var(--color-on-primary-container);
-}
-
-/* Smooth scrolling */
-html {
-    scroll-behavior: smooth;
-    -webkit-user-select: text;
-    user-select: text;
 }
 
 /* =========================================
