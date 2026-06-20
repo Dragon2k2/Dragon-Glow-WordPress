@@ -15,6 +15,14 @@ defined( 'ABSPATH' ) || exit;
  */
 function dg_enqueue_assets(): void {
 
+    // style.css — chứa design token :root (--color-*) mà tất cả CSS khác phụ thuộc qua var().
+    wp_enqueue_style(
+        'dg-style',
+        get_stylesheet_uri(),
+        array(),
+        DG_VERSION
+    );
+
     // Google Fonts
     wp_enqueue_style(
         'dg-google-fonts',
@@ -35,7 +43,7 @@ function dg_enqueue_assets(): void {
     wp_enqueue_style(
         'dg-main',
         DG_URI . '/assets/css/main.css',
-        array( 'dg-google-fonts' ),
+        array( 'dg-style', 'dg-google-fonts' ),
         DG_VERSION
     );
 
