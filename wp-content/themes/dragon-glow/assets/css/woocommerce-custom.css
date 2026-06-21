@@ -108,11 +108,6 @@
     font-weight: 700;
 }
 
-.woocommerce ul.products li.product .star-rating {
-    color: #735c00;
-    font-size: 0.875rem;
-}
-
 .woocommerce ul.products li.product a.button {
     display: none; /* We use custom Quick Add button */
 }
@@ -453,28 +448,7 @@
 }
 
 /* =========================================
-   8. STAR RATING
-   ========================================= */
-
-.woocommerce .star-rating {
-    color: #735c00;
-    font-size: 0.875rem;
-}
-
-.woocommerce .star-rating::before {
-    color: #d4c2c2;
-}
-
-/* Star rating — yellow color on shop page */
-.woocommerce .star-rating,
-.woocommerce .star-rating span,
-.dg-star-rating .material-symbols-outlined,
-.product-card-glass .material-symbols-outlined[data-icon="star"] {
-    color: #f1ca50 !important;
-}
-
-/* =========================================
-   9. SALES FLASH
+   8. SALES FLASH
    ========================================= */
 
 .woocommerce span.onsale {
@@ -496,7 +470,7 @@
 }
 
 /* =========================================
-   10. FORM INPUTS
+   9. FORM INPUTS
    ========================================= */
 
 .woocommerce form .form-row input.input-text,
@@ -526,7 +500,7 @@
 }
 
 /* =========================================
-   11. RELATED PRODUCTS
+   10. RELATED PRODUCTS
    ========================================= */
 
 .woocommerce div.product .related {
@@ -542,7 +516,7 @@
 }
 
 /* =========================================
-   12. ORDER DETAILS
+   11. ORDER DETAILS
    ========================================= */
 
 .woocommerce table.order_details {
@@ -556,7 +530,7 @@
 }
 
 /* =========================================
-   13. COUPON
+   12. COUPON
    ========================================= */
 
 .woocommerce .coupon {
@@ -571,7 +545,7 @@
 }
 
 /* =========================================
-   14. PAGINATION
+   13. PAGINATION
    ========================================= */
 
 .woocommerce nav.woocommerce-pagination ul {
@@ -610,7 +584,7 @@
 }
 
 /* =========================================
-   15. PRODUCT GALLERY
+   14. PRODUCT GALLERY
    ========================================= */
 
 .woocommerce div.product div.images .flex-control-thumbs {
@@ -638,7 +612,7 @@
 }
 
 /* =========================================
-   16. SHIPPING CALCULATOR
+   15. SHIPPING CALCULATOR
    ========================================= */
 
 .woocommerce-shipping-calculator {
@@ -650,7 +624,7 @@
 }
 
 /* =========================================
-   17. VARIATION SWATCHES (if using plugin)
+   16. VARIATION SWATCHES (if using plugin)
    ========================================= */
 
 .woocommerce div.product table.variations {
@@ -675,7 +649,7 @@
 }
 
 /* =========================================
-   18. CHECKOUT REDESIGN
+   17. CHECKOUT REDESIGN
    ========================================= */
 
 /* ── Step panes ── */

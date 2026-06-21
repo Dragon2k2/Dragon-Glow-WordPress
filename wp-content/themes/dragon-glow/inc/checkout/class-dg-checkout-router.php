@@ -5,16 +5,17 @@
  * Single entry point for all Buy Now actions (mock and WooCommerce products).
  *
  * Decision tree:
- *   1. Numeric product_id provided  → WooCommerce product
- *      - WC active + real product  → WooCommerce handler (add to cart, redirect WC checkout)
- *      - WC active + no product    → Mock handler
- *      - WC inactive + mock exists → Mock handler
- *      - WC inactive + WC product → Error: product unavailable
+ *   1. Numeric product_id provided
+ *      - WC active + product found  → WC handler (add to cart, redirect WC checkout)
+ *      - WC active + product not found → fallback: try mock (via slug), else error
+ *      - WC inactive + WC product   → error: product unavailable
+ *      - WC inactive + unknown ID   → error: product not found
  *
- *   2. String slug only           → Try mock first, then WooCommerce
- *      - Mock product             → Mock handler (always)
- *      - WooCommerce product      → WC handler (if WC active) or error
- *      - Unknown slug             → Error: product not found
+ *   2. String slug only (no product_id)
+ *      - Mock product exists        → WC handler (shadow product) if WC active,
+ *                                    else Mock handler
+ *      - WooCommerce product exists → WC handler
+ *      - Unknown slug               → error: product not found
  *
  * @package Dragon_Glow
  */
@@ -120,10 +121,20 @@ class DG_Checkout_Router {
 	 * @return array
 	 */
 	private static function handle_by_slug( string $slug, int $quantity, string $size ): array {
-		// Always check mock first — mock is the primary display source.
-		$mock_result = self::try_mock_handler( $slug, $quantity, $size );
-		if ( null !== $mock_result ) {
-			return $mock_result;
+		// Always check mock first — mock products are the primary display entities.
+		if ( DG_Product_Factory::mock()->exists( $slug ) ) {
+
+			// ── Mock product found ───────────────────────────────────────────────
+			// Route based on whether WooCommerce is active:
+			//   • WC active  → resolve to shadow WC product, add to WC cart, redirect to WC checkout.
+			//   • WC inactive → use the internal mock checkout page.
+			if ( dg_is_woocommerce_active() ) {
+				$wc_handler = new DG_WooCommerce_Checkout_Handler();
+				return $wc_handler->handle_mock_shadow( $slug, $quantity, $size );
+			}
+
+			$handler = new DG_Mock_Checkout_Handler();
+			return $handler->handle( $slug, $quantity, $size );
 		}
 
 		// Not a mock product — check WooCommerce.
@@ -137,21 +148,21 @@ class DG_Checkout_Router {
 			}
 		}
 
-		// Unrecognised slug.
-		$shop_url = dg_is_woocommerce_active()
-			? wc_get_page_permalink( 'shop' )
-			: home_url( '/shop/' );
-
+		// Unrecognised slug — return a clear error, do NOT silently redirect to /shop/.
+		// The backend never knows the user's intent when the slug is garbage; the best
+		// UX is an explicit error message, not a silent page load with no context.
 		return array(
-			'success'       => true,
-			'redirect'      => $shop_url,
-			'preview_notice' => __( 'This item is a preview and is not yet available for purchase.', 'dragon-glow' ),
+			'success' => false,
+			'message' => __( 'This product is not available for purchase. If you reached this page from a link, the product may no longer be available.', 'dragon-glow' ),
 		);
 	}
 
 	/**
 	 * Attempt to dispatch to the mock checkout handler.
+	 *
 	 * Returns null if the slug is not a recognised mock product.
+	 * NOTE: this method is only called when WooCommerce is NOT active — see
+	 * handle_by_slug() for the WC-active mock routing path (uses shadow products).
 	 *
 	 * @param string $slug
 	 * @param int    $quantity

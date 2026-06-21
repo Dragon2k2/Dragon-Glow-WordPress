@@ -18,15 +18,40 @@
 
 defined( 'ABSPATH' ) || exit;
 
-require_once get_template_directory() . '/inc/mock-products-data.php';
-
 get_header();
 
-$page_title = get_the_title() ?: __( 'The Collection', 'dragon-glow' );
-$shop_url   = dg_is_woocommerce_active()
-	? get_permalink( wc_get_page_id( 'shop' ) )
-	: home_url( '/shop/' );
-?>
+// Notify the admin if the mock checkout page has not been set up.
+if ( ! dg_mock_checkout_page_exists() && ! dg_is_woocommerce_active() ) :
+	?>
+	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-6">
+		<div class="flex items-start gap-3 p-4 bg-primary-container/20 border border-primary/20 rounded-xl text-sm">
+			<span class="material-symbols-outlined text-primary flex-shrink-0 mt-0.5">info</span>
+			<p class="text-on-surface-variant">
+				<strong class="text-primary"><?php esc_html_e( 'Checkout not configured.', 'dragon-glow' ); ?></strong>
+				<?php
+				printf(
+					/* translators: %s: URL of the Pages admin screen */
+					esc_html__( 'To enable Buy Now, please create a WordPress page with the slug %1$s and assign it the %2$s template.', 'dragon-glow' ),
+					'<code>mock-checkout</code>',
+					'<strong>Mock Checkout — Dragon Glow</strong>'
+				);
+				?>
+				<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=page' ) ); ?>"
+				   class="text-primary underline underline-offset-2 ml-1"
+				   target="_blank">
+					<?php esc_html_e( 'Create page', 'dragon-glow' ); ?>
+				</a>
+			</p>
+		</div>
+	</div>
+	<?php
+endif;
+
+	$page_title = get_the_title() ?: __( 'The Collection', 'dragon-glow' );
+	$shop_url   = dg_is_woocommerce_active()
+		? get_permalink( wc_get_page_id( 'shop' ) )
+		: home_url( '/shop/' );
+	?>
 
 <!-- 1. Immersive narrative hero (matches Stitch sample) -->
 <?php get_template_part( 'template-parts/shop/hero' ); ?>
@@ -208,35 +233,8 @@ $shop_url   = dg_is_woocommerce_active()
 
 		<!-- No-WooCommerce fallback: show mock products in magazine grid with pagination -->
 		<?php
-		/**
-		 * Render star rating HTML (4, 4.5, hoặc 5 sao) — màu vàng đồng.
-		 * Note: uses dg_mock_stars() internally for consistent star rendering.
-		 * (phpcs:ignore covers the inline SVG / escaped-attribute patterns below.)
-		 * @param float $rating Star rating value.
-		 * @return string       HTML string.
-		 */
-		function dg_render_stars( float $rating ): string {
-			$full    = (int) floor( $rating );
-			$half    = ( $rating - $full ) >= 0.5;
-			$star_f  = '<svg width="11" height="11" viewBox="0 0 14 14" aria-hidden="true"><polygon points="7,1 8.8,5.2 13.5,5.5 10,8.5 11.1,13 7,10.5 2.9,13 4,8.5 0.5,5.5 5.2,5.2" fill="#f1ca50"/></svg>';
-			$star_h  = '<svg width="11" height="11" viewBox="0 0 14 14" aria-hidden="true"><defs><linearGradient id="hg"><stop offset="50%" stop-color="#f1ca50"/><stop offset="50%" stop-color="#f1ca50" stop-opacity="0.2"/></linearGradient></defs><polygon points="7,1 8.8,5.2 13.5,5.5 10,8.5 11.1,13 7,10.5 2.9,13 4,8.5 0.5,5.5 5.2,5.2" fill="url(#hg)"/></svg>';
-			$star_e  = '<svg width="11" height="11" viewBox="0 0 14 14" aria-hidden="true"><polygon points="7,1 8.8,5.2 13.5,5.5 10,8.5 11.1,13 7,10.5 2.9,13 4,8.5 0.5,5.5 5.2,5.2" fill="#f1ca50" fill-opacity="0.25"/></svg>';
-			$html    = '<div class="dg-star-rating" style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:6px;" role="img" aria-label="' . esc_attr( $rating ) . ' out of 5 stars">';
-			for ( $i = 1; $i <= 5; $i++ ) {
-				if ( $i <= $full ) {
-					$html .= $star_f;
-				} elseif ( $half && $i === $full + 1 ) {
-					$html .= $star_h;
-				} else {
-					$html .= $star_e;
-				}
-			}
-			$html .= '</div>';
-			return $html;
-		}
-
-		// Pagination logic — reuse $mock_products_data from the shared include.
-		$mock_all_products = array_values( $mock_products_data );
+		// Load mock product data via the canonical loader (works from any scope, including AJAX).
+		$mock_all_products = array_values( dg_get_mock_products_data() );
 		$mock_per_page     = 6;
 		$mock_total        = count( $mock_all_products );
 		$mock_total_pages  = (int) ceil( $mock_total / $mock_per_page );
@@ -251,53 +249,61 @@ $shop_url   = dg_is_woocommerce_active()
 			'total'   => $mock_total_pages,
 		);
 		?>
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-32" id="dg-product-grid">
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-32" id="dg-product-grid">
 			<?php foreach ( $mock_products_paged as $i => $p ) : ?>
 				<?php
 				$delay_ms   = $i * 100;
 				$is_dark    = ( 'right' === $p['badge_pos'] );
 				$pos_class  = $is_dark ? 'absolute top-4 right-4 z-10' : 'absolute top-4 left-4 z-10';
-				// Query-string URL — không cần rewrite, không conflict với WC.
+				$card_slug  = sanitize_title( $p['name'] );
+				// Shadow WC product ID for Buy Now buttons (0 if WC is inactive).
+				$card_wc_id = dg_is_woocommerce_active()
+					? ( dg_get_or_create_mock_shadow_product( $card_slug ) ?: 0 )
+					: 0;
+				// Query-string URL — doesn't need rewrite, no conflict with WC.
 				$shop_base  = dg_is_woocommerce_active()
 					? get_permalink( wc_get_page_id( 'shop' ) )
 					: home_url( '/shop/' );
-				$card_url   = add_query_arg( 'dg_product', sanitize_title( $p['name'] ), $shop_base );
+				$card_url   = add_query_arg( 'dg_product', $card_slug, $shop_base );
 				?>
-				<div class="stagger-item group product-card-hover reveal-on-scroll active dg-product-card"
-					 data-category="<?php echo esc_attr( $p['category_slug'] ); ?>"
-					 data-rating="<?php echo esc_attr( $p['rating'] ); ?>"
-					 style="transition-delay: <?php echo esc_attr( $delay_ms ); ?>ms;">
-					<div class="relative aspect-[3/4] overflow-hidden bg-surface-container-low mb-6 dg-product-image">
-						<a href="<?php echo esc_url( $card_url ); ?>" class="absolute inset-0 block" aria-label="<?php echo esc_attr( $p['name'] ); ?>">
-							<img alt="<?php echo esc_attr( $p['name'] ); ?>"
-								 class="w-full h-full object-cover dg-product-img"
-								 src="<?php echo esc_url( $p['img_main'] ); ?>" />
-						</a>
-						<?php if ( $p['badge'] ) : ?>
-							<div class="<?php echo esc_attr( $pos_class ); ?>">
-								<span class="<?php echo $is_dark ? 'dg-badge-right' : 'dg-badge-left'; ?>">
-									<?php echo esc_html( $p['badge'] ); ?>
-								</span>
-							</div>
-						<?php endif; ?>
-						<button class="dg-add-to-ritual absolute z-10 inline-flex items-center justify-center gap-2"
-								type="button">
-							<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
-							<span><?php esc_html_e( 'Add to Ritual', 'dragon-glow' ); ?></span>
-						</button>
-					</div>
-					<div class="text-center px-2">
-						<?php echo dg_render_stars( (float) $p['rating'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<h3 class="dg-product-name">
-							<a href="<?php echo esc_url( $card_url ); ?>" class="hover:text-primary transition-colors">
-								<?php echo esc_html( $p['name'] ); ?>
-							</a>
-						</h3>
-						<div class="dg-product-divider" aria-hidden="true"></div>
-						<p class="dg-product-tags"><?php echo esc_html( $p['tags'] ); ?></p>
-						<p class="dg-product-price"><?php echo esc_html( $p['price'] ); ?></p>
-					</div>
+			<div class="stagger-item group product-card-hover reveal-on-scroll active dg-product-card"
+				 data-category="<?php echo esc_attr( $p['category_slug'] ); ?>"
+				 data-rating="<?php echo esc_attr( $p['rating'] ); ?>"
+				 style="transition-delay: <?php echo esc_attr( $delay_ms ); ?>ms;">
+				<a href="<?php echo esc_url( $card_url ); ?>"
+				   aria-label="<?php echo esc_attr( $p['name'] ); ?>"
+				   class="dg-product-stretched-link">
+				</a>
+				<div class="relative aspect-[3/4] overflow-hidden bg-surface-container-low mb-6 dg-product-image">
+					<img alt="<?php echo esc_attr( $p['name'] ); ?>"
+						 class="w-full h-full object-cover dg-product-img"
+						 src="<?php echo esc_url( $p['img_main'] ); ?>" />
+					<?php if ( $p['badge'] ) : ?>
+						<div class="<?php echo esc_attr( $pos_class ); ?>">
+							<span class="<?php echo $is_dark ? 'dg-badge-right' : 'dg-badge-left'; ?>">
+								<?php echo esc_html( $p['badge'] ); ?>
+							</span>
+						</div>
+					<?php endif; ?>
+					<button class="dg-add-to-ritual inline-flex items-center justify-center gap-2"
+							type="button"
+							data-add-to-bag="1"
+							data-product-slug="<?php echo esc_attr( $card_slug ); ?>"
+							data-product-id="<?php echo esc_attr( $card_wc_id ); ?>">
+						<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
+						<span><?php esc_html_e( 'Add to Ritual', 'dragon-glow' ); ?></span>
+					</button>
 				</div>
+				<a href="<?php echo esc_url( $card_url ); ?>" class="text-center px-2 dg-product-info-link">
+					<?php echo dg_mock_stars( (float) $p['rating'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<h3 class="dg-product-name">
+						<?php echo esc_html( $p['name'] ); ?>
+					</h3>
+					<div class="dg-product-divider" aria-hidden="true"></div>
+					<p class="dg-product-tags"><?php echo esc_html( $p['tags'] ); ?></p>
+					<p class="dg-product-price"><?php echo esc_html( $p['price'] ); ?></p>
+				</a>
+			</div>
 			<?php endforeach; ?>
 		</div>
 
@@ -329,336 +335,18 @@ $shop_url   = dg_is_woocommerce_active()
 
 <style>
 	/* =====================================================
-	   Local styles for the shop template — luxury / glassy
+	   Local overrides for the shop template.
+	   All shared shop card styles have been moved to
+	   assets/css/shop.css — no duplication here.
 	   ===================================================== */
 	:root {
 		--luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
+	/* Material Symbols — FILL variation (already in main.css;
+	   repeated here to ensure it loads before JS renders stars) */
 	.material-symbols-outlined {
 		font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-	}
-
-	/* =====================================================
-	   Product card — luxury redesign
-	   (template-parts/shop/product-card.php + mock loop)
-	   ===================================================== */
-	.dg-product-card {
-		cursor: pointer;
-		transition: box-shadow 0.5s ease;
-	}
-	.dg-product-card:hover {
-		box-shadow: 0 20px 60px rgba(115, 92, 0, 0.13);
-	}
-
-	/* Permanent gradient scrim on the image area (::after pseudo) */
-	.dg-product-image {
-		position: relative;
-	}
-	.dg-product-image::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(to top, rgba(28, 27, 27, 0.55) 0%, transparent 45%);
-		pointer-events: none;
-		z-index: 1;
-	}
-	/* Image zoom on card hover (1s ease) */
-	.dg-product-img {
-		transform: scale(1);
-		transition: transform 1s ease;
-	}
-	.dg-product-card:hover .dg-product-img {
-		transform: scale(1.06);
-	}
-
-	/* Badges */
-	.dg-badge-left,
-	.dg-badge-right {
-		display: inline-block;
-		border-radius: 9999px;
-		padding: 4px 12px;
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		line-height: 1.2;
-	}
-	.dg-badge-left {
-		background-color: rgba(255, 255, 255, 0.6);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-		color: var(--color-primary, #735c00);
-	}
-	.dg-badge-right {
-		background-color: var(--color-primary, #735c00);
-		color: var(--color-on-primary, #ffffff);
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	}
-
-	/* CTA "Add to Ritual" — pill at bottom, hover-revealed */
-	.dg-add-to-ritual {
-		bottom: 1rem;
-		left: 1rem;
-		right: 1rem;
-		background-color: var(--color-tertiary-container, #f1ca50);
-		color: var(--color-on-tertiary-container, #6b5500);
-		border-radius: 9999px;
-		padding-top: 0.75rem;
-		padding-bottom: 0.75rem;
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		opacity: 0;
-		transform: translateY(16px);
-		overflow: hidden;
-		position: absolute;
-		transition: opacity 0.35s ease, transform 0.35s ease;
-	}
-
-	/* Ánh sáng chạy qua (sheen) bằng ::before pseudo-element */
-	.dg-add-to-ritual::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 60%;
-		height: 100%;
-		background: linear-gradient(
-			120deg,
-			transparent 0%,
-			rgba(255, 255, 255, 0.55) 50%,
-			transparent 100%
-		);
-		transform: skewX(-20deg);
-		transition: left 0s;
-		pointer-events: none;
-	}
-
-	/* Khi hover vào card: hiện button + giữ màu vàng đồng + chạy sheen */
-	.dg-product-card:hover .dg-add-to-ritual {
-		opacity: 1;
-		transform: translateY(0);
-		background-color: var(--color-tertiary-container, #f1ca50);
-		color: var(--color-on-tertiary-container, #6b5500);
-	}
-	.dg-product-card:hover .dg-add-to-ritual::before {
-		left: 160%;
-		transition: left 0.65s ease;
-	}
-
-	/* Text block */
-	.dg-product-name {
-		margin: 0;
-		font-family: 'Playfair Display', Georgia, serif;
-		font-size: 22px;
-		font-weight: 500;
-		font-style: italic;
-		color: #1c1b1b;
-		line-height: 1.2;
-		transition: color 0.3s ease;
-	}
-	.dg-product-name-link {
-		color: inherit;
-		text-decoration: none;
-	}
-	.dg-product-card:hover .dg-product-name,
-	.dg-product-card:hover .dg-product-name-link {
-		color: #735c00;
-	}
-
-	.dg-product-divider {
-		width: 32px;
-		height: 1px;
-		background: rgba(115, 92, 0, 0.35);
-		margin: 10px auto;
-	}
-
-	.dg-product-tags {
-		margin: 0;
-		font-family: 'Montserrat', system-ui, sans-serif;
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: #7f7663;
-	}
-
-	.dg-product-price {
-		margin: 14px 0 0;
-		font-family: 'Bodoni Moda', Georgia, serif;
-		font-size: 16px;
-		font-weight: 600;
-		font-style: italic;
-		color: #735c00;
-	}
-
-	.luxury-shadow {
-		box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.04);
-	}
-
-	.reveal-on-scroll {
-		opacity: 0;
-		transform: translateY(20px);
-		transition: all 1s var(--luxury-bezier);
-	}
-	.reveal-on-scroll.active {
-		opacity: 1;
-		transform: translateY(0);
-	}
-
-	.stagger-item:nth-child(even) {
-		margin-top: 4rem;
-	}
-	@media (max-width: 768px) {
-		.stagger-item:nth-child(even) {
-			margin-top: 0;
-		}
-	}
-
-	/* Nav-link underline animation (used by pagination numbers) */
-	.nav-link-underline {
-		position: relative;
-	}
-	.nav-link-underline::after {
-		content: '';
-		position: absolute;
-		bottom: -2px;
-		left: 0;
-		width: 0;
-		height: 1px;
-		background-color: currentColor;
-		transition: width 0.4s var(--luxury-bezier);
-	}
-	.nav-link-underline:hover::after {
-		width: 100%;
-	}
-
-	/* Luxury button sheen */
-	.btn-luxury {
-		transition: all 0.4s var(--luxury-bezier);
-		position: relative;
-		overflow: hidden;
-	}
-	.btn-luxury::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-		transition: left 0.6s var(--luxury-bezier);
-	}
-	.btn-luxury:hover::before {
-		left: 100%;
-	}
-
-	/* Product card hover */
-	.product-card-hover {
-		transition:
-			transform 0.5s var(--luxury-bezier),
-			box-shadow 0.5s var(--luxury-bezier);
-	}
-	.product-card-hover:hover {
-		transform: translateY(-8px);
-		box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.1);
-	}
-
-	.filter-transition {
-		transition: opacity 0.3s var(--luxury-bezier), transform 0.3s var(--luxury-bezier);
-	}
-	.filter-transition:hover {
-		opacity: 0.7;
-		transform: translateX(4px);
-	}
-
-	/* Custom scrollbar for filter dropdown / sidebar */
-	.custom-scrollbar::-webkit-scrollbar {
-		width: 6px;
-	}
-	.custom-scrollbar::-webkit-scrollbar-track {
-		background: transparent;
-	}
-	.custom-scrollbar::-webkit-scrollbar-thumb {
-		background: rgba(115, 92, 0, 0.2);
-		border-radius: 9999px;
-	}
-
-	/* ── Filter dropdown panel (Material style) ─────────────
-	   Anchored under the "Filter by Skin Concern" trigger. */
-	.dg-filter-dropdown {
-		position: absolute;
-		top: calc(100% + 12px);
-		right: 0;
-		width: 360px;
-		max-width: calc(100vw - 2 * 20px);
-		background: var(--color-surface, #fbf9f5);
-		border: 1px solid var(--color-outline-variant, #d4c2c2);
-		box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15),
-		            0 8px 24px -8px rgba(123, 84, 85, 0.1);
-		padding: 28px;
-		z-index: 50;
-		opacity: 0;
-		transform: translateY(-8px) scale(0.98);
-		pointer-events: none;
-		transition: opacity 0.25s var(--luxury-bezier),
-		            transform 0.25s var(--luxury-bezier);
-	}
-	.dg-filter-dropdown.is-open {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-		pointer-events: auto;
-	}
-	@media (max-width: 640px) {
-		.dg-filter-dropdown {
-			position: fixed;
-			top: auto;
-			bottom: 0;
-			right: 0;
-			left: 0;
-			width: 100%;
-			max-width: 100vw;
-			max-height: 85vh;
-			overflow-y: auto;
-			padding: 24px;
-			transform: translateY(100%);
-		}
-		.dg-filter-dropdown.is-open {
-			transform: translateY(0);
-		}
-	}
-
-	/* Caret / arrow on top of dropdown */
-	.dg-filter-dropdown::before {
-		content: '';
-		position: absolute;
-		top: -6px;
-		right: 28px;
-		width: 12px;
-		height: 12px;
-		background: var(--color-surface, #fbf9f5);
-		border-top: 1px solid var(--color-outline-variant, #d4c2c2);
-		border-left: 1px solid var(--color-outline-variant, #d4c2c2);
-		transform: rotate(45deg);
-	}
-	@media (max-width: 640px) {
-		.dg-filter-dropdown::before {
-			display: none;
-		}
-	}
-
-	/* Filter trigger open state */
-	.dg-filter-trigger.is-open .dg-filter-trigger-text,
-	.dg-filter-trigger.is-open .dg-filter-trigger-icon {
-		color: var(--color-primary, #7b5455);
-		border-color: var(--color-primary, #7b5455);
-	}
-	.dg-filter-trigger.is-open .dg-filter-trigger-icon {
-		transform: rotate(180deg);
 	}
 </style>
 

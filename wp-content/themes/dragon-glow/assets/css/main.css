@@ -326,14 +326,51 @@ html {
 }
 
 /* ── Star rating — golden (shared, used by both mock & WooCommerce product pages) ──
-   Color is fixed; fill is controlled via --dg-star-fill custom property.
-   dg_mock_stars() passes style="--dg-star-fill:{fill}" inline; the FILL
-   font-variation-setting reads the custom property value. */
+   All stars (full / half / empty) share the same color #f1ca50.
+   Three visual states rendered in PHP (dg_mock_stars in mock-products-loader.php):
+     Full star  — single "star" glyph, --dg-star-fill:1 inline.
+     Half star  — .dg-star-half wrapper with two overlaid "star" glyphs:
+                   dg-star-half__fill  : --dg-star-fill:1 inline, clipped to left half
+                                         via clip-path; z-index:1 so it sits on top
+                                         of __base; the shared rule below applies
+                                         font-variation-settings 'FILL' 1 and color
+                                         #f1ca50 automatically from the var.
+                   dg-star-half__base  : --dg-star-fill:0 inline; the shared rule
+                                         below applies 'FILL' 0 and color #f1ca50.
+                                         Only layout (position/clip) is set here.
+     Empty star — single "star" glyph, --dg-star-fill:0 inline.
+   FILL axis is controlled exclusively via inline --dg-star-fill on each span.
+   The single rule below reads that var; no per-state font-variation-settings
+   override is needed, which avoids CSS specificity battles. */
 .dg-stars .material-symbols-outlined {
     color: #f1ca50;
     font-size: 20px;
     font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
+
+.dg-star-half {
+    display: inline-flex;
+    position: relative;
+    font-size: var(--dg-star-size, 20px);
+    line-height: 1;
+}
+
+/* Positioned left-half fill layer — sits on top of __base via z-index.
+   Right half is clipped away by inset(0 50% 0 0), leaving only the filled
+   left half visible over the base outline star underneath. The shared
+   ".dg-stars .material-symbols-outlined" rule applies 'FILL' 1 from the
+   inline --dg-star-fill:1 set on this span. */
+.dg-star-half__fill {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    z-index: 1;
+    clip-path: inset(0 50% 0 0);
+}
+
+/* dg-star-half__base relies entirely on inline --dg-star-fill:0; the shared
+   ".dg-stars .material-symbols-outlined" rule picks up that var and applies
+   'FILL' 0 (outline) + color #f1ca50 automatically. No additional CSS needed. */
 
 /* =========================================
    14. WOOCOMMERCE BASE STYLES

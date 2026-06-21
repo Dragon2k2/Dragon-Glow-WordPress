@@ -21,36 +21,63 @@ function dg_is_woocommerce_active(): bool {
 }
 
 /**
- * Get the URL of the internal mock checkout page.
+ * Get the internal mock checkout page object.
  *
- * @return string
+ * Single source of truth for mock-checkout page lookup. Uses three strategies
+ * in order of reliability:
+ *   1. Published page with slug "mock-checkout" (most stable — slug is fixed).
+ *   2. Published page using the checkout template (survives slug edits).
+ *   3. null (caller decides fallback behaviour).
+ *
+ * @return WP_Post|null
  */
-function dg_get_mock_checkout_url(): string {
-	// Check for a published page using the mock checkout template.
+function dg_find_mock_checkout_page() {
+	// Strategy 1: look up by known slug.
+	$page_by_slug = get_page_by_path( 'mock-checkout' );
+	if ( $page_by_slug && 'publish' === $page_by_slug->post_status ) {
+		return $page_by_slug;
+	}
+
+	// Strategy 2: find any published page that uses the checkout template.
 	$pages = get_posts(
 		array(
 			'post_type'      => 'page',
 			'posts_per_page' => 1,
+			'post_status'    => 'publish',
 			'meta_key'       => '_wp_page_template',
 			'meta_value'     => 'page-templates/template-mock-checkout.php',
-			'post_status'    => 'publish',
 		)
 	);
 
-	if ( ! empty( $pages ) ) {
-		return get_permalink( $pages[0] );
+	return ! empty( $pages ) ? $pages[0] : null;
+}
+
+/**
+ * Get the URL of the internal mock checkout page.
+ *
+ * @return string Checkout page URL, or shop URL with dg_checkout_unavailable flag.
+ */
+function dg_get_mock_checkout_url(): string {
+	$page = dg_find_mock_checkout_page();
+
+	if ( $page ) {
+		return get_permalink( $page );
 	}
 
-	$fallback = get_page_by_path( 'mock-checkout' );
-	if ( $fallback ) {
-		return get_permalink( $fallback );
-	}
+	// No checkout page found — return shop URL with a flag so the frontend
+	// can display a clear "please create a checkout page" message.
+	$shop_url = dg_is_woocommerce_active()
+		? wc_get_page_permalink( 'shop' )
+		: home_url( '/shop/' );
 
-	return home_url( '/shop/' );
+	return add_query_arg( 'dg_checkout_unavailable', '1', $shop_url );
 }
 
 /**
  * Check if the current page is the mock checkout page.
+ *
+ * @return bool
+ */
 
 /**
  * Render star rating HTML.

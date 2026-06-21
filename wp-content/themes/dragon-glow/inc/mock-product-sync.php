@@ -19,6 +19,11 @@ defined( 'ABSPATH' ) || exit;
  * The shadow product is a simple WC_Product with catalog_visibility = 'hidden' so
  * it never appears in the public shop archive or search results.
  *
+ * Data is read via dg_get_mock_products_data() which uses a `static` cache so the
+ * underlying file is parsed exactly once per request regardless of scope.  This
+ * avoids the broken `require_once` + `global` pattern that causes empty data when
+ * the first include happens inside a function body (e.g. on AJAX requests).
+ *
  * @param string $slug Mock product slug (array key in $mock_products_data).
  * @return int|null   Real WooCommerce product ID, or null if the slug is not
  *                    a recognized mock product.
@@ -51,18 +56,15 @@ function dg_get_or_create_mock_shadow_product( string $slug ): ?int {
 	}
 
 	// 2. Load the mock data and verify this slug is a known entry.
-	// The same require_once pattern already used by template-mock-product.php.
-	$mock_file = DG_DIR . '/inc/mock-products-data.php';
-	if ( ! file_exists( $mock_file ) ) {
-		return null;
-	}
-	require_once $mock_file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.NotUsingAbsolutePath
+	// Uses dg_get_mock_products_data() — safe for both global scope and
+	// function-scope calls (AJAX, hooks, etc.).
+	$mock_data = dg_get_mock_products_data();
 
-	if ( ! isset( $mock_products_data[ $slug ] ) ) {
+	if ( ! isset( $mock_data[ $slug ] ) ) {
 		return null;
 	}
 
-	$p = $mock_products_data[ $slug ];
+	$p = $mock_data[ $slug ];
 
 	// 3. Parse the numeric price from the display string (e.g. "$95.00" → 95.00).
 	$price_raw = preg_replace( '/[^0-9.]/', '', $p['price'] ?? '' );

@@ -127,6 +127,16 @@
 		});
 	}
 
+	/**
+	 * Add to Bag for mock products (slug-only) or WC products (product_id).
+	 *
+	 * Uses the unified dg_ajax_buy_now route through DG_Checkout_Router so that:
+	 *   - Mock product + WC active  → shadow product added to WC cart → redirect to WC cart.
+	 *   - Mock product + WC off     → DG_Mock_Checkout_Handler stores item → shows notice.
+	 *   - WC product (product_id > 0) → DG_WooCommerce_Checkout_Handler adds to WC cart.
+	 *
+	 * @param {Event} e
+	 */
 	function handleAddToBagClick(e) {
 		var btn = e.currentTarget;
 
@@ -155,9 +165,11 @@
 		.then(function (r) { return r.json(); })
 		.then(function (data) {
 			if (data.success) {
-				// Item was added to cart — go to cart page.
+				// Item was added to cart — redirect to cart page (WC) or show notice.
 				var redirectUrl = data.data && data.data.redirect;
 				if (redirectUrl) {
+					// For mock products when WC is inactive, redirect to mock checkout
+					// instead of the WC cart page so the user can complete the order.
 					window.location.href = redirectUrl;
 				} else {
 					btn.textContent = gettext('Added!');

@@ -14,8 +14,8 @@
  *   - related      (array)   4 other products keyed by slug
  *   - detail_shots (array)   URLs from dg_mock_detail_shots() — optional; falls back to helper
  *
- * Dependencies (must be included before this file):
- *   - inc/mock-products-data.php  (provides $mock_products_data, dg_mock_stars(), dg_mock_detail_shots())
+ * Dependencies (available on every request via functions.php bootstrap):
+ *   - inc/mock-products-loader.php  (provides dg_mock_stars(), dg_mock_detail_shots())
  *
  * @package Dragon_Glow
  */
@@ -210,24 +210,26 @@ if ( ! empty( $p['img_main'] ) ) {
 				</div>
 			</div>
 
-			<!-- CTAs -->
-			<div class="flex flex-col sm:flex-row gap-4 pt-2" id="dg-cta-row">
-				<button type="button"
-				        data-add-to-bag="1"
-				        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
-				        class="btn-primary-glow flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-					<span class="material-symbols-outlined">shopping_bag</span>
-					<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
-				</button>
-				<button type="button"
-				        id="dg-buy-now-btn"
-				        data-buy-now="1"
-				        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
-				        class="flex-1 py-4 rounded-2xl bg-primary text-on-primary font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-					<span class="material-symbols-outlined dg-buy-now-icon">bolt</span>
-					<span class="dg-buy-now-label"><?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?></span>
-				</button>
-			</div>
+		<!-- CTAs -->
+		<div class="flex flex-col sm:flex-row gap-4 pt-2" id="dg-cta-row">
+			<button type="button"
+			        data-add-to-bag="1"
+			        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
+			        data-product-id="<?php echo esc_attr( $args['wc_product_id'] ?? 0 ); ?>"
+			        class="btn-primary-glow flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+				<span class="material-symbols-outlined">shopping_bag</span>
+				<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
+			</button>
+			<button type="button"
+			        id="dg-buy-now-btn"
+			        data-buy-now="1"
+			        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
+			        data-product-id="<?php echo esc_attr( $args['wc_product_id'] ?? 0 ); ?>"
+			        class="flex-1 py-4 rounded-2xl bg-primary text-on-primary font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+				<span class="material-symbols-outlined dg-buy-now-icon">bolt</span>
+				<span class="dg-buy-now-label"><?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?></span>
+			</button>
+		</div>
 			<div id="dg-buy-now-notice" class="hidden mt-3 px-4 py-3 rounded-xl text-sm bg-primary-container/20 text-primary border border-primary/20"></div>
 
 			<!-- Trust badges -->

@@ -175,3 +175,286 @@ input[type="range"]::-moz-range-thumb {
 	color: #f1ca50;
 	transition: color 0.3s ease;
 }
+
+/* =====================================================
+   Product card — luxury redesign
+   (moved from inline <style> in template-shop.php)
+   ===================================================== */
+.dg-product-card {
+	cursor: pointer;
+	transition: box-shadow 0.5s ease;
+}
+.dg-product-card:hover {
+	box-shadow: 0 20px 60px rgba(115, 92, 0, 0.13);
+}
+
+/* Permanent gradient scrim on the image area (::after pseudo) */
+.dg-product-image {
+	position: relative;
+}
+.dg-product-image::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(28, 27, 27, 0.55) 0%, transparent 45%);
+	pointer-events: none;
+	z-index: 1;
+}
+/* Image zoom on card hover (1s ease) */
+.dg-product-img {
+	transform: scale(1);
+	transition: transform 1s ease;
+}
+.dg-product-card:hover .dg-product-img {
+	transform: scale(1.06);
+}
+
+/* Badges */
+.dg-badge-left,
+.dg-badge-right {
+	display: inline-block;
+	border-radius: 9999px;
+	padding: 4px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+.dg-badge-left {
+	background-color: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	color: var(--color-primary, #735c00);
+}
+.dg-badge-right {
+	background-color: var(--color-primary, #735c00);
+	color: var(--color-on-primary, #ffffff);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* CTA "Add to Ritual" — pill at bottom, hidden by default, hover-revealed */
+.dg-add-to-ritual {
+	bottom: 1rem;
+	left: 1rem;
+	right: 1rem;
+	background-color: var(--color-tertiary-container, #f1ca50);
+	color: var(--color-on-tertiary-container, #6b5500);
+	border-radius: 9999px;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	opacity: 0;
+	transform: translateY(16px);
+	overflow: hidden;
+	position: absolute;
+	z-index: 2;
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Sheen effect on CTA button (::before pseudo) */
+.dg-add-to-ritual::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 60%;
+	height: 100%;
+	background: linear-gradient(
+		120deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.55) 50%,
+		transparent 100%
+	);
+	transform: skewX(-20deg);
+	transition: left 0s;
+	pointer-events: none;
+}
+
+/* On card hover: show CTA button + run sheen */
+.dg-product-card:hover .dg-add-to-ritual {
+	opacity: 1;
+	transform: translateY(0);
+	background-color: var(--color-tertiary-container, #f1ca50);
+	color: var(--color-on-tertiary-container, #6b5500);
+}
+.dg-product-card:hover .dg-add-to-ritual::before {
+	left: 160%;
+	transition: left 0.65s ease;
+}
+
+/* Product name — default color is #735C00 (matches brand) */
+.dg-product-name {
+	margin: 0;
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 22px;
+	font-weight: 500;
+	font-style: italic;
+	color: #735C00;
+	line-height: 1.2;
+	transition: color 0.3s ease;
+}
+.dg-product-name-link {
+	color: #735C00;
+	text-decoration: none;
+}
+
+.dg-product-divider {
+	width: 32px;
+	height: 1px;
+	background: rgba(115, 92, 0, 0.35);
+	margin: 10px auto;
+}
+
+.dg-product-tags {
+	margin: 0;
+	font-family: 'Montserrat', system-ui, sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #7f7663;
+}
+
+.dg-product-price {
+	margin: 14px 0 0;
+	font-family: 'Bodoni Moda', Georgia, serif;
+	font-size: 16px;
+	font-weight: 600;
+	font-style: italic;
+	color: #735c00;
+}
+
+.luxury-shadow {
+	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.04);
+}
+
+.stagger-item:nth-child(even) {
+	margin-top: 4rem;
+}
+@media (max-width: 768px) {
+	.stagger-item:nth-child(even) {
+		margin-top: 0;
+	}
+}
+
+/* Filter dropdown panel (Material style)
+   Anchored under the "Filter by Skin Concern" trigger. */
+.dg-filter-dropdown {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	width: 360px;
+	max-width: calc(100vw - 2 * 20px);
+	background: var(--color-surface, #fbf9f5);
+	border: 1px solid var(--color-outline-variant, #d4c2c2);
+	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15),
+	            0 8px 24px -8px rgba(123, 84, 85, 0.1);
+	padding: 28px;
+	z-index: 50;
+	opacity: 0;
+	transform: translateY(-8px) scale(0.98);
+	pointer-events: none;
+	transition: opacity 0.25s var(--luxury-bezier),
+	            transform 0.25s var(--luxury-bezier);
+}
+.dg-filter-dropdown.is-open {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	pointer-events: auto;
+}
+@media (max-width: 640px) {
+	.dg-filter-dropdown {
+		position: fixed;
+		top: auto;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		width: 100%;
+		max-width: 100vw;
+		max-height: 85vh;
+		overflow-y: auto;
+		padding: 24px;
+		transform: translateY(100%);
+	}
+	.dg-filter-dropdown.is-open {
+		transform: translateY(0);
+	}
+}
+
+/* Caret / arrow on top of dropdown */
+.dg-filter-dropdown::before {
+	content: '';
+	position: absolute;
+	top: -6px;
+	right: 28px;
+	width: 12px;
+	height: 12px;
+	background: var(--color-surface, #fbf9f5);
+	border-top: 1px solid var(--color-outline-variant, #d4c2c2);
+	border-left: 1px solid var(--color-outline-variant, #d4c2c2);
+	transform: rotate(45deg);
+}
+@media (max-width: 640px) {
+	.dg-filter-dropdown::before {
+		display: none;
+	}
+}
+
+/* Filter trigger open state */
+.dg-filter-trigger.is-open .dg-filter-trigger-text,
+.dg-filter-trigger.is-open .dg-filter-trigger-icon {
+	color: var(--color-primary, #7b5455);
+	border-color: var(--color-primary, #7b5455);
+}
+.dg-filter-trigger.is-open .dg-filter-trigger-icon {
+	transform: rotate(180deg);
+}
+
+/* Product info link — wraps entire text block (stars + name + tags + price)
+   so any click in that zone navigates to the detail page. */
+.dg-product-info-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+}
+.dg-product-info-link:hover .dg-product-name {
+	color: #9a7800;
+}
+.dg-product-card:hover .dg-product-info-link .dg-product-price {
+	color: #f1ca50;
+}
+
+/* =====================================================
+   Stretched-link pattern — single link covers entire card
+   ===================================================== */.dg-product-card {
+	position: relative;
+}
+
+/* The stretched link sits on top of everything except interactive
+   descendants (buttons, inputs, etc.), which stay clickable via
+   pointer-events: auto. */
+a.dg-product-stretched-link {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	/* Invisible — no background, border, or text decoration */
+	background: transparent;
+	text-indent: -9999px;
+	white-space: nowrap;
+	overflow: hidden;
+}/* Ensure the card's text block sits above the stretched-link's
+   text-indent ghost so screen-reader text remains accessible */
+.dg-product-info-link {
+	position: relative;
+	z-index: 2;
+}
+
+
+

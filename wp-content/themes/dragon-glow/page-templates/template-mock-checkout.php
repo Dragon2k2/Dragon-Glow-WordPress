@@ -14,27 +14,51 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// Guard: redirect away if WooCommerce is active — real products should use WC checkout.
-if ( dg_is_woocommerce_active() && function_exists( 'wc_get_checkout_url' ) ) {
-	$wc_checkout = wc_get_checkout_url();
-	$has_wc_cart_items = false;
-	try {
-		$has_wc_cart_items = ! WC()->cart->is_empty();
-	} catch ( Exception $e ) {
-		$has_wc_cart_items = false;
-	}
+// Load the mock checkout handler to access cart operations.
+$mock_handler = new DG_Mock_Checkout_Handler();
 
-	if ( $has_wc_cart_items ) {
-		wp_safe_redirect( $wc_checkout );
-		exit;
+// Guard: redirect to WooCommerce checkout if WC is active and cart has items.
+// The shadow products created by mock-product-sync.php feed real WC cart items,
+// so when the user is on WC checkout they should go through the standard WC flow.
+if ( dg_is_woocommerce_active() && function_exists( 'WC' ) ) {
+	try {
+		if ( ! WC()->cart->is_empty() ) {
+			wp_safe_redirect( wc_get_checkout_url() );
+			exit;
+		}
+	} catch ( Exception $e ) {
+		// WC not fully initialized — continue to mock checkout.
 	}
 }
 
+// Guard: if the checkout page is unavailable (page not created), show a clear notice.
+if ( isset( $_GET['dg_checkout_unavailable'] ) && '1' === $_GET['dg_checkout_unavailable'] ) :
+	get_header();
+	?>
+	<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-16 text-center">
+		<div class="w-20 h-20 bg-primary-container/30 rounded-full flex items-center justify-center mx-auto mb-6">
+			<span class="material-symbols-outlined text-primary" style="font-size: 48px;">info</span>
+		</div>
+		<h1 class="font-headline text-headline-md text-primary mb-4">
+			<?php esc_html_e( 'Checkout Unavailable', 'dragon-glow' ); ?>
+		</h1>
+		<p class="text-on-surface-variant text-body-lg max-w-md mx-auto mb-8">
+			<?php esc_html_e( 'The checkout page has not been set up yet. Please create a WordPress page with the "Mock Checkout" template, or enable WooCommerce to use the built-in checkout.', 'dragon-glow' ); ?>
+		</p>
+		<a href="<?php echo esc_url( home_url( '/shop/' ) ); ?>"
+		   class="btn-luxury bg-primary text-on-primary px-10 py-4 font-label-sm text-label-sm uppercase tracking-widest inline-block">
+			<?php esc_html_e( 'Back to Shop', 'dragon-glow' ); ?>
+		</a>
+	</main>
+	<?php
+	get_footer();
+	exit;
+endif;
+
 get_header();
 
-// Load the mock checkout handler.
-$mock_handler = new DG_Mock_Checkout_Handler();
-$cart        = $mock_handler->load_cart();
+// Load cart from the transient after the guard check above.
+$cart     = $mock_handler->load_cart();
 $item_key    = isset( $_GET['dg_mock_item'] ) ? rawurldecode( sanitize_text_field( wp_unslash( $_GET['dg_mock_item'] ) ) ) : '';
 
 // Extract slug and size from the item key.

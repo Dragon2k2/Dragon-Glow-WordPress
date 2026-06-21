@@ -1,14 +1,23 @@
 <?php
 /**
- * Dragon Glow — Shared Mock Product Data & Helpers
+ * Dragon Glow — Mock Product Data (Pure)
  *
  * Single source of truth for all mock product data used by:
  *   - template-shop.php  (no-WooCommerce fallback grid)
- *   - template-mock-product.php  (standalone detail page, now a thin include wrapper)
- *   - template-parts/shop/product-detail.php  (reusable detail partial)
+ *   - template-mock-product.php  (standalone detail page)
+ *   - DG_Mock_Product_Repository  (Buy Now AJAX router)
+ *   - dg_get_or_create_mock_shadow_product()  (shadow WC product creation)
  *
- * Keep in sync: keys must match sanitize_title( $p['name'] ) used in
- * template-shop.php $card_url generation.
+ * ARCHITECTURE NOTE:
+ * This file is a PURE DATA FILE. It contains only the $mock_products_data array
+ * and ends with `return $mock_products_data;`. It must NOT be included with
+ * `require_once` — it is always loaded via `require` whose return value is captured
+ * by dg_get_mock_products_data() in inc/mock-products-loader.php.
+ *
+ * The functions that previously lived here (dg_get_mock_products_data,
+ * dg_mock_stars, dg_mock_detail_shots) have been moved to
+ * inc/mock-products-loader.php so they are available on every request
+ * (including AJAX/admin-ajax.php) via functions.php bootstrap.
  *
  * @package Dragon_Glow
  */
@@ -249,7 +258,7 @@ $mock_products_data = array(
 		'description'   => 'BrowLuxe Define Brow Mascara features a micro-flex brush that coats every brow hair evenly, delivering buildable color and flexible hold without flaking or stiffness.',
 		'ingredients'   => 'Aqua, Beeswax, Carnauba Wax, Panthenol, Vitamin E, Keratin Protein, Castor Oil.',
 		'how_to_use'    => array(
-			array( 'step' => '1', 'title' => 'Brush',  'desc' => 'Comb brows upward with spoolie before application.' ),
+			array( 'step' => '1', 'title' => 'Brush',  'desc' => 'Combs brows upward with spoolie before application.' ),
 			array( 'step' => '2', 'title' => 'Apply',  'desc' => 'Stroke mascara wand through brows following natural hair direction.' ),
 			array( 'step' => '3', 'title' => 'Define', 'desc' => 'Use tip of wand to fill sparse areas for fuller brows.' ),
 		),
@@ -309,52 +318,6 @@ $mock_products_data = array(
 	),
 );
 
-// ── Shared helper: render 5-star rating (Material Symbols, golden color) ──
-// Used by both the shop grid (via dg_render_stars fallback) and the detail page.
-//
-// Font-variation-settings and font-size are controlled via CSS custom properties
-// defined in main.css (.dg-stars .material-symbols-outlined). Each star span
-// gets a short inline style that sets --dg-star-fill (0 / 0.5 / 1) and
-// --dg-star-size; the color is inherited from the CSS class.
-if ( ! function_exists( 'dg_mock_stars' ) ) :
-	function dg_mock_stars( float $rating, string $size = '20px' ): string {
-		$html = '<div class="flex items-center gap-0.5 dg-stars">';
-		for ( $s = 1; $s <= 5; $s++ ) {
-			$fill = ( $s <= floor( $rating ) ) ? '1' : ( ( $s - 0.5 <= $rating ) ? '0.5' : '0' );
-			$html .= sprintf(
-				'<span class="material-symbols-outlined" style="--dg-star-fill:%s;--dg-star-size:%s;">star</span>',
-				esc_attr( $fill ),
-				esc_attr( $size )
-			);
-		}
-		$html .= '</div>';
-		return $html;
-	}
-endif;
+// ── Return the data array (captured by require in mock-products-loader.php) ──
+return $mock_products_data;
 
-// ── Shared helper: load detail shots from assets/images/details/{slug}/ ──
-// Returns an array of URLs for shots 1–4 in priority order jpg > webp > jpeg > png.
-// $slug defaults to '' so the function never throws a TypeError even if called with null.
-if ( ! function_exists( 'dg_mock_detail_shots' ) ) :
-	function dg_mock_detail_shots( string $slug = '' ): array {
-		if ( empty( $slug ) ) {
-			return array();
-		}
-		$detail_dir  = get_template_directory() . '/assets/images/details/' . $slug . '/';
-		$detail_url  = get_template_directory_uri() . '/assets/images/details/' . $slug . '/';
-		$detail_exts = array( 'jpg', 'webp', 'jpeg', 'png' );
-		$shots       = array();
-
-		for ( $n = 1; $n <= 4; $n++ ) {
-			foreach ( $detail_exts as $ext ) {
-				$file = $detail_dir . 'shot' . $n . '.' . $ext;
-				if ( file_exists( $file ) ) {
-					$shots[] = $detail_url . 'shot' . $n . '.' . $ext;
-					break;
-				}
-			}
-		}
-
-		return $shots;
-	}
-endif;

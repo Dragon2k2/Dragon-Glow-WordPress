@@ -2,8 +2,8 @@
 /**
  * Dragon Glow — Mock Product Repository
  *
- * Reads product data from the single source of truth:
- * inc/mock-products-data.php (the $mock_products_data global).
+ * Reads product data through dg_get_mock_products_data() (defined in
+ * inc/mock-products-loader.php and bootstrapped via functions.php).
  *
  * @package Dragon_Glow
  */
@@ -12,16 +12,13 @@ defined( 'ABSPATH' ) || exit;
 
 class DG_Mock_Product_Repository {
 
-	/** @var array|null Cached reference to the mock data array. */
-	private static $cache = null;
-
 	/**
 	 * Return all mock products as DG_Product objects.
 	 *
 	 * @return DG_Product[]
 	 */
 	public function get_all(): array {
-		$raw = $this->get_raw_data();
+		$raw = dg_get_mock_products_data();
 		$products = array();
 
 		foreach ( $raw as $slug => $data ) {
@@ -38,7 +35,7 @@ class DG_Mock_Product_Repository {
 	 * @return DG_Product|null
 	 */
 	public function get_by_slug( string $slug ): ?DG_Product {
-		$raw = $this->get_raw_data();
+		$raw = dg_get_mock_products_data();
 		$slug = sanitize_key( $slug );
 
 		if ( ! isset( $raw[ $slug ] ) ) {
@@ -70,31 +67,8 @@ class DG_Mock_Product_Repository {
 	 * @return bool
 	 */
 	public function exists( string $slug ): bool {
-		$raw = $this->get_raw_data();
+		$raw = dg_get_mock_products_data();
 		return isset( $raw[ sanitize_key( $slug ) ] );
-	}
-
-	/**
-	 * Lazy-load and cache the raw mock products data array.
-	 * Ensures the file is only included once even when called repeatedly.
-	 *
-	 * @return array
-	 */
-	private function get_raw_data(): array {
-		if ( null === self::$cache ) {
-			$file = DG_DIR . '/inc/mock-products-data.php';
-			if ( ! file_exists( $file ) ) {
-				self::$cache = array();
-				return self::$cache;
-			}
-			require_once $file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.NotUsingAbsolutePath
-			global $mock_products_data;
-			self::$cache = isset( $mock_products_data ) && is_array( $mock_products_data )
-				? $mock_products_data
-				: array();
-		}
-
-		return self::$cache;
 	}
 
 	/**

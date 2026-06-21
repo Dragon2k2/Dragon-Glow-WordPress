@@ -4,9 +4,8 @@
    (template-parts/shop/product-detail.php)
    NOT loaded on is_product() pages.
 
-   Depends on: main.css (tokens, .glass-card),
-   product.css (.dg-thumb-btn, .dg-size-btn, .dg-stars,
-   .dg-tab-btn, .dg-related-card, .btn-primary-glow),
+   Depends on: main.css (tokens, .glass-card, .dg-stars, .dg-star-half,
+   .dg-star-half__fill),
    Tailwind (utilities).
    ========================================= */
 

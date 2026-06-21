@@ -21,7 +21,7 @@ class DG_Mock_Checkout_Handler {
 	/**
 	 * Handle a Buy Now action for a mock product.
 	 *
-	 * @param string $slug     Mock product slug (key in $mock_products_data).
+	 * @param string $slug     Mock product slug (array key in mock-products-data).
 	 * @param int    $quantity Number of items.
 	 * @param string $size     Selected size label (e.g. "50ml").
 	 * @return array{success: bool, redirect?: string, message?: string}
@@ -37,27 +37,27 @@ class DG_Mock_Checkout_Handler {
 			);
 		}
 
-		$mock_checkout_url = dg_get_mock_checkout_url();
+		$mock_checkout_url = $this->get_checkout_page_url();
 
 		if ( empty( $mock_checkout_url ) ) {
 			return array(
 				'success' => false,
-				'message' => __( 'Checkout is not available at this time.', 'dragon-glow' ),
+				'message' => __( 'Checkout is not available at this time. Please add a Checkout page in WordPress admin and assign the "Mock Checkout" template.', 'dragon-glow' ),
 			);
 		}
 
 		// Persist the item in our transient "cart".
 		$cart_items = $this->load_cart();
-		$item_key  = $slug . '|' . $size;
+		$item_key   = $slug . '|' . $size;
 
 		$cart_items[ $item_key ] = array(
-			'slug'     => $slug,
-			'name'     => $product->get_name(),
-			'price'    => $product->get_price(),
+			'slug'            => $slug,
+			'name'            => $product->get_name(),
+			'price'          => $product->get_price(),
 			'formatted_price' => $product->get_price_formatted(),
-			'image_url' => $product->get_image_url(),
-			'size'     => $size,
-			'quantity' => $quantity,
+			'image_url'      => $product->get_image_url(),
+			'size'           => $size,
+			'quantity'       => $quantity,
 		);
 
 		$this->save_cart( $cart_items );
@@ -65,13 +65,13 @@ class DG_Mock_Checkout_Handler {
 		$redirect_url = add_query_arg(
 			array(
 				'dg_mock_checkout' => '1',
-				'dg_mock_item'    => rawurlencode( $item_key ),
+				'dg_mock_item'     => rawurlencode( $item_key ),
 			),
-			$mock_checkout_url
+			trailingslashit( $mock_checkout_url )
 		);
 
 		return array(
-			'success' => true,
+			'success'  => true,
 			'redirect' => $redirect_url,
 		);
 	}
@@ -108,32 +108,14 @@ class DG_Mock_Checkout_Handler {
 	/**
 	 * Get the mock checkout page URL.
 	 *
+	 * Delegates to the canonical helper in helpers.php so all lookup logic lives
+	 * in a single place. This method exists purely to keep the handler's public
+	 * API self-contained; callers may use either this method or dg_get_mock_checkout_url()
+	 * interchangeably.
+	 *
 	 * @return string
 	 */
 	public function get_checkout_page_url(): string {
-		// Template file: page-templates/template-mock-checkout.php
-		// Find a WordPress page that uses this template.
-		$pages = get_posts(
-			array(
-				'post_type'      => 'page',
-				'posts_per_page' => 1,
-				'meta_key'       => '_wp_page_template',
-				'meta_value'     => 'page-templates/template-mock-checkout.php',
-				'post_status'    => 'publish',
-			)
-		);
-
-		if ( ! empty( $pages ) ) {
-			return get_permalink( $pages[0] );
-		}
-
-		// Fallback: check if the page slug exists.
-		$fallback = get_page_by_path( 'mock-checkout' );
-		if ( $fallback ) {
-			return get_permalink( $fallback );
-		}
-
-		// Last resort: site home.
-		return home_url( '/' );
+		return dg_get_mock_checkout_url();
 	}
 }

@@ -199,7 +199,8 @@ $review_count = get_comments( array(
                     <?php if ( is_user_logged_in() ) : ?>
                         <form id="dg-review-form" class="space-y-6">
                             <input type="hidden" name="action" value="dg_submit_review" />
-                            <?php wp_nonce_field( 'dg_review_nonce', 'dg_review_nonce' ); ?>
+                            <input type="hidden" name="product_id" value="<?php echo esc_attr( $product->get_id() ); ?>" />
+                            <?php wp_nonce_field( 'dg_review_nonce', 'dg_review_nonce' ) ?>
 
                             <div>
                                 <label for="review-rating" class="block text-label-sm text-on-surface-variant mb-2">

@@ -222,8 +222,8 @@ tailwind.config = {
 
         "tertiary":"#5d5f5f",
         "on-tertiary":"#ffffff",
-        "tertiary-container":"#b2b3b3",
-        "on-tertiary-container":"#434546",
+        "tertiary-container":"#f1ca50",
+        "on-tertiary-container":"#6b5500",
         "tertiary-fixed":"#e2e2e2",
         "tertiary-fixed-dim":"#c6c6c7",
         "on-tertiary-fixed":"#1a1c1c",
