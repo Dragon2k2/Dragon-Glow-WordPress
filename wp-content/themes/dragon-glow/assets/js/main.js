@@ -145,6 +145,13 @@
     });
 
     // ── Update Cart Count ─────────────────────────────────────
+    /**
+     * Refresh the cart fragment displayed in the header (cart icon + count).
+     * Exposed on window so other modules (e.g. quick-add-to-cart.js) can call it
+     * after adding an item without needing to duplicate the AJAX call.
+     *
+     * @return {void}
+     */
     function updateCartCount() {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', dgAjax.url + '?action=woocommerce_get_refreshed_fragments', true);
@@ -161,12 +168,13 @@
                         });
                     }
                 } catch (e) {
-                    console.error('Parse error:', e);
+                    console.error('Cart fragment parse error:', e);
                 }
             }
         };
         xhr.send();
     }
+    window.DGUpdateCartCount = updateCartCount;
 
     // ── AJAX: Wishlist Toggle ──────────────────────────────────
     document.addEventListener('click', function (e) {

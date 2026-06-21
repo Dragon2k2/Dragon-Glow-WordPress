@@ -285,14 +285,14 @@ endif;
 							</span>
 						</div>
 					<?php endif; ?>
-					<button class="dg-add-to-ritual inline-flex items-center justify-center gap-2"
-							type="button"
-							data-add-to-bag="1"
-							data-product-slug="<?php echo esc_attr( $card_slug ); ?>"
-							data-product-id="<?php echo esc_attr( $card_wc_id ); ?>">
-						<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
-						<span><?php esc_html_e( 'Add to Ritual', 'dragon-glow' ); ?></span>
-					</button>
+				<button class="dg-add-to-ritual dg-quick-add inline-flex items-center justify-center gap-2"
+						type="button"
+						data-product-id="<?php echo esc_attr( $card_wc_id ); ?>"
+						data-product-slug="<?php echo esc_attr( $card_slug ); ?>"
+						data-original-label="<?php esc_attr_e( 'Add to Ritual', 'dragon-glow' ); ?>">
+					<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
+					<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Ritual', 'dragon-glow' ); ?></span>
+				</button>
 				</div>
 				<a href="<?php echo esc_url( $card_url ); ?>" class="text-center px-2 dg-product-info-link">
 					<?php echo dg_mock_stars( (float) $p['rating'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -463,17 +463,6 @@ endif;
 		if (mobileToggle)  mobileToggle.addEventListener('click', openMobileFilter);
 		if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobileFilter);
 		if (mobileClose)   mobileClose.addEventListener('click', closeMobileFilter);
-
-		// ── Quick Add (mock — falls back to product link) ────
-		document.querySelectorAll('.dg-quick-add').forEach(function(btn) {
-			btn.addEventListener('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var id  = this.dataset.productId;
-				var url = '/?add-to-cart=' + id;
-				window.location.href = url;
-			});
-		});
 
 		// ── Active filter tags (used when WC is not active) ──
 		var activeFilters = {

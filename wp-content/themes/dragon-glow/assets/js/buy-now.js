@@ -135,6 +135,11 @@
 	 *   - Mock product + WC off     → DG_Mock_Checkout_Handler stores item → shows notice.
 	 *   - WC product (product_id > 0) → DG_WooCommerce_Checkout_Handler adds to WC cart.
 	 *
+	 * Icon preservation: the button contains a material-symbols span (always the first
+	 * child) and a label text node (second child when present, or part of textContent
+	 * when no span wrapper exists).  We write only to the label — never touch the icon
+	 * span or call btn.textContent which would destroy the entire DOM subtree.
+	 *
 	 * @param {Event} e
 	 */
 	function handleAddToBagClick(e) {
@@ -145,9 +150,18 @@
 		var size      = getSelectedSize();
 		var quantity  = getQuantity();
 
+		// Capture original label text — prefer the dedicated label element when present,
+		// otherwise fall back to the second child (icon-span + text-node markup).
+		var labelEl = btn.querySelector('.dg-quick-add__label');
+		if (!labelEl && btn.children.length > 1) {
+			labelEl = btn.children[1];
+		}
+		var origText = labelEl
+			? labelEl.textContent.trim()
+			: btn.textContent.trim();
+
 		btn.disabled = true;
-		var origText = btn.textContent.trim();
-		btn.textContent = '...';
+		setLabel(btn, '...');
 
 		var formData = new FormData();
 		formData.append('action', 'dg_ajax_buy_now');
@@ -165,17 +179,14 @@
 		.then(function (r) { return r.json(); })
 		.then(function (data) {
 			if (data.success) {
-				// Item was added to cart — redirect to cart page (WC) or show notice.
 				var redirectUrl = data.data && data.data.redirect;
 				if (redirectUrl) {
-					// For mock products when WC is inactive, redirect to mock checkout
-					// instead of the WC cart page so the user can complete the order.
 					window.location.href = redirectUrl;
 				} else {
-					btn.textContent = gettext('Added!');
+					setLabel(btn, gettext('Added!'));
 					btn.classList.add('bg-green-600');
 					setTimeout(function () {
-						btn.textContent = origText;
+						setLabel(btn, origText);
 						btn.classList.remove('bg-green-600');
 						btn.disabled = false;
 					}, 2000);
@@ -185,15 +196,33 @@
 					? data.data.message
 					: gettext('Could not add to bag.');
 				showBuyNowNotice(btn, msg, 'error');
-				btn.textContent = origText;
+				setLabel(btn, origText);
 				btn.disabled = false;
 			}
 		})
 		.catch(function () {
-			btn.textContent = origText;
+			setLabel(btn, origText);
 			btn.disabled = false;
 			showBuyNowNotice(btn, gettext('Network error.'), 'error');
 		});
+	}
+
+	/**
+	 * Write text only to the label element inside a button — never overwrite the
+	 * icon span or call btn.textContent which would nuke all child nodes.
+	 *
+	 * @param {HTMLElement} btn
+	 * @param {string}     text
+	 * @return {void}
+	 */
+	function setLabel(btn, text) {
+		var labelEl = btn.querySelector('.dg-quick-add__label');
+		if (!labelEl && btn.children.length > 1) {
+			labelEl = btn.children[1];
+		}
+		if (labelEl) {
+			labelEl.textContent = text;
+		}
 	}
 
 	// ── Helpers ──────────────────────────────────────────────────────────────

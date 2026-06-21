@@ -218,7 +218,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			        data-product-id="<?php echo esc_attr( $args['wc_product_id'] ?? 0 ); ?>"
 			        class="btn-primary-glow flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
 				<span class="material-symbols-outlined">shopping_bag</span>
-				<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
+				<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?></span>
 			</button>
 			<button type="button"
 			        id="dg-buy-now-btn"

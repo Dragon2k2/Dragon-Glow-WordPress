@@ -175,6 +175,17 @@ function dg_enqueue_assets(): void {
         ),
     ) );
 
+    // Quick Add to Cart — loads on any page that may have .dg-quick-add buttons
+    // (Shop grid, Best Sellers carousel, mock product cards).  Depends on dg-main
+    // so that dgAjax (url / nonce / i18n) is guaranteed to be available.
+    wp_enqueue_script(
+        'dg-quick-add-to-cart',
+        DG_URI . '/assets/js/quick-add-to-cart.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
+
     // Buy Now handler — loads on any page with Buy Now buttons (product detail, shop).
     wp_enqueue_script(
         'dg-buy-now',

@@ -151,8 +151,9 @@ $fallback_products = array(
 
                     <button class="dg-quick-add absolute bottom-4 right-4 bg-white/90 backdrop-blur text-primary p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 active:scale-90 shadow-lg"
                             data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
+                            data-original-label="<?php esc_attr_e( 'Add to Ritual', 'dragon-glow' ); ?>"
                             aria-label="<?php esc_attr_e( 'Add to cart', 'dragon-glow' ); ?>">
-                        <span class="material-symbols-outlined">shopping_bag</span>
+                        <span class="material-symbols-outlined dg-quick-add__label">shopping_bag</span>
                     </button>
                 </div>
 
@@ -194,8 +195,9 @@ $fallback_products = array(
                     </span>
                     <?php endif; ?>
 
-                    <button class="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-primary p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 active:scale-90 shadow-lg" aria-label="<?php esc_attr_e( 'Add to cart', 'dragon-glow' ); ?>">
-                        <span class="material-symbols-outlined">shopping_bag</span>
+                    <button class="dg-quick-add absolute bottom-4 right-4 bg-white/90 backdrop-blur text-primary p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 active:scale-90 shadow-lg"
+                            aria-label="<?php esc_attr_e( 'Add to cart', 'dragon-glow' ); ?>">
+                        <span class="material-symbols-outlined dg-quick-add__label">shopping_bag</span>
                     </button>
                 </div>
 

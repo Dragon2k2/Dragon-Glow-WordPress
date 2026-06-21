@@ -178,40 +178,24 @@ add_action( 'wp_ajax_nopriv_dg_contact_form', 'dg_handle_contact' );
 function dg_ajax_add_to_cart(): void {
 	check_ajax_referer( 'dg_nonce', 'nonce' );
 
-	if ( ! dg_is_woocommerce_active() ) {
-		wp_send_json_error( array( 'message' => __( 'WooCommerce is not active.', 'dragon-glow' ) ) );
-	}
-
 	$product_id = absint( $_POST['product_id'] ?? 0 );
-	$quantity   = absint( $_POST['quantity'] ?? 1 );
+	$slug      = sanitize_text_field( $_POST['slug'] ?? '' );
+	$size      = sanitize_text_field( $_POST['size'] ?? '' );
+	$quantity  = absint( $_POST['quantity'] ?? 1 );
 
-	if ( ! $product_id ) {
-		wp_send_json_error( array( 'message' => __( 'Invalid product.', 'dragon-glow' ) ) );
-	}
+	$result = dg_add_to_cart_silently( array(
+		'product_id' => $product_id,
+		'slug'       => $slug,
+		'size'       => $size,
+		'quantity'   => $quantity,
+	) );
 
-	$product = wc_get_product( $product_id );
-
-	if ( ! $product ) {
-		wp_send_json_error( array( 'message' => __( 'Product not found.', 'dragon-glow' ) ) );
-	}
-
-	// Check for variable products - redirect instead
-	if ( 'variable' === $product->get_type() ) {
-		wp_send_json_error( array(
-			'message'  => __( 'Please select options for this product.', 'dragon-glow' ),
-			'redirect' => get_permalink( $product_id ),
-		) );
-	}
-
-	$added = WC()->cart->add_to_cart( $product_id, $quantity );
-
-	if ( $added ) {
+	if ( $result['success'] ) {
 		wp_send_json_success( array(
-			'message'  => __( 'Added to bag!', 'dragon-glow' ),
-			'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
+			'message' => __( 'Added to bag!', 'dragon-glow' ),
 		) );
 	} else {
-		wp_send_json_error( array( 'message' => __( 'Could not add to cart.', 'dragon-glow' ) ) );
+		wp_send_json_error( array( 'message' => $result['message'] ) );
 	}
 }
 add_action( 'wp_ajax_dg_ajax_add_to_cart', 'dg_ajax_add_to_cart' );
