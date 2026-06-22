@@ -178,10 +178,11 @@ add_action( 'wp_ajax_nopriv_dg_contact_form', 'dg_handle_contact' );
 function dg_ajax_add_to_cart(): void {
 	check_ajax_referer( 'dg_nonce', 'nonce' );
 
-	$product_id = absint( $_POST['product_id'] ?? 0 );
-	$slug      = sanitize_text_field( $_POST['slug'] ?? '' );
-	$size      = sanitize_text_field( $_POST['size'] ?? '' );
-	$quantity  = absint( $_POST['quantity'] ?? 1 );
+	$product_id       = absint( $_POST['product_id'] ?? 0 );
+	$slug            = sanitize_text_field( $_POST['slug'] ?? '' );
+	$size            = sanitize_text_field( $_POST['size'] ?? '' );
+	$quantity        = absint( $_POST['quantity'] ?? 1 );
+	$redirect_after  = ! empty( $_POST['redirect_after_add'] );
 
 	$result = dg_add_to_cart_silently( array(
 		'product_id' => $product_id,
@@ -191,9 +192,28 @@ function dg_ajax_add_to_cart(): void {
 	) );
 
 	if ( $result['success'] ) {
-		wp_send_json_success( array(
-			'message' => __( 'Added to bag!', 'dragon-glow' ),
-		) );
+		// Find the cart_item_key for the product we just added
+		$cart_item_key = '';
+		if ( dg_is_woocommerce_active() && WC()->cart ) {
+			foreach ( WC()->cart->get_cart() as $key => $item ) {
+				if ( (int) $item['product_id'] === $product_id ) {
+					$cart_item_key = $key;
+					break;
+				}
+			}
+		}
+
+		$payload = array(
+			'message'       => __( 'Added to bag!', 'dragon-glow' ),
+			'redirect'      => $result['redirect'] ?? dg_get_cart_url(),
+			'cart_item_key' => $cart_item_key,
+		);
+
+		if ( $redirect_after ) {
+			$payload['redirect'] = dg_get_checkout_url();
+		}
+
+		wp_send_json_success( $payload );
 	} else {
 		wp_send_json_error( array( 'message' => $result['message'] ) );
 	}
@@ -376,3 +396,158 @@ function dg_ajax_update_cart(): void {
     ) );
 }
 add_action( 'wp_ajax_dg_ajax_update_cart', 'dg_ajax_update_cart' );
+
+/**
+ * AJAX: Remove a single item from the mock transient cart.
+ *
+ * @return void
+ */
+function dg_ajax_remove_from_mock_cart(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	$item_key = sanitize_text_field( $_POST['item_key'] ?? '' );
+
+	if ( empty( $item_key ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid item key.', 'dragon-glow' ) ) );
+	}
+
+	$cart = dg_get_mock_cart();
+
+	if ( ! isset( $cart[ $item_key ] ) ) {
+		wp_send_json_error( array( 'message' => __( 'Item not found in cart.', 'dragon-glow' ) ) );
+	}
+
+	unset( $cart[ $item_key ] );
+	dg_save_mock_cart( $cart );
+
+	wp_send_json_success( array(
+		'message' => __( 'Item removed.', 'dragon-glow' ),
+		'count'   => count( $cart ),
+	) );
+}
+add_action( 'wp_ajax_dg_ajax_remove_from_mock_cart', 'dg_ajax_remove_from_mock_cart' );
+add_action( 'wp_ajax_nopriv_dg_ajax_remove_from_mock_cart', 'dg_ajax_remove_from_mock_cart' );
+
+/**
+ * AJAX: Update quantity of a single item in the mock transient cart.
+ *
+ * If quantity < 1 the item is removed entirely.
+ *
+ * @return void
+ */
+function dg_ajax_update_mock_cart(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	$item_key = sanitize_text_field( $_POST['item_key'] ?? '' );
+	$quantity = absint( $_POST['quantity'] ?? 0 );
+
+	if ( empty( $item_key ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid item key.', 'dragon-glow' ) ) );
+	}
+
+	$cart = dg_get_mock_cart();
+
+	if ( ! isset( $cart[ $item_key ] ) ) {
+		wp_send_json_error( array( 'message' => __( 'Item not found in cart.', 'dragon-glow' ) ) );
+	}
+
+	if ( $quantity < 1 ) {
+		unset( $cart[ $item_key ] );
+	} else {
+		$cart[ $item_key ]['quantity'] = $quantity;
+	}
+
+	dg_save_mock_cart( $cart );
+
+	wp_send_json_success( array(
+		'message' => __( 'Cart updated.', 'dragon-glow' ),
+		'count'   => count( $cart ),
+	) );
+}
+add_action( 'wp_ajax_dg_ajax_update_mock_cart', 'dg_ajax_update_mock_cart' );
+add_action( 'wp_ajax_nopriv_dg_ajax_update_mock_cart', 'dg_ajax_update_mock_cart' );
+
+/**
+ * AJAX: Get current cart item count (works for both WC cart and mock cart).
+ *
+ * @return void
+ */
+function dg_ajax_get_cart_count(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	wp_send_json_success( array(
+		'count' => dg_get_cart_item_count(),
+	) );
+}
+add_action( 'wp_ajax_dg_ajax_get_cart_count', 'dg_ajax_get_cart_count' );
+add_action( 'wp_ajax_nopriv_dg_ajax_get_cart_count', 'dg_ajax_get_cart_count' );
+
+/**
+ * AJAX: Remove a product from cart by product_id or slug.
+ *
+ * Delegates to dg_remove_from_cart_silently() so the same mode-aware logic
+ * handles both WooCommerce products and mock products without duplication.
+ *
+ * @return void
+ */
+function dg_ajax_remove_product_from_cart(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	$product_id = absint( $_POST['product_id'] ?? 0 );
+	$slug       = sanitize_text_field( $_POST['slug'] ?? '' );
+
+	$result = dg_remove_from_cart_silently( array(
+		'product_id' => $product_id,
+		'slug'       => $slug,
+	) );
+
+	if ( $result['success'] ) {
+		wp_send_json_success( array(
+			'message' => __( 'Item removed from bag.', 'dragon-glow' ),
+			'count'   => $result['count'] ?? 0,
+		) );
+	} else {
+		wp_send_json_error( array( 'message' => $result['message'] ?? __( 'Could not remove item.', 'dragon-glow' ) ) );
+	}
+}
+add_action( 'wp_ajax_dg_ajax_remove_product_from_cart',        'dg_ajax_remove_product_from_cart' );
+add_action( 'wp_ajax_nopriv_dg_ajax_remove_product_from_cart', 'dg_ajax_remove_product_from_cart' );
+
+/**
+ * AJAX: Return all cart identifiers for the current cart mode.
+ *
+ * Used by the shop page JS on DOMContentLoaded to restore "Added!" button
+ * states for any products the visitor has already added.
+ *
+ * Returns {product_ids: int[], slugs: string[]} — the client can check either
+ * list depending on which product system is in use.
+ *
+ * @return void
+ */
+function dg_ajax_get_cart_identifiers(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	$ids = dg_get_cart_identifiers();
+
+	wp_send_json_success( $ids );
+}
+add_action( 'wp_ajax_dg_ajax_get_cart_identifiers',        'dg_ajax_get_cart_identifiers' );
+add_action( 'wp_ajax_nopriv_dg_ajax_get_cart_identifiers', 'dg_ajax_get_cart_identifiers' );
+
+/**
+ * AJAX: Return all product IDs currently in the WooCommerce cart.
+ *
+ * DEPRECATED — use dg_ajax_get_cart_identifiers instead.
+ * Kept for backwards compatibility with any third-party or legacy callers.
+ *
+ * @return void
+ */
+function dg_ajax_get_cart_product_ids(): void {
+	check_ajax_referer( 'dg_nonce', 'nonce' );
+
+	$ids = dg_get_cart_identifiers();
+
+	wp_send_json_success( array( 'product_ids' => $ids['product_ids'] ) );
+}
+add_action( 'wp_ajax_dg_ajax_get_cart_product_ids',        'dg_ajax_get_cart_product_ids' );
+add_action( 'wp_ajax_nopriv_dg_ajax_get_cart_product_ids', 'dg_ajax_get_cart_product_ids' );

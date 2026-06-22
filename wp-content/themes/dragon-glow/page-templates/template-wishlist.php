@@ -97,6 +97,7 @@ $shop_url = get_permalink( wc_get_page_id( 'shop' ) );
                     <button type="button"
                             class="w-full bg-primary text-white py-3 rounded-xl font-medium hover:brightness-110 transition-all wc-add-to-cart-btn"
                             data-product-id="<?php echo esc_attr( $product_id ); ?>"
+                            data-product-slug="<?php echo esc_attr( $product->get_slug() ); ?>"
                             data-product-type="<?php echo esc_attr( $product->get_type() ); ?>">
                         <?php echo 'simple' === $product->get_type() ? esc_html__( 'Add to Bag', 'dragon-glow' ) : esc_html__( 'View Options', 'dragon-glow' ); ?>
                     </button>

@@ -153,19 +153,23 @@ if ( 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['dg_mock_checkout_no
 	<?php elseif ( ! $product ) : ?>
 		<!-- ── Empty / Not found ── -->
 		<div class="text-center py-16">
-			<div class="w-32 h-32 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-6">
-				<span class="material-symbols-outlined text-primary" style="font-size: 64px;">shopping_bag_off</span>
-			</div>
-			<h1 class="font-headline text-headline-md text-primary mb-4">
-				<?php esc_html_e( 'Your bag is empty', 'dragon-glow' ); ?>
-			</h1>
-			<p class="text-on-surface-variant text-body-lg max-w-md mx-auto mb-8">
-				<?php esc_html_e( 'It looks like you haven\'t added anything to your bag yet.', 'dragon-glow' ); ?>
-			</p>
-			<a href="<?php echo esc_url( home_url( '/shop/' ) ); ?>"
-			   class="btn-luxury bg-primary text-on-primary px-10 py-4 font-label-sm text-label-sm uppercase tracking-widest inline-block">
-				<?php esc_html_e( 'Browse Collection', 'dragon-glow' ); ?>
-			</a>
+			<?php
+			get_template_part(
+				'template-parts/global/empty-state',
+				null,
+				array(
+					'icon'          => 'shopping_bag',
+					'icon_size'    => 96,
+					'circle_size'  => 'w-48 h-48',
+					'title'        => __( 'Your bag is empty', 'dragon-glow' ),
+					'description'  => __( "It looks like you haven't added anything to your bag yet.", 'dragon-glow' ),
+					'primary_cta'  => array(
+						'label' => __( 'Browse Collection', 'dragon-glow' ),
+						'url'   => esc_url( home_url( '/shop/' ) ),
+					),
+				)
+			);
+			?>
 		</div>
 
 	<?php else : ?>

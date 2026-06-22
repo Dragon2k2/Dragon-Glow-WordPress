@@ -147,7 +147,7 @@ function dg_custom_loop_add_to_cart(): void {
     $product_type = $product->get_type();
     $button_text  = ( 'simple' === $product_type ) ? __( 'Quick Add', 'dragon-glow' ) : __( 'View Options', 'dragon-glow' );
 
-    echo '<button class="absolute bottom-4 left-4 right-4 bg-primary text-on-primary py-3 rounded-xl font-label-sm text-label-sm opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:brightness-110 wc-add-to-cart-btn z-10" data-product-id="' . esc_attr( $product->get_id() ) . '" data-product-type="' . esc_attr( $product_type ) . '">';
+    echo '<button class="absolute bottom-4 left-4 right-4 bg-primary text-on-primary py-3 rounded-xl font-label-sm text-label-sm opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:brightness-110 wc-add-to-cart-btn z-10" data-product-id="' . esc_attr( $product->get_id() ) . '" data-product-slug="' . esc_attr( $product->get_slug() ) . '" data-product-type="' . esc_attr( $product_type ) . '">';
     echo esc_html( $button_text );
     echo '</button>';
 }
@@ -187,7 +187,7 @@ function dg_cart_count_fragment( array $fragments ): array {
         return $fragments;
     }
     $count = WC()->cart->get_cart_contents_count();
-    $fragments['.dg-cart-count'] = '<span class="dg-cart-count' . ( $count ? '' : ' hidden' ) . '">' . $count . '</span>';
+    $fragments['.dg-cart-count'] = dg_render_cart_count_badge( $count );
     return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'dg_cart_count_fragment' );
@@ -240,7 +240,7 @@ function dg_cart_menu_item( string $items, array $args ): string {
     $cart_count = WC()->cart->get_cart_contents_count();
 
     $cart_link = '<li class="menu-item-cart">';
-    $cart_link .= '<a href="' . esc_url( wc_get_cart_url() ) . '" class="relative p-2 hover:bg-primary-container/20 rounded-full transition-all text-primary" aria-label="' . esc_attr__( 'Cart', 'dragon-glow' ) . '">';
+    $cart_link .= '<a href="' . esc_url( dg_get_cart_url() ) . '" class="relative p-2 hover:bg-primary-container/20 rounded-full transition-all text-primary" aria-label="' . esc_attr__( 'Cart', 'dragon-glow' ) . '">';
     $cart_link .= '<span class="material-symbols-outlined">shopping_bag</span>';
     $cart_link .= '<span class="dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center' . ( $cart_count ? '' : ' hidden' ) . '">';
     $cart_link .= $cart_count;

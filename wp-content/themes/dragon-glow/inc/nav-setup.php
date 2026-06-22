@@ -103,6 +103,51 @@ function dg_register_default_menu_pages(): void {
         update_post_meta( $contact_page_id, '_wp_page_template', 'template-contact.php' );
     }
 
+    // --- Shipping & Returns ---
+    $shipping_page = get_page_by_path( 'shipping-returns' );
+    if ( ! $shipping_page ) {
+        $shipping_page_id = wp_insert_post( array(
+            'post_type'    => 'page',
+            'post_title'   => 'Shipping & Returns',
+            'post_name'    => 'shipping-returns',
+            'post_status'  => 'publish',
+            'page_template' => 'template-shipping-returns.php',
+        ) );
+    } else {
+        $shipping_page_id = $shipping_page->ID;
+        update_post_meta( $shipping_page_id, '_wp_page_template', 'template-shipping-returns.php' );
+    }
+
+    // --- FAQ ---
+    $faq_page = get_page_by_path( 'faq' );
+    if ( ! $faq_page ) {
+        $faq_page_id = wp_insert_post( array(
+            'post_type'    => 'page',
+            'post_title'   => 'FAQ',
+            'post_name'    => 'faq',
+            'post_status'  => 'publish',
+            'page_template' => 'template-faq.php',
+        ) );
+    } else {
+        $faq_page_id = $faq_page->ID;
+        update_post_meta( $faq_page_id, '_wp_page_template', 'template-faq.php' );
+    }
+
+    // --- Track Your Order ---
+    $track_page = get_page_by_path( 'order-tracking' );
+    if ( ! $track_page ) {
+        $track_page_id = wp_insert_post( array(
+            'post_type'    => 'page',
+            'post_title'   => 'Track Your Order',
+            'post_name'    => 'order-tracking',
+            'post_status'  => 'publish',
+            'page_template' => 'template-order-tracking.php',
+        ) );
+    } else {
+        $track_page_id = $track_page->ID;
+        update_post_meta( $track_page_id, '_wp_page_template', 'template-order-tracking.php' );
+    }
+
     // --- Clear any existing menu items ---
     $existing_items = wp_get_nav_menu_items( $menu_id );
     if ( ! empty( $existing_items ) ) {

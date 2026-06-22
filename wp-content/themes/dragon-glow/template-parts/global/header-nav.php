@@ -8,10 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$cart_count = 0;
-if ( dg_is_woocommerce_active() && isset( WC()->cart ) ) {
-    $cart_count = WC()->cart->get_cart_contents_count();
-}
+$cart_count = dg_get_cart_item_count();
 ?>
 <nav class="glass-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
 <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
@@ -95,11 +92,7 @@ if ( dg_is_woocommerce_active() && isset( WC()->cart ) ) {
                class="relative p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
                aria-label="<?php esc_attr_e( 'Cart', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">shopping_bag</span>
-                <?php if ( $cart_count ) : ?>
-                <span class="dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                    <?php echo esc_html( $cart_count ); ?>
-                </span>
-                <?php endif; ?>
+                <?php echo dg_render_cart_count_badge( $cart_count ); ?>
             </a>
 
             <!-- Mobile menu toggle -->

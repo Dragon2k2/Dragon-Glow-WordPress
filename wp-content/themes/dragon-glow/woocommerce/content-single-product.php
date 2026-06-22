@@ -311,7 +311,7 @@ if ( $related_ids ) :
 			</div>
 		</div>
 		<button type="button"
-		        class="btn-primary-glow px-6 py-3 rounded-xl font-label-sm text-label-sm whitespace-nowrap"
+		        class="btn-outline-gold px-6 py-3 rounded-xl font-label-sm text-label-sm whitespace-nowrap"
 		        onclick="document.querySelector('.single_add_to_cart_button')?.click()">
 			<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
 		</button>

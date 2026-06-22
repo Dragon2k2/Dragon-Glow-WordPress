@@ -177,7 +177,7 @@ function dg_breadcrumb(): void {
             <span class="text-primary font-bold"><?php esc_html_e( 'Your Bag', 'dragon-glow' ); ?></span>
         <?php elseif ( is_checkout() ) : ?>
             <span>/</span>
-            <a href="<?php echo esc_url( wc_get_cart_url() ); ?>"
+            <a href="<?php echo esc_url( dg_get_cart_url() ); ?>"
                class="hover:text-primary">
                 <?php esc_html_e( 'Your Bag', 'dragon-glow' ); ?>
             </a>

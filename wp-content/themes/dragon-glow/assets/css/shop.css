@@ -141,8 +141,8 @@ input[type="range"]::-moz-range-thumb {
 	background: rgba(115, 92, 0, 0.4);
 }
 
-/* Add to Ritual Button */
-.dg-add-to-ritual {
+/* Add to Cart Button */
+.dg-add-to-cart {
 	background-color: var(--color-tertiary-container);
 	color: var(--color-on-tertiary-container);
 	position: absolute;
@@ -160,12 +160,12 @@ input[type="range"]::-moz-range-thumb {
 	white-space: nowrap;
 	transition: background-color 0.3s var(--luxury-bezier), color 0.3s var(--luxury-bezier), transform 0.3s var(--luxury-bezier);
 }
-.dg-add-to-ritual:hover {
+.dg-add-to-cart:hover {
 	background-color: var(--color-tertiary);
 	color: var(--color-on-primary);
 	transform: translateX(-50%) translateY(-2px);
 }
-.dg-add-to-ritual:focus-visible {
+.dg-add-to-cart:focus-visible {
 	outline: 2px solid var(--color-tertiary);
 	outline-offset: 2px;
 }
@@ -235,8 +235,8 @@ input[type="range"]::-moz-range-thumb {
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* CTA "Add to Ritual" — pill at bottom, hidden by default, hover-revealed */
-.dg-add-to-ritual {
+/* CTA "Add to Cart" — pill at bottom, hidden by default, hover-revealed */
+.dg-add-to-cart {
 	bottom: 1rem;
 	left: 1rem;
 	right: 1rem;
@@ -258,7 +258,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Sheen effect on CTA button (::before pseudo) */
-.dg-add-to-ritual::before {
+.dg-add-to-cart::before {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -277,15 +277,20 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* On card hover: show CTA button + run sheen */
-.dg-product-card:hover .dg-add-to-ritual {
+.dg-product-card:hover .dg-add-to-cart {
 	opacity: 1;
 	transform: translateY(0);
 	background-color: var(--color-tertiary-container, #f1ca50);
 	color: var(--color-on-tertiary-container, #6b5500);
 }
-.dg-product-card:hover .dg-add-to-ritual::before {
+.dg-product-card:hover .dg-add-to-cart::before {
 	left: 160%;
 	transition: left 0.65s ease;
+}
+
+/* Checkmark icon turns golden when button is in "added" state */
+.dg-quick-add--added .material-symbols-outlined {
+	color: var(--color-tertiary, #f1ca50);
 }
 
 /* Product name — default color is #735C00 (matches brand) */
@@ -454,6 +459,30 @@ a.dg-product-stretched-link {
 .dg-product-info-link {
 	position: relative;
 	z-index: 2;
+}
+
+/* =====================================================
+   Quick-Add toggle — "Added" permanent visible state
+   ===================================================== */
+
+/**
+ * When a product is in the cart (.dg-quick-add--added), the button must
+ * stay visible regardless of whether the card is being hovered.
+ * Override the default opacity:0 / translateY(16px) hiding rules.
+ */
+.dg-add-to-cart.dg-quick-add--added {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/**
+ * Hover on an "Added" button: subtle darker-gold tint + slight lift
+ * to hint that clicking will remove the item.
+ */
+.dg-add-to-cart.dg-quick-add--added:hover {
+	background-color: var(--color-primary-container, #d4af37);
+	color: var(--color-on-primary-container, #554300);
+	transform: translateY(-2px);
 }
 
 

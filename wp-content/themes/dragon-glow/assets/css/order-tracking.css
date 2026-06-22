@@ -1,0 +1,69 @@
+/* =========================================
+   DRAGON GLOW — ORDER TRACKING STYLES
+   ========================================= */
+
+/* Text glow on hero title */
+.text-glow {
+    text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
+}
+
+/* Override WooCommerce form defaults to match design language */
+.dg-tracking-form-wrapper .woocommerce form p {
+    margin-bottom: 1.5rem;
+}
+.dg-tracking-form-wrapper .woocommerce form label {
+    display: block;
+    font-family: var(--font-label, 'Montserrat', sans-serif);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant, #4d4635);
+    margin-bottom: 0.5rem;
+}
+.dg-tracking-form-wrapper .woocommerce form input[type="text"],
+.dg-tracking-form-wrapper .woocommerce form input[type="email"] {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid rgba(208, 197, 175, 0.4);
+    background: transparent;
+    padding: 1rem 0;
+    font-family: var(--font-body, 'Montserrat', sans-serif);
+    font-size: 1rem;
+    color: var(--color-on-surface, #1c1b1b);
+    transition: border-color 0.3s ease;
+}
+.dg-tracking-form-wrapper .woocommerce form input[type="text"]:focus,
+.dg-tracking-form-wrapper .woocommerce form input[type="email"]:focus {
+    outline: none;
+    border-bottom-color: var(--color-primary, #735c00);
+}
+.dg-tracking-form-wrapper .woocommerce form button[type="submit"] {
+    width: 100%;
+    background-color: var(--color-primary, #735c00);
+    color: var(--color-on-primary, #ffffff);
+    font-family: var(--font-label, 'Montserrat', sans-serif);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 1.5rem;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+.dg-tracking-form-wrapper .woocommerce form button[type="submit"]:hover {
+    opacity: 0.85;
+    box-shadow: 0 8px 24px rgba(115, 92, 0, 0.2);
+}
+.dg-tracking-form-wrapper .woocommerce .woocommerce-form-row {
+    margin: 0 0 1.5rem;
+}
+.dg-tracking-form-wrapper .woocommerce-form p:first-child {
+    margin-top: 0;
+}
+
+/* Need help cards hover */
+.dg-tracking-form-wrapper + section [class*="bg-surface-container"] {
+    transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}

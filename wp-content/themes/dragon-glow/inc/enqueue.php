@@ -120,6 +120,36 @@ function dg_enqueue_assets(): void {
         );
     }
 
+    // Shipping & Returns page specific styles
+    if ( is_page_template( 'page-templates/template-shipping-returns.php' ) ) {
+        wp_enqueue_style(
+            'dg-shipping-returns',
+            DG_URI . '/assets/css/shipping-returns.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
+    // FAQ page specific styles
+    if ( is_page_template( 'page-templates/template-faq.php' ) ) {
+        wp_enqueue_style(
+            'dg-faq',
+            DG_URI . '/assets/css/faq.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
+    // Order tracking page specific styles
+    if ( is_page_template( 'page-templates/template-order-tracking.php' ) ) {
+        wp_enqueue_style(
+            'dg-order-tracking',
+            DG_URI . '/assets/css/order-tracking.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
 	// Tailwind CSS CDN (load in head for immediate parsing)
     wp_enqueue_script(
         'tailwindcss',
@@ -138,12 +168,29 @@ function dg_enqueue_assets(): void {
         true
     );
 
+    // Cart API shared module — provides window.DGCart for all cart AJAX.
+    // Depends on dg-main so dgAjax (url/nonce/i18n) is available.
+    // Also registered as a dep of dg-quick-add-to-cart, dg-buy-now, dg-wishlist.
+    wp_enqueue_script(
+        'dg-cart-api',
+        DG_URI . '/assets/js/lib/cart-api.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
+
     // Page-specific JS (WooCommerce conditionals)
     if ( dg_is_woocommerce_active() ) {
         if ( is_product() ) {
             wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main' ), DG_VERSION, true );
         }
         if ( is_cart() ) {
+            wp_enqueue_style(
+                'dg-cart',
+                DG_URI . '/assets/css/cart.css',
+                array( 'dg-main' ),
+                DG_VERSION
+            );
             wp_enqueue_script( 'dg-cart', DG_URI . '/assets/js/cart.js', array( 'dg-main' ), DG_VERSION, true );
         }
         if ( is_checkout() ) {
@@ -156,32 +203,53 @@ function dg_enqueue_assets(): void {
     if ( is_page_template( 'page-templates/template-contact.php' ) ) {
         wp_enqueue_script( 'dg-contact', DG_URI . '/assets/js/contact.js', array( 'dg-main' ), DG_VERSION, true );
     }
+    if ( is_page_template( 'page-templates/template-faq.php' ) ) {
+        wp_enqueue_script( 'dg-faq', DG_URI . '/assets/js/faq.js', array( 'dg-main' ), DG_VERSION, true );
+    }
     if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
-        wp_enqueue_script( 'dg-wishlist', DG_URI . '/assets/js/wishlist.js', array( 'dg-main' ), DG_VERSION, true );
+        wp_enqueue_script( 'dg-wishlist', DG_URI . '/assets/js/wishlist.js', array( 'dg-cart-api' ), DG_VERSION, true );
+    }
+
+    // Mock Cart page (only when WooCommerce is inactive, otherwise the real WC cart is used).
+    if ( is_page_template( 'page-templates/template-mock-cart.php' ) && ! dg_is_woocommerce_active() ) {
+        wp_enqueue_style(
+            'dg-mock-cart',
+            DG_URI . '/assets/css/cart.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+        wp_enqueue_script(
+            'dg-mock-cart',
+            DG_URI . '/assets/js/mock-cart.js',
+            array( 'dg-main' ),
+            DG_VERSION,
+            true
+        );
     }
 
     // Localize script — truyền data PHP → JS
     wp_localize_script( 'dg-main', 'dgAjax', array(
-        'url'   => admin_url( 'admin-ajax.php' ),
-        'nonce' => wp_create_nonce( 'dg_nonce' ),
-        'i18n'  => array(
+        'url'     => admin_url( 'admin-ajax.php' ),
+        'nonce'   => wp_create_nonce( 'dg_nonce' ),
+        'cartUrl' => function_exists('dg_get_cart_url') ? dg_get_cart_url() : home_url( '/cart/' ),
+        'i18n'    => array(
             'Processing...'    => __( 'Processing...', 'dragon-glow' ),
             'Buy Now'         => __( 'Buy Now', 'dragon-glow' ),
             'Something went wrong. Please try again.' => __( 'Something went wrong. Please try again.', 'dragon-glow' ),
             'Network error. Please check your connection and try again.' => __( 'Network error. Please check your connection and try again.', 'dragon-glow' ),
             'Network error.'  => __( 'Network error.', 'dragon-glow' ),
-            'Added!'          => __( 'Added!', 'dragon-glow' ),
+            'Added'             => __( 'Added', 'dragon-glow' ),
             'Could not add to bag.' => __( 'Could not add to bag.', 'dragon-glow' ),
         ),
     ) );
 
     // Quick Add to Cart — loads on any page that may have .dg-quick-add buttons
-    // (Shop grid, Best Sellers carousel, mock product cards).  Depends on dg-main
-    // so that dgAjax (url / nonce / i18n) is guaranteed to be available.
+    // (Shop grid, Best Sellers carousel, mock product cards).  Depends on dg-cart-api
+    // so that DGCart is available before the button handler runs.
     wp_enqueue_script(
         'dg-quick-add-to-cart',
         DG_URI . '/assets/js/quick-add-to-cart.js',
-        array( 'dg-main' ),
+        array( 'dg-cart-api' ),
         DG_VERSION,
         true
     );
@@ -190,7 +258,7 @@ function dg_enqueue_assets(): void {
     wp_enqueue_script(
         'dg-buy-now',
         DG_URI . '/assets/js/buy-now.js',
-        array( 'dg-main' ),
+        array( 'dg-cart-api' ),
         DG_VERSION,
         true
     );

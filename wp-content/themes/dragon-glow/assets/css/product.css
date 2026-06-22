@@ -14,17 +14,6 @@
 	pointer-events: none;
 }
 
-/* ── Primary CTA — gradient glow (used by add-to-cart + sticky bar) ── */
-.btn-primary-glow {
-	background: linear-gradient(135deg, #f4c2c2 0%, #ffdad9 100%);
-	border-bottom: 2px solid #e9c349;
-	color: #734e4e;
-	transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.btn-primary-glow:hover {
-	box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
-	transform: translateY(-1px);
-}
 
 /* ── Gallery thumbnails — active state (initial) ──
    product.js also toggles Tailwind border/opacity classes on click;

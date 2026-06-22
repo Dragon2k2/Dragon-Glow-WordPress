@@ -1,0 +1,84 @@
+/* =========================================
+   DRAGON GLOW — FAQ PAGE STYLES
+   ========================================= */
+
+/* Search input */
+.dg-faq-search input {
+    border-radius: 0;
+}
+
+/* FAQ trigger button */
+.dg-faq-trigger {
+    cursor: pointer;
+    text-align: left;
+}
+.dg-faq-trigger:focus-visible {
+    outline: 2px solid var(--color-primary, #735c00);
+    outline-offset: 2px;
+}
+
+/* Icon rotation when open */
+.dg-faq-trigger[aria-expanded="true"] .dg-faq-icon {
+    transform: rotate(45deg);
+}
+
+/* Smooth height animation for panel */
+.dg-faq-panel {
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.3s ease;
+}
+.dg-faq-panel.dg-panel-open {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+/* Highlight matching text */
+.dg-faq-highlight {
+    background-color: rgba(115, 92, 0, 0.12);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* No results state */
+.dg-no-results-msg {
+    display: none;
+}
+.dg-no-results-msg.dg-visible {
+    display: block;
+}
+
+/* Text glow on hero title */
+.text-glow {
+    text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
+}
+
+/* Scroll-reveal for group sections */
+.dg-faq-group {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dg-faq-group.dg-faq-group-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Group title */
+.dg-faq-group-title {
+    transition: color 0.2s ease;
+}
+
+/* Hide groups when filtering to zero */
+.dg-faq-group.dg-hidden {
+    display: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+    .dg-faq-answer {
+        padding-left: 0;
+    }
+}

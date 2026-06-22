@@ -184,7 +184,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							<?php esc_html_e( 'Back to cart', 'dragon-glow' ); ?>
 						</a>
 						<button type="button"
-						        class="dg-step-next btn-primary-glow px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
+						        class="dg-step-next btn-outline-gold px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
 						        data-goto="2">
 							<?php esc_html_e( 'Continue to Payment', 'dragon-glow' ); ?>
 							<span class="material-symbols-outlined text-lg">arrow_forward</span>
@@ -228,7 +228,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							<?php esc_html_e( 'Back to Shipping', 'dragon-glow' ); ?>
 						</button>
 						<button type="button"
-						        class="dg-step-next btn-primary-glow px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
+						        class="dg-step-next btn-outline-gold px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
 						        data-goto="3">
 							<?php esc_html_e( 'Review Order', 'dragon-glow' ); ?>
 							<span class="material-symbols-outlined text-lg">arrow_forward</span>
@@ -324,7 +324,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 						 */
 						?>
 						<button type="submit"
-						        class="dg-place-order btn-primary-glow px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
+						        class="dg-place-order btn-outline-gold px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center gap-2"
 						        id="dg-place-order-btn">
 							<span class="material-symbols-outlined text-lg">check_circle</span>
 							<?php esc_html_e( 'Place Order', 'dragon-glow' ); ?>

@@ -1,23 +1,19 @@
 /**
- * Dragon Glow — Quick Add to Cart
+ * Dragon Glow — Quick Add to Cart (Toggle)
  *
- * Handles silent add-to-cart for quick-add buttons across the site:
- *   - "Add to Ritual" buttons on the Shop grid (product-card.php).
- *   - Quick-add icon on the Best Sellers carousel (best-sellers.php).
- *   - Mock-product quick-add buttons in template-shop.php.
+ * Handles add/remove toggle for .dg-quick-add buttons on the Shop grid.
  *
- * This module intentionally NEVER redirects — it fires the AJAX request and
- * restores the button state, regardless of outcome.  The back-end handler
- * (dg_add_to_cart_silently) never returns a redirect URL on this action.
+ * Behaviour:
+ *   - First click  → AJAX add to cart → button stays in "Add" state permanently.
+ *   - Second click → AJAX remove from cart → button reverts to "Add to Cart".
+ *   - On DOMContentLoaded, fetches current cart identifiers from the server
+ *     and pre-marks buttons for products already in the cart (supports both
+ *     WooCommerce products and mock products).
  *
- * Responsibilities:
- *   - Prevent double-click by disabling the button during the request.
- *   - Update only the label text (via the `.dg-quick-add__label` child element)
- *     so the icon remains untouched in the DOM.
- *   - Restore the original label + re-enable the button in ALL code paths
- *     (success, error, network failure) via `.finally()`.
- *   - Call window.DGUpdateCartCount() after a successful add so the header
- *     badge reflects the new cart state without a page reload.
+ * AJAX actions used:
+ *   dg_ajax_add_to_cart              — adds product
+ *   dg_ajax_remove_product_from_cart — removes by product_id or slug
+ *   dg_ajax_get_cart_identifiers     — returns product_ids + slugs in current cart
  *
  * @package Dragon_Glow
  */
@@ -27,82 +23,234 @@
 
 	// ── Init on DOM ready ─────────────────────────────────────────────────────
 
-	document.addEventListener('DOMContentLoaded', bindQuickAddButtons);
+	document.addEventListener('DOMContentLoaded', function () {
+		bindQuickAddButtons();
+		restoreCartState();
+	});
 
-	// ── Core ─────────────────────────────────────────────────────────────────
+	// ── Stable identifier key per button ──────────────────────────────────────
 
 	/**
-	 * Find and bind all `.dg-quick-add` buttons on the page.
+	 * Return the stable cart-lookup key for a button:
+	 *   product_id > 0  → numeric product_id (WooCommerce)
+	 *   product_id === 0 → slug (mock products)
+	 *
+	 * @param {HTMLElement} btn
+	 * @return {string}  Identifier to use for add/remove/restore.
+	 */
+	function getButtonKey(btn) {
+		var pid = parseInt(btn.dataset.productId, 10) || 0;
+		return pid > 0 ? String(pid) : (btn.dataset.productSlug || '');
+	}
+
+	// ── Bind buttons ──────────────────────────────────────────────────────────
+
+	/**
+	 * Attach click handlers to all .dg-quick-add buttons on the page.
 	 *
 	 * @return {void}
 	 */
 	function bindQuickAddButtons() {
-		var buttons = document.querySelectorAll('.dg-quick-add');
-		buttons.forEach(function (btn) {
-			btn.addEventListener('click', handleQuickAddClick);
+		document.querySelectorAll('.dg-quick-add').forEach(function (btn) {
+			btn.addEventListener('click', handleToggleClick);
 		});
 	}
 
+	// ── Toggle handler ────────────────────────────────────────────────────────
+
 	/**
-	 * Handle a single quick-add click.
+	 * Handle a click on a quick-add button.
+	 * Toggles between "Add to Cart" and "Add" states.
 	 *
 	 * @param {Event} e
 	 * @return {void}
 	 */
-	function handleQuickAddClick(e) {
+	function handleToggleClick(e) {
 		var btn = e.currentTarget;
 
+		// If product is already in cart → remove it
+		if (btn.dataset.inCart === '1') {
+			handleRemoveFromCart(btn);
+		} else {
+			handleAddToCart(btn);
+		}
+	}
+
+	// ── Add to cart ───────────────────────────────────────────────────────────
+
+	/**
+	 * AJAX: add the product to cart, then permanently mark button as "Added".
+	 *
+	 * Bug fix #1 (Lỗi 1): always sends slug + size so mock products work.
+	 * Uses window.DGCart.add() which POSTs product_id, slug, size, quantity.
+	 *
+	 * @param {HTMLElement} btn
+	 * @return {void}
+	 */
+	function handleAddToCart(btn) {
 		var productId = parseInt(btn.dataset.productId, 10) || 0;
 		var slug      = btn.dataset.productSlug || '';
+		var size      = btn.dataset.productSize || '';
 		var quantity  = parseInt(btn.dataset.quantity, 10) || 1;
 
-		// Guard: quick-add buttons should not have size selection — they add qty=1.
-		// The shared quantity state from buy-now.js is intentionally ignored here.
 		setButtonLoading(btn, true);
 
-		var formData = new FormData();
-		formData.append('action', 'dg_ajax_add_to_cart');
-		formData.append('nonce', getNonce());
-		formData.append('product_id', productId);
-		formData.append('slug', slug);
-		formData.append('quantity', quantity);
-
-		fetch(getAjaxUrl(), {
-			method: 'POST',
-			body: formData,
-			credentials: 'same-origin'
+		window.DGCart.add({
+			productId: productId,
+			slug:      slug,
+			size:      size,
+			quantity:  quantity,
 		})
-		.then(function (r) { return r.json(); })
 		.then(function (data) {
-			// Guard: if the backend ever leaks a redirect URL on this action,
-			// warn in the console rather than silently navigate away.
-			if (data.data && data.data.redirect) {
-				console.warn('[Dragon Glow] quick-add-to-cart received an unexpected redirect URL — this should not happen. URL:', data.data.redirect);
-			}
-
 			if (data.success) {
-				showAddedFeedback(btn);
-				refreshCartCount();
+				setAddedState(btn);
+				window.DGCart.refreshCount();
 			} else {
 				var msg = (data.data && data.data.message)
 					? data.data.message
 					: gettext('Could not add to bag.');
 				showInlineNotice(btn, msg);
+				resetButton(btn);
 			}
 		})
 		.catch(function () {
 			showInlineNotice(btn, gettext('Network error.'));
-		})
-		.finally(function () {
 			resetButton(btn);
 		});
 	}
 
-	// ── Button state ─────────────────────────────────────────────────────────
+	// ── Remove from cart ──────────────────────────────────────────────────────
 
 	/**
-	 * Put a quick-add button into loading state.
-	 * Only the label element is modified — the icon child is untouched.
+	 * AJAX: remove the product from cart by product_id or slug, then reset button.
+	 *
+	 * Bug fix #2 (Lỗi 2): sends slug alongside product_id so mock removal works.
+	 * Uses window.DGCart.remove() which POSTs both identifiers.
+	 *
+	 * @param {HTMLElement} btn
+	 * @return {void}
+	 */
+	function handleRemoveFromCart(btn) {
+		var productId = parseInt(btn.dataset.productId, 10) || 0;
+		var slug      = btn.dataset.productSlug || '';
+
+		setButtonLoading(btn, true);
+
+		window.DGCart.remove({
+			productId: productId,
+			slug:      slug,
+		})
+		.then(function (data) {
+			if (data.success) {
+				resetButton(btn);
+				window.DGCart.refreshCount();
+			} else {
+				// Remove failed — restore added state (item is still in cart)
+				setAddedState(btn);
+				var msg = (data.data && data.data.message)
+					? data.data.message
+					: gettext('Could not remove item.');
+				showInlineNotice(btn, msg);
+			}
+		})
+		.catch(function () {
+			setAddedState(btn);
+			showInlineNotice(btn, gettext('Network error.'));
+		});
+	}
+
+	// ── Page-load cart state restore ──────────────────────────────────────────
+
+	/**
+	 * On page load, fetch which products are in the cart and mark their buttons.
+	 * This handles hard refreshes and direct URL visits to the shop page.
+	 *
+	 * Bug fix #3 (Lỗi 3): uses dg_ajax_get_cart_identifiers which returns both
+	 * product_ids (WooCommerce) and slugs (mock). A button is marked "Added" if
+	 * its key matches either list.
+	 *
+	 * @return {void}
+	 */
+	function restoreCartState() {
+		window.DGCart.getIdentifiers()
+		.then(function (data) {
+			if (!data || !data.success) { return; }
+
+			var ids  = (data.data && data.data.product_ids) || [];
+			var slugs = (data.data && data.data.slugs) || [];
+
+			document.querySelectorAll('.dg-quick-add').forEach(function (btn) {
+				var key = getButtonKey(btn);
+				if (!key) { return; }
+
+				// Check against numeric IDs (WooCommerce) or slug strings (mock)
+				var isAdded = (ids.indexOf(Number(key)) !== -1) || (slugs.indexOf(key) !== -1);
+				if (isAdded) {
+					setAddedState(btn);
+				}
+			});
+		})
+		.catch(function () {
+			// Silently fail — buttons simply start in "Add to Cart" state
+		});
+	}
+
+	// ── Button state helpers ──────────────────────────────────────────────────
+
+	/**
+	 * Mark a button as permanently "Add" (product is in cart).
+	 * Stores inCart flag on the element; no timeout revert.
+	 *
+	 * @param {HTMLElement} btn
+	 * @return {void}
+	 */
+	function setAddedState(btn) {
+		btn.disabled          = false;
+		btn.dataset.inCart    = '1';
+
+		btn.classList.add('dg-quick-add--added');
+
+		var label = btn.querySelector('.dg-quick-add__label');
+		if (label) {
+			label.textContent = gettext('Added');
+		}
+
+		var icon = btn.querySelector('.material-symbols-outlined');
+		if (icon) {
+			// Save original icon name before overwriting
+			if (!btn.dataset.savedIcon) {
+				btn.dataset.savedIcon = icon.textContent;
+			}
+			icon.textContent = 'check';
+		}
+	}
+
+	/**
+	 * Reset a button to its idle "Add to Cart" state.
+	 *
+	 * @param {HTMLElement} btn
+	 * @return {void}
+	 */
+	function resetButton(btn) {
+		btn.disabled       = false;
+		btn.dataset.inCart = '0';
+
+		btn.classList.remove('dg-quick-add--added');
+
+		var label = btn.querySelector('.dg-quick-add__label');
+		if (label) {
+			label.textContent = getOriginalLabel(btn);
+		}
+
+		var icon = btn.querySelector('.material-symbols-outlined');
+		if (icon) {
+			icon.textContent = btn.dataset.savedIcon || 'shopping_bag';
+		}
+	}
+
+	/**
+	 * Set loading state on a button (disables it and shows "...").
+	 * Only the label span is modified — the icon is untouched during loading.
 	 *
 	 * @param {HTMLElement} btn
 	 * @param {boolean}    loading
@@ -116,50 +264,10 @@
 		}
 	}
 
-	/**
-	 * Reset a quick-add button to its idle state after a request completes.
-	 * Called from the `.finally()` block so it runs unconditionally.
-	 *
-	 * @param {HTMLElement} btn
-	 * @return {void}
-	 */
-	function resetButton(btn) {
-		btn.disabled = false;
-		var label = btn.querySelector('.dg-quick-add__label');
-		if (label) {
-			label.textContent = getOriginalLabel(btn);
-		}
-		btn.classList.remove('dg-quick-add--added');
-	}
+	// ── Utility helpers ─────────────────────────────────────────────────────
 
 	/**
-	 * Show brief "Added!" feedback on the label, then revert after 1.5 s.
-	 *
-	 * @param {HTMLElement} btn
-	 * @return {void}
-	 */
-	function showAddedFeedback(btn) {
-		var label = btn.querySelector('.dg-quick-add__label');
-		if (!label) return;
-
-		btn.classList.add('dg-quick-add--added');
-		label.textContent = gettext('Added!');
-
-		setTimeout(function () {
-			if (label) {
-				label.textContent = getOriginalLabel(btn);
-			}
-			btn.classList.remove('dg-quick-add--added');
-		}, 1500);
-	}
-
-	// ── Helpers ───────────────────────────────────────────────────────────────
-
-	/**
-	 * Retrieve the original label text stored in the data attribute set at
-	 * render time, or fall back to the current textContent of the label span.
-	 * Using a data attribute avoids any edge case where the textContent was
-	 * already modified by showAddedFeedback() when we read it for reset.
+	 * Return the original button label stored at render time in data-original-label.
 	 *
 	 * @param {HTMLElement} btn
 	 * @return {string}
@@ -169,54 +277,23 @@
 	}
 
 	/**
-	 * Show a temporary inline error message below the button.
+	 * Show a brief inline error notice below the button.
 	 *
 	 * @param {HTMLElement} btn
 	 * @param {string}     message
 	 * @return {void}
 	 */
 	function showInlineNotice(btn, message) {
-		var notice = btn.closest('.dg-product-image').querySelector('.dg-quick-add-notice');
-		if (notice) {
-			notice.textContent = message;
-			notice.classList.remove('hidden');
-			setTimeout(function () {
-				if (notice) notice.classList.add('hidden');
-			}, 3000);
-		}
-	}
+		var wrap   = btn.closest('.dg-product-image');
+		var notice = wrap ? wrap.querySelector('.dg-quick-add-notice') : null;
+		if (!notice) { return; }
 
-	/**
-	 * Trigger a cart count refresh so the header badge reflects the new state.
-	 *
-	 * @return {void}
-	 */
-	function refreshCartCount() {
-		if (typeof window.DGUpdateCartCount === 'function') {
-			window.DGUpdateCartCount();
-		}
-	}
+		notice.textContent = message;
+		notice.classList.remove('hidden');
 
-	/**
-	 * Get AJAX URL from dgAjax global.
-	 *
-	 * @return {string}
-	 */
-	function getAjaxUrl() {
-		return (window.dgAjax && window.dgAjax.url)
-			? window.dgAjax.url
-			: '/wp-admin/admin-ajax.php';
-	}
-
-	/**
-	 * Get nonce from dgAjax global.
-	 *
-	 * @return {string}
-	 */
-	function getNonce() {
-		return (window.dgAjax && window.dgAjax.nonce)
-			? window.dgAjax.nonce
-			: '';
+		setTimeout(function () {
+			if (notice) { notice.classList.add('hidden'); }
+		}, 3000);
 	}
 
 	/**

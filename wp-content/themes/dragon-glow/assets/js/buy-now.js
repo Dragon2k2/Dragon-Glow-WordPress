@@ -130,10 +130,9 @@
 	/**
 	 * Add to Bag for mock products (slug-only) or WC products (product_id).
 	 *
-	 * Uses the unified dg_ajax_buy_now route through DG_Checkout_Router so that:
-	 *   - Mock product + WC active  → shadow product added to WC cart → redirect to WC cart.
-	 *   - Mock product + WC off     → DG_Mock_Checkout_Handler stores item → shows notice.
-	 *   - WC product (product_id > 0) → DG_WooCommerce_Checkout_Handler adds to WC cart.
+	 * Uses window.DGCart.add() which POSTs to dg_ajax_add_to_cart silently —
+	 * no checkout redirect.  On success, redirects to the cart page if the
+	 * backend returned a redirect URL.
 	 *
 	 * Icon preservation: the button contains a material-symbols span (always the first
 	 * child) and a label text node (second child when present, or part of textContent
@@ -163,33 +162,24 @@
 		btn.disabled = true;
 		setLabel(btn, '...');
 
-		var formData = new FormData();
-		formData.append('action', 'dg_ajax_buy_now');
-		formData.append('nonce', getNonce());
-		formData.append('product_id', productId);
-		formData.append('slug', slug);
-		formData.append('size', size);
-		formData.append('quantity', quantity);
-
-		fetch(getAjaxUrl(), {
-			method: 'POST',
-			body: formData,
-			credentials: 'same-origin'
+		window.DGCart.add({
+			productId: productId,
+			slug:      slug,
+			size:      size,
+			quantity:  quantity,
 		})
-		.then(function (r) { return r.json(); })
 		.then(function (data) {
 			if (data.success) {
-				var redirectUrl = data.data && data.data.redirect;
+				var redirectUrl = (data.data && data.data.redirect)
+					? data.data.redirect
+					: '';
 				if (redirectUrl) {
 					window.location.href = redirectUrl;
 				} else {
-					setLabel(btn, gettext('Added!'));
-					btn.classList.add('bg-green-600');
-					setTimeout(function () {
-						setLabel(btn, origText);
-						btn.classList.remove('bg-green-600');
-						btn.disabled = false;
-					}, 2000);
+					var msg = gettext('Could not add to bag.');
+					showBuyNowNotice(btn, msg, 'error');
+					setLabel(btn, origText);
+					btn.disabled = false;
 				}
 			} else {
 				var msg = (data.data && data.data.message)
@@ -269,7 +259,7 @@
 			}
 		} else {
 			if (icon) {
-				icon.textContent = 'bolt';
+				icon.textContent = 'shopping_cart_checkout';
 				icon.classList.remove('animate-spin');
 			}
 			if (label) {

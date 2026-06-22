@@ -202,6 +202,23 @@ html {
     text-decoration: none;
 }
 
+/* Outline Gold Button — primary-secondary pair with .btn-primary */
+.btn-outline-gold {
+    background: transparent;
+    border: 1.5px solid #735c00;
+    color: #735c00;
+    transition: background-color 0.3s ease, color 0.3s ease,
+                transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-outline-gold:hover:not(:disabled) {
+    background-color: var(--color-tertiary-container, #f1ca50);
+    border-color: var(--color-tertiary-container, #f1ca50);
+    color: var(--color-on-tertiary-container, #6b5500);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -6px rgba(241, 202, 80, 0.45);
+}
+
 /* =========================================
    9. PRODUCT BADGES / CHIPS
    ========================================= */

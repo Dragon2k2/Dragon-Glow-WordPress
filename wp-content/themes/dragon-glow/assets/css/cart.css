@@ -1,0 +1,278 @@
+/* ============================================================
+   DRAGON GLOW — Cart Page Styles
+   Glassmorphism luxury cart UI
+   ============================================================ */
+
+/* ── Atmospheric background ─────────────────────────────── */
+.dg-cart-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -10;
+    overflow: hidden;
+}
+
+.dg-cart-blob-1 {
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.12);   /* primary-container at low opacity */
+    filter: blur(100px);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+.dg-cart-blob-2 {
+    position: absolute;
+    bottom: 20%;
+    right: 10%;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: rgba(241, 202, 80, 0.08);  /* tertiary-container at low opacity */
+    filter: blur(120px);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+}
+
+/* ── Glass panel ──────────────────────────────────────────── */
+.dg-glass-panel {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.45),
+        0 4px 24px rgba(115, 92, 0, 0.06);
+}
+
+/* ── Gold border accent (table header bottom line) ─────── */
+.dg-gold-border {
+    border-bottom: 2px solid #d4af37;
+}
+
+/* ── Shimmer checkout button ─────────────────────────────── */
+.dg-shimmer-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #c9952a 100%);
+    position: relative;
+    overflow: hidden;
+    color: #241a00;          /* on-primary-fixed — dark for contrast on gold */
+    transition: opacity 0.25s ease, transform 0.2s ease;
+}
+
+.dg-shimmer-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -75%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.28),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+}
+
+.dg-shimmer-btn:hover::after {
+    left: 130%;
+}
+
+.dg-shimmer-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+/* ── Cart product image wrapper ──────────────────────────── */
+.dg-cart-img-wrap {
+    width: 88px;
+    height: 116px;
+    flex-shrink: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #eae7e7;   /* surface-container-high */
+}
+
+.dg-cart-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ── Quantity stepper ────────────────────────────────────── */
+.dg-qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(252, 249, 248, 0.5);
+    border: 1px solid rgba(208, 197, 175, 0.3);
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+}
+
+.dg-qty-stepper-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #735c00;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+    line-height: 1;
+}
+
+.dg-qty-stepper-btn:hover {
+    background: rgba(212, 175, 55, 0.18);
+}
+
+.dg-qty-stepper-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.dg-qty-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    min-width: 1.25rem;
+    text-align: center;
+    color: #1c1b1b;
+}
+
+/* ── Remove button ───────────────────────────────────────── */
+.dg-remove-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: rgba(77, 70, 53, 0.4);
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.dg-remove-btn:hover {
+    color: #ba1a1a;
+}
+
+/* ── Coupon / promo code input ────────────────────────────── */
+.dg-promo-input {
+    flex: 1;
+    background: #f6f3f2;
+    border: 0;
+    border-bottom: 1px solid #d4af37;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #1c1b1b;
+    outline: none;
+    transition: border-bottom-color 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dg-promo-input:focus {
+    border-bottom-width: 2px;
+    border-bottom-color: #735c00;
+}
+
+.dg-promo-input::placeholder {
+    opacity: 0.4;
+}
+
+.dg-promo-apply-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #735c00;
+    transition: opacity 0.2s ease;
+}
+
+.dg-promo-apply-btn:hover {
+    opacity: 0.65;
+}
+
+/* ── Trust badge pills ───────────────────────────────────── */
+.dg-trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    background: rgba(225, 225, 245, 0.25);
+    color: #6f5f59;          /* on-secondary-container */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+/* ── Row remove animation ────────────────────────────────── */
+.dg-cart-row {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.dg-cart-row.is-removing {
+    opacity: 0;
+    transform: translateX(24px);
+    pointer-events: none;
+}
+
+/* ── Coupon discount row ─────────────────────────────────── */
+.cart-discount .woocommerce-Price-amount,
+.cart-discount td {
+    color: #735c00;
+    font-weight: 600;
+}
+
+/* ── Empty cart state ────────────────────────────────────── */
+#dg-empty-cart-view {
+    display: none;
+}
+
+#dg-empty-cart-view.is-visible {
+    display: block;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .dg-cart-blob-1,
+    .dg-cart-blob-2 {
+        width: 260px;
+        height: 260px;
+    }
+}
+
+@media (max-width: 640px) {
+    .dg-cart-img-wrap {
+        width: 68px;
+        height: 88px;
+    }
+
+    .dg-glass-panel {
+        padding: 1.25rem;
+    }
+}

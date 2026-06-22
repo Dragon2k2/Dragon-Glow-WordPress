@@ -86,17 +86,12 @@
             this.textContent = '...';
             this.disabled = true;
 
-            var formData = new FormData();
-            formData.append('action', 'dg_ajax_add_to_cart');
-            formData.append('product_id', productId);
-            formData.append('quantity', 1);
-            formData.append('nonce', dgAjax.nonce);
-
-            fetch(dgAjax.url, {
-                method: 'POST',
-                body: formData
+            window.DGCart.add({
+                productId: parseInt(productId, 10) || 0,
+                slug:      this.dataset.productSlug || '',
+                size:      '',
+                quantity:  1,
             })
-            .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data.success) {
                     this.textContent = '✓ Added!';
@@ -112,8 +107,7 @@
                     this.disabled = false;
                 }
             }.bind(this))
-            .catch(function (err) {
-                console.error('Add to cart error:', err);
+            .catch(function () {
                 this.textContent = originalText;
                 this.disabled = false;
             }.bind(this));

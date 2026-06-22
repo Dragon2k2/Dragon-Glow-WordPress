@@ -15,6 +15,8 @@ if (!$_product) {
 	return;
 }
 
+$product_slug = $_product->get_slug();
+
 $product_name = $_product->get_name();
 $product_price = $_product->get_price_html();
 $product_link = get_permalink($product_id);
@@ -70,12 +72,13 @@ $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '
 			</div>
 		<?php endif; ?>
 
-		<button class="dg-add-to-ritual dg-quick-add inline-flex items-center justify-center gap-2"
+		<button class="dg-add-to-cart dg-quick-add inline-flex items-center justify-center gap-2"
 			data-product-id="<?php echo esc_attr($product_id); ?>"
-			data-original-label="<?php esc_attr_e('Add to Ritual', 'dragon-glow'); ?>"
+			data-product-slug="<?php echo esc_attr($product_slug); ?>"
+			data-original-label="<?php esc_attr_e('Add to Cart', 'dragon-glow'); ?>"
 			type="button">
-			<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
-			<span class="dg-quick-add__label"><?php esc_html_e('Add to Ritual', 'dragon-glow'); ?></span>
+		<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
+		<span class="dg-quick-add__label"><?php esc_html_e('Add to Cart', 'dragon-glow'); ?></span>
 		</button>
 	</div>
 	<a href="<?php echo esc_url($product_link); ?>" class="text-center px-2 dg-product-info-link">

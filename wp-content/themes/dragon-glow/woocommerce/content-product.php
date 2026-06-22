@@ -90,6 +90,7 @@ if ( $product->is_featured() ) {
         ?>
         <button class="absolute bottom-4 left-4 right-4 bg-primary text-on-primary py-3 rounded-xl font-label-sm text-label-sm opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:brightness-110 wc-add-to-cart-btn z-10"
                 data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
+                data-product-slug="<?php echo esc_attr( $product->get_slug() ); ?>"
                 data-product-type="<?php echo esc_attr( $product_type ); ?>">
             <?php echo esc_html( $button_text ); ?>
         </button>

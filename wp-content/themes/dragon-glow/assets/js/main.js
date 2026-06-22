@@ -102,17 +102,12 @@
         btn.textContent = '✓';
         btn.classList.add('opacity-70');
 
-        var formData = new FormData();
-        formData.append('action', 'dg_ajax_add_to_cart');
-        formData.append('product_id', productId);
-        formData.append('quantity', 1);
-        formData.append('nonce', dgAjax.nonce);
-
-        fetch(dgAjax.url, {
-            method: 'POST',
-            body: formData
+        window.DGCart.add({
+            productId: parseInt(productId, 10) || 0,
+            slug:      btn.dataset.productSlug || '',
+            size:      '',
+            quantity:  1,
         })
-        .then(function (r) { return r.json(); })
         .then(function (data) {
             if (data.error && data.data && data.data.redirect) {
                 window.location.href = data.data.redirect;
@@ -121,7 +116,7 @@
 
             if (data.success) {
                 // Update cart count
-                updateCartCount();
+                window.DGCart.refreshCount();
 
                 // Show success feedback
                 btn.textContent = '✓ Added!';
@@ -137,8 +132,7 @@
                 btn.classList.remove('opacity-70');
             }
         })
-        .catch(function (err) {
-            console.error('Add to cart error:', err);
+        .catch(function () {
             btn.textContent = originalText;
             btn.classList.remove('opacity-70');
         });
@@ -153,26 +147,23 @@
      * @return {void}
      */
     function updateCartCount() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', dgAjax.url + '?action=woocommerce_get_refreshed_fragments', true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.fragments) {
-                        Object.keys(response.fragments).forEach(function (key) {
-                            var els = document.querySelectorAll(key);
-                            els.forEach(function (el) {
-                                el.outerHTML = response.fragments[key];
-                            });
-                        });
-                    }
-                } catch (e) {
-                    console.error('Cart fragment parse error:', e);
-                }
-            }
-        };
-        xhr.send();
+        var formData = new FormData();
+        formData.append('action', 'dg_ajax_get_cart_count');
+        formData.append('nonce', dgAjax.nonce);
+
+        fetch(dgAjax.url, { method: 'POST', body: formData, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.success) return;
+                var count = data.data.count;
+                document.querySelectorAll('.dg-cart-count').forEach(function (el) {
+                    el.textContent = count;
+                    el.classList.toggle('hidden', count === 0);
+                });
+            })
+            .catch(function (err) {
+                console.error('Cart count update error:', err);
+            });
     }
     window.DGUpdateCartCount = updateCartCount;
 

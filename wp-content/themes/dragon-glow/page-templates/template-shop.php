@@ -47,6 +47,43 @@ if ( ! dg_mock_checkout_page_exists() && ! dg_is_woocommerce_active() ) :
 	<?php
 endif;
 
+// Show a transient banner when the user has been redirected back to the Shop
+// because the mock checkout page was not found.  Clears the query flag from the
+// URL so it does not re-appear on refresh.
+if ( ! empty( $_GET['dg_checkout_unavailable'] ) ) :
+	?>
+	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-6" id="dg-checkout-unavailable-banner">
+		<div class="flex items-start gap-3 p-4 bg-primary-container/20 border border-primary/20 rounded-xl text-sm">
+			<span class="material-symbols-outlined text-primary flex-shrink-0 mt-0.5">error</span>
+			<p class="text-on-surface-variant">
+				<strong class="text-primary"><?php esc_html_e( 'Checkout not available.', 'dragon-glow' ); ?></strong>
+				<?php
+				printf(
+					esc_html__( 'A checkout page has not been set up yet. Please %1$screate a page with the slug %2$s%3$s and assign it the %4$s template to enable checkout.', 'dragon-glow' ),
+					'<a href="' . esc_url( admin_url( 'post-new.php?post_type=page' ) ) . '" class="text-primary underline underline-offset-2" target="_blank">',
+					'<code>mock-checkout</code>',
+					'</a>',
+					'<strong>Mock Checkout — Dragon Glow</strong>'
+				);
+				?>
+			</p>
+		</div>
+	</div>
+	<script>
+		(function () {
+			var banner = document.getElementById('dg-checkout-unavailable-banner');
+			if (banner) {
+				var url = new URL(window.location);
+				if (url.searchParams.has('dg_checkout_unavailable')) {
+					url.searchParams.delete('dg_checkout_unavailable');
+					history.replaceState({}, '', url.toString());
+				}
+			}
+		})();
+	</script>
+	<?php
+endif;
+
 	$page_title = get_the_title() ?: __( 'The Collection', 'dragon-glow' );
 	$shop_url   = dg_is_woocommerce_active()
 		? get_permalink( wc_get_page_id( 'shop' ) )
@@ -285,14 +322,14 @@ endif;
 							</span>
 						</div>
 					<?php endif; ?>
-				<button class="dg-add-to-ritual dg-quick-add inline-flex items-center justify-center gap-2"
-						type="button"
-						data-product-id="<?php echo esc_attr( $card_wc_id ); ?>"
-						data-product-slug="<?php echo esc_attr( $card_slug ); ?>"
-						data-original-label="<?php esc_attr_e( 'Add to Ritual', 'dragon-glow' ); ?>">
-					<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
-					<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Ritual', 'dragon-glow' ); ?></span>
-				</button>
+		<button class="dg-add-to-cart dg-quick-add inline-flex items-center justify-center gap-2"
+				type="button"
+				data-product-id="<?php echo esc_attr( $card_wc_id ); ?>"
+				data-product-slug="<?php echo esc_attr( $card_slug ); ?>"
+				data-original-label="<?php esc_attr_e( 'Add to Cart', 'dragon-glow' ); ?>">
+				<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
+				<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Cart', 'dragon-glow' ); ?></span>
+		</button>
 				</div>
 				<a href="<?php echo esc_url( $card_url ); ?>" class="text-center px-2 dg-product-info-link">
 					<?php echo dg_mock_stars( (float) $p['rating'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

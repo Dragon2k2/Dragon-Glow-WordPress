@@ -1,0 +1,79 @@
+/* =========================================
+   DRAGON GLOW — SHIPPING & RETURNS STYLES
+   ========================================= */
+
+/* In-page navigation */
+.dg-toc-link {
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+.dg-toc-link.dg-toc-active {
+    border-bottom-color: var(--color-primary, #735c00);
+    color: var(--color-on-surface, #1c1b1b);
+}
+
+/* Section number labels */
+.section-number-label {
+    display: block;
+}
+
+/* Return step timeline */
+.dg-return-step {
+    transition: opacity 0.3s ease;
+}
+.dg-step-number {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.dg-step-check {
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Scroll-reveal — start invisible */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal].dg-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Table row hover micro-interaction */
+table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Text glow on hero title */
+.text-glow {
+    text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
+}
+
+/* Scrollbar hide for TOC nav */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hover card micro-interaction */
+.bg-surface-container-lowest {
+    transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Coverage cards full-width on mobile */
+@media (max-width: 767px) {
+    .dg-return-step {
+        gap: 1rem;
+    }
+}

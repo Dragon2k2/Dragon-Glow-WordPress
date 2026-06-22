@@ -216,9 +216,9 @@ if ( ! empty( $p['img_main'] ) ) {
 			        data-add-to-bag="1"
 			        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
 			        data-product-id="<?php echo esc_attr( $args['wc_product_id'] ?? 0 ); ?>"
-			        class="btn-primary-glow flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+			        class="btn-outline-gold flex-1 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
 				<span class="material-symbols-outlined">shopping_bag</span>
-				<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?></span>
+				<span class="dg-quick-add__label"><?php esc_html_e( 'Add to Cart', 'dragon-glow' ); ?></span>
 			</button>
 			<button type="button"
 			        id="dg-buy-now-btn"
@@ -226,7 +226,7 @@ if ( ! empty( $p['img_main'] ) ) {
 			        data-product-slug="<?php echo esc_attr( $current_slug ); ?>"
 			        data-product-id="<?php echo esc_attr( $args['wc_product_id'] ?? 0 ); ?>"
 			        class="flex-1 py-4 rounded-2xl bg-primary text-on-primary font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-				<span class="material-symbols-outlined dg-buy-now-icon">bolt</span>
+				<span class="material-symbols-outlined dg-buy-now-icon">shopping_cart_checkout</span>
 				<span class="dg-buy-now-label"><?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?></span>
 			</button>
 		</div>

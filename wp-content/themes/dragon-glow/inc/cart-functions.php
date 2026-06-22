@@ -131,6 +131,116 @@ function dg_clear_mock_cart(): bool {
 	return delete_transient( DG_Mock_Checkout_Handler::CART_TRANSIENT_KEY );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  Cart Page Resolution  (mirrors mock-checkout page lookup pattern in helpers.php)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Get the WooCommerce Cart page object if it exists and is published.
+ *
+ * @return WP_Post|null
+ */
+function dg_find_wc_cart_page() {
+	if ( ! dg_is_woocommerce_active() ) {
+		return null;
+	}
+
+	$page_id = function_exists( 'wc_get_page_id' ) ? wc_get_page_id( 'cart' ) : 0;
+
+	if ( $page_id <= 0 ) {
+		return null;
+	}
+
+	$page = get_post( $page_id );
+
+	if ( ! $page || 'publish' !== $page->post_status ) {
+		return null;
+	}
+
+	return $page;
+}
+
+/**
+ * Check whether the WooCommerce Cart page is published.
+ *
+ * @return bool
+ */
+function dg_wc_cart_page_exists(): bool {
+	return (bool) dg_find_wc_cart_page();
+}
+
+/**
+ * Find the internal Mock Cart page.
+ *
+ * Looks for a published page by slug "cart" when WooCommerce is inactive, OR
+ * any published page using the mock-cart template.
+ *
+ * @return WP_Post|null
+ */
+function dg_find_mock_cart_page() {
+	// Strategy 1: published page with slug "cart" (only reliable when WC is inactive,
+	// since WC owns the "cart" slug when active).
+	if ( ! dg_is_woocommerce_active() ) {
+		$page_by_slug = get_page_by_path( 'cart' );
+		if ( $page_by_slug && 'publish' === $page_by_slug->post_status ) {
+			return $page_by_slug;
+		}
+	}
+
+	// Strategy 2: any published page using the mock-cart template.
+	$pages = get_posts(
+		array(
+			'post_type'      => 'page',
+			'posts_per_page' => 1,
+			'post_status'    => 'publish',
+			'meta_key'       => '_wp_page_template',
+			'meta_value'     => 'page-templates/template-mock-cart.php',
+		)
+	);
+
+	return ! empty( $pages ) ? $pages[0] : null;
+}
+
+/**
+ * Single source of truth for the cart page URL.
+ *
+ * Priority:
+ *   1. WooCommerce cart URL (when WC active and cart page is published).
+ *   2. Shop URL with dg_cart_unavailable=1 (when WC active but cart page is missing).
+ *   3. Mock cart page permalink (when WC inactive and a mock cart page exists).
+ *   4. Shop URL with dg_cart_unavailable=1 (fallback — never returns a guessed URL).
+ *
+ * @return string
+ */
+function dg_get_cart_url(): string {
+	if ( dg_is_woocommerce_active() && dg_wc_cart_page_exists() ) {
+		return wc_get_cart_url();
+	}
+
+	if ( dg_is_woocommerce_active() ) {
+		// WC active but the cart page is unpublished / deleted.
+		$shop_url = function_exists( 'wc_get_page_permalink' )
+			? wc_get_page_permalink( 'shop' )
+			: home_url( '/shop/' );
+		return add_query_arg( 'dg_cart_unavailable', '1', $shop_url );
+	}
+
+	// WC inactive — try the mock cart page.
+	$mock_page = dg_find_mock_cart_page();
+	if ( $mock_page ) {
+		return get_permalink( $mock_page );
+	}
+
+	// No cart page found — return shop URL with a flag so the frontend
+	// can display a meaningful "please create a cart page" message.
+	$shop_url = home_url( '/shop/' );
+	return add_query_arg( 'dg_cart_unavailable', '1', $shop_url );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  End Cart Page Resolution
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Silent add-to-cart: adds a product to cart without ever producing a redirect.
  *
@@ -141,8 +251,8 @@ function dg_clear_mock_cart(): bool {
  *     → stores the item in the transient mock cart so the user can view it on
  *       the mock checkout page without being redirected.
  *
- * This function intentionally returns NO `redirect` key in the response array,
- * differentiating it from the buy-now flow which goes through DG_Checkout_Router.
+ * After a successful add, always returns a 'redirect' key pointing to the
+ * canonical cart URL (dg_get_cart_url()) so the frontend never has to guess.
  *
  * @param array $args {
  *     @type int    $product_id  Numeric WC product ID (0 if using slug for mock product).
@@ -150,7 +260,7 @@ function dg_clear_mock_cart(): bool {
  *     @type string $size        Selected size label (e.g. "50ml").
  *     @type int    $quantity    Number of items (default 1).
  * }
- * @return array{success: bool, message?: string}
+ * @return array{success: bool, message?: string, redirect?: string}
  */
 function dg_add_to_cart_silently( array $args ): array {
 	$product_id = absint( $args['product_id'] ?? 0 );
@@ -161,7 +271,10 @@ function dg_add_to_cart_silently( array $args ): array {
 	if ( $product_id > 0 ) {
 		$added = dg_wc_add_to_cart( $product_id, $quantity );
 		if ( $added ) {
-			return array( 'success' => true );
+			return array(
+				'success'  => true,
+				'redirect' => dg_get_cart_url(),
+			);
 		}
 		return array(
 			'success' => false,
@@ -201,5 +314,167 @@ function dg_add_to_cart_silently( array $args ): array {
 
 	dg_save_mock_cart( $cart_items );
 
-	return array( 'success' => true );
+	return array(
+		'success'  => true,
+		'redirect' => dg_get_cart_url(),
+	);
+}
+
+/**
+ * Get the total item count across whichever cart system is currently active.
+ *
+ * @return int
+ */
+function dg_get_cart_item_count(): int {
+	if ( dg_is_woocommerce_active() && isset( WC()->cart ) ) {
+		return WC()->cart->get_cart_contents_count();
+	}
+
+	$total = 0;
+	foreach ( dg_get_mock_cart() as $item ) {
+		$total += (int) ( $item['quantity'] ?? 0 );
+	}
+	return $total;
+}
+
+/**
+ * Render the cart-count badge markup. Single source of truth — used by both
+ * the initial server-side render (header-nav.php) and the WooCommerce
+ * fragments filter (dg_cart_count_fragment) so the two never drift apart.
+ *
+ * @param int $count Item count.
+ * @return string
+ */
+function dg_render_cart_count_badge( int $count ): string {
+	$classes = 'dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center';
+	if ( 0 === $count ) {
+		$classes .= ' hidden';
+	}
+	return '<span class="' . esc_attr( $classes ) . '">' . esc_html( $count ) . '</span>';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Silent Remove  (single source of truth for cart removal)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Remove a product from whichever cart system is currently active.
+ *
+ * Mode-aware:
+ *   - product_id > 0  → remove from WooCommerce cart (scans by product_id).
+ *   - slug provided   → remove from transient mock cart.
+ *
+ * Used exclusively by AJAX handlers; exposed as a function so the same logic
+ * can be called from any context without repeating the scan logic.
+ *
+ * @param array $args {
+ *     @type int    $product_id  Numeric WC product ID (0 if removing mock-only).
+ *     @type string $slug        Mock product slug (used when product_id is 0).
+ * }
+ * @return array{success: bool, message?: string, count?: int}
+ */
+function dg_remove_from_cart_silently( array $args ): array {
+	$product_id = absint( $args['product_id'] ?? 0 );
+	$slug       = sanitize_text_field( $args['slug'] ?? '' );
+
+	// ── WooCommerce path ──────────────────────────────────────────────────────
+	if ( $product_id > 0 && dg_is_woocommerce_active() && isset( WC()->cart ) ) {
+		$removed = false;
+		foreach ( WC()->cart->get_cart() as $cart_item_key => $item ) {
+			if ( (int) $item['product_id'] === $product_id ) {
+				$removed = WC()->cart->remove_cart_item( $cart_item_key );
+				break;
+			}
+		}
+
+		if ( $removed ) {
+			return array(
+				'success' => true,
+				'count'   => WC()->cart->get_cart_contents_count(),
+			);
+		}
+		return array(
+			'success' => false,
+			'message'  => __( 'Could not remove item.', 'dragon-glow' ),
+		);
+	}
+
+	// ── Mock cart path ───────────────────────────────────────────────────────
+	if ( empty( $slug ) ) {
+		return array(
+			'success' => false,
+			'message'  => __( 'No identifier provided for removal.', 'dragon-glow' ),
+		);
+	}
+
+	$cart     = dg_get_mock_cart();
+	$item_key = $slug; // In mock cart, items are keyed by slug only (no size variant here).
+	$found    = false;
+
+	// Scan for any mock item whose key starts with the slug (handles size-variant keys
+	// like "luminous-serum|50ml" — we only need to match the slug prefix).
+	foreach ( $cart as $key => $item ) {
+		if ( 0 === strpos( $key, $slug . '|' ) || $key === $slug ) {
+			unset( $cart[ $key ] );
+			$found = true;
+		}
+	}
+
+	if ( ! $found ) {
+		return array(
+			'success' => false,
+			'message'  => __( 'Item not found in cart.', 'dragon-glow' ),
+		);
+	}
+
+	dg_save_mock_cart( $cart );
+
+	$total = 0;
+	foreach ( $cart as $item ) {
+		$total += (int) ( $item['quantity'] ?? 0 );
+	}
+
+	return array(
+		'success' => true,
+		'count'   => $total,
+	);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Cart Identifiers  (single source of truth for restore-cart-state)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Get all stable identifiers of items currently in the cart.
+ *
+ * Mode-aware:
+ *   - WooCommerce active → reads WC()->cart → returns product_ids.
+ *   - WooCommerce inactive → reads transient mock cart → returns slugs.
+ *
+ * Used by the shop page to pre-mark quick-add buttons on page load so the
+ * "Added" state survives hard refreshes.
+ *
+ * @return array{product_ids: int[], slugs: string[]}
+ */
+function dg_get_cart_identifiers(): array {
+	$product_ids = array();
+	$slugs       = array();
+
+	if ( dg_is_woocommerce_active() && isset( WC()->cart ) && WC()->cart ) {
+		foreach ( WC()->cart->get_cart() as $item ) {
+			$product_ids[] = (int) $item['product_id'];
+		}
+		$product_ids = array_values( array_unique( $product_ids ) );
+	} else {
+		$cart = dg_get_mock_cart();
+		foreach ( $cart as $key => $item ) {
+			$slugs[] = $item['slug'] ?? '';
+		}
+		$slugs = array_values( array_unique( array_filter( $slugs ) ) );
+	}
+
+	return array(
+		'product_ids' => $product_ids,
+		'slugs'       => $slugs,
+	);
 }

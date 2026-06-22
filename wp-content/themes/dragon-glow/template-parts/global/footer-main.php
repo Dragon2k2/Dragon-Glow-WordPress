@@ -11,6 +11,16 @@ defined( 'ABSPATH' ) || exit;
 $shop_url = dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#';
 $about_url = get_permalink( get_page_by_path( 'our-story' ) ) ?: '#';
 $contact_url = get_permalink( get_page_by_path( 'contact' ) ) ?: '#';
+$faq_url     = get_permalink( get_page_by_path( 'faq' ) ) ?: '#';
+$shipping_url = get_permalink( get_page_by_path( 'shipping-returns' ) ) ?: '#';
+$track_url   = get_permalink( get_page_by_path( 'order-tracking' ) ) ?: '#';
+
+// Legal pages — always render with fallback so the column is never empty
+$privacy_url = get_privacy_policy_url()
+	?: ( get_permalink( get_page_by_path( 'privacy-policy' ) ) ?: '#' );
+$tos_url     = get_permalink( get_page_by_path( 'terms-of-service' ) ) ?: '#';
+$cookie_url = get_permalink( get_page_by_path( 'cookie-policy' ) ) ?: '#';
+$access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
 ?>
 <footer class="bg-gradient-to-br from-[#f4c2c2] via-[#e1e1f5] to-[#e1e1f5] mt-section-gap pt-section-gap flat no-shadows">
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-wrap justify-between gap-gutter">
@@ -48,14 +58,14 @@ $contact_url = get_permalink( get_page_by_path( 'contact' ) ) ?: '#';
             </div>
         </div>
 
-        <!-- Shop Column -->
+        <!-- Customer Care Column -->
         <div class="w-full md:w-1/4 lg:w-1/6">
-            <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Shop', 'dragon-glow' ); ?></h5>
+            <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Customer Care', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
-                <li><a href="<?php echo esc_url( $shop_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'All Products', 'dragon-glow' ); ?></a></li>
-                <li><a href="#" class="hover:text-primary transition-all"><?php esc_html_e( 'New Arrivals', 'dragon-glow' ); ?></a></li>
-                <li><a href="#" class="hover:text-primary transition-all"><?php esc_html_e( 'Best Sellers', 'dragon-glow' ); ?></a></li>
-                <li><a href="#" class="hover:text-primary transition-all"><?php esc_html_e( 'Skin Quiz', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $shipping_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Shipping & Returns', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $faq_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'FAQ', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $track_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Track Your Order', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $contact_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Contact Us', 'dragon-glow' ); ?></a></li>
             </ul>
         </div>
 
@@ -70,21 +80,14 @@ $contact_url = get_permalink( get_page_by_path( 'contact' ) ) ?: '#';
             </ul>
         </div>
 
-        <!-- Help Column -->
+        <!-- Legal Column -->
         <div class="w-full md:w-1/4 lg:w-1/6">
-            <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Help', 'dragon-glow' ); ?></h5>
+            <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Legal', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
-                <?php if ( function_exists( 'the_privacy_policy_link' ) ) : ?>
-                    <li><?php the_privacy_policy_link( '', '' ); ?></li>
-                <?php endif; ?>
-                <?php
-                $tos_page = get_page_by_path( 'terms-of-service' );
-                if ( $tos_page ) :
-                ?>
-                <li><a href="<?php echo esc_url( get_permalink( $tos_page ) ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Terms of Service', 'dragon-glow' ); ?></a></li>
-                <?php endif; ?>
-                <li><a href="#" class="hover:text-primary transition-all"><?php esc_html_e( 'Shipping & Returns', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $contact_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Contact Us', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $privacy_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Privacy Policy', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $tos_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Terms of Service', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $cookie_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Cookie Policy', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $access_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Accessibility', 'dragon-glow' ); ?></a></li>
             </ul>
         </div>
     </div>
