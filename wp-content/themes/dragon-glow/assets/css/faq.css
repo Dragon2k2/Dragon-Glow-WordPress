@@ -1,84 +1,442 @@
-/* =========================================
-   DRAGON GLOW — FAQ PAGE STYLES
-   ========================================= */
+/* ═══════════════════════════════════════════
+   DRAGON GLOW — FAQ
+   Numbered editorial · Geist · hairline · single column
+   ═══════════════════════════════════════════ */
 
-/* Search input */
-.dg-faq-search input {
-    border-radius: 0;
-}
+/* ── Scope & typography ─────────────────────── */
+.dg-faq {
+	--faq-ink: var(--color-on-surface, #1c1b1b);
+	--faq-muted: var(--color-on-surface-variant, #514843);
+	--faq-line: var(--color-outline-variant, rgba(28, 27, 27, 0.14));
+	--faq-accent: #d4af37; /* vàng thương hiệu */
+	--faq-num-w: 2.75rem;
 
-/* FAQ trigger button */
-.dg-faq-trigger {
-    cursor: pointer;
-    text-align: left;
-}
-.dg-faq-trigger:focus-visible {
-    outline: 2px solid var(--color-primary, #735c00);
-    outline-offset: 2px;
-}
-
-/* Icon rotation when open */
-.dg-faq-trigger[aria-expanded="true"] .dg-faq-icon {
-    transform: rotate(45deg);
+	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+	font-feature-settings: "tnum" 1; /* số tabular cho 01/02 + dữ kiện */
+	color: var(--faq-ink);
+	background: var(--color-background, #fbf9f5);
+	padding-bottom: clamp(5rem, 12vw, 9rem);
 }
 
-/* Smooth height animation for panel */
-.dg-faq-panel {
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.3s ease;
-}
-.dg-faq-panel.dg-panel-open {
-    max-height: 1000px;
-    opacity: 1;
+.dg-faq-wrap {
+	max-width: 56rem;
+	margin: 0 auto;
+	padding: clamp(3.5rem, 9vw, 7rem) var(--wp--custom--spacing--margin-mobile, 22px) 0;
 }
 
-/* Highlight matching text */
-.dg-faq-highlight {
-    background-color: rgba(115, 92, 0, 0.12);
-    padding: 0 2px;
-    border-radius: 2px;
+/* ── Scroll-linked progress ─────────────────── */
+.dg-faq-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	z-index: 60;
+	pointer-events: none;
+	background: transparent;
+}
+.dg-faq-progress-fill {
+	display: block;
+	width: 100%;
+	height: 100%;
+	transform: scaleX(0);
+	transform-origin: 0 50%;
+	background: linear-gradient(90deg, var(--faq-accent), #f1ca50);
 }
 
-/* No results state */
-.dg-no-results-msg {
-    display: none;
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.dg-faq-hero {
+	margin-bottom: clamp(2.75rem, 7vw, 5rem);
 }
-.dg-no-results-msg.dg-visible {
-    display: block;
+.dg-faq-eyebrow {
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	color: var(--faq-muted);
+	margin: 0 0 clamp(1rem, 3vw, 1.75rem);
+}
+.dg-faq-title {
+	font-size: clamp(3.25rem, 11vw, 7rem);
+	font-weight: 600;
+	letter-spacing: -0.04em;
+	line-height: 0.92;
+	margin: 0;
+}
+.dg-faq-lede {
+	font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+	font-weight: 400;
+	line-height: 1.4;
+	color: var(--faq-muted);
+	max-width: 32ch;
+	margin: clamp(1.25rem, 3vw, 1.75rem) 0 0;
 }
 
-/* Text glow on hero title */
-.text-glow {
-    text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
+/* ═══════════════════════════════════════════
+   SEARCH
+   ═══════════════════════════════════════════ */
+.dg-faq-search {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	border-bottom: 1px solid var(--faq-ink);
+	padding: 0.9rem 0;
+	margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+.dg-faq-search-icon {
+	font-size: 1.35rem;
+	color: var(--faq-muted);
+	flex: none;
+}
+.dg-faq-search-input {
+	flex: 1;
+	min-width: 0;
+	border: 0;
+	background: transparent;
+	font-family: inherit;
+	font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+	font-weight: 400;
+	color: var(--faq-ink);
+	padding: 0;
+}
+.dg-faq-search-input::placeholder {
+	color: var(--faq-muted);
+	opacity: 0.7;
+}
+.dg-faq-search-input:focus {
+	outline: none;
+}
+.dg-faq-search-input::-webkit-search-cancel-button {
+	-webkit-appearance: none;
+	appearance: none;
+}
+.dg-faq-search-clear {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border: 0;
+	background: transparent;
+	color: var(--faq-muted);
+	cursor: pointer;
+	flex: none;
+	transition: color 0.2s ease;
+}
+.dg-faq-search-clear:hover {
+	color: var(--faq-ink);
+}
+.dg-faq-search-clear .material-symbols-outlined {
+	font-size: 1.25rem;
+}
+/* Số kết quả — neo dưới đường search, không đẩy layout */
+.dg-faq-search-status {
+	position: absolute;
+	top: calc(100% + 0.6rem);
+	left: 0;
+	font-size: 0.78rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--faq-muted);
+	margin: 0;
 }
 
-/* Scroll-reveal for group sections */
+/* ═══════════════════════════════════════════
+   GROUPS & ITEMS
+   ═══════════════════════════════════════════ */
 .dg-faq-group {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	margin-bottom: clamp(2.5rem, 6vw, 4rem);
 }
-.dg-faq-group.dg-faq-group-visible {
-    opacity: 1;
-    transform: translateY(0);
+.dg-faq-group[hidden] {
+	display: none;
 }
-
-/* Group title */
-.dg-faq-group-title {
-    transition: color 0.2s ease;
-}
-
-/* Hide groups when filtering to zero */
-.dg-faq-group.dg-hidden {
-    display: none;
+.dg-faq-group-label {
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.26em;
+	text-transform: uppercase;
+	color: var(--faq-muted);
+	margin: 0 0 0.5rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--faq-line);
 }
 
-/* Mobile adjustments */
+.dg-faq-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	counter-reset: faq; /* đánh số lại theo từng nhóm */
+}
+.dg-faq-item {
+	counter-increment: faq; /* item bị search ẩn (display:none) sẽ không tính */
+	border-bottom: 1px solid var(--faq-line);
+}
+.dg-faq-item[hidden] {
+	display: none;
+}
+
+.dg-faq-q {
+	margin: 0;
+	font-weight: inherit;
+}
+.dg-faq-trigger {
+	display: grid;
+	grid-template-columns: var(--faq-num-w) 1fr auto;
+	align-items: start;
+	gap: clamp(0.75rem, 2vw, 1.5rem);
+	width: 100%;
+	text-align: left;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	padding: clamp(1.15rem, 3vw, 1.65rem) 0;
+	color: var(--faq-ink);
+	font-family: inherit;
+}
+.dg-faq-num::before {
+	content: counter(faq, decimal-leading-zero);
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--faq-muted);
+	line-height: 1.75;
+	transition: color 0.25s ease;
+}
+.dg-faq-q-text {
+	font-size: clamp(1.08rem, 2.4vw, 1.5rem);
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	line-height: 1.32;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dấu +/− vẽ bằng pseudo-element */
+.dg-faq-mark {
+	position: relative;
+	width: 15px;
+	height: 15px;
+	margin-top: 0.55rem;
+	flex: none;
+	color: var(--faq-muted);
+	transition: color 0.25s ease;
+}
+.dg-faq-mark::before,
+.dg-faq-mark::after {
+	content: "";
+	position: absolute;
+	background: currentColor;
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dg-faq-mark::before {
+	top: 50%;
+	left: 0;
+	width: 100%;
+	height: 1.5px;
+	transform: translateY(-50%);
+}
+.dg-faq-mark::after {
+	left: 50%;
+	top: 0;
+	width: 1.5px;
+	height: 100%;
+	transform: translateX(-50%);
+}
+.dg-faq-trigger[aria-expanded="true"] .dg-faq-mark::after {
+	transform: translateX(-50%) scaleY(0);
+}
+.dg-faq-trigger[aria-expanded="true"] .dg-faq-num::before,
+.dg-faq-trigger[aria-expanded="true"] .dg-faq-mark {
+	color: var(--faq-ink);
+}
+
+/* Hover (chỉ thiết bị có con trỏ) */
+@media (hover: hover) {
+	.dg-faq-trigger:hover .dg-faq-q-text {
+		transform: translateX(8px);
+	}
+	.dg-faq-trigger:hover .dg-faq-num::before,
+	.dg-faq-trigger:hover .dg-faq-mark {
+		color: var(--faq-accent);
+	}
+}
+
+.dg-faq-trigger:focus-visible {
+	outline: 2px solid var(--faq-accent);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+/* Panel câu trả lời (height do JS điều khiển) */
+.dg-faq-panel {
+	overflow: hidden;
+}
+.dg-faq-panel[hidden] {
+	display: none;
+}
+.dg-faq-a {
+	margin: 0;
+	padding: 0 clamp(0.75rem, 2vw, 1.5rem) clamp(1.4rem, 3vw, 1.75rem) calc(var(--faq-num-w) + clamp(0.75rem, 2vw, 1.5rem));
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.65;
+	color: var(--faq-muted);
+	max-width: 60ch;
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════ */
+.dg-faq-empty {
+	text-align: center;
+	padding: clamp(3rem, 8vw, 5rem) 0;
+}
+.dg-faq-empty[hidden] {
+	display: none;
+}
+.dg-faq-empty-title {
+	font-size: clamp(1.5rem, 4vw, 2.25rem);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	margin: 0 0 0.75rem;
+}
+.dg-faq-empty-text {
+	font-size: 1rem;
+	color: var(--faq-muted);
+	margin: 0 auto 2rem;
+	max-width: 36ch;
+}
+.dg-faq-empty-link {
+	display: inline-block;
+	font-size: 0.78rem;
+	font-weight: 500;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--faq-ink);
+	text-decoration: none;
+	border-bottom: 1px solid var(--faq-ink);
+	padding-bottom: 0.4rem;
+	transition: color 0.25s ease, border-color 0.25s ease;
+}
+.dg-faq-empty-link:hover {
+	color: var(--faq-accent);
+	border-color: var(--faq-accent);
+}
+
+/* ═══════════════════════════════════════════
+   CONTACT CTA
+   ═══════════════════════════════════════════ */
+.dg-faq-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1.25rem;
+	margin-top: clamp(3.5rem, 8vw, 5.5rem);
+	padding-top: clamp(2rem, 5vw, 3rem);
+	border-top: 1px solid var(--faq-ink);
+}
+.dg-faq-cta-text {
+	font-size: clamp(1.5rem, 4vw, 2.5rem);
+	font-weight: 600;
+	letter-spacing: -0.03em;
+	margin: 0;
+}
+.dg-faq-cta-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	font-size: 0.8rem;
+	font-weight: 500;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--faq-ink);
+	text-decoration: none;
+	will-change: transform;
+}
+.dg-faq-cta-arrow {
+	font-size: 1.1rem;
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (hover: hover) {
+	.dg-faq-cta-link:hover .dg-faq-cta-arrow {
+		transform: translateX(6px);
+	}
+}
+.dg-faq-cta-link:focus-visible {
+	outline: 2px solid var(--faq-accent);
+	outline-offset: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE  (thiết kế riêng cho màn nhỏ)
+   - Search dính trên đầu để luôn trong tầm tay
+   - Thu nhỏ cột số, giảm gap, câu trả lời trải full
+   - CTA xếp dọc
+   ═══════════════════════════════════════════ */
 @media (max-width: 640px) {
-    .dg-faq-answer {
-        padding-left: 0;
-    }
+	.dg-faq {
+		--faq-num-w: 1.9rem;
+	}
+	.dg-faq-search {
+		position: sticky;
+		top: 0;
+		z-index: 40;
+		background: var(--color-background, #fbf9f5);
+		/* nới mép để nền sticky che hết bề ngang khi cuộn */
+		margin-left: calc(-1 * var(--wp--custom--spacing--margin-mobile, 22px));
+		margin-right: calc(-1 * var(--wp--custom--spacing--margin-mobile, 22px));
+		padding-left: var(--wp--custom--spacing--margin-mobile, 22px);
+		padding-right: var(--wp--custom--spacing--margin-mobile, 22px);
+	}
+	.dg-faq-search-status {
+		left: var(--wp--custom--spacing--margin-mobile, 22px);
+	}
+	.dg-faq-num::before {
+		font-size: 0.72rem;
+	}
+	.dg-faq-a {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.dg-faq-cta {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.5rem;
+	}
+}
+
+/* Tablet — nới bề ngang mép trang */
+@media (min-width: 768px) {
+	.dg-faq-wrap {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 48px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 48px);
+	}
+}
+
+/* ═══════════════════════════════════════════
+   FOUC GUARD + REDUCED MOTION
+   ═══════════════════════════════════════════ */
+/* Ẩn phần tử sẽ reveal cho tới khi JS chạy (chỉ khi có .dg-js) */
+.dg-js .dg-faq [data-sr] {
+	opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-js .dg-faq [data-sr] {
+		opacity: 1 !important;
+	}
+	.dg-faq-progress-fill {
+		transform: scaleX(1);
+	}
+	.dg-faq-q-text,
+	.dg-faq-mark::before,
+	.dg-faq-mark::after,
+	.dg-faq-cta-arrow {
+		transition: none !important;
+	}
+	.dg-faq-trigger:hover .dg-faq-q-text {
+		transform: none;
+	}
 }

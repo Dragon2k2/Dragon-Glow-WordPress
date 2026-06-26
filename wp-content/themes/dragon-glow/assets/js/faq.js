@@ -1,148 +1,204 @@
 /**
- * Dragon Glow — FAQ Accordion & Search
+ * Dragon Glow — FAQ
+ * ES Module — Motion (motion.dev) vanilla API. KHÔNG React.
+ *
+ * Gồm: scroll-progress, reveal + stagger, accordion (animate height),
+ * live search (lọc + đánh số lại qua CSS counter), magnetic CTA.
+ * Tôn trọng prefers-reduced-motion.
  *
  * @package Dragon_Glow
  */
-(function () {
-    'use strict';
 
-    /* ── Scroll reveal for groups ─────────────────────────────────────────────── */
-    var groups = document.querySelectorAll('.dg-faq-group');
-    if (groups.length) {
-        var observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('dg-faq-group-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-        groups.forEach(function (group) { observer.observe(group); });
-    }
+import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 
-    /* ── Accordion ────────────────────────────────────────────────────────────── */
-    var accordion = document.getElementById('dg-faq-accordion');
-    if (!accordion) return;
+( function () {
+	'use strict';
 
-    var triggers = accordion.querySelectorAll('.dg-faq-trigger');
-    var panels   = accordion.querySelectorAll('.dg-faq-panel');
+	const reduce = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const root = document.querySelector( '.dg-faq' );
+	if ( ! root ) {
+		return;
+	}
 
-    function getTargetPanel(trigger) {
-        var panelId = trigger.getAttribute('aria-controls');
-        return panelId ? document.getElementById(panelId) : null;
-    }
+	const EASE = [ 0.16, 1, 0.3, 1 ];
 
-    function openPanel(trigger, panel) {
-        trigger.setAttribute('aria-expanded', 'true');
-        panel.hidden = false;
-        panel.classList.add('dg-panel-open');
-    }
+	initProgress();
+	initReveal();
+	initAccordion();
+	initSearch();
+	initMagnetic();
 
-    function closePanel(trigger, panel) {
-        trigger.setAttribute('aria-expanded', 'false');
-        panel.classList.remove('dg-panel-open');
-        // Delay removing hidden so CSS transition plays out
-        panel.addEventListener('transitionend', function onEnd() {
-            panel.removeAttribute('hidden');
-            panel.removeEventListener('transitionend', onEnd);
-        });
-    }
+	/* ── Scroll-linked progress ─────────────────────────────────────────────── */
+	function initProgress() {
+		const fill = root.querySelector( '.dg-faq-progress-fill' );
+		if ( ! fill ) {
+			return;
+		}
+		if ( reduce ) {
+			fill.style.transform = 'scaleX(1)';
+			return;
+		}
+		scroll(
+			animate( fill, { scaleX: [ 0, 1 ] }, { ease: 'linear' } ),
+			{ target: document.documentElement }
+		);
+	}
 
-    function closeAllPanels() {
-        triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
-        panels.forEach(function (p) {
-            p.classList.remove('dg-panel-open');
-            p.removeAttribute('hidden');
-            p.style.maxHeight = '';
-        });
-    }
+	/* ── Reveal: stagger nhóm con + reveal khối đơn ─────────────────────────── */
+	function initReveal() {
+		// Khối có data-sr-group: stagger các con data-sr (vd hero).
+		root.querySelectorAll( '[data-sr-group]' ).forEach( function ( group ) {
+			const kids = Array.from( group.querySelectorAll( ':scope > [data-sr]' ) );
+			if ( ! kids.length ) {
+				return;
+			}
+			if ( reduce ) {
+				kids.forEach( function ( k ) { k.style.opacity = 1; } );
+				return;
+			}
+			inView( group, function () {
+				animate( kids, { opacity: [ 0, 1 ], y: [ 22, 0 ] }, { duration: 0.6, ease: EASE, delay: stagger( 0.06 ) } );
+			}, { amount: 0.2 } );
+		} );
 
-    triggers.forEach(function (trigger) {
-        trigger.addEventListener('click', function () {
-            var panel = getTargetPanel(trigger);
-            if (!panel) return;
-            var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+		// Khối data-sr đứng riêng (search, từng group, cta).
+		root.querySelectorAll( '[data-sr]:not([data-sr-group] [data-sr])' ).forEach( function ( el ) {
+			if ( reduce ) {
+				el.style.opacity = 1;
+				return;
+			}
+			inView( el, function () {
+				animate( el, { opacity: [ 0, 1 ], y: [ 22, 0 ] }, { duration: 0.6, ease: EASE } );
+			}, { amount: 0.15 } );
+		} );
+	}
 
-            if (isOpen) {
-                closePanel(trigger, panel);
-            } else {
-                openPanel(trigger, panel);
-            }
-        });
+	/* ── Accordion ──────────────────────────────────────────────────────────── */
+	function initAccordion() {
+		root.querySelectorAll( '.dg-faq-trigger' ).forEach( function ( trigger ) {
+			const panel = document.getElementById( trigger.getAttribute( 'aria-controls' ) );
+			if ( ! panel ) {
+				return;
+			}
+			trigger.addEventListener( 'click', function () {
+				const isOpen = trigger.getAttribute( 'aria-expanded' ) === 'true';
+				if ( isOpen ) {
+					closePanel( trigger, panel );
+				} else {
+					openPanel( trigger, panel );
+				}
+			} );
+		} );
+	}
 
-        // Keyboard support
-        trigger.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                trigger.click();
-            }
-        });
-    });
+	function openPanel( trigger, panel ) {
+		trigger.setAttribute( 'aria-expanded', 'true' );
+		panel.hidden = false;
+		if ( reduce ) {
+			return;
+		}
+		const target = panel.scrollHeight;
+		animate( panel, { height: [ '0px', target + 'px' ], opacity: [ 0, 1 ] }, { duration: 0.4, ease: EASE } )
+			.then( function () { panel.style.height = 'auto'; } );
+	}
 
-    /* ── Search / filter ───────────────────────────────────────────────────────── */
-    var searchInput  = document.getElementById('dg-faq-search');
-    var clearBtn     = document.getElementById('dg-faq-search-clear');
-    var emptyState   = document.getElementById('dg-faq-empty');
-    var noResultsMsg = document.getElementById('dg-faq-search-count');
+	function closePanel( trigger, panel ) {
+		trigger.setAttribute( 'aria-expanded', 'false' );
+		if ( reduce ) {
+			panel.hidden = true;
+			return;
+		}
+		const current = panel.scrollHeight;
+		// Exit nhanh hơn enter cho cảm giác phản hồi.
+		animate( panel, { height: [ current + 'px', '0px' ], opacity: [ 1, 0 ] }, { duration: 0.28, ease: EASE } )
+			.then( function () {
+				panel.hidden = true;
+				panel.style.height = '';
+				panel.style.opacity = '';
+			} );
+	}
 
-    if (searchInput) {
-        function normalise(str) {
-            return str.toLowerCase().replace(/['']/g, "'");
-        }
+	/* ── Live search ────────────────────────────────────────────────────────── */
+	function initSearch() {
+		const input = document.getElementById( 'dg-faq-search' );
+		const clear = document.getElementById( 'dg-faq-search-clear' );
+		const status = document.getElementById( 'dg-faq-search-status' );
+		const empty = document.getElementById( 'dg-faq-empty' );
+		if ( ! input ) {
+			return;
+		}
 
-        function filterFAQs() {
-            var query = normalise(searchInput.value.trim());
-            var hasQuery = query.length > 0;
-            var visibleGroups = 0;
-            var visibleItems = 0;
+		const items = Array.from( root.querySelectorAll( '[data-faq-item]' ) );
+		const groups = Array.from( root.querySelectorAll( '[data-faq-group]' ) );
+		// Cache text (câu hỏi + câu trả lời) một lần để lọc nhanh.
+		const haystacks = items.map( function ( it ) {
+			return normalise( it.textContent || '' );
+		} );
 
-            // Show/hide clear button
-            if (clearBtn) {
-                clearBtn.classList.toggle('hidden', !hasQuery);
-            }
+		let timer;
 
-            // Walk each group
-            groups.forEach(function (group) {
-                var listItems = group.querySelectorAll('.dg-faq-item');
-                var visibleInGroup = 0;
+		function run() {
+			const q = normalise( input.value.trim() );
+			const hasQuery = q.length > 0;
+			clear.hidden = ! hasQuery;
 
-                listItems.forEach(function (item) {
-                    var question = item.querySelector('.dg-faq-question-text');
-                    var answer   = item.querySelector('.dg-faq-answer');
-                    if (!question) return;
+			let visible = 0;
+			items.forEach( function ( it, i ) {
+				const match = ! hasQuery || haystacks[ i ].indexOf( q ) !== -1;
+				it.hidden = ! match;
+				if ( match ) {
+					visible++;
+				}
+			} );
 
-                    var questionText = normalise(question.textContent || '');
-                    var answerText   = answer ? normalise(answer.textContent || '') : '';
-                    var matches = questionText.includes(query) || answerText.includes(query);
+			groups.forEach( function ( g ) {
+				const any = g.querySelector( '[data-faq-item]:not([hidden])' ) !== null;
+				g.hidden = ! any;
+				// Khi đang search, buộc hiện nhóm khớp (kể cả nhóm chưa kịp reveal).
+				if ( hasQuery && any ) {
+					g.style.opacity = '1';
+					g.style.transform = 'none';
+				}
+			} );
 
-                    item.classList.toggle('dg-hidden', !matches);
-                    if (matches) {
-                        visibleInGroup++;
-                        visibleItems++;
-                    }
-                });
+			if ( empty ) {
+				empty.hidden = visible > 0;
+			}
+			if ( status ) {
+				status.textContent = hasQuery ? visible + ( visible === 1 ? ' result' : ' results' ) : '';
+			}
+		}
 
-                group.classList.toggle('dg-hidden', visibleInGroup === 0);
-                if (visibleInGroup > 0) visibleGroups++;
-            });
+		input.addEventListener( 'input', function () {
+			window.clearTimeout( timer );
+			timer = window.setTimeout( run, 120 );
+		} );
+		clear.addEventListener( 'click', function () {
+			input.value = '';
+			input.focus();
+			run();
+		} );
+	}
 
-            // Toggle empty / no-results states
-            if (emptyState) {
-                emptyState.classList.toggle('hidden', visibleGroups > 0);
-            }
-            if (noResultsMsg) {
-                noResultsMsg.classList.toggle('dg-visible', hasQuery && visibleItems === 0);
-            }
-        }
+	function normalise( str ) {
+		return str.toLowerCase().replace( /[‘’]/g, "'" );
+	}
 
-        searchInput.addEventListener('input', filterFAQs);
-
-        if (clearBtn) {
-            clearBtn.addEventListener('click', function () {
-                searchInput.value = '';
-                searchInput.focus();
-                filterFAQs();
-            });
-        }
-    }
-})();
+	/* ── Magnetic CTA (chỉ desktop, không reduced-motion) ───────────────────── */
+	function initMagnetic() {
+		if ( reduce || ! window.matchMedia( '(hover: hover)' ).matches ) {
+			return;
+		}
+		root.querySelectorAll( '[data-magnetic]' ).forEach( function ( el ) {
+			el.addEventListener( 'pointermove', function ( e ) {
+				const r = el.getBoundingClientRect();
+				const dx = ( e.clientX - ( r.left + r.width / 2 ) ) / ( r.width / 2 );
+				const dy = ( e.clientY - ( r.top + r.height / 2 ) ) / ( r.height / 2 );
+				animate( el, { x: dx * 6, y: dy * 6 }, { duration: 0.3, ease: 'easeOut' } );
+			} );
+			el.addEventListener( 'pointerleave', function () {
+				animate( el, { x: 0, y: 0 }, { type: 'spring', stiffness: 200, damping: 15 } );
+			} );
+		} );
+	}
+} )();

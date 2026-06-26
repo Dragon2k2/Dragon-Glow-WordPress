@@ -132,10 +132,17 @@ function dg_enqueue_assets(): void {
 
     // FAQ page specific styles
     if ( is_page_template( 'page-templates/template-faq.php' ) ) {
+        // Geist (Vercel) — không có trên Google Fonts, nạp qua Fontsource CDN.
+        wp_enqueue_style(
+            'dg-geist',
+            'https://cdn.jsdelivr.net/npm/@fontsource-variable/geist@5/index.css',
+            array(),
+            null
+        );
         wp_enqueue_style(
             'dg-faq',
             DG_URI . '/assets/css/faq.css',
-            array( 'dg-main' ),
+            array( 'dg-main', 'dg-geist' ),
             DG_VERSION
         );
     }
@@ -204,7 +211,21 @@ function dg_enqueue_assets(): void {
         wp_enqueue_script( 'dg-contact', DG_URI . '/assets/js/contact.js', array( 'dg-main' ), DG_VERSION, true );
     }
     if ( is_page_template( 'page-templates/template-faq.php' ) ) {
-        wp_enqueue_script( 'dg-faq', DG_URI . '/assets/js/faq.js', array( 'dg-main' ), DG_VERSION, true );
+        // ES module: faq.js import Motion (motion.dev) trực tiếp từ CDN.
+        wp_enqueue_script_module(
+            'dg-faq',
+            DG_URI . '/assets/js/faq.js',
+            array(),
+            DG_VERSION
+        );
+    }
+    if ( is_page_template( 'page-templates/template-shipping-returns.php' ) ) {
+        wp_enqueue_script_module(
+            'dg-shipping-returns',
+            DG_URI . '/assets/js/shipping-returns.js',
+            array(),
+            DG_VERSION
+        );
     }
     if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
         wp_enqueue_script( 'dg-wishlist', DG_URI . '/assets/js/wishlist.js', array( 'dg-cart-api' ), DG_VERSION, true );
