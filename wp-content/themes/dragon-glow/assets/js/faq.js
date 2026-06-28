@@ -2,14 +2,14 @@
  * Dragon Glow — FAQ
  * ES Module — Motion (motion.dev) vanilla API. KHÔNG React.
  *
- * Gồm: scroll-progress, reveal + stagger, accordion (animate height),
- * live search (lọc + đánh số lại qua CSS counter), magnetic CTA.
+ * Gồm: reveal + stagger, accordion single-open (animate height),
+ * category filter (sidebar), live search (lọc + ẩn group rỗng), magnetic CTA.
  * Tôn trọng prefers-reduced-motion.
  *
  * @package Dragon_Glow
  */
 
-import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
+import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 
 ( function () {
 	'use strict';
@@ -22,31 +22,13 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 
 	const EASE = [ 0.16, 1, 0.3, 1 ];
 
-	initProgress();
 	initReveal();
 	initAccordion();
+	initCategories();
 	initSearch();
-	initMagnetic();
 
-	/* ── Scroll-linked progress ─────────────────────────────────────────────── */
-	function initProgress() {
-		const fill = root.querySelector( '.dg-faq-progress-fill' );
-		if ( ! fill ) {
-			return;
-		}
-		if ( reduce ) {
-			fill.style.transform = 'scaleX(1)';
-			return;
-		}
-		scroll(
-			animate( fill, { scaleX: [ 0, 1 ] }, { ease: 'linear' } ),
-			{ target: document.documentElement }
-		);
-	}
-
-	/* ── Reveal: stagger nhóm con + reveal khối đơn ─────────────────────────── */
+	/* ── Reveal: stagger các phần tử data-sr ──────────────────────────────── */
 	function initReveal() {
-		// Khối có data-sr-group: stagger các con data-sr (vd hero).
 		root.querySelectorAll( '[data-sr-group]' ).forEach( function ( group ) {
 			const kids = Array.from( group.querySelectorAll( ':scope > [data-sr]' ) );
 			if ( ! kids.length ) {
@@ -61,7 +43,6 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 			}, { amount: 0.2 } );
 		} );
 
-		// Khối data-sr đứng riêng (search, từng group, cta).
 		root.querySelectorAll( '[data-sr]:not([data-sr-group] [data-sr])' ).forEach( function ( el ) {
 			if ( reduce ) {
 				el.style.opacity = 1;
@@ -73,26 +54,40 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 		} );
 	}
 
-	/* ── Accordion ──────────────────────────────────────────────────────────── */
+	/* ── Accordion: chỉ một card open tại một thời điểm ────────────────────── */
 	function initAccordion() {
 		root.querySelectorAll( '.dg-faq-trigger' ).forEach( function ( trigger ) {
+			const card = trigger.closest( '.dg-faq-card' );
 			const panel = document.getElementById( trigger.getAttribute( 'aria-controls' ) );
-			if ( ! panel ) {
+			if ( ! card || ! panel ) {
 				return;
 			}
 			trigger.addEventListener( 'click', function () {
 				const isOpen = trigger.getAttribute( 'aria-expanded' ) === 'true';
 				if ( isOpen ) {
-					closePanel( trigger, panel );
+					closeCard( trigger, card, panel );
 				} else {
-					openPanel( trigger, panel );
+					// Đóng tất cả card khác (single-open).
+					closeAll();
+					openCard( trigger, card, panel );
 				}
 			} );
 		} );
 	}
 
-	function openPanel( trigger, panel ) {
+	function closeAll() {
+		root.querySelectorAll( '.dg-faq-card.is-open' ).forEach( function ( card ) {
+			const trig = card.querySelector( '.dg-faq-trigger' );
+			const panel = card.querySelector( '.dg-faq-panel' );
+			if ( trig && panel ) {
+				closeCard( trig, card, panel );
+			}
+		} );
+	}
+
+	function openCard( trigger, card, panel ) {
 		trigger.setAttribute( 'aria-expanded', 'true' );
+		card.classList.add( 'is-open' );
 		panel.hidden = false;
 		if ( reduce ) {
 			return;
@@ -102,14 +97,14 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 			.then( function () { panel.style.height = 'auto'; } );
 	}
 
-	function closePanel( trigger, panel ) {
+	function closeCard( trigger, card, panel ) {
 		trigger.setAttribute( 'aria-expanded', 'false' );
+		card.classList.remove( 'is-open' );
 		if ( reduce ) {
 			panel.hidden = true;
 			return;
 		}
 		const current = panel.scrollHeight;
-		// Exit nhanh hơn enter cho cảm giác phản hồi.
 		animate( panel, { height: [ current + 'px', '0px' ], opacity: [ 1, 0 ] }, { duration: 0.28, ease: EASE } )
 			.then( function () {
 				panel.hidden = true;
@@ -118,7 +113,56 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 			} );
 	}
 
-	/* ── Live search ────────────────────────────────────────────────────────── */
+	/* ── Category filter (sidebar) ─────────────────────────────────────────── */
+	function initCategories() {
+		const buttons = Array.from( root.querySelectorAll( '[data-faq-category]' ) );
+		if ( ! buttons.length ) {
+			return;
+		}
+		buttons.forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				const id = btn.getAttribute( 'data-faq-category' );
+				// active state
+				buttons.forEach( function ( b ) {
+					const on = b === btn;
+					b.classList.toggle( 'is-active', on );
+					b.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+				} );
+				// lọc groups: nhóm khớp hiện, còn lại ẩn
+				filterByCategory( id );
+				// scroll lên đầu accordion nếu user ở xa
+				const list = root.querySelector( '#dg-faq-list' );
+				if ( list ) {
+					const top = list.getBoundingClientRect().top + window.scrollY - 100;
+					window.scrollTo( { top: Math.max( 0, top ), behavior: reduce ? 'auto' : 'smooth' } );
+				}
+			} );
+		} );
+	}
+
+	function filterByCategory( id ) {
+		const groups = Array.from( root.querySelectorAll( '[data-faq-group]' ) );
+		groups.forEach( function ( g ) {
+			const match = g.getAttribute( 'data-faq-group' ) === id;
+			g.hidden = ! match;
+			// Bỏ qua trạng thái open ở các card trong group bị ẩn (clean state).
+			if ( ! match ) {
+				g.querySelectorAll( '.dg-faq-card.is-open' ).forEach( function ( card ) {
+					const trig = card.querySelector( '.dg-faq-trigger' );
+					const panel = card.querySelector( '.dg-faq-panel' );
+					if ( trig && panel ) {
+						trig.setAttribute( 'aria-expanded', 'false' );
+						card.classList.remove( 'is-open' );
+						panel.hidden = true;
+						panel.style.height = '';
+						panel.style.opacity = '';
+					}
+				} );
+			}
+		} );
+	}
+
+	/* ── Live search: lọc item + ẩn group rỗng + empty-state ───────────────── */
 	function initSearch() {
 		const input = document.getElementById( 'dg-faq-search' );
 		const clear = document.getElementById( 'dg-faq-search-clear' );
@@ -154,11 +198,6 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 			groups.forEach( function ( g ) {
 				const any = g.querySelector( '[data-faq-item]:not([hidden])' ) !== null;
 				g.hidden = ! any;
-				// Khi đang search, buộc hiện nhóm khớp (kể cả nhóm chưa kịp reveal).
-				if ( hasQuery && any ) {
-					g.style.opacity = '1';
-					g.style.transform = 'none';
-				}
 			} );
 
 			if ( empty ) {
@@ -173,32 +212,16 @@ import { animate, inView, scroll, stagger } from "https://cdn.jsdelivr.net/npm/m
 			window.clearTimeout( timer );
 			timer = window.setTimeout( run, 120 );
 		} );
-		clear.addEventListener( 'click', function () {
-			input.value = '';
-			input.focus();
-			run();
-		} );
+		if ( clear ) {
+			clear.addEventListener( 'click', function () {
+				input.value = '';
+				input.focus();
+				run();
+			} );
+		}
 	}
 
 	function normalise( str ) {
 		return str.toLowerCase().replace( /[‘’]/g, "'" );
-	}
-
-	/* ── Magnetic CTA (chỉ desktop, không reduced-motion) ───────────────────── */
-	function initMagnetic() {
-		if ( reduce || ! window.matchMedia( '(hover: hover)' ).matches ) {
-			return;
-		}
-		root.querySelectorAll( '[data-magnetic]' ).forEach( function ( el ) {
-			el.addEventListener( 'pointermove', function ( e ) {
-				const r = el.getBoundingClientRect();
-				const dx = ( e.clientX - ( r.left + r.width / 2 ) ) / ( r.width / 2 );
-				const dy = ( e.clientY - ( r.top + r.height / 2 ) ) / ( r.height / 2 );
-				animate( el, { x: dx * 6, y: dy * 6 }, { duration: 0.3, ease: 'easeOut' } );
-			} );
-			el.addEventListener( 'pointerleave', function () {
-				animate( el, { x: 0, y: 0 }, { type: 'spring', stiffness: 200, damping: 15 } );
-			} );
-		} );
 	}
 } )();

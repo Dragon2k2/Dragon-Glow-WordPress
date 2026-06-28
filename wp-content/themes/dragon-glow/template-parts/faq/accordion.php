@@ -1,8 +1,8 @@
 <?php
 /**
  * Dragon Glow — FAQ: Accordion
- * Danh sách câu hỏi đánh số (CSS counter) theo từng nhóm + empty-state.
- * Số thứ tự do CSS sinh ra → tự đánh lại khi search lọc bớt item.
+ * Glass-panel cards trong 12-col grid; một card active tại một thời điểm.
+ * Mỗi nhóm có data-faq-group khớp với category id ở sidebar.
  *
  * @package Dragon_Glow
  */
@@ -16,39 +16,39 @@ $faq = dg_faq_data();
 	<?php foreach ( $faq['groups'] as $group ) : ?>
 		<section
 			class="dg-faq-group"
-			data-faq-group
+			data-faq-group="<?php echo esc_attr( $group['id'] ); ?>"
 			data-sr
 			aria-label="<?php echo esc_attr( $group['label'] ); ?>"
 		>
-			<h2 class="dg-faq-group-label"><?php echo esc_html( $group['label'] ); ?></h2>
-
 			<ul class="dg-faq-items" role="list">
 				<?php
 				foreach ( $group['items'] as $i => $item ) :
 					$uid = 'faq-' . $group['id'] . '-' . $i;
 					?>
 					<li class="dg-faq-item" data-faq-item>
-						<h3 class="dg-faq-q">
+						<article class="dg-faq-card dg-faq-card--ghost">
 							<button
+								type="button"
 								class="dg-faq-trigger"
 								id="<?php echo esc_attr( $uid . '-t' ); ?>"
 								aria-expanded="false"
 								aria-controls="<?php echo esc_attr( $uid . '-p' ); ?>"
 							>
-								<span class="dg-faq-num" aria-hidden="true"></span>
-								<span class="dg-faq-q-text"><?php echo esc_html( $item['q'] ); ?></span>
-								<span class="dg-faq-mark" aria-hidden="true"></span>
+								<h3 class="dg-faq-q"><?php echo esc_html( $item['q'] ); ?></h3>
+								<span class="dg-faq-icon" aria-hidden="true">
+									<span class="material-symbols-outlined">expand_more</span>
+								</span>
 							</button>
-						</h3>
-						<div
-							class="dg-faq-panel"
-							id="<?php echo esc_attr( $uid . '-p' ); ?>"
-							role="region"
-							aria-labelledby="<?php echo esc_attr( $uid . '-t' ); ?>"
-							hidden
-						>
-							<p class="dg-faq-a"><?php echo esc_html( $item['a'] ); ?></p>
-						</div>
+							<div
+								class="dg-faq-panel"
+								id="<?php echo esc_attr( $uid . '-p' ); ?>"
+								role="region"
+								aria-labelledby="<?php echo esc_attr( $uid . '-t' ); ?>"
+								hidden
+							>
+								<p class="dg-faq-a"><?php echo esc_html( $item['a'] ); ?></p>
+							</div>
+						</article>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -58,7 +58,7 @@ $faq = dg_faq_data();
 	<?php // Empty-state — hiện khi search không khớp gì. ?>
 	<div class="dg-faq-empty" id="dg-faq-empty" hidden>
 		<p class="dg-faq-empty-title"><?php esc_html_e( 'Nothing here, yet.', 'dragon-glow' ); ?></p>
-		<p class="dg-faq-empty-text"><?php esc_html_e( 'No answer meets those words. Our concierge will.', 'dragon-glow' ); ?></p>
+		<p class="dg-faq-empty-text"><?php esc_html_e( 'No answer meets those words. We will write one.', 'dragon-glow' ); ?></p>
 		<a class="dg-faq-empty-link" href="<?php echo esc_url( $faq['contact_url'] ); ?>">
 			<?php esc_html_e( 'Reach the concierge', 'dragon-glow' ); ?>
 		</a>

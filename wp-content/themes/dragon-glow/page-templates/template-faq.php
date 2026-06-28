@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: FAQ — Dragon Glow
- * Description: Frequently asked questions — numbered editorial accordion with live search.
+ * Description: The Concierge — sidebar categories + glass-panel accordion, with live search.
  *
  * @package Dragon_Glow
  */
@@ -18,13 +18,19 @@ require_once locate_template( 'template-parts/faq/data-faq.php' );
 ?>
 
 <main class="dg-faq" id="main-content">
-	<div class="dg-faq-progress" aria-hidden="true"><span class="dg-faq-progress-fill"></span></div>
-
 	<div class="dg-faq-wrap">
 		<?php
 		get_template_part( 'template-parts/faq/section-hero' );
 		get_template_part( 'template-parts/faq/section-search' );
+
+		// Layout 12-col: sidebar categories (3) + accordion (9)
+		echo '<div class="dg-faq-layout">';
+		get_template_part( 'template-parts/faq/section-categories' );
+		echo '<div class="dg-faq-main">';
 		get_template_part( 'template-parts/faq/accordion' );
+		echo '</div>';
+		echo '</div>';
+
 		get_template_part( 'template-parts/faq/section-cta' );
 		?>
 	</div>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dragon Glow | FAQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#484742",
+                        "primary-container": "#f9f8f6",
+                        "inverse-primary": "#c7c6c5",
+                        "secondary-fixed": "#e6e2db",
+                        "surface-container": "#f0eded",
+                        "background": "#fcf9f8",
+                        "tertiary": "#775a19",
+                        "on-secondary-container": "#64625d",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-surface": "#1c1b1b",
+                        "on-tertiary-fixed": "#261900",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-tertiary-container": "#8d6d2b",
+                        "primary-fixed": "#e3e2e0",
+                        "outline-variant": "#c4c7c4",
+                        "error-container": "#ffdad6",
+                        "primary": "#5e5e5d",
+                        "on-background": "#1c1b1b",
+                        "primary-fixed-dim": "#c7c6c5",
+                        "secondary": "#605e59",
+                        "inverse-surface": "#313030",
+                        "surface-container-high": "#eae7e7",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#444845",
+                        "tertiary-fixed": "#ffdea5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#1a1c1b",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "on-primary-container": "#717270",
+                        "outline": "#747875",
+                        "surface-bright": "#fcf9f8",
+                        "tertiary-container": "#fff7ef",
+                        "secondary-container": "#e3dfd8",
+                        "surface-tint": "#5e5e5d",
+                        "surface-container-low": "#f6f3f2",
+                        "inverse-on-surface": "#f3f0ef",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#464746",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "surface-variant": "#e5e2e1",
+                        "surface-dim": "#dcd9d9",
+                        "surface": "#fcf9f8",
+                        "on-secondary-fixed": "#1c1c17",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "24px",
+                        "margin-desktop": "80px",
+                        "gutter": "24px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "body-md": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "label-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "label-sm": ["10px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "300"}],
+                        "display-lg-mobile": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "300"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "300"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .glass-panel {
+            background: rgba(249, 248, 246, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ghost-border { border: 1px solid rgba(229, 226, 225, 0.5); }
+        .aura-glow { box-shadow: 0 4px 30px rgba(233, 193, 118, 0.15); }
+        .active-aura { border: 1px solid rgba(233, 193, 118, 0.4); }
+        
+        .fade-in-up {
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-tertiary-fixed selection:text-on-tertiary-fixed min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 dark:border-outline-variant/10 flat no shadows backdrop-blur-2xl transition-all duration-700 ease-in-out">
+<div class="flex justify-between items-center px-margin-desktop py-6 max-w-container-max mx-auto">
+<div class="font-headline-sm text-headline-sm tracking-widest uppercase text-on-surface dark:text-on-surface-variant">
+                Dragon Glow
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-500" href="#">Bespoke Rituals</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-500" href="#">The Collection</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors duration-500" href="#">Sustainability</a>
+<a class="font-body-md text-body-md text-primary font-medium border-b border-primary pb-1 hover:text-primary transition-colors duration-500" href="#">Concierge</a>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="shopping_bag" class="text-primary dark:text-primary-fixed-dim hover:text-primary transition-colors duration-500">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow pt-32 pb-24 px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Header Section -->
+<header class="text-center max-w-3xl mx-auto mb-20 fade-in-up">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-6">The Concierge</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Guidance tailored to the discerning individual. Discover insights into our quiet luxury philosophy, bespoke formulations, and the ethereal radiance of Dragon Glow.</p>
+</header>
+<!-- FAQ Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Side Navigation (Categories) -->
+<aside class="md:col-span-3 fade-in-up delay-100">
+<div class="sticky top-40 flex flex-col gap-4">
+<button class="text-left font-body-md text-body-md text-tertiary font-medium border-l-2 border-tertiary pl-4 py-1 transition-colors duration-300">The Glow Ritual</button>
+<button class="text-left font-body-md text-body-md text-on-surface-variant hover:text-tertiary border-l-2 border-transparent pl-4 py-1 transition-colors duration-300">Ingredient Transparency</button>
+<button class="text-left font-body-md text-body-md text-on-surface-variant hover:text-tertiary border-l-2 border-transparent pl-4 py-1 transition-colors duration-300">Orders & Shipping</button>
+<button class="text-left font-body-md text-body-md text-on-surface-variant hover:text-tertiary border-l-2 border-transparent pl-4 py-1 transition-colors duration-300">Sustainability Practice</button>
+</div>
+</aside>
+<!-- FAQ Accordion Container -->
+<div class="md:col-span-9 flex flex-col gap-6 fade-in-up delay-200">
+<!-- FAQ Item 1 (Active/Expanded State) -->
+<article class="glass-panel active-aura aura-glow rounded-xl p-8 transition-all duration-500 cursor-pointer overflow-hidden">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">How is the 'Dragon Glow' distinct from typical highlighters?</h3>
+<span class="material-symbols-outlined text-tertiary transition-transform duration-500 transform rotate-180">expand_more</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Our formulation shuns chunky glitter and synthetic mica. Instead, we utilize an proprietary blend of micro-crushed ethereal minerals suspended in a translucent botanical serum. This creates a refractive, "glass skin" effect that appears to emanate from within, capturing the essence of quiet luxury rather than superficial shine.
+                    </div>
+</article>
+<!-- FAQ Item 2 -->
+<article class="ghost-border bg-surface-container-low rounded-xl p-8 hover:bg-surface-container transition-all duration-500 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-tertiary transition-colors duration-300">Are the botanical ingredients ethically sourced?</h3>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors duration-300">expand_more</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-relaxed hidden mt-4">
+                        Absolutely. We partner exclusively with sustainable micro-farms dedicated to regenerative agriculture. Every botanical active is traceable, ensuring zero exploitation and minimal ecological footprint while maximizing efficacy.
+                    </div>
+</article>
+<!-- FAQ Item 3 -->
+<article class="ghost-border bg-surface-container-low rounded-xl p-8 hover:bg-surface-container transition-all duration-500 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-tertiary transition-colors duration-300">Can the serums be layered with retinol?</h3>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors duration-300">expand_more</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-relaxed hidden mt-4">
+                        Our collection is designed for gentleness and barrier repair. While safe to use alongside retinol, we recommend applying our restorative serums on alternating nights or in the morning to prevent overwhelming the skin's delicate ecosystem.
+                    </div>
+</article>
+<!-- FAQ Item 4 -->
+<article class="ghost-border bg-surface-container-low rounded-xl p-8 hover:bg-surface-container transition-all duration-500 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-tertiary transition-colors duration-300">What is the shelf life of the bespoke formulations?</h3>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors duration-300">expand_more</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant leading-relaxed hidden mt-4">
+                        Given our commitment to eliminating synthetic preservatives, our formulations possess an optimal freshness window of 6 months once opened. We encapsulate our products in UV-protective, dark glass vessels to preserve their vitality.
+                    </div>
+</article>
+</div>
+</div>
+<!-- Contact Banner -->
+<div class="mt-24 w-full h-64 rounded-xl relative overflow-hidden fade-in-up delay-300 flex items-center justify-center">
+<div class="absolute inset-0 bg-cover bg-center w-full h-full opacity-60 mix-blend-multiply" data-alt="A serene, ethereal abstract background featuring soft, flowing gradients of warm ivory, muted gold, and soft sand. The lighting is diffused, mimicking light passing through frosted glass, creating a luxurious, quiet, and minimalist aesthetic suitable for a high-end cosmetic brand." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC-UgfToPNr9tFMOoL9Ki7BRp2DsRok0x8bR6CzVFQVDBTj3Y4A4-tOeuwaRn8vQImCr1R8HJLo1r7nljRcxEwq5Lt1zmst__HoF4PtFQX8SUqmCPiT7iZ2RMNC-R9upYhTAjy81FbuBNJ9K8eBj-kRj-tRUj90eimQGKmV69CNXL6ZsEiCJvg7oD3A_5JY_IB8rBBXqKZHYcY22mqqx9bn8R6YVNd71_21kNlgs6opF7A_gHCMe3bUhd8OBekcQe0_YczSCHbZ9cI')"></div>
+<div class="relative z-10 text-center glass-panel p-10 rounded-xl border border-white/20">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-2">Require Personal Assistance?</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Our dedicated concierge team is available to curate your bespoke ritual.</p>
+<button class="bg-on-surface text-on-primary font-label-md text-label-md uppercase tracking-widest px-8 py-3 rounded-DEFAULT hover:bg-tertiary transition-colors duration-500 shadow-md">Contact Concierge</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-20 bg-background dark:bg-surface-dim border-t border-outline-variant/20 flat no shadows opacity-80 hover:opacity-100 transition-opacity">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop gap-gutter max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md text-on-surface mb-6 md:mb-0">
+                Dragon Glow
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-md text-label-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary transition-opacity duration-300" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary transition-opacity duration-300" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary transition-opacity duration-300" href="#">Ingredient Transparency</a>
+<a class="font-label-md text-label-md text-on-secondary-container dark:text-on-secondary-fixed-variant hover:text-primary transition-opacity duration-300" href="#">Store Locator</a>
+</div>
+<div class="font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim mt-6 md:mt-0 text-center md:text-right">
+                © 2026 Dragon Glow. All rights reserved. Built for the discerning.
+            </div>
+</div>
+</footer>
+<script>
+        // Simple accordion interaction script
+        document.querySelectorAll('article.cursor-pointer').forEach(item => {
+            item.addEventListener('click', () => {
+                const isExpanded = item.classList.contains('active-aura');
+                
+                // Close all
+                document.querySelectorAll('article.cursor-pointer').forEach(sibling => {
+                    sibling.classList.remove('active-aura', 'aura-glow', 'glass-panel');
+                    sibling.classList.add('ghost-border', 'bg-surface-container-low');
+                    const content = sibling.querySelector('.text-body-md');
+                    const icon = sibling.querySelector('.material-symbols-outlined');
+                    if(content) content.classList.add('hidden');
+                    if(icon) icon.classList.remove('rotate-180', 'text-tertiary');
+                });
+
+                // Open clicked if it wasn't already expanded
+                if (!isExpanded) {
+                    item.classList.add('active-aura', 'aura-glow', 'glass-panel');
+                    item.classList.remove('ghost-border', 'bg-surface-container-low');
+                    const content = item.querySelector('.text-body-md');
+                    const icon = item.querySelector('.material-symbols-outlined');
+                    if(content) content.classList.remove('hidden');
+                    if(icon) icon.classList.add('rotate-180', 'text-tertiary');
+                }
+            });
+        });
+    </script>
+</body></html>

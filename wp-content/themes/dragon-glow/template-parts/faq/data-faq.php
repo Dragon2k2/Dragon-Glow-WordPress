@@ -28,13 +28,95 @@ function dg_faq_data(): array {
 
 		/* ── Hero ─────────────────────────────────────────────────────────────── */
 		'intro' => array(
-			'eyebrow'  => esc_html__( 'Help Centre', 'dragon-glow' ),
-			'title'    => esc_html__( 'Answers', 'dragon-glow' ),
-			'subtitle' => esc_html__( 'The questions you arrive with, answered.', 'dragon-glow' ),
+			'eyebrow'  => esc_html__( 'Concierge', 'dragon-glow' ),
+			'title'    => esc_html__( 'The Concierge', 'dragon-glow' ),
+			'subtitle' => esc_html__( 'Quiet answers, for the curious. No flourish, no filler — only the facts that shape your ritual.', 'dragon-glow' ),
 		),
 
-		/* ── Nhóm câu hỏi ─────────────────────────────────────────────────────── */
+		/* ── Sidebar categories ───────────────────────────────────────────────── */
+		'categories' => array(
+			array(
+				'id'    => 'glow-ritual',
+				'label' => esc_html__( 'The Glow Ritual', 'dragon-glow' ),
+			),
+			array(
+				'id'    => 'ingredients',
+				'label' => esc_html__( 'Ingredient Transparency', 'dragon-glow' ),
+			),
+			array(
+				'id'    => 'orders',
+				'label' => esc_html__( 'Orders & Shipping', 'dragon-glow' ),
+			),
+			array(
+				'id'    => 'sustainability',
+				'label' => esc_html__( 'Sustainability Practice', 'dragon-glow' ),
+			),
+		),
+
+		/* ── Nhóm câu hỏi — id khớp categories ───────────────────────────────── */
 		'groups' => array(
+
+			array(
+				'id'    => 'glow-ritual',
+				'label' => esc_html__( 'The Glow Ritual', 'dragon-glow' ),
+				'items' => array(
+					array(
+						'q' => esc_html__( 'What makes the Dragon Glow finish different?', 'dragon-glow' ),
+						'a' => esc_html__( 'No glitter. No synthetic mica. We suspend micro-crushed minerals in a botanical serum, so the light moves from beneath the skin rather than sitting on top of it.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Can I layer the serums with retinol?', 'dragon-glow' ),
+						'a' => esc_html__( 'Yes. We suggest our serums in the morning, retinol at night. On sensitive skin, alternate nights. The barrier stays intact either way.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'How long does each formulation last?', 'dragon-glow' ),
+						'a' => esc_html__( 'Six months after opening. The dark glass and airless pump do the work — no synthetic preservatives needed.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Walk me through the morning ritual.', 'dragon-glow' ),
+						'a' => esc_html__( 'Milk cleanser. Botanical essence. Two drops of radiance serum. Moisturiser. SPF mist. One breath between each step. The skin tells you when it is ready for the next.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Is the range safe during pregnancy?', 'dragon-glow' ),
+						'a' => esc_html__( 'Most of it, yes. Pause the retinol alternative. For everything else, ask your physician, then write to us — we will pare the ritual back to what you need.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Can I try before I commit?', 'dragon-glow' ),
+						'a' => esc_html__( 'A discovery set ships with each seasonal launch. The newsletter carries the first invitation. If a full size does not suit, return it within 30 days — opened, sealed, either way.', 'dragon-glow' ),
+					),
+				),
+			),
+
+			array(
+				'id'    => 'ingredients',
+				'label' => esc_html__( 'Ingredient Transparency', 'dragon-glow' ),
+				'items' => array(
+					array(
+						'q' => esc_html__( 'Where do the botanicals come from?', 'dragon-glow' ),
+						'a' => esc_html__( 'Micro-farms in Japan, France, the Pacific Northwest. All run on regenerative practices. Each batch carries a trace code back to the field it left.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Are the formulas vegan and cruelty-free?', 'dragon-glow' ),
+						'a' => esc_html__( 'Vegan. Always. No animal testing at any stage — not the raw material, not the finished product. The certificate renews each year and sits at the foot of every product page.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'What is left out?', 'dragon-glow' ),
+						'a' => esc_html__( 'Parabens, sulphates, synthetic fragrance, phthalates, mineral oil, formaldehyde donors. The full list of exclusions, with the reason for each, lives in the ingredient glossary.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Will the formulas suit sensitive skin?', 'dragon-glow' ),
+						'a' => esc_html__( 'Built for it. Every product page carries the full deck. When in doubt, a 24-hour patch test on the inner forearm. Or write — we will walk through your routine with you.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Where are the formulations made?', 'dragon-glow' ),
+						'a' => esc_html__( 'Designed in New York. Compounded in a GMP-certified facility in the United States. The botanicals are traced back to their farms; the hands that make them are paid a wage that lets them stay.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'How does the formula stay fresh without harsh preservatives?', 'dragon-glow' ),
+						'a' => esc_html__( 'Airless pumps. UV-protective glass. Fermentation-derived preservatives, chosen for their work, not their harm. The integrity holds from the first drop to the last.', 'dragon-glow' ),
+					),
+				),
+			),
 
 			array(
 				'id'    => 'orders',
@@ -42,96 +124,58 @@ function dg_faq_data(): array {
 				'items' => array(
 					array(
 						'q' => esc_html__( 'How long until my order arrives?', 'dragon-glow' ),
-						'a' => esc_html__( 'Within the US, 5–7 business days. Express in 2–3, or overnight — both at checkout. Beyond the US, 10–21 business days, depending on customs.', 'dragon-glow' ),
+						'a' => esc_html__( 'Inside the US: 5–7 business days. Express in 2–3. Overnight at checkout. Outside the US: 10–21 days, depending on customs.', 'dragon-glow' ),
 					),
 					array(
 						'q' => esc_html__( 'Do you ship internationally?', 'dragon-glow' ),
-						'a' => esc_html__( 'Yes — to over 60 countries. Customs clears each parcel before it reaches you. Duties and taxes fall to the recipient, shown at checkout.', 'dragon-glow' ),
+						'a' => esc_html__( 'To 60+ countries. Duties and taxes are calculated at checkout and paid by the recipient. Customs holds each parcel before it moves on.', 'dragon-glow' ),
 					),
 					array(
 						'q' => esc_html__( 'How do I track my order?', 'dragon-glow' ),
-						'a' => esc_html__( 'When your order ships, a tracking number reaches your inbox. Or open Track Your Order with your order ID and the email you used.', 'dragon-glow' ),
+						'a' => esc_html__( 'A tracking number arrives in your inbox the moment the parcel ships. Or open Track Your Order with your order ID and the email used at purchase.', 'dragon-glow' ),
 					),
 					array(
 						'q' => esc_html__( 'Can I change or cancel my order?', 'dragon-glow' ),
-						'a' => esc_html__( 'We begin within 1–2 hours. Write to concierge@dragonglow.com before it ships, and we will do what we can.', 'dragon-glow' ),
+						'a' => esc_html__( 'We pack within 1–2 hours. Write to concierge@dragonglow.com before the label prints and we will do what we can.', 'dragon-glow' ),
 					),
 					array(
 						'q' => esc_html__( 'What if my package arrives damaged?', 'dragon-glow' ),
-						'a' => esc_html__( 'Tell us within 48 hours, with photos of the parcel and what is inside. A replacement or a refund follows.', 'dragon-glow' ),
+						'a' => esc_html__( 'Tell us within 48 hours. A photograph of the parcel and the piece inside. A replacement or a refund follows without delay.', 'dragon-glow' ),
+					),
+					array(
+						'q' => esc_html__( 'Do you offer gift wrapping?', 'dragon-glow' ),
+						'a' => esc_html__( 'Every order ships in our ivory linen, sealed with a wax stamp. A handwritten note is added on request. No charge.', 'dragon-glow' ),
 					),
 				),
 			),
 
 			array(
-				'id'    => 'products',
-				'label' => esc_html__( 'Products & Ingredients', 'dragon-glow' ),
+				'id'    => 'sustainability',
+				'label' => esc_html__( 'Sustainability Practice', 'dragon-glow' ),
 				'items' => array(
 					array(
-						'q' => esc_html__( 'Will they suit sensitive skin?', 'dragon-glow' ),
-						'a' => esc_html__( 'Made for every skin, sensitive included. No synthetic fragrance, no parabens, no sulphates. Each product page lists the ingredients. When in doubt, patch test, or ask us.', 'dragon-glow' ),
+						'q' => esc_html__( 'Is the packaging recyclable?', 'dragon-glow' ),
+						'a' => esc_html__( 'Glass vessels. Paper cartons. Soy-based inks. Curbside, in most cities. Pumps and droppers, mixed-material by nature, return to us at no cost — we send them back into the loop.', 'dragon-glow' ),
 					),
 					array(
-						'q' => esc_html__( 'Are they vegan and cruelty-free?', 'dragon-glow' ),
-						'a' => esc_html__( 'Yes — vegan, and never tested on animals, at any stage. No ingredient comes from one.', 'dragon-glow' ),
+						'q' => esc_html__( 'Do you offer refills?', 'dragon-glow' ),
+						'a' => esc_html__( 'The hero serums refill. Send the empty vessel back with the prepaid label in your order. A credit lands in your account toward the next ritual.', 'dragon-glow' ),
 					),
 					array(
-						'q' => esc_html__( 'How should I store them?', 'dragon-glow' ),
-						'a' => esc_html__( 'Cool, dry, out of the sun. Our airless pumps hold the actives. Once opened, use within 12 months, cap closed.', 'dragon-glow' ),
+						'q' => esc_html__( 'What does carbon-neutral mean in practice?', 'dragon-glow' ),
+						'a' => esc_html__( 'Every shipment is offset through verified reforestation and mangrove restoration. The certificate rides with the parcel — open the tracking link to see where your offset landed.', 'dragon-glow' ),
 					),
 					array(
-						'q' => esc_html__( 'Where are they made?', 'dragon-glow' ),
-						'a' => esc_html__( 'Designed in our New York studio. Made in a GMP facility in the United States, with botanicals sourced worldwide.', 'dragon-glow' ),
+						'q' => esc_html__( 'Where does the paper come from?', 'dragon-glow' ),
+						'a' => esc_html__( 'FSC-certified. Milled in the Pacific Northwest. Printed with vegetable-based inks. No plastic fillers. The carton is built to protect the vessel, not to fill a landfill.', 'dragon-glow' ),
 					),
 					array(
-						'q' => esc_html__( 'Do you offer samples?', 'dragon-glow' ),
-						'a' => esc_html__( 'With each seasonal launch, at times. Our newsletter tells you first. Full sizes return within 30 days, if they are not yours.', 'dragon-glow' ),
-					),
-				),
-			),
-
-			array(
-				'id'    => 'returns',
-				'label' => esc_html__( 'Returns & Refunds', 'dragon-glow' ),
-				'items' => array(
-					array(
-						'q' => esc_html__( 'What is your return policy?', 'dragon-glow' ),
-						'a' => esc_html__( 'Unopened, unused, within 30 days. Opened items may earn partial credit, at our discretion. Final-sale items and gifts stay with you. The full steps live on Shipping & Returns.', 'dragon-glow' ),
+						'q' => esc_html__( 'Are the manufacturing facilities audited?', 'dragon-glow' ),
+						'a' => esc_html__( 'Annually, by an independent third party. Labour, water, waste streams, energy sourcing. The summary ships in our annual impact report.', 'dragon-glow' ),
 					),
 					array(
-						'q' => esc_html__( 'How long does a refund take?', 'dragon-glow' ),
-						'a' => esc_html__( 'Once your return arrives and clears, 5–7 business days to your original method. A note confirms it. Your bank may add 3–5 more.', 'dragon-glow' ),
-					),
-					array(
-						'q' => esc_html__( 'Do you offer exchanges?', 'dragon-glow' ),
-						'a' => esc_html__( 'Not directly. Return the first, order the next.', 'dragon-glow' ),
-					),
-					array(
-						'q' => esc_html__( 'Who pays for return shipping?', 'dragon-glow' ),
-						'a' => esc_html__( 'We do — a prepaid, carbon-neutral label, yours at no cost. Our error? Every cost is ours.', 'dragon-glow' ),
-					),
-				),
-			),
-
-			array(
-				'id'    => 'account',
-				'label' => esc_html__( 'Account', 'dragon-glow' ),
-				'items' => array(
-					array(
-						'q' => esc_html__( 'Do I need an account to order?', 'dragon-glow' ),
-						'a' => esc_html__( 'No — guest checkout is open. An account keeps your favourites, your orders, and early access close.', 'dragon-glow' ),
-					),
-					array(
-						'q' => esc_html__( 'How do I reset my password?', 'dragon-glow' ),
-						'a' => esc_html__( 'On the login page, choose Forgot your password. A reset link follows in minutes. Nothing there? Check spam, or reach us.', 'dragon-glow' ),
-					),
-					array(
-						'q' => esc_html__( 'How is my information protected?', 'dragon-glow' ),
-						'a' => esc_html__( 'Encrypted over SSL, held to privacy law. We never sell your data. The Privacy Policy holds the detail.', 'dragon-glow' ),
-					),
-					array(
-						'q' => esc_html__( 'Can I delete my account?', 'dragon-glow' ),
-						'a' => esc_html__( 'Yes. Write to concierge@dragonglow.com — your account and its data clear within 30 days.', 'dragon-glow' ),
+						'q' => esc_html__( 'How do I dispose of an empty vessel?', 'dragon-glow' ),
+						'a' => esc_html__( 'Rinse it. Send it in our prepaid envelope. We send it through the glass-recovery programme. Or keep it — a bud vase, a travel bottle, a quiet object on a shelf.', 'dragon-glow' ),
 					),
 				),
 			),

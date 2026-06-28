@@ -1,77 +1,78 @@
 /* ═══════════════════════════════════════════
    DRAGON GLOW — FAQ
-   Numbered editorial · Geist · hairline · single column
+   The Concierge · Geist · glass-panel · sidebar categories
+   Color tokens per DESIGN.md (Quiet Luxury · Light Dominant)
    ═══════════════════════════════════════════ */
 
-/* ── Scope & typography ─────────────────────── */
-.dg-faq {
-	--faq-ink: var(--color-on-surface, #1c1b1b);
-	--faq-muted: var(--color-on-surface-variant, #514843);
-	--faq-line: var(--color-outline-variant, rgba(28, 27, 27, 0.14));
-	--faq-accent: #d4af37; /* vàng thương hiệu */
-	--faq-num-w: 2.75rem;
-
+/* ── Scope & tokens ───────────────────────── */
+.dg-faq,
+.dg-faq * {
 	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
-	font-feature-settings: "tnum" 1; /* số tabular cho 01/02 + dữ kiện */
+}
+
+.dg-faq {
+	--faq-bg: var(--color-background, #fcf9f8);
+	--faq-surface: var(--color-surface, #fcf9f8);
+	--faq-surface-low: var(--color-surface-container-low, #f6f3f2);
+	--faq-surface-container: var(--color-surface-container, #f0eded);
+	--faq-ink: var(--color-on-surface, #1c1b1b);
+	--faq-muted: var(--color-on-surface-variant, #444845);
+	--faq-line: var(--color-outline-variant, #c4c7c4);
+	--faq-line-soft: rgba(229, 226, 225, 0.5);
+	--faq-gold: var(--color-tertiary, #775a19);
+	--faq-gold-soft: rgba(233, 193, 118, 0.4);
+	--faq-gold-glow: rgba(233, 193, 118, 0.15);
+	--faq-glass: rgba(249, 248, 246, 0.8);
+	--faq-radius: 0.75rem;
+
 	color: var(--faq-ink);
-	background: var(--color-background, #fbf9f5);
-	padding-bottom: clamp(5rem, 12vw, 9rem);
+	background: var(--faq-bg);
+	padding-bottom: clamp(4rem, 10vw, 7rem);
 }
 
+/* FOUC guard: ẩn phần tử sẽ reveal cho tới khi JS chạy */
+.dg-js .dg-faq [data-sr] {
+	opacity: 0;
+}
+
+/* ── Wrap ─────────────────────────────────── */
 .dg-faq-wrap {
-	max-width: 56rem;
+	max-width: 1280px;
 	margin: 0 auto;
-	padding: clamp(3.5rem, 9vw, 7rem) var(--wp--custom--spacing--margin-mobile, 22px) 0;
+	padding: clamp(4rem, 8vw, 6.5rem) var(--wp--custom--spacing--margin-mobile, 22px) 0;
 }
 
-/* ── Scroll-linked progress ─────────────────── */
-.dg-faq-progress {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 2px;
-	z-index: 60;
-	pointer-events: none;
-	background: transparent;
-}
-.dg-faq-progress-fill {
-	display: block;
-	width: 100%;
-	height: 100%;
-	transform: scaleX(0);
-	transform-origin: 0 50%;
-	background: linear-gradient(90deg, var(--faq-accent), #f1ca50);
+@media (min-width: 768px) {
+	.dg-faq-wrap {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 48px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 48px);
+	}
 }
 
 /* ═══════════════════════════════════════════
    HERO
    ═══════════════════════════════════════════ */
 .dg-faq-hero {
-	margin-bottom: clamp(2.75rem, 7vw, 5rem);
-}
-.dg-faq-eyebrow {
-	font-size: 0.72rem;
-	font-weight: 500;
-	letter-spacing: 0.32em;
-	text-transform: uppercase;
-	color: var(--faq-muted);
-	margin: 0 0 clamp(1rem, 3vw, 1.75rem);
+	text-align: center;
+	max-width: 48rem;
+	margin: 0 auto clamp(3rem, 7vw, 5rem);
 }
 .dg-faq-title {
-	font-size: clamp(3.25rem, 11vw, 7rem);
-	font-weight: 600;
+	font-size: clamp(2.75rem, 9vw, 4.5rem);
+	font-weight: 300;
 	letter-spacing: -0.04em;
-	line-height: 0.92;
-	margin: 0;
+	line-height: 1.05;
+	color: var(--faq-ink);
+	margin: 0 0 1.5rem;
+	font-feature-settings: "ss01" 1;
 }
 .dg-faq-lede {
-	font-size: clamp(1.05rem, 2.4vw, 1.4rem);
-	font-weight: 400;
-	line-height: 1.4;
+	font-size: clamp(1rem, 1.8vw, 1.125rem);
+	font-weight: 300;
+	line-height: 1.6;
 	color: var(--faq-muted);
-	max-width: 32ch;
-	margin: clamp(1.25rem, 3vw, 1.75rem) 0 0;
+	margin: 0 auto;
+	max-width: 42rem;
 }
 
 /* ═══════════════════════════════════════════
@@ -83,13 +84,18 @@
 	align-items: center;
 	gap: 0.85rem;
 	border-bottom: 1px solid var(--faq-ink);
-	padding: 0.9rem 0;
-	margin-bottom: clamp(3rem, 7vw, 5rem);
+	padding: 0.85rem 0;
+	margin-bottom: clamp(2.5rem, 6vw, 4rem);
+	max-width: 36rem;
+	margin-left: auto;
+	margin-right: auto;
 }
 .dg-faq-search-icon {
 	font-size: 1.35rem;
 	color: var(--faq-muted);
 	flex: none;
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
 }
 .dg-faq-search-input {
 	flex: 1;
@@ -97,7 +103,7 @@
 	border: 0;
 	background: transparent;
 	font-family: inherit;
-	font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+	font-size: clamp(1rem, 1.8vw, 1.15rem);
 	font-weight: 400;
 	color: var(--faq-ink);
 	padding: 0;
@@ -130,145 +136,250 @@
 	color: var(--faq-ink);
 }
 .dg-faq-search-clear .material-symbols-outlined {
+	font-family: "Material Symbols Outlined", sans-serif;
 	font-size: 1.25rem;
+	font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
 }
-/* Số kết quả — neo dưới đường search, không đẩy layout */
 .dg-faq-search-status {
 	position: absolute;
 	top: calc(100% + 0.6rem);
 	left: 0;
-	font-size: 0.78rem;
-	letter-spacing: 0.08em;
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: var(--faq-muted);
 	margin: 0;
 }
 
 /* ═══════════════════════════════════════════
-   GROUPS & ITEMS
+   LAYOUT: SIDEBAR + MAIN (12-COL)
+   ═══════════════════════════════════════════ */
+.dg-faq-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 1024px) {
+	.dg-faq-layout {
+		grid-template-columns: 1fr 3fr;
+		gap: clamp(2rem, 4vw, 3.5rem);
+	}
+}
+
+/* ── Sidebar categories ─────────────────── */
+.dg-faq-categories {
+	display: none;
+}
+
+@media (min-width: 1024px) {
+	.dg-faq-categories {
+		display: block;
+		position: sticky;
+		top: 7rem;
+		align-self: start;
+	}
+}
+
+.dg-faq-categories-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	border-left: 1px solid var(--faq-line-soft);
+}
+
+.dg-faq-category {
+	appearance: none;
+	border: 0;
+	background: transparent;
+	color: var(--faq-muted);
+	font-family: inherit;
+	font-size: 0.95rem;
+	font-weight: 400;
+	text-align: left;
+	padding: 0.65rem 0 0.65rem 1.25rem;
+	cursor: pointer;
+	border-left: 2px solid transparent;
+	margin-left: -1px;
+	transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.dg-faq-category:hover {
+	color: var(--faq-gold);
+}
+
+.dg-faq-category.is-active {
+	color: var(--faq-gold);
+	font-weight: 500;
+	border-left-color: var(--faq-gold);
+}
+
+.dg-faq-category:focus-visible {
+	outline: 2px solid var(--faq-gold);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* Mobile horizontal scroll cho categories */
+@media (max-width: 1023px) {
+	.dg-faq-layout {
+		grid-template-columns: 1fr;
+	}
+	.dg-faq-categories {
+		display: block;
+		margin: 0 calc(-1 * var(--wp--custom--spacing--margin-mobile, 22px));
+		padding: 0 var(--wp--custom--spacing--margin-mobile, 22px);
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+	.dg-faq-categories::-webkit-scrollbar {
+		display: none;
+	}
+	.dg-faq-categories-nav {
+		flex-direction: row;
+		gap: 1.25rem;
+		border-left: 0;
+		border-bottom: 1px solid var(--faq-line-soft);
+		padding-bottom: 0.85rem;
+		white-space: nowrap;
+	}
+	.dg-faq-category {
+		border-left: 0;
+		border-bottom: 2px solid transparent;
+		margin-left: 0;
+		padding: 0.5rem 0.25rem 0.85rem;
+		font-size: 0.85rem;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+	}
+	.dg-faq-category.is-active {
+		border-left-color: transparent;
+		border-bottom-color: var(--faq-gold);
+	}
+}
+
+/* ── Main column ────────────────────────── */
+.dg-faq-main {
+	min-width: 0;
+}
+
+/* ═══════════════════════════════════════════
+   GROUPS & CARDS
    ═══════════════════════════════════════════ */
 .dg-faq-group {
-	margin-bottom: clamp(2.5rem, 6vw, 4rem);
+	margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
 }
 .dg-faq-group[hidden] {
 	display: none;
 }
-.dg-faq-group-label {
-	font-size: 0.72rem;
-	font-weight: 500;
-	letter-spacing: 0.26em;
-	text-transform: uppercase;
-	color: var(--faq-muted);
-	margin: 0 0 0.5rem;
-	padding-top: 1.25rem;
-	border-top: 1px solid var(--faq-line);
-}
-
 .dg-faq-items {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	counter-reset: faq; /* đánh số lại theo từng nhóm */
+	display: flex;
+	flex-direction: column;
+	gap: clamp(0.85rem, 2vw, 1.25rem);
 }
+
 .dg-faq-item {
-	counter-increment: faq; /* item bị search ẩn (display:none) sẽ không tính */
-	border-bottom: 1px solid var(--faq-line);
+	/* container cho mỗi card */
 }
 .dg-faq-item[hidden] {
 	display: none;
 }
 
-.dg-faq-q {
-	margin: 0;
-	font-weight: inherit;
+/* ── Card (glass-panel + ghost-border) ─── */
+.dg-faq-card {
+	position: relative;
+	border-radius: var(--faq-radius);
+	padding: clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2rem);
+	background: var(--faq-surface-low);
+	border: 1px solid var(--faq-line-soft);
+	transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+	overflow: hidden;
 }
+
+/* Hover (chỉ thiết bị có con trỏ) */
+@media (hover: hover) {
+	.dg-faq-card--ghost:hover {
+		background: var(--faq-surface-container);
+	}
+	.dg-faq-card--ghost:hover .dg-faq-q {
+		color: var(--faq-gold);
+	}
+	.dg-faq-card--ghost:hover .dg-faq-icon {
+		color: var(--faq-gold);
+	}
+}
+
+/* Active: glass-panel + gold aura */
+.dg-faq-card.is-open {
+	background: var(--faq-glass);
+	border-color: var(--faq-gold-soft);
+	box-shadow: 0 4px 30px var(--faq-gold-glow);
+	-webkit-backdrop-filter: blur(20px);
+	backdrop-filter: blur(20px);
+}
+.dg-faq-card.is-open .dg-faq-q {
+	color: var(--faq-ink);
+}
+.dg-faq-card.is-open .dg-faq-icon {
+	color: var(--faq-gold);
+	transform: rotate(180deg);
+}
+
+/* ── Trigger button ─────────────────────── */
 .dg-faq-trigger {
-	display: grid;
-	grid-template-columns: var(--faq-num-w) 1fr auto;
-	align-items: start;
-	gap: clamp(0.75rem, 2vw, 1.5rem);
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1.5rem;
 	width: 100%;
 	text-align: left;
 	border: 0;
 	background: transparent;
 	cursor: pointer;
-	padding: clamp(1.15rem, 3vw, 1.65rem) 0;
-	color: var(--faq-ink);
+	padding: 0;
+	color: inherit;
 	font-family: inherit;
 }
-.dg-faq-num::before {
-	content: counter(faq, decimal-leading-zero);
-	font-size: 0.85rem;
-	font-weight: 500;
-	color: var(--faq-muted);
-	line-height: 1.75;
-	transition: color 0.25s ease;
-}
-.dg-faq-q-text {
-	font-size: clamp(1.08rem, 2.4vw, 1.5rem);
-	font-weight: 500;
+
+.dg-faq-q {
+	font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+	font-weight: 400;
 	letter-spacing: -0.01em;
-	line-height: 1.32;
-	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Dấu +/− vẽ bằng pseudo-element */
-.dg-faq-mark {
-	position: relative;
-	width: 15px;
-	height: 15px;
-	margin-top: 0.55rem;
-	flex: none;
-	color: var(--faq-muted);
-	transition: color 0.25s ease;
-}
-.dg-faq-mark::before,
-.dg-faq-mark::after {
-	content: "";
-	position: absolute;
-	background: currentColor;
-	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.dg-faq-mark::before {
-	top: 50%;
-	left: 0;
-	width: 100%;
-	height: 1.5px;
-	transform: translateY(-50%);
-}
-.dg-faq-mark::after {
-	left: 50%;
-	top: 0;
-	width: 1.5px;
-	height: 100%;
-	transform: translateX(-50%);
-}
-.dg-faq-trigger[aria-expanded="true"] .dg-faq-mark::after {
-	transform: translateX(-50%) scaleY(0);
-}
-.dg-faq-trigger[aria-expanded="true"] .dg-faq-num::before,
-.dg-faq-trigger[aria-expanded="true"] .dg-faq-mark {
+	line-height: 1.35;
 	color: var(--faq-ink);
+	margin: 0;
+	transition: color 0.4s ease;
 }
 
-/* Hover (chỉ thiết bị có con trỏ) */
-@media (hover: hover) {
-	.dg-faq-trigger:hover .dg-faq-q-text {
-		transform: translateX(8px);
-	}
-	.dg-faq-trigger:hover .dg-faq-num::before,
-	.dg-faq-trigger:hover .dg-faq-mark {
-		color: var(--faq-accent);
-	}
+.dg-faq-icon {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	color: var(--faq-muted);
+	transition: color 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+	margin-top: 0.2rem;
+}
+.dg-faq-icon .material-symbols-outlined {
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-size: 1.5rem;
+	font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
 }
 
 .dg-faq-trigger:focus-visible {
-	outline: 2px solid var(--faq-accent);
+	outline: 2px solid var(--faq-gold);
 	outline-offset: 4px;
 	border-radius: 2px;
 }
 
-/* Panel câu trả lời (height do JS điều khiển) */
+/* ── Panel (câu trả lời) ────────────────── */
 .dg-faq-panel {
 	overflow: hidden;
 }
@@ -277,10 +388,10 @@
 }
 .dg-faq-a {
 	margin: 0;
-	padding: 0 clamp(0.75rem, 2vw, 1.5rem) clamp(1.4rem, 3vw, 1.75rem) calc(var(--faq-num-w) + clamp(0.75rem, 2vw, 1.5rem));
-	font-size: 1rem;
-	font-weight: 400;
-	line-height: 1.65;
+	padding-top: clamp(1rem, 2vw, 1.25rem);
+	font-size: clamp(0.95rem, 1.4vw, 1.0625rem);
+	font-weight: 300;
+	line-height: 1.7;
 	color: var(--faq-muted);
 	max-width: 60ch;
 }
@@ -297,146 +408,141 @@
 }
 .dg-faq-empty-title {
 	font-size: clamp(1.5rem, 4vw, 2.25rem);
-	font-weight: 600;
+	font-weight: 300;
 	letter-spacing: -0.02em;
+	color: var(--faq-ink);
 	margin: 0 0 0.75rem;
 }
 .dg-faq-empty-text {
 	font-size: 1rem;
+	font-weight: 300;
 	color: var(--faq-muted);
 	margin: 0 auto 2rem;
 	max-width: 36ch;
 }
 .dg-faq-empty-link {
 	display: inline-block;
-	font-size: 0.78rem;
-	font-weight: 500;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: var(--faq-ink);
-	text-decoration: none;
-	border-bottom: 1px solid var(--faq-ink);
-	padding-bottom: 0.4rem;
-	transition: color 0.25s ease, border-color 0.25s ease;
-}
-.dg-faq-empty-link:hover {
-	color: var(--faq-accent);
-	border-color: var(--faq-accent);
-}
-
-/* ═══════════════════════════════════════════
-   CONTACT CTA
-   ═══════════════════════════════════════════ */
-.dg-faq-cta {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 1.25rem;
-	margin-top: clamp(3.5rem, 8vw, 5.5rem);
-	padding-top: clamp(2rem, 5vw, 3rem);
-	border-top: 1px solid var(--faq-ink);
-}
-.dg-faq-cta-text {
-	font-size: clamp(1.5rem, 4vw, 2.5rem);
-	font-weight: 600;
-	letter-spacing: -0.03em;
-	margin: 0;
-}
-.dg-faq-cta-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.6rem;
-	font-size: 0.8rem;
+	font-size: 0.72rem;
 	font-weight: 500;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	color: var(--faq-ink);
 	text-decoration: none;
-	will-change: transform;
+	border-bottom: 1px solid var(--faq-ink);
+	padding-bottom: 0.4rem;
+	transition: color 0.3s ease, border-color 0.3s ease;
 }
+.dg-faq-empty-link:hover {
+	color: var(--faq-gold);
+	border-color: var(--faq-gold);
+}
+
+/* ═══════════════════════════════════════════
+   CTA — image bg + glass panel
+   ═══════════════════════════════════════════ */
+.dg-faq-cta {
+	position: relative;
+	margin-top: clamp(4rem, 9vw, 6rem);
+	border-radius: var(--faq-radius);
+	overflow: hidden;
+	height: clamp(15rem, 30vw, 18rem);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dg-faq-cta-bg {
+	position: absolute;
+	inset: 0;
+	background-image: var(--dg-faq-cta-bg, none);
+	background-size: cover;
+	background-position: center;
+	opacity: 0.6;
+	mix-blend-mode: multiply;
+}
+
+.dg-faq-cta-panel {
+	position: relative;
+	z-index: 1;
+	text-align: center;
+	background: var(--faq-glass);
+	-webkit-backdrop-filter: blur(20px);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: var(--faq-radius);
+	padding: clamp(1.75rem, 4vw, 2.75rem) clamp(2rem, 5vw, 3.5rem);
+	max-width: 32rem;
+}
+
+.dg-faq-cta-title {
+	font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+	font-weight: 400;
+	letter-spacing: -0.01em;
+	color: var(--faq-ink);
+	margin: 0 0 0.65rem;
+}
+
+.dg-faq-cta-text {
+	font-size: clamp(0.9rem, 1.3vw, 1rem);
+	font-weight: 300;
+	color: var(--faq-muted);
+	margin: 0 0 1.5rem;
+	line-height: 1.5;
+}
+
+.dg-faq-cta-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	background: var(--faq-ink);
+	color: #fff;
+	font-family: inherit;
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	text-decoration: none;
+	padding: 0.85rem 2rem;
+	border-radius: 0.125rem;
+	border: 0;
+	cursor: pointer;
+	transition: background 0.4s ease;
+}
+
+.dg-faq-cta-button:hover {
+	background: var(--faq-gold);
+	color: #fff;
+}
+
 .dg-faq-cta-arrow {
-	font-size: 1.1rem;
+	font-size: 1rem;
 	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@media (hover: hover) {
-	.dg-faq-cta-link:hover .dg-faq-cta-arrow {
-		transform: translateX(6px);
-	}
+.dg-faq-cta-button:hover .dg-faq-cta-arrow {
+	transform: translateX(4px);
 }
-.dg-faq-cta-link:focus-visible {
-	outline: 2px solid var(--faq-accent);
+
+.dg-faq-cta-button:focus-visible {
+	outline: 2px solid var(--faq-gold);
 	outline-offset: 4px;
 }
 
 /* ═══════════════════════════════════════════
-   MOBILE  (thiết kế riêng cho màn nhỏ)
-   - Search dính trên đầu để luôn trong tầm tay
-   - Thu nhỏ cột số, giảm gap, câu trả lời trải full
-   - CTA xếp dọc
+   REDUCED MOTION
    ═══════════════════════════════════════════ */
-@media (max-width: 640px) {
-	.dg-faq {
-		--faq-num-w: 1.9rem;
-	}
-	.dg-faq-search {
-		position: sticky;
-		top: 0;
-		z-index: 40;
-		background: var(--color-background, #fbf9f5);
-		/* nới mép để nền sticky che hết bề ngang khi cuộn */
-		margin-left: calc(-1 * var(--wp--custom--spacing--margin-mobile, 22px));
-		margin-right: calc(-1 * var(--wp--custom--spacing--margin-mobile, 22px));
-		padding-left: var(--wp--custom--spacing--margin-mobile, 22px);
-		padding-right: var(--wp--custom--spacing--margin-mobile, 22px);
-	}
-	.dg-faq-search-status {
-		left: var(--wp--custom--spacing--margin-mobile, 22px);
-	}
-	.dg-faq-num::before {
-		font-size: 0.72rem;
-	}
-	.dg-faq-a {
-		padding-left: 0;
-		padding-right: 0;
-	}
-	.dg-faq-cta {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1.5rem;
-	}
-}
-
-/* Tablet — nới bề ngang mép trang */
-@media (min-width: 768px) {
-	.dg-faq-wrap {
-		padding-left: var(--wp--custom--spacing--margin-desktop, 48px);
-		padding-right: var(--wp--custom--spacing--margin-desktop, 48px);
-	}
-}
-
-/* ═══════════════════════════════════════════
-   FOUC GUARD + REDUCED MOTION
-   ═══════════════════════════════════════════ */
-/* Ẩn phần tử sẽ reveal cho tới khi JS chạy (chỉ khi có .dg-js) */
-.dg-js .dg-faq [data-sr] {
-	opacity: 0;
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.dg-js .dg-faq [data-sr] {
 		opacity: 1 !important;
 	}
-	.dg-faq-progress-fill {
-		transform: scaleX(1);
-	}
-	.dg-faq-q-text,
-	.dg-faq-mark::before,
-	.dg-faq-mark::after,
+	.dg-faq-card,
+	.dg-faq-q,
+	.dg-faq-icon,
+	.dg-faq-category,
+	.dg-faq-cta-button,
 	.dg-faq-cta-arrow {
 		transition: none !important;
 	}
-	.dg-faq-trigger:hover .dg-faq-q-text {
-		transform: none;
+	.dg-faq-card.is-open .dg-faq-icon {
+		transform: rotate(180deg);
 	}
 }
