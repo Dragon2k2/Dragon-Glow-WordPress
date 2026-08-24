@@ -1,0 +1,448 @@
+/* ============================================================
+   DRAGON GLOW — HELP CENTER STYLES
+   Mirrors stitch_dragon_glow_support_hub prototype.
+   Geist + tokens scoped to [data-page="help-center"].
+   ============================================================ */
+
+/* ── FOUC guard ────────────────────────────────────────────── */
+.dg-js [data-page="help-center"] [data-sr] {
+	opacity: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SCOPED GEIST + TOKENS
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] {
+	font-family: 'Geist Variable', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--hc-on-surface);
+	background: var(--hc-bg);
+
+	--hc-bg: #fcf9f8;
+	--hc-on-surface: #1c1b1b;
+	--hc-on-surface-variant: #4d4635;
+	--hc-primary: #605e5c;
+	--hc-on-primary: #ffffff;
+	--hc-secondary: #615e57;
+	--hc-outline: #797770;
+	--hc-outline-variant: #c9c6be;
+	--hc-ivory: #f6f3f2;
+	--hc-champagne: #e8e2d9;
+	--hc-gold: #735C00;
+	--hc-gold-title: #D4AF37;
+	--hc-gold-muted: #a08520;
+	--hc-gold-hover: #4a3b00;
+	--hc-radius-sm: 0.25rem;
+	--hc-radius-md: 0.5rem;
+	--hc-shadow-hover: 0 20px 40px rgba(45, 45, 45, 0.03);
+	--hc-shadow-icon: 0 10px 20px rgba(45, 45, 45, 0.02);
+	--hc-gutter: 32px;
+	--hc-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] .dg-hc-hero {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 120px var(--wp--custom--spacing--margin-mobile, 20px) 32px;
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	[data-page="help-center"] .dg-hc-hero {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 64px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 64px);
+	}
+}
+
+[data-page="help-center"] .dg-hc-hero-title {
+	font-family: inherit;
+	font-size: clamp(40px, 8vw, 64px);
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: -0.04em;
+	color: var(--hc-gold);
+	margin: 0 0 16px;
+}
+
+[data-page="help-center"] .dg-hc-hero-sub {
+	font-family: inherit;
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 1.6;
+	letter-spacing: 0.01em;
+	color: var(--hc-secondary);
+	margin: 0 auto;
+	max-width: 56ch;
+}
+
+/* ══════════════════════════════════════════════
+   SEARCH — underline expands to Ivory on focus
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] .dg-hc-search {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 0 var(--wp--custom--spacing--margin-mobile, 20px) 64px;
+}
+
+@media (min-width: 768px) {
+	[data-page="help-center"] .dg-hc-search {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 64px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 64px);
+	}
+}
+
+[data-page="help-center"] .dg-hc-search-container {
+	position: relative;
+	padding: 8px;
+	border-radius: var(--hc-radius-md);
+}
+
+[data-page="help-center"] .dg-hc-search-container::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 1px;
+	background-color: var(--hc-outline-variant);
+	opacity: 0.4;
+	transition:
+		background-color 500ms var(--hc-ease),
+		height 500ms var(--hc-ease),
+		opacity 500ms var(--hc-ease),
+		box-shadow 500ms var(--hc-ease);
+	z-index: -1;
+	border-radius: 0;
+}
+
+[data-page="help-center"] .dg-hc-search-container:focus-within::after {
+	height: 100%;
+	background-color: var(--hc-ivory);
+	opacity: 1;
+	border-radius: var(--hc-radius-md);
+	box-shadow: var(--hc-shadow-hover);
+}
+
+[data-page="help-center"] .dg-hc-search-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	margin-left: 8px;
+	color: var(--hc-outline);
+	font-size: 20px;
+	vertical-align: middle;
+}
+
+[data-page="help-center"] .dg-hc-search-input {
+	width: calc(100% - 48px);
+	background: transparent;
+	border: 0;
+	outline: none;
+	padding: 16px 16px;
+	font-family: inherit;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+	color: var(--hc-primary);
+	transition: padding 500ms var(--hc-ease);
+}
+
+[data-page="help-center"] .dg-hc-search-container:focus-within .dg-hc-search-input {
+	padding-left: var(--hc-gutter);
+	padding-right: var(--hc-gutter);
+}
+
+[data-page="help-center"] .dg-hc-search-input::placeholder {
+	color: var(--hc-outline);
+	opacity: 0.5;
+	font-weight: 300;
+}
+
+[data-page="help-center"] .dg-hc-search-status {
+	font-size: 12px;
+	font-weight: 500;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--hc-outline);
+	margin: 12px 0 0;
+	min-height: 1em;
+}
+
+/* ══════════════════════════════════════════════
+   WRAP + SECTIONS
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] .dg-hc-wrap {
+	max-width: var(--wp--custom--layout--content-size, 1140px);
+	margin: 0 auto;
+	padding: 0 var(--wp--custom--spacing--margin-mobile, 20px) 120px;
+	display: flex;
+	flex-direction: column;
+	gap: 96px;
+}
+
+@media (min-width: 768px) {
+	[data-page="help-center"] .dg-hc-wrap {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 64px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 64px);
+		gap: 120px;
+	}
+}
+
+/* Section header */
+[data-page="help-center"] .dg-hc-section-head {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 32px;
+}
+
+[data-page="help-center"] .dg-hc-section-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 9999px;
+	background-color: var(--hc-bg);
+	border: 1px solid rgba(212, 175, 55, 0.3);
+	box-shadow: var(--hc-shadow-icon);
+	color: var(--hc-gold-title);
+	flex-shrink: 0;
+	transition: background-color 300ms var(--hc-ease), color 300ms var(--hc-ease);
+}
+
+[data-page="help-center"] .dg-hc-section-icon .material-symbols-outlined {
+	font-size: 22px;
+	font-variation-settings: 'FILL' 1, 'wght' 400;
+}
+
+[data-page="help-center"] .dg-hc-section-title {
+	font-family: inherit;
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+	color: var(--hc-gold-title);
+	margin: 0;
+}
+
+[data-page="help-center"] .dg-hc-section-empty {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 300;
+	line-height: 1.6;
+	color: var(--hc-secondary);
+	margin: 0;
+	padding: 24px 0;
+	border-top: 1px solid rgba(201, 198, 190, 0.3);
+}
+
+/* ══════════════════════════════════════════════
+   ACCORDION — single-open, height-animated by JS
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] .dg-hc-accordion {
+	border-top: 1px solid rgba(201, 198, 190, 0.3);
+}
+
+[data-page="help-center"] .dg-hc-faq-item {
+	border-bottom: 1px solid rgba(201, 198, 190, 0.3);
+}
+
+[data-page="help-center"] .dg-hc-faq-trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	width: 100%;
+	padding: 24px 0;
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+	text-align: left;
+	font: inherit;
+	color: var(--hc-on-surface);
+	transition: color 300ms var(--hc-ease);
+}
+
+[data-page="help-center"] .dg-hc-faq-trigger:hover {
+	color: var(--hc-gold);
+}
+
+[data-page="help-center"] .dg-hc-faq-question {
+	font-family: inherit;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.5;
+	letter-spacing: 0;
+	flex: 1;
+	min-width: 0;
+}
+
+[data-page="help-center"] .dg-hc-faq-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	color: var(--hc-gold);
+	transition: color 300ms var(--hc-ease);
+}
+
+[data-page="help-center"] .dg-hc-faq-item.is-open .dg-hc-faq-icon {
+	color: var(--hc-gold-hover);
+}
+
+[data-page="help-center"] .dg-hc-faq-icon .material-symbols-outlined {
+	font-size: 22px;
+	font-variation-settings: 'wght' 300;
+}
+
+[data-page="help-center"] .dg-hc-faq-panel {
+	overflow: hidden;
+	height: 0;
+	opacity: 0;
+}
+
+[data-page="help-center"] .dg-hc-faq-panel-inner {
+	padding: 0 0 32px;
+}
+
+[data-page="help-center"] .dg-hc-faq-answer {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.65;
+	letter-spacing: 0.01em;
+	color: var(--hc-secondary);
+	margin: 0;
+	max-width: 64ch;
+}
+
+[data-page="help-center"] .dg-hc-faq-cta {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 24px;
+	padding: 14px 28px;
+	background-color: var(--hc-primary);
+	color: var(--hc-on-primary);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-decoration: none;
+	border-radius: var(--hc-radius-sm);
+	transition: background-color 500ms var(--hc-ease);
+}
+
+[data-page="help-center"] .dg-hc-faq-cta:hover {
+	background-color: #313030;
+}
+
+/* ══════════════════════════════════════════════
+   EMPTY-STATE (search no-match)
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] .dg-hc-empty {
+	max-width: var(--wp--custom--layout--content-size, 1140px);
+	margin: 48px auto 0;
+	padding: 48px var(--wp--custom--spacing--margin-mobile, 20px);
+	text-align: center;
+	border-top: 1px solid rgba(201, 198, 190, 0.3);
+}
+
+@media (min-width: 768px) {
+	[data-page="help-center"] .dg-hc-empty {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 64px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 64px);
+	}
+}
+
+[data-page="help-center"] .dg-hc-empty-title {
+	font-family: inherit;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+	color: var(--hc-primary);
+	margin: 0 0 12px;
+}
+
+[data-page="help-center"] .dg-hc-empty-text {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--hc-secondary);
+	margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+	[data-page="help-center"] .dg-hc-hero {
+		padding-top: 80px;
+	}
+
+	[data-page="help-center"] .dg-hc-section-title {
+		font-size: 20px;
+	}
+
+	[data-page="help-center"] .dg-hc-faq-question {
+		font-size: 16px;
+	}
+
+	[data-page="help-center"] .dg-hc-faq-panel-inner {
+		padding-right: 16px;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	[data-page="help-center"] [data-sr] {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	[data-page="help-center"] *,
+	[data-page="help-center"] *::before,
+	[data-page="help-center"] *::after {
+		transition: none !important;
+	}
+
+
+	[data-page="help-center"] .dg-hc-faq-panel {
+		height: auto !important;
+		opacity: 1 !important;
+		overflow: visible !important;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   FOCUS STATES
+   ══════════════════════════════════════════════ */
+[data-page="help-center"] :focus-visible {
+	outline: 2px solid var(--hc-primary);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+[data-page="help-center"] .dg-hc-faq-trigger:focus-visible {
+	outline-offset: -2px;
+}
+
+[data-page="help-center"] .dg-hc-search-input:focus-visible {
+	outline: none;
+}

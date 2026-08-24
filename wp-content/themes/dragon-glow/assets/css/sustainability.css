@@ -1,0 +1,752 @@
+/* ============================================================
+   DRAGON GLOW — SUSTAINABILITY STYLES
+   Mirrors stitch_dragon_glow_sustainability_page prototype.
+   Geist scoped to [data-page="sustainability"] — does not
+   touch the global theme font tokens.
+   Design: Editorial Luxury Minimalism, cream/charcoal palette.
+   ============================================================ */
+
+/* ── FOUC guard ────────────────────────────────────────────── */
+.dg-js [data-page="sustainability"] [data-sr] {
+	opacity: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SCOPED GEIST + TOKENS
+   ══════════════════════════════════════════════ */
+[data-page="sustainability"] {
+	font-family: 'Geist Variable', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	color: #1b1c1a;
+	background: #faf9f5;
+	-webkit-font-smoothing: antialiased;
+
+	/* Stitch design tokens (scoped) */
+	--sus-bg: #faf9f5;
+	--sus-on-bg: #1b1c1a;
+	--sus-primary: #000000;
+	--sus-on-primary: #ffffff;
+	--sus-on-surface: #1b1c1a;
+	--sus-on-surface-variant: #444748;
+	--sus-secondary: #735c00;
+	--sus-tertiary: #000000;
+	--sus-tertiary-container: #211a17;
+	--sus-tertiary-fixed: #eedfda;
+	--sus-secondary-container: #fed65b;
+	--sus-surface-container-low: #f4f4f0;
+	--sus-surface-container: #efeeea;
+	--sus-surface-variant: #e3e2df;
+	--sus-primary-container: #1c1b1b;
+	--sus-inverse-surface: #2f312e;
+	--sus-inverse-on-surface: #f2f1ed;
+	--sus-outline: #747878;
+	--sus-outline-variant: #c4c7c7;
+
+	/* Spacing tokens */
+	--sus-margin-mobile: 24px;
+	--sus-margin-desktop: 64px;
+	--sus-gutter: 24px;
+	--sus-section-gap: 120px;
+	--sus-container-max: 1440px;
+}
+
+/* ── Material Symbols (inherits from global enqueue; ensure weight 200) ── */
+[data-page="sustainability"] .material-symbols-outlined {
+	font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ── Shared hairline divider ───────────────────────────────── */
+[data-page="sustainability"] .dg-sus-hairline {
+	height: 1px;
+	background: rgba(27, 28, 26, 0.1);
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* ── Type scale (badge / display / headline / body / label) ─ */
+[data-page="sustainability"] .dg-sus-hero-badge,
+[data-page="sustainability"] .dg-sus-commit-title,
+[data-page="sustainability"] .dg-sus-packaging-title {
+	font-weight: 600;
+}
+
+[data-page="sustainability"] .dg-sus-hero-badge {
+	font-size: 12px;
+	line-height: 1.0;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--sus-on-surface-variant);
+	margin: 0 0 1.5rem;
+}
+
+[data-page="sustainability"] .dg-sus-hero-headline,
+[data-page="sustainability"] .dg-sus-sourcing-headline,
+[data-page="sustainability"] .dg-sus-refill-headline,
+[data-page="sustainability"] .dg-sus-accountability-headline {
+	font-size: clamp(48px, 7vw, 80px);
+	font-weight: 600;
+	line-height: 1.0;
+	letter-spacing: -0.04em;
+	color: var(--sus-primary);
+	margin: 0 0 2rem;
+}
+
+[data-page="sustainability"] .dg-sus-intro-text,
+[data-page="sustainability"] .dg-sus-commitments-heading,
+[data-page="sustainability"] .dg-sus-packaging-heading,
+[data-page="sustainability"] .dg-sus-carbon-headline {
+	font-size: clamp(32px, 4vw, 48px);
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--sus-on-surface);
+	margin: 0;
+}
+
+[data-page="sustainability"] .dg-sus-hero-body,
+[data-page="sustainability"] .dg-sus-sourcing-body,
+[data-page="sustainability"] .dg-sus-refill-body,
+[data-page="sustainability"] .dg-sus-accountability-body,
+[data-page="sustainability"] .dg-sus-carbon-body {
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1.6;
+	letter-spacing: -0.01em;
+	color: var(--sus-on-surface-variant);
+	margin: 0 0 3rem;
+}
+
+[data-page="sustainability"] .dg-sus-commit-body,
+[data-page="sustainability"] .dg-sus-packaging-body {
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--sus-on-surface-variant);
+	margin: 0;
+}
+
+[data-page="sustainability"] .dg-sus-packaging-title {
+	font-size: 18px;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+	color: var(--sus-on-surface);
+	margin: 0 0 0.5rem;
+}
+
+[data-page="sustainability"] .dg-sus-commit-title {
+	font-size: 18px;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+	color: var(--sus-primary);
+	margin: 0 0 1rem;
+}
+
+[data-page="sustainability"] .dg-sus-numbers-item {
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.0;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--sus-on-primary);
+}
+
+[data-page="sustainability"] .dg-sus-sourcing-footnote {
+	font-size: 16px;
+	font-weight: 400;
+	font-style: italic;
+	line-height: 1.6;
+	color: var(--sus-on-surface-variant);
+	margin: 1.5rem 0 0;
+}
+
+[data-page="sustainability"] .dg-sus-closing-headline {
+	font-size: clamp(48px, 7vw, 80px);
+	font-weight: 600;
+	line-height: 1.0;
+	letter-spacing: -0.04em;
+	color: var(--sus-primary);
+	margin: 0 0 3rem;
+	text-align: center;
+}
+
+/* ── Button ────────────────────────────────────────────────── */
+[data-page="sustainability"] .dg-sus-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem 2rem;
+	border: 1px solid var(--sus-on-surface);
+	color: var(--sus-primary);
+	background: transparent;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.0;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
+		color 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-page="sustainability"] .dg-sus-btn:hover {
+	background: var(--sus-tertiary-fixed);
+	border-color: var(--sus-tertiary-fixed);
+}
+
+[data-page="sustainability"] .dg-sus-btn:focus-visible {
+	outline: 2px solid var(--sus-primary);
+	outline-offset: 4px;
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+
+.dg-sus-hero-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sus-gutter);
+	align-items: center;
+	padding: calc(var(--sus-section-gap) * 0.75) var(--sus-margin-mobile) var(--sus-section-gap);
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-hero-inner {
+		grid-template-columns: 5fr 6fr;
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+		column-gap: calc(var(--sus-gutter) * 2);
+	}
+}
+
+@media (min-width: 1024px) {
+	.dg-sus-hero-inner {
+		column-gap: calc(var(--sus-gutter) * 3);
+	}
+}
+
+.dg-sus-hero-image {
+	width: 100%;
+	height: 50vh;
+	overflow: hidden;
+	order: 2;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-hero-image {
+		height: clamp(420px, 65vh, 680px);
+		order: 1;
+	}
+}
+
+.dg-sus-hero-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: brightness(0.95);
+}
+
+.dg-sus-hero-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 1rem 0;
+	order: 1;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-hero-content {
+		order: 2;
+		padding: 0;
+		padding-left: 0;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   INTRO
+   ══════════════════════════════════════════════ */
+.dg-sus-intro {
+	background: var(--sus-surface-container-low);
+}
+
+.dg-sus-intro-inner {
+	max-width: 768px;
+	margin: 0 auto;
+	padding: var(--sus-section-gap) var(--sus-margin-mobile);
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-intro-inner {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+/* ══════════════════════════════════════════════
+   COMMITMENTS (3 tiles)
+   ══════════════════════════════════════════════ */
+.dg-sus-commitments {
+	padding: var(--sus-section-gap) var(--sus-margin-mobile);
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-commitments {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-commitments-header {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin-bottom: calc(var(--sus-section-gap) * 0.4);
+}
+
+.dg-sus-commitments-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: calc(var(--sus-gutter) * 2);
+}
+
+@media (min-width: 768px) {
+	.dg-sus-commitments-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--sus-gutter);
+	}
+}
+
+.dg-sus-commit {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 2rem;
+	border: 1px solid transparent;
+	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
+		border-color 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-sus-commit:hover {
+	background: var(--sus-tertiary-fixed);
+	border-color: rgba(27, 28, 26, 0.05);
+}
+
+.dg-sus-commit-icon {
+	font-size: 32px;
+	color: var(--sus-on-surface-variant);
+	margin-bottom: 1.5rem;
+	transition: color 300ms ease;
+}
+
+.dg-sus-commit:hover .dg-sus-commit-icon {
+	color: var(--sus-primary);
+}
+
+/* ══════════════════════════════════════════════
+   SOURCING (image-left / text-right)
+   ══════════════════════════════════════════════ */
+.dg-sus-sourcing {
+	padding: var(--sus-section-gap) var(--sus-margin-mobile);
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+	border-top: 1px solid rgba(27, 28, 26, 0.1);
+}
+
+@media (min-width: 768px) {
+	.dg-sus-sourcing {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-sourcing-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sus-gutter);
+	align-items: center;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-sourcing-inner {
+		grid-template-columns: 6fr 5fr;
+		column-gap: calc(var(--sus-gutter) * 3);
+	}
+}
+
+.dg-sus-sourcing-image {
+	width: 100%;
+	height: 50vh;
+	overflow: hidden;
+	order: 2;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-sourcing-image {
+		height: clamp(500px, 70vh, 716px);
+		order: 1;
+	}
+}
+
+.dg-sus-sourcing-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dg-sus-sourcing-content {
+	order: 1;
+	padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-sourcing-content {
+		order: 2;
+		padding: 0;
+	}
+}
+
+.dg-sus-sourcing-regions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.dg-sus-sourcing-region {
+	padding: 0.5rem 1rem;
+	background: var(--sus-surface-container-low);
+	color: var(--sus-on-surface);
+	border: 1px solid rgba(27, 28, 26, 0.1);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.0;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════
+   PACKAGING (3 cards with hairline above)
+   ══════════════════════════════════════════════ */
+.dg-sus-packaging {
+	background: var(--sus-surface-container-low);
+	padding: var(--sus-section-gap) 0;
+}
+
+.dg-sus-packaging-inner {
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+	padding: 0 var(--sus-margin-mobile);
+}
+
+@media (min-width: 768px) {
+	.dg-sus-packaging-inner {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-packaging-header {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin-bottom: calc(var(--sus-section-gap) * 0.4);
+}
+
+.dg-sus-packaging-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-packaging-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--sus-gutter);
+	}
+}
+
+.dg-sus-packaging-item {
+	border-top: 1px solid rgba(27, 28, 26, 0.2);
+	padding-top: 1.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   REFILL (text-left / image-right)
+   ══════════════════════════════════════════════ */
+.dg-sus-refill {
+	padding: var(--sus-section-gap) var(--sus-margin-mobile);
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-refill {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-refill-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sus-gutter);
+	align-items: center;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-refill-inner {
+		grid-template-columns: 5fr 6fr;
+		column-gap: calc(var(--sus-gutter) * 3);
+	}
+}
+
+.dg-sus-refill-content {
+	padding: 1rem 0;
+}
+
+.dg-sus-refill-image {
+	width: 100%;
+	height: 50vh;
+	overflow: hidden;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-refill-image {
+		height: clamp(500px, 60vh, 614px);
+	}
+}
+
+.dg-sus-refill-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ══════════════════════════════════════════════
+   CARBON (centered, tinted overlay)
+   ══════════════════════════════════════════════ */
+.dg-sus-carbon {
+	position: relative;
+	overflow: hidden;
+	padding: clamp(6rem, 12vw, 10rem) var(--sus-margin-mobile);
+	text-align: center;
+	border-top: 1px solid rgba(27, 28, 26, 0.05);
+	border-bottom: 1px solid rgba(27, 28, 26, 0.05);
+	background: var(--sus-bg);
+}
+
+.dg-sus-carbon-overlay {
+	position: absolute;
+	inset: 0;
+	background: var(--sus-tertiary-fixed);
+	opacity: 0.1;
+	pointer-events: none;
+}
+
+.dg-sus-carbon-inner {
+	position: relative;
+	width: 100%;
+	max-width: 896px;
+	margin: 0 auto;
+	z-index: 1;
+}
+
+.dg-sus-carbon-icon {
+	display: inline-block;
+	font-size: 40px;
+	color: var(--sus-primary);
+	margin-bottom: 2rem;
+}
+
+[data-page="sustainability"] .dg-sus-carbon-body {
+	max-width: 640px;
+	margin: 1.5rem auto 0;
+}
+
+/* ══════════════════════════════════════════════
+   ACCOUNTABILITY (image-left / text-right)
+   ══════════════════════════════════════════════ */
+.dg-sus-accountability {
+	padding: var(--sus-section-gap) var(--sus-margin-mobile);
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-accountability {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-accountability-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--sus-gutter);
+	align-items: center;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-accountability-inner {
+		grid-template-columns: 6fr 5fr;
+		column-gap: calc(var(--sus-gutter) * 3);
+	}
+}
+
+.dg-sus-accountability-image {
+	width: 100%;
+	height: 50vh;
+	overflow: hidden;
+	order: 2;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-accountability-image {
+		height: clamp(500px, 70vh, 716px);
+		order: 1;
+	}
+}
+
+.dg-sus-accountability-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dg-sus-accountability-content {
+	order: 1;
+	padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-accountability-content {
+		order: 2;
+		padding: 0;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   NUMBERS (dark strip)
+   ══════════════════════════════════════════════ */
+.dg-sus-numbers {
+	background: var(--sus-primary);
+	padding: 4rem 0;
+}
+
+.dg-sus-numbers-inner {
+	max-width: var(--sus-container-max);
+	margin: 0 auto;
+	padding: 0 var(--sus-margin-mobile);
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	align-items: center;
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-sus-numbers-inner {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 1rem;
+		text-align: left;
+	}
+}
+
+.dg-sus-numbers-dot {
+	display: none;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.3);
+}
+
+@media (min-width: 768px) {
+	.dg-sus-numbers-dot {
+		display: block;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   CLOSING
+   ══════════════════════════════════════════════ */
+.dg-sus-closing {
+	padding: clamp(6rem, 12vw, 12rem) var(--sus-margin-mobile);
+	text-align: center;
+	background: var(--sus-bg);
+}
+
+@media (min-width: 768px) {
+	.dg-sus-closing {
+		padding-left: var(--sus-margin-desktop);
+		padding-right: var(--sus-margin-desktop);
+	}
+}
+
+.dg-sus-closing-inner {
+	max-width: 672px;
+	margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE (640 / 768 / 1024)
+   ══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+	.dg-sus-intro-inner,
+	.dg-sus-commitments,
+	.dg-sus-sourcing,
+	.dg-sus-packaging-inner,
+	.dg-sus-refill,
+	.dg-sus-accountability,
+	.dg-sus-closing {
+		padding-top: 6rem;
+		padding-bottom: 6rem;
+	}
+
+	.dg-sus-commitments-header,
+	.dg-sus-packaging-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+	.dg-sus-sourcing-regions {
+		flex-wrap: wrap;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	[data-page="sustainability"] [data-sr] {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	[data-page="sustainability"] .dg-sus-commit,
+	[data-page="sustainability"] .dg-sus-btn {
+		transition: none !important;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   FOCUS STATES
+   ══════════════════════════════════════════════ */
+[data-page="sustainability"] :focus-visible {
+	outline: 2px solid var(--sus-primary);
+	outline-offset: 4px;
+	border-radius: 2px;
+}

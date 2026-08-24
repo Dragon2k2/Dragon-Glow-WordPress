@@ -1,0 +1,362 @@
+﻿/* =========================================
+   DRAGON GLOW — WOOCOMMERCE: SHARED STYLES
+   Loaded site-wide when WooCommerce is active. Covers elements reused across
+   shop, product, cart, checkout, and account pages. Page-specific styles live
+   in the matching single-product.css, cart.css, checkout-page.css, account.css.
+   ========================================= */
+
+/* =========================================
+   1. MESSAGES & NOTICES
+   ========================================= */
+
+.woocommerce-error,
+.woocommerce-info,
+.woocommerce-message {
+	border-radius: 1rem;
+	padding: 1.25rem 1.5rem;
+	margin-bottom: 2rem;
+	border: none;
+	border-left: 4px solid;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+
+/* Error - Professional red (Tailwind red-50/600/800) */
+.woocommerce-error {
+	background-color: #FEF2F2;
+	border-left-color: #DC2626;
+	color: #991B1B;
+}
+
+.woocommerce-error::before {
+	content: "⚠";
+	color: #DC2626;
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1;
+	flex-shrink: 0;
+	align-self: flex-start;
+}
+
+/* Error list items - stack vertically */
+.woocommerce-error ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.woocommerce-error li {
+	padding: 0;
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* Info - Professional blue (Tailwind blue-50/600/800) */
+.woocommerce-info,
+.woocommerce-message {
+	background-color: #EFF6FF;
+	border-left-color: #2563EB;
+	color: #1E40AF;
+}
+
+.woocommerce-info::before,
+.woocommerce-message::before {
+	content: "ℹ";
+	color: #2563EB;
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+/* =========================================
+   2. PRODUCT LOOP / ARCHIVE
+   ========================================= */
+
+.woocommerce ul.products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .woocommerce ul.products {
+        grid-template-columns: 1fr;
+    }
+}
+
+.woocommerce ul.products li.product {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+    position: relative;
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #1b1c1a;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+
+.woocommerce ul.products li.product a img {
+    margin-bottom: 0;
+    border-radius: 1rem;
+}
+
+.woocommerce ul.products li.product .price {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #7b5455;
+    margin-bottom: 0.75rem;
+}
+
+.woocommerce ul.products li.product .price del {
+    color: #827473;
+    opacity: 0.6;
+}
+
+.woocommerce ul.products li.product .price ins {
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.woocommerce ul.products li.product a.button {
+    display: none; /* We use custom Quick Add button */
+}
+
+/* =========================================
+   3. SHOP / ARCHIVE BREADCRUMB
+   ========================================= */
+
+.woocommerce .woocommerce-breadcrumb {
+    font-size: 0.75rem;
+    color: #504444;
+    margin-bottom: 1rem;
+}
+
+.woocommerce .woocommerce-breadcrumb a {
+    color: #7b5455;
+}
+
+.woocommerce .woocommerce-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   4. SALE FLASH
+   ========================================= */
+
+.woocommerce span.onsale {
+    background: #f1ca50;
+    color: #6b5500;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    min-width: auto;
+    min-height: auto;
+    line-height: 1;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+}
+
+/* =========================================
+   5. FORM INPUTS
+   ========================================= */
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d4c2c2;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    font-size: 1rem;
+    color: #1b1c1a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.woocommerce form .form-row input.input-text:focus,
+.woocommerce form .form-row textarea:focus,
+.woocommerce form .form-row select:focus {
+	border-color: #FFC107;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+	outline: none;
+}
+
+.woocommerce form .form-row label {
+    color: #504444;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   6. ORDER DETAILS
+   ========================================= */
+
+.woocommerce table.order_details {
+    border: none;
+}
+
+.woocommerce table.order_details th,
+.woocommerce table.order_details td {
+    border-bottom: 1px solid #e4e2de;
+    padding: 1rem;
+}
+
+/* =========================================
+   7. COUPON
+   ========================================= */
+
+.woocommerce .coupon {
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce .coupon input.input-text {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d4c2c2;
+    border-radius: 0.75rem;
+    min-width: 200px;
+}
+
+/* =========================================
+   8. PAGINATION
+   ========================================= */
+
+.woocommerce nav.woocommerce-pagination ul {
+    border: none;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.woocommerce nav.woocommerce-pagination ul li {
+    border: none;
+    margin: 0;
+    padding: 0;
+    float: none;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a,
+.woocommerce nav.woocommerce-pagination ul li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid #d4c2c2;
+    color: #504444;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a:hover,
+.woocommerce nav.woocommerce-pagination ul li span.current {
+    background: #7b5455;
+    border-color: #7b5455;
+    color: #ffffff;
+}
+
+/* =========================================
+   9. SELECT2 DROPDOWN MENU
+   Appended to <body> by WooCommerce country-select; reused on checkout,
+   cart shipping calculator, and account edit-address country/state fields.
+   ========================================= */
+
+/* ── Select2 dropdown menu ── */
+.select2-container--default .select2-dropdown {
+    border: 1px solid #d0c5af !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    margin-top: 0.25rem !important;
+    overflow: hidden !important;
+}
+
+.select2-container--default .select2-search--dropdown {
+    padding: 0.75rem !important;
+    background: #f6f3f2 !important;
+    border-bottom: 1px solid #d0c5af !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #d0c5af !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9375rem !important;
+    color: #1c1b1b !important;
+    outline: none !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+	border-color: #FFC107 !important;
+	box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.15) !important;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9375rem !important;
+    color: #1c1b1b !important;
+    transition: background-color 0.15s, color 0.15s !important;
+}
+
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #f6f3f2 !important;
+    color: #735c00 !important;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: #ffe088 !important;
+    color: #554300 !important;
+    font-weight: 500 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true]:not(.select2-results__option--highlighted) {
+    background-color: #ffe088 !important;
+    color: #554300 !important;
+}
+
+/* ── Select2 search field placeholder ── */
+.select2-container--default .select2-search--dropdown .select2-search__field::placeholder {
+    color: #a8998b !important;
+    opacity: 0.6 !important;
+    font-style: italic !important;
+}
+
+/* ── Select2 "no results" message ── */
+.select2-container--default .select2-results__option--disabled {
+    color: #827473 !important;
+    font-style: italic !important;
+}
+

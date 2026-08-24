@@ -1,0 +1,909 @@
+/**
+ * Dragon Glow — Thank You Page Styles
+ *
+ * Styles for the order confirmation / thank you page.
+ *
+ * @package Dragon_Glow
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SUCCESS ICON
+   Circular icon with animated float — matches mockup.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-icon {
+	width: 128px;
+	height: 128px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 32px;
+	/* Peach/coral — uses --color-secondary-container (matches Tailwind config in inc/enqueue/tailwind-config.php). */
+	background: var(--color-secondary-container);
+	border-radius: 9999px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dg-thankyou-icon .material-symbols-outlined {
+	color: var(--color-primary);
+	font-size: 80px;
+}
+
+/* Float animation — matches mockup .dg-animate-float */
+@keyframes dg-thankyou-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+.dg-thankyou-icon--animate {
+	animation: dg-thankyou-float 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ERROR ICON (Failed order state)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-icon--error .material-symbols-outlined {
+	font-size: 64px;
+}
+
+/* ── Reduce motion — no float animation when user prefers reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+	.dg-thankyou-icon--animate {
+		animation: none;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   WRAPPER — matches mockup .dg-thankyou-main
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-main {
+	max-width: var(--spacing-container-max);
+	margin-left: auto;
+	margin-right: auto;
+	padding: 48px var(--spacing-margin-mobile);
+}
+
+@media (min-width: 768px) {
+	.dg-thankyou-main {
+		padding: 48px var(--spacing-margin-desktop);
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SUCCESS HEADER — matches mockup .dg-thankyou-header
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-header {
+	text-align: center;
+	padding: 32px 0;
+}
+
+.dg-thankyou-title {
+	font-family: 'Playfair Display', serif;
+	font-size: 40px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: var(--color-primary);
+	margin: 0 0 16px;
+}
+
+@media (max-width: 767px) {
+	.dg-thankyou-title {
+		font-size: 32px;
+	}
+}
+
+.dg-thankyou-subtitle {
+	color: var(--color-on-surface-variant);
+	font-size: 18px;
+	line-height: 1.6;
+	margin: 0 auto 16px;
+	max-width: 512px;
+}
+
+.dg-thankyou-email {
+	color: var(--color-on-surface-variant);
+	margin: 0 0 32px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BACS CARD — matches mockup .dg-thankyou-bacs and .dg-thankyou-bacs-card
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-bacs {
+	max-width: 672px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 32px;
+}
+
+.dg-thankyou-bacs-card {
+	background: #fff;
+	border-radius: 24px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	padding: 32px;
+	border: 1px solid var(--color-outline-variant);
+}
+
+.dg-thankyou-bacs-eyebrow {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	margin: 0 0 8px;
+}
+
+.dg-thankyou-bacs-title {
+	font-family: 'Playfair Display', serif;
+	font-size: 28px;
+	line-height: 1.3;
+	font-weight: 500;
+	color: var(--color-primary);
+	margin: 0 0 8px;
+}
+
+.dg-thankyou-bacs-desc {
+	color: var(--color-on-surface-variant);
+	margin: 0 0 24px;
+}
+
+.dg-thankyou-bacs-desc strong {
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+/* QR panel inside BACS card — match inner radius to outer card */
+.dg-thankyou-bacs-card .dg-bacs-qr {
+	border-radius: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ORDER DETAILS WRAPPER — matches mockup .dg-thankyou-details-wrap
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-details-wrap {
+	max-width: 672px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ORDER DETAILS CARD — matches mockup .dg-thankyou-card
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-card {
+	background: #fff;
+	border-radius: 24px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	padding: 32px;
+	margin-bottom: 32px;
+}
+
+.dg-thankyou-card-title {
+	font-family: 'Playfair Display', serif;
+	font-size: 20px;
+	color: var(--color-primary);
+	margin: 0 0 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   META GRID — matches mockup .dg-thankyou-meta-grid
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-meta-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+	.dg-thankyou-meta-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.dg-thankyou-meta-label {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	display: block;
+	margin-bottom: 4px;
+}
+
+.dg-thankyou-meta-value {
+	font-weight: 700;
+}
+
+.dg-thankyou-meta-value--accent {
+	color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ORDER ITEMS — matches mockup .dg-thankyou-items
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-items {
+	border-top: 1px solid var(--color-outline-variant);
+	padding-top: 24px;
+}
+
+.dg-thankyou-items-title {
+	font-family: 'Playfair Display', serif;
+	font-size: 18px;
+	color: var(--color-primary);
+	margin: 0 0 16px;
+}
+
+.dg-thankyou-item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.dg-thankyou-item:last-child {
+	margin-bottom: 0;
+}
+
+.dg-thankyou-item-thumb {
+	width: 64px;
+	height: 64px;
+	background: linear-gradient(135deg, #f4c2c2, #e1e1f5);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.dg-thankyou-item-thumb .material-symbols-outlined {
+	font-size: 32px;
+	color: var(--color-primary);
+}
+
+.dg-thankyou-item-thumb img {
+	width: 64px;
+	height: 64px;
+	object-fit: cover;
+	border-radius: 12px;
+}
+
+.dg-thankyou-item-info {
+	flex: 1;
+}
+
+.dg-thankyou-item-name {
+	font-weight: 500;
+	margin: 0 0 4px;
+}
+
+.dg-thankyou-item-qty {
+	font-size: 14px;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+}
+
+.dg-thankyou-item-price {
+	font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CUSTOMER ADDRESSES — matches mockup .dg-thankyou-addresses
+   2-column grid on desktop (Billing Address + Contact),
+   stacks to 1 column on mobile.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-addresses {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+	margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+	.dg-thankyou-addresses {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.dg-thankyou-address-card {
+	background: #fff;
+	border-radius: 24px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	padding: 24px;
+}
+
+.dg-thankyou-address-title {
+	font-family: 'Playfair Display', serif;
+	font-size: 18px;
+	color: var(--color-primary);
+	margin: 0 0 16px;
+}
+
+.dg-thankyou-address {
+	font-style: normal;
+	color: var(--color-on-surface-variant);
+	line-height: 1.6;
+}
+
+.dg-thankyou-address strong {
+	color: var(--color-on-surface);
+}
+
+/* Customer name in billing address — gold highlight per mockup review */
+.dg-thankyou-customer-name {
+	color: #d4af37 !important;
+	font-weight: 700;
+}
+
+/* Fallback if WooCommerce wraps name in <strong> without class */
+.dg-thankyou-address > strong:first-child {
+	color: #d4af37;
+	font-weight: 700;
+}
+
+/* WordPress default address elements */
+.dg-thankyou-address br {
+	margin-bottom: 4px;
+}
+
+/* ── Contact card (email + phone) — shares .dg-thankyou-address-card
+   surface, so only the inner row layout is defined here. ── */
+.dg-thankyou-contact-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.dg-thankyou-contact-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.dg-thankyou-contact-icon {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 9999px;
+	background: #f0dbd3;
+	color: var(--color-primary);
+}
+
+.dg-thankyou-contact-icon .material-symbols-outlined {
+	font-size: 20px;
+}
+
+.dg-thankyou-contact-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.dg-thankyou-contact-label {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+}
+
+.dg-thankyou-contact-value {
+	color: var(--color-on-surface);
+	font-weight: 500;
+	word-break: break-word;
+	transition: color 0.2s ease;
+}
+
+a.dg-thankyou-contact-value:hover,
+a.dg-thankyou-contact-value:focus-visible {
+	color: var(--color-primary);
+}
+
+a.dg-thankyou-contact-value:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	a.dg-thankyou-contact-value {
+		transition: none;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ACTION BUTTONS — matches mockup .dg-thankyou-actions
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-thankyou-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	justify-content: center;
+	align-items: stretch;
+}
+
+@media (min-width: 640px) {
+	.dg-thankyou-actions {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.dg-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 14px 32px;
+	border-radius: 9999px;
+	font-family: 'Montserrat', sans-serif;
+	font-weight: 600;
+	font-size: 14px;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	text-align: center;
+	text-decoration: none;
+}
+
+.dg-btn--primary {
+	background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+	color: var(--color-on-primary);
+	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+}
+
+.dg-btn--primary:hover {
+	box-shadow: 0 8px 24px rgba(115, 92, 0, 0.3);
+	transform: translateY(-2px);
+}
+
+.dg-btn--ghost {
+	background: transparent;
+	color: var(--color-primary);
+	border: 1.5px solid var(--color-outline-variant);
+}
+
+.dg-btn--ghost:hover {
+	background: var(--color-secondary-container);
+	color: var(--color-primary);
+	border-color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BACS QR CODE PANEL (Direct Bank Transfer)
+   Inline QR code generator panel for BACS payment instructions.
+   Shares visual language with thank you page (golden accent).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dg-bacs-qr {
+	--color-payment-primary: #735c00;
+	--color-payment-primary-rgb: 115, 92, 0;
+	--color-payment-accent: #d4af37;
+	--color-payment-accent-rgb: 212, 175, 55;
+	--color-payment-on-primary: #ffffff;
+	--dg-bacs-qr-accent: var(--color-payment-accent);
+	--dg-bacs-qr-accent-rgb: var(--color-payment-accent-rgb);
+	--dg-bacs-qr-primary-rgb: var(--color-payment-primary-rgb);
+	position: relative;
+	margin-top: 1.25rem;
+	padding: 1.25rem;
+	border-radius: 1.25rem;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.96) 0%,
+		rgba(255, 255, 255, 0.82) 100%
+	);
+	border: 1.5px solid rgba(var(--dg-bacs-qr-accent-rgb), 0.18);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.04),
+		0 1px 2px rgba(0, 0, 0, 0.02);
+	overflow: hidden;
+	transition:
+		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dg-bacs-qr::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		circle at top right,
+		rgba(var(--dg-bacs-qr-primary-rgb), 0.08) 0%,
+		transparent 65%
+	);
+	pointer-events: none;
+	opacity: 0.8;
+}
+
+.dg-bacs-qr[data-country="US"]::after {
+	content: '';
+	position: absolute;
+	bottom: -3rem;
+	left: -3rem;
+	width: 8rem;
+	height: 8rem;
+	background: radial-gradient(
+		circle,
+		rgba(var(--color-payment-primary-rgb), 0.18) 0%,
+		transparent 70%
+	);
+	pointer-events: none;
+	filter: blur(18px);
+}
+
+/* ── Layout — mobile-first: stacked, then horizontal at sm ── */
+.dg-bacs-qr__layout {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	position: relative;
+	z-index: 1;
+}
+
+@media (min-width: 640px) {
+	.dg-bacs-qr__layout {
+		flex-direction: row;
+		align-items: stretch;
+		gap: 1.5rem;
+	}
+
+	.dg-bacs-qr {
+		padding: 1.5rem;
+	}
+}
+
+/* ── QR canvas — square, framed, with subtle gold accent frame ── */
+.dg-bacs-qr__canvas {
+	position: relative;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	max-width: 12rem;
+	margin: 0 auto;
+	aspect-ratio: 1;
+	padding: 0.75rem;
+	background: #ffffff;
+	border: 1.5px solid rgba(var(--dg-bacs-qr-accent-rgb), 0.12);
+	border-radius: 1rem;
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.04),
+		inset 0 0 0 4px rgba(var(--color-payment-primary-rgb), 0.08);
+}
+
+@media (min-width: 640px) {
+	.dg-bacs-qr__canvas {
+		max-width: 11rem;
+	}
+}
+
+.dg-bacs-qr__code {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dg-bacs-qr__code canvas,
+.dg-bacs-qr__code svg,
+.dg-bacs-qr__code img {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+}
+
+.dg-bacs-qr__badge {
+	position: absolute;
+	top: -0.5rem;
+	right: -0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 9999px;
+	background: var(--color-payment-primary);
+	color: var(--color-payment-on-primary);
+	box-shadow: 0 4px 10px rgba(var(--color-payment-primary-rgb), 0.4);
+	transform: rotate(8deg);
+}
+
+.dg-bacs-qr__badge .material-symbols-outlined {
+	font-size: 1.125rem;
+}
+
+/* ── Body block — text content alongside QR ── */
+.dg-bacs-qr__body {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.dg-bacs-qr__eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-payment-accent);
+}
+
+.dg-bacs-qr__eyebrow .material-symbols-outlined {
+	font-size: 1rem;
+}
+
+.dg-bacs-qr__title {
+	margin: 0;
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	letter-spacing: -0.01em;
+}
+
+.dg-bacs-qr__amount {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	margin: 0;
+	padding: 0.75rem 1rem;
+	border-radius: 0.75rem;
+	background: linear-gradient(
+		135deg,
+		rgba(var(--color-payment-primary-rgb), 0.12) 0%,
+		rgba(var(--color-payment-primary-rgb), 0.06) 100%
+	);
+	border: 1px solid rgba(var(--color-payment-primary-rgb), 0.25);
+}
+
+.dg-bacs-qr__amount-label {
+	font-size: 0.6875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--color-on-surface-variant);
+}
+
+.dg-bacs-qr__amount-value {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--color-primary);
+	letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+	.dg-bacs-qr__amount-value {
+		font-size: 1.75rem;
+	}
+}
+
+/* ── Manual bank details (collapsible) ── */
+.dg-bacs-qr__details {
+	margin-top: 0.25rem;
+	border-top: 1px solid rgba(var(--dg-bacs-qr-accent-rgb), 0.15);
+	padding-top: 0.75rem;
+}
+
+.dg-bacs-qr__details > summary {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--color-payment-accent);
+	cursor: pointer;
+	list-style: none;
+	user-select: none;
+	transition: color 0.2s ease;
+}
+
+.dg-bacs-qr__details > summary::-webkit-details-marker {
+	display: none;
+}
+
+.dg-bacs-qr__details > summary:hover {
+	color: var(--color-primary);
+}
+
+.dg-bacs-qr__details > summary .material-symbols-outlined {
+	font-size: 1.125rem;
+}
+
+.dg-bacs-qr__details > summary .dg-bacs-qr__chevron {
+	margin-left: auto;
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dg-bacs-qr__details[open] > summary .dg-bacs-qr__chevron {
+	transform: rotate(180deg);
+}
+
+.dg-bacs-qr__bank {
+	margin: 0.75rem 0 0;
+	padding: 12px 16px;
+	background-color: rgba(var(--dg-bacs-qr-primary-rgb), 0.05);
+	border-radius: 0 8px 8px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.dg-bacs-qr__row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem;
+	font-size: 0.8125rem;
+}
+
+.dg-bacs-qr__row dt {
+	margin: 0;
+	font-weight: 500;
+	color: var(--color-on-surface-variant);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.6875rem;
+}
+
+.dg-bacs-qr__row dd {
+	margin: 0;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	word-break: break-word;
+}
+
+/* ── Customer instructions ── */
+.dg-bacs-qr__instructions {
+	margin: 16px 0 0;
+	padding: 12px 16px;
+	list-style: none;
+	border-left: 3px solid var(--color-payment-accent);
+	border-radius: 0 8px 8px 0;
+	background-color: rgba(var(--dg-bacs-qr-primary-rgb), 0.04);
+}
+
+.dg-bacs-qr__instructions li {
+	font-size: 0.8125rem;
+	color: var(--color-on-surface-variant);
+	padding: 4px 0 4px 20px;
+	position: relative;
+	line-height: 1.5;
+}
+
+.dg-bacs-qr__instructions li::before {
+	content: '\2726';
+	position: absolute;
+	left: 0;
+	color: var(--color-payment-accent);
+}
+
+/* ── Country notice (live region) ── */
+.dg-bacs-qr__countries {
+	margin-top: 1rem;
+	padding-top: 0.75rem;
+	border-top: 1px dashed rgba(var(--dg-bacs-qr-accent-rgb), 0.2);
+	font-size: 0.75rem;
+	line-height: 1.5;
+	color: var(--color-on-surface-variant);
+	text-align: left;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.dg-bacs-qr__countries > .dg-bacs-qr__countries-icon {
+	/* Offset the icon down so it visually aligns with the second text line
+	   (the country name) instead of the eyebrow label above it.
+
+	   Math: label line-height (font-size 0.75rem inherited from parent
+	   × 1.5) + p gap (0.125rem) = ~1.16rem.
+
+	   Why: with flex-row + align-items:flex-start the icon sits at the
+	   top of the <p>, which is the eyebrow row. Pushing it down by one
+	   row's worth of height makes it look like a list marker for the
+	   country name — the visually dominant data. */
+	margin-top: 1.15625rem;
+}
+
+.dg-bacs-qr__countries-icon {
+	font-size: 1.25rem;
+	color: var(--color-payment-accent);
+	flex-shrink: 0;
+	line-height: 1;
+}
+
+.dg-bacs-qr__countries p {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.125rem;
+}
+
+.dg-bacs-qr__countries-label {
+	display: block;
+	color: var(--color-on-surface-variant);
+	opacity: 0.85;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-size: 0.6875rem;
+}
+
+.dg-bacs-qr__countries strong {
+	font-weight: 700;
+	color: var(--color-on-surface);
+}
+
+.dg-bacs-qr__countries-note {
+	display: block;
+	font-style: italic;
+	opacity: 0.85;
+}
+
+/* ── State when QR is hidden (non-US country) ── */
+.dg-bacs-qr[data-country]:not([data-country="US"]) .dg-bacs-qr__canvas {
+	display: none;
+}
+
+/* ── Reduce motion support ── */
+@media (prefers-reduced-motion: reduce) {
+	.dg-btn--primary:hover,
+	.dg-btn--ghost:hover {
+		transform: none;
+		box-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+	}
+
+	.dg-btn--ghost:hover {
+		box-shadow: none;
+	}
+
+	.dg-bacs-qr,
+	.dg-bacs-qr__details > summary .dg-bacs-qr__chevron {
+		transition: none;
+	}
+}
+
+/* ── High contrast ── */
+@media (prefers-contrast: high) {
+	.dg-bacs-qr {
+		border-width: 2px;
+	}
+
+	.dg-bacs-qr__canvas {
+		border-width: 2px;
+	}
+}

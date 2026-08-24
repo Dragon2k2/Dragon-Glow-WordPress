@@ -1,0 +1,201 @@
+/* =========================================
+   DRAGON GLOW — WOOCOMMERCE: SINGLE PRODUCT
+   Loaded on is_product(). Depends on the shared woocommerce.css.
+   ========================================= */
+
+/* =========================================
+   1. PRODUCT SUMMARY (title, price, cart, tabs)
+   ========================================= */
+
+.woocommerce div.product {
+    max-width: 100%;
+}
+
+.woocommerce div.product div.images {
+    margin-bottom: 2rem;
+}
+
+.woocommerce div.product div.images img {
+    border-radius: 1.5rem;
+}
+
+.woocommerce div.product .product_title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #7b5455;
+    margin-bottom: 1rem;
+}
+
+.woocommerce div.product p.price {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #7b5455;
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce div.product p.price del {
+    color: #827473;
+    font-size: 1.25rem;
+}
+
+.woocommerce div.product p.price ins {
+    text-decoration: none;
+}
+
+.woocommerce div.product .woocommerce-product-details__short-description {
+    font-size: 1.125rem;
+    color: #504444;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce div.product form.cart {
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce div.product form.cart .button {
+    background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
+    border-bottom: 2px solid #735c00;
+    color: #734e4e;
+    padding: 1rem 2.5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.woocommerce div.product form.cart .button:hover {
+    box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
+    transform: translateY(-1px);
+}
+
+.woocommerce div.product form.cart .button:active {
+    transform: scale(0.95);
+}
+
+/* Quantity Input */
+.woocommerce .quantity .qty {
+    width: 5rem;
+    padding: 0.75rem;
+    border: 1px solid #d4c2c2;
+    border-radius: 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.woocommerce .quantity .qty:focus {
+	border-color: #FFC107;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+	outline: none;
+}
+
+/* Tabs */
+.woocommerce div.product .woocommerce-tabs ul.tabs {
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    border-bottom: 1px solid #d4c2c2;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs::before {
+    display: none;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li::before,
+.woocommerce div.product .woocommerce-tabs ul.tabs li::after {
+    display: none;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #504444;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li.active a {
+    color: #7b5455;
+    border-bottom-color: #7b5455;
+    font-weight: 700;
+}
+
+/* =========================================
+   2. RELATED PRODUCTS
+   ========================================= */
+
+.woocommerce div.product .related {
+    clear: both;
+}
+
+.woocommerce div.product .related h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    color: #7b5455;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* =========================================
+   3. PRODUCT GALLERY THUMBNAILS
+   ========================================= */
+
+.woocommerce div.product div.images .flex-control-thumbs {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.woocommerce div.product div.images .flex-control-thumbs li {
+    width: 80px;
+    height: 96px;
+    float: none;
+}
+
+.woocommerce div.product div.images .flex-control-thumbs li img {
+    border-radius: 0.75rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.woocommerce div.product div.images .flex-control-thumbs li img.flex-active,
+.woocommerce div.product div.images .flex-control-thumbs li img:hover {
+    border-color: #7b5455;
+}
+
+/* =========================================
+   4. VARIATIONS TABLE
+   ========================================= */
+
+.woocommerce div.product table.variations {
+    border: none;
+}
+
+.woocommerce div.product table.variations td {
+    display: block;
+    padding: 0.5rem 0;
+    border: none;
+}
+
+.woocommerce div.product table.variations td.label {
+    font-weight: 500;
+    color: #504444;
+    margin-bottom: 0.25rem;
+}
+
+.woocommerce div.product table.variations select {
+    width: 100%;
+    max-width: 300px;
+}
+

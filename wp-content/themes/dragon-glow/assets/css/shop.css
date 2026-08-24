@@ -1,0 +1,780 @@
+/* =========================================
+   DRAGON GLOW — SHOP PAGE STYLES
+   Editorial / luxury layout
+   ========================================= */
+
+/* Local custom properties for shop */
+:root {
+	--luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Material symbols base */
+.material-symbols-outlined {
+	font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+	display: inline-block;
+	line-height: 1;
+}
+
+/* Reveal-on-scroll animation */
+.reveal-on-scroll {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: all 1s var(--luxury-bezier);
+}
+.reveal-on-scroll.active {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* Magazine staggered grid: even items offset on desktop */
+.stagger-item:nth-child(even) {
+	margin-top: 4rem;
+}
+@media (max-width: 768px) {
+	.stagger-item:nth-child(even) {
+		margin-top: 0;
+	}
+}
+
+/* Luxury shadow */
+.luxury-shadow {
+	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.04);
+}
+
+/* Product card hover (luxury lift) */
+.product-card-hover {
+	transition: all 0.5s var(--luxury-bezier);
+}
+.product-card-hover:hover {
+	transform: translateY(-8px);
+	box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.1);
+}
+
+/* Nav-link underline animation (used by pagination numbers) */
+.nav-link-underline {
+	position: relative;
+}
+.nav-link-underline::after {
+	content: '';
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 0;
+	height: 1px;
+	background-color: currentColor;
+	transition: width 0.4s var(--luxury-bezier);
+}
+.nav-link-underline:hover::after {
+	width: 100%;
+}
+
+/* Luxury button sheen */
+.btn-luxury {
+	transition: all 0.4s var(--luxury-bezier);
+	position: relative;
+	overflow: hidden;
+}
+.btn-luxury::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+	transition: left 0.6s var(--luxury-bezier);
+}
+.btn-luxury:hover::before {
+	left: 100%;
+}
+
+/* Filled variant — force white text across all link states to override UA :visited/hover defaults */
+.btn-luxury--filled,
+.btn-luxury--filled:link,
+.btn-luxury--filled:visited,
+.btn-luxury--filled:hover,
+.btn-luxury--filled:active,
+.btn-luxury--filled:focus {
+	color: var(--color-on-primary, #ffffff);
+}
+
+/* Filter transition (used on category list items) */
+.filter-transition {
+	transition: opacity 0.3s var(--luxury-bezier), transform 0.3s var(--luxury-bezier);
+}
+.filter-transition:hover {
+	opacity: 0.7;
+	transform: translateX(4px);
+}
+
+/* Range slider thumb */
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 18px;
+	width: 18px;
+	border-radius: 50%;
+	background: var(--color-primary, #7b5455);
+	cursor: pointer;
+	border: 2px solid #fff;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+input[type="range"]::-moz-range-thumb {
+	height: 18px;
+	width: 18px;
+	border-radius: 50%;
+	background: var(--color-primary, #7b5455);
+	cursor: pointer;
+	border: 2px solid #fff;
+}
+
+/* Custom scrollbar for the desktop filter sidebar */
+.custom-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(115, 92, 0, 0.2) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+	width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background: rgba(115, 92, 0, 0.2);
+	border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: rgba(115, 92, 0, 0.4);
+}
+
+/* Add to Cart Button */
+.dg-add-to-cart {
+	background-color: var(--color-tertiary-container);
+	color: var(--color-on-tertiary-container);
+	position: absolute;
+	bottom: 1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	min-width: 160px;
+	padding: 0.625rem 1.25rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	border: none;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.3s var(--luxury-bezier), color 0.3s var(--luxury-bezier), transform 0.3s var(--luxury-bezier);
+}
+.dg-add-to-cart:hover {
+	background-color: var(--color-tertiary);
+	color: var(--color-on-primary);
+	transform: translateX(-50%) translateY(-2px);
+}
+.dg-add-to-cart:focus-visible {
+	outline: 2px solid var(--color-tertiary);
+	outline-offset: 2px;
+}
+
+/* Price turns golden on card hover */
+.dg-product-card:hover .dg-product-price {
+	color: #f1ca50;
+	transition: color 0.3s ease;
+}
+
+/* =====================================================
+   Product card — luxury redesign
+   (moved from inline <style> in template-shop.php)
+   ===================================================== */
+.dg-product-card {
+	cursor: pointer;
+	transition: box-shadow 0.5s ease;
+}
+.dg-product-card:hover {
+	box-shadow: 0 20px 60px rgba(115, 92, 0, 0.13);
+}
+
+/* ── Star rating (card layout — matches mock product page) ─────────
+   All stars share color #f1ca50 via .dg-stars-card .material-symbols-outlined.
+   Three visual states:
+     Full star  — single glyph, --dg-star-fill:1 inline.
+     Half star  — .dg-star-half wrapper with two overlaid glyphs:
+                   dg-star-half__fill  : --dg-star-fill:1, clipped left half.
+                   dg-star-half__base  : --dg-star-fill:0 (outline).
+     Empty star — single glyph, --dg-star-fill:0 inline. */
+.dg-stars-card {
+	font-size: 20px;
+}
+
+.dg-stars-card .material-symbols-outlined {
+	color: #f1ca50;
+	font-size: 20px;
+	font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.dg-star-half {
+	display: inline-flex;
+	position: relative;
+	font-size: var(--dg-star-size, 20px);
+	line-height: 1;
+}
+
+.dg-star-half__fill {
+	position: absolute;
+	inset-inline-start: 0;
+	top: 0;
+	z-index: 1;
+	clip-path: inset(0 50% 0 0);
+}
+
+/* .dg-star-half__base inherits --dg-star-fill:0 from inline; no extra CSS needed. */
+
+.dg-star-count {
+	font-size: 11px;
+	color: #c9a96e;
+	margin-left: 2px;
+}
+
+/* =========================================
+   13. WOOCOMMERCE SHOP STYLES
+   ========================================= */
+.dg-product-image {
+	position: relative;
+}
+.dg-product-image::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(28, 27, 27, 0.55) 0%, transparent 45%);
+	pointer-events: none;
+	z-index: 1;
+}
+/* Image zoom on card hover (1s ease) */
+.dg-product-img {
+	transform: scale(1);
+	transition: transform 1s ease;
+}
+.dg-product-card:hover .dg-product-img {
+	transform: scale(1.06);
+}
+
+/* Badges */
+.dg-badge-left,
+.dg-badge-right {
+	display: inline-block;
+	border-radius: 9999px;
+	padding: 4px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+.dg-badge-left {
+	background-color: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	color: var(--color-primary, #735c00);
+}
+.dg-badge-right {
+	background-color: var(--color-primary, #735c00);
+	color: var(--color-on-primary, #ffffff);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* CTA "Add to Cart" — pill at bottom, hidden by default, hover-revealed */
+.dg-add-to-cart {
+	bottom: 1rem;
+	left: 1rem;
+	right: 1rem;
+	background-color: var(--color-tertiary-container, #f1ca50);
+	color: var(--color-on-tertiary-container, #6b5500);
+	border-radius: 9999px;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	opacity: 0;
+	transform: translateY(16px);
+	overflow: hidden;
+	position: absolute;
+	z-index: 2;
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Sheen effect on CTA button (::before pseudo) */
+.dg-add-to-cart::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 60%;
+	height: 100%;
+	background: linear-gradient(
+		120deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.55) 50%,
+		transparent 100%
+	);
+	transform: skewX(-20deg);
+	transition: left 0s;
+	pointer-events: none;
+}
+
+/* On card hover: show CTA button + run sheen */
+.dg-product-card:hover .dg-add-to-cart {
+	opacity: 1;
+	transform: translateY(0);
+	background-color: var(--color-tertiary-container, #f1ca50);
+	color: var(--color-on-tertiary-container, #6b5500);
+}
+.dg-product-card:hover .dg-add-to-cart::before {
+	left: 160%;
+	transition: left 0.65s ease;
+}
+
+/* Checkmark icon turns golden when button is in "added" state */
+.dg-quick-add--added .material-symbols-outlined {
+	color: var(--color-tertiary, #f1ca50);
+}
+
+/* Product name — default color is #735C00 (matches brand) */
+.dg-product-name {
+	margin: 0;
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 22px;
+	font-weight: 500;
+	font-style: italic;
+	color: #735C00;
+	line-height: 1.2;
+	transition: color 0.3s ease;
+}
+.dg-product-name-link {
+	color: #735C00;
+	text-decoration: none;
+}
+
+.dg-product-divider {
+	width: 32px;
+	height: 1px;
+	background: rgba(115, 92, 0, 0.35);
+	margin: 10px auto;
+}
+
+.dg-product-tags {
+	margin: 0;
+	font-family: 'Montserrat', system-ui, sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #7f7663;
+}
+
+.dg-product-price {
+	margin: 14px 0 0;
+	font-family: 'Bodoni Moda', Georgia, serif;
+	font-size: 16px;
+	font-weight: 600;
+	font-style: italic;
+	color: #735c00;
+}
+
+.luxury-shadow {
+	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.04);
+}
+
+
+.stagger-item:nth-child(even) {
+	margin-top: 4rem;
+}
+@media (max-width: 768px) {
+	.stagger-item:nth-child(even) {
+		margin-top: 0;
+	}
+}
+
+/* Filter dropdown panel (Material style)
+   Anchored under the "Filter by Skin Concern" trigger. */
+#dg-curated-header {
+	position: relative;
+	z-index: 80;
+}
+
+#dg-curated-header .dg-filter-trigger {
+	position: relative;
+	z-index: 81;
+}
+
+.dg-filter-dropdown {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	width: 360px;
+	max-width: calc(100vw - 2 * 20px);
+	background: var(--color-surface, #fbf9f5);
+	border: 1px solid var(--color-outline-variant, #d4c2c2);
+	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15),
+	            0 8px 24px -8px rgba(123, 84, 85, 0.1);
+	padding: 28px;
+	z-index: 90;
+	opacity: 0;
+	transform: translateY(-8px) scale(0.98);
+	pointer-events: none;
+	transition: opacity 0.25s var(--luxury-bezier),
+	            transform 0.25s var(--luxury-bezier);
+}
+.dg-filter-dropdown.is-open {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	pointer-events: auto;
+}
+@media (max-width: 640px) {
+	.dg-filter-dropdown {
+		position: fixed;
+		top: auto;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		width: 100%;
+		max-width: 100vw;
+		max-height: 85vh;
+		overflow-y: auto;
+		padding: 24px;
+		transform: translateY(100%);
+	}
+	.dg-filter-dropdown.is-open {
+		transform: translateY(0);
+	}
+}
+
+/* Caret / arrow on top of dropdown */
+.dg-filter-dropdown::before {
+	content: '';
+	position: absolute;
+	top: -6px;
+	right: 28px;
+	width: 12px;
+	height: 12px;
+	background: var(--color-surface, #fbf9f5);
+	border-top: 1px solid var(--color-outline-variant, #d4c2c2);
+	border-left: 1px solid var(--color-outline-variant, #d4c2c2);
+	transform: rotate(45deg);
+}
+@media (max-width: 640px) {
+	.dg-filter-dropdown::before {
+		display: none;
+	}
+}
+
+/* Filter trigger open state */
+.dg-filter-trigger.is-open .dg-filter-trigger-text,
+.dg-filter-trigger.is-open .dg-filter-trigger-icon {
+	color: var(--color-primary, #7b5455);
+	border-color: var(--color-primary, #7b5455);
+}
+.dg-filter-trigger.is-open .dg-filter-trigger-icon {
+	transform: rotate(180deg);
+}
+
+/* Product info link — wraps entire text block (stars + name + tags + price)
+   so any click in that zone navigates to the detail page. */
+.dg-product-info-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+}
+.dg-product-info-link:hover .dg-product-name {
+	color: #9a7800;
+}
+.dg-product-card:hover .dg-product-info-link .dg-product-price {
+	color: #f1ca50;
+}
+
+/* =====================================================
+   Stretched-link pattern — single link covers entire card
+   ===================================================== */.dg-product-card {
+	position: relative;
+}
+
+/* The stretched link sits on top of everything except interactive
+   descendants (buttons, inputs, etc.), which stay clickable via
+   pointer-events: auto. */
+a.dg-product-stretched-link {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	/* Invisible — no background, border, or text decoration */
+	background: transparent;
+	text-indent: -9999px;
+	white-space: nowrap;
+	overflow: hidden;
+}/* Ensure the card's text block sits above the stretched-link's
+   text-indent ghost so screen-reader text remains accessible */
+.dg-product-info-link {
+	position: relative;
+	z-index: 2;
+}
+
+/* =====================================================
+   Quick-Add toggle — "Added" permanent visible state
+   ===================================================== */
+
+/**
+ * When a product is in the cart (.dg-quick-add--added), the button must
+ * stay visible regardless of whether the card is being hovered.
+ * Override the default opacity:0 / translateY(16px) hiding rules.
+ */
+.dg-add-to-cart.dg-quick-add--added {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/**
+ * Hover on an "Added" button: subtle darker-gold tint + slight lift
+ * to hint that clicking will remove the item.
+ */
+.dg-add-to-cart.dg-quick-add--added:hover {
+	background-color: var(--color-primary-container, #d4af37);
+	color: var(--color-on-primary-container, #554300);
+	transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   14. LUXURY PAGINATION — Frosted Glass Pills 2026
+   Glassmorphism: semi-transparent, golden gradient border,
+   shimmer on hover, smooth slide arrows
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Pager button base ─────────────────────────── */
+.dg-pager-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 22px 10px 16px;
+	border-radius: 9999px;
+
+	/* Glassmorphism background */
+	background: rgba(251, 247, 240, 0.55);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+
+	/* Golden gradient border via outline + shadow trick */
+	border: 1.5px solid transparent;
+	background-image: linear-gradient(rgba(251, 247, 240, 0.55), rgba(251, 247, 240, 0.55)),
+		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 40%, #c9a96e 70%, #a07840 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+
+	/* Text */
+	font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: #735c00;
+	text-decoration: none;
+
+	/* Shadow */
+	box-shadow:
+		0 1px 3px rgba(123, 84, 85, 0.06),
+		0 4px 16px rgba(201, 169, 110, 0.12);
+
+	/* Motion */
+	overflow: hidden;
+	transition:
+		color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		background-image 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Shimmer glow overlay — slides across on hover */
+.dg-pager-btn__glow {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		115deg,
+		transparent 20%,
+		rgba(255, 245, 220, 0.7) 45%,
+		rgba(255, 245, 220, 0.7) 55%,
+		transparent 80%
+	);
+	transform: translateX(-120%);
+	transition: transform 0s;
+	pointer-events: none;
+}
+.dg-pager-btn:hover .dg-pager-btn__glow {
+	transform: translateX(120%);
+	transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Arrow icon */
+.dg-pager-btn__icon {
+	font-size: 14px;
+	line-height: 1;
+	font-style: normal;
+}
+.dg-pager-btn__arrow {
+	display: inline-block;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover state */
+.dg-pager-btn:hover:not(.dg-pager-btn--disabled) {
+	color: #4a3500;
+	box-shadow:
+		0 2px 8px rgba(123, 84, 85, 0.1),
+		0 8px 32px rgba(201, 169, 110, 0.22);
+	transform: translateY(-2px);
+}
+
+/* Prev: arrow slides left on hover */
+.dg-pager-btn--prev:hover .dg-pager-btn__arrow {
+	transform: translateX(-3px);
+}
+
+/* Next: arrow slides right on hover */
+.dg-pager-btn--next:hover .dg-pager-btn__arrow {
+	transform: translateX(3px);
+}
+
+/* Focus state */
+.dg-pager-btn:focus-visible {
+	outline: 2px solid #c9a96e;
+	outline-offset: 3px;
+}
+
+/* Disabled state */
+.dg-pager-btn--disabled {
+	color: #b8a888;
+	border-color: transparent;
+	background-image: linear-gradient(rgba(251, 247, 240, 0.3), rgba(251, 247, 240, 0.3)),
+		linear-gradient(135deg, #d4c9b0 0%, #e0d5c0 100%);
+	box-shadow: none;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* ── Page number pills ─────────────────────────── */
+.dg-page-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	border-radius: 9999px;
+
+	font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	color: #735c00;
+	text-decoration: none;
+
+	border: 1.5px solid transparent;
+	background-image: linear-gradient(rgba(251, 247, 240, 0.4), rgba(251, 247, 240, 0.4)),
+		linear-gradient(135deg, #d4c9b0 0%, #e0d5c0 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+	box-shadow: 0 1px 4px rgba(123, 84, 85, 0.06);
+
+	transition:
+		color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+		background-image 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dg-page-pill:hover:not(.dg-page-pill--active) {
+	color: #4a3500;
+	background-image: linear-gradient(rgba(255, 245, 220, 0.6), rgba(255, 245, 220, 0.6)),
+		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 40%, #c9a96e 70%, #a07840 100%);
+	box-shadow:
+		0 1px 4px rgba(123, 84, 85, 0.08),
+		0 4px 16px rgba(201, 169, 110, 0.18);
+	transform: translateY(-1px);
+}
+.dg-page-pill:focus-visible {
+	outline: 2px solid #c9a96e;
+	outline-offset: 2px;
+}
+
+/* Active page pill */
+.dg-page-pill--active {
+	color: #ffffff;
+	border-color: transparent;
+	background-image: linear-gradient(135deg, #c9a96e 0%, #a07840 100%);
+	box-shadow:
+		0 2px 8px rgba(160, 120, 64, 0.3),
+		0 4px 20px rgba(201, 169, 110, 0.25);
+	cursor: default;
+	pointer-events: none;
+}
+
+/* Ellipsis */
+.dg-page-ellipsis {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
+	padding: 0 6px;
+	color: #b8a888;
+	font-size: 14px;
+	letter-spacing: 2px;
+	user-select: none;
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 480px) {
+	.dg-pager-btn {
+		padding: 8px 16px 8px 12px;
+		font-size: 10px;
+		letter-spacing: 0.12em;
+	}
+	.dg-page-pill {
+		min-width: 32px;
+		height: 32px;
+		font-size: 11px;
+	}
+	.dg-page-ellipsis {
+		display: none;
+	}
+}
+
+/* ── Reduced motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.dg-pager-btn,
+	.dg-page-pill {
+		transition: none;
+	}
+	.dg-pager-btn__glow {
+		display: none;
+	}
+	.dg-pager-btn:hover .dg-pager-btn__arrow,
+	.dg-pager-btn--prev:hover .dg-pager-btn__arrow,
+	.dg-pager-btn--next:hover .dg-pager-btn__arrow {
+		transform: none;
+	}
+	.dg-page-pill:hover:not(.dg-page-pill--active) {
+		transform: none;
+	}
+	.dg-pager-btn:hover:not(.dg-pager-btn--disabled) {
+		transform: none;
+	}
+}
+
+
+

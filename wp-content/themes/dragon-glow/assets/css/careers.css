@@ -1,0 +1,1273 @@
+/* ═══════════════════════════════════════════
+   DRAGON GLOW — Careers
+   Editorial luxury · Geist · Sharp · Flat
+   Color tokens theo stitch_dragon_glow_careers_ui DESIGN.md
+   ═══════════════════════════════════════════ */
+
+/* ── Scope & tokens ───────────────────────── */
+.dg-careers,
+.dg-careers * {
+	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+}
+
+.dg-careers {
+	--c-bg:           #fcf9f8;
+	--c-ink:          #1c1b1b;
+	--c-ink-variant:  #464742;
+	--c-hero-heading: #735c00;
+	--c-tertiary:     #c5a059;       /* gold accent — map sang theme tertiary */
+	--c-tertiary-soft:#ffdea5;       /* hairline-b */
+	--c-surface-low:  #f6f3f2;
+	--c-surface-high: #eae7e7;
+	--c-surface-highest: #e5e2e1;
+	--c-inverse-surface: #313030;
+	--c-inverse-on-surface: #f3f0ef;
+	--c-secondary-container: #eedfdf; /* blush */
+	--c-on-secondary-container: #6d6262;
+	--c-outline:      #777871;
+	--c-outline-var:  #c7c7bf;
+	--c-radius:       0;             /* Sharp */
+	--c-section-gap:  clamp(5rem, 12vw, 10rem);
+	--c-margin-desk:  80px;
+	--c-margin-mob:   20px;
+	--c-gutter:       24px;
+	--c-page-max:     1280px;
+
+	background: var(--c-bg);
+	color: var(--c-ink);
+	overflow-x: clip;
+}
+
+.dg-careers > section {
+	width: min(100%, var(--c-page-max));
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* FOUC guard */
+.dg-js .dg-careers [data-sr] {
+	opacity: 0;
+}
+
+/* ── Shared section title ─────────────────── */
+.dg-careers-section-title {
+	font-family: inherit;
+	font-size: clamp(2rem, 5vw, 2.5rem);
+	font-weight: 400;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	color: var(--c-ink);
+	margin: 0 0 4rem;
+	max-width: 28ch;
+}
+
+.dg-careers-section-title--center {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.dg-careers-section-title--emphasis {
+	font-size: clamp(2.25rem, 5.8vw, 3rem);
+	font-weight: 400;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+	margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-section-title {
+		margin-bottom: 6rem;
+	}
+}
+
+/* ── Hairline utility (0.5px gold) ────────── */
+.dg-careers-hairline-b {
+	border-bottom: 0.5px solid var(--c-tertiary-soft);
+}
+
+.dg-careers-hairline-t {
+	border-top: 0.5px solid var(--c-tertiary-soft);
+}
+
+/* ── Buttons ─────────────────────────────── */
+.dg-careers-btn {
+	display: inline-block;
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-decoration: none;
+	padding: 1rem 2rem;
+	border-radius: 0;
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, opacity 0.2s ease;
+	cursor: pointer;
+}
+
+.dg-careers-btn--primary {
+	background: var(--c-ink);
+	color: var(--c-bg);
+	border: 1px solid var(--c-ink);
+}
+
+.dg-careers-btn--primary:hover {
+	background: var(--c-ink-variant);
+	border-color: var(--c-ink-variant);
+}
+
+.dg-careers-btn--primary:focus-visible {
+	outline: 2px solid var(--c-tertiary);
+	outline-offset: 3px;
+}
+
+.dg-careers-btn--secondary {
+	background: transparent;
+	color: var(--c-ink);
+	border: 1px solid var(--c-ink);
+	align-self: flex-start;
+}
+
+.dg-careers-btn--secondary:hover {
+	background: var(--c-ink);
+	color: var(--c-bg);
+}
+
+.dg-careers-btn--secondary:focus-visible {
+	outline: 2px solid var(--c-tertiary);
+	outline-offset: 3px;
+}
+
+/* Hero CTA parity with "See the sources" button on Our Ingredients */
+.dg-careers-hero .dg-careers-btn--secondary {
+	background: var(--c-ink);
+	color: var(--c-bg);
+	border-color: var(--c-ink);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	padding: 1rem 2rem;
+	transition: background-color 400ms cubic-bezier(0.2, 0, 0, 1),
+		color 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-careers-hero .dg-careers-btn--secondary:hover {
+	background: var(--c-inverse-surface);
+	color: var(--c-inverse-on-surface);
+}
+
+/* ═══════════════════════════════════════════
+   1. HERO
+   ═══════════════════════════════════════════ */
+.dg-careers-hero {
+	display: grid;
+	grid-template-columns: 1fr;
+	min-height: 80vh;
+	width: 100%;
+	align-items: center;
+	margin: 0;
+	padding-top: clamp(64px, 10vw, 80px);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hero {
+		grid-template-columns: repeat(12, 1fr);
+	}
+}
+
+.dg-careers-hero-media {
+	height: 50vh;
+	position: relative;
+	overflow: hidden;
+	background: var(--c-surface-high);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hero-media {
+		grid-column: 1 / span 6;
+		height: 100%;
+	}
+}
+
+.dg-careers-hero-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	display: block;
+}
+
+/* Fallback khi ảnh die */
+.dg-careers-hero-img.is-broken {
+	display: none;
+}
+
+.dg-careers-hero-media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(135deg, var(--c-surface-low), var(--c-secondary-container));
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.dg-careers-hero-media:has(.is-broken)::after {
+	opacity: 1;
+}
+
+.dg-careers-hero-text {
+	padding: 4rem var(--c-margin-mob);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hero-text {
+		grid-column: 8 / span 5;
+		padding: 0;
+	}
+}
+
+.dg-careers-hero-eyebrow {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--c-hero-heading);
+	margin: 0;
+}
+
+.dg-careers-hero-title {
+	font-family: inherit;
+	font-size: clamp(3rem, 8vw, 5rem);
+	font-weight: 200;
+	letter-spacing: -0.03em;
+	line-height: 1.05;
+	color: var(--c-hero-heading);
+	margin: 0;
+}
+
+.dg-careers-hero-title--emphasis {
+	font-weight: 300;
+	letter-spacing: -0.04em;
+	line-height: 1.02;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hero-title {
+		font-size: 5rem;
+		letter-spacing: -0.04em;
+	}
+}
+
+.dg-careers-hero-intro {
+	font-size: 1.125rem;
+	font-weight: 400;
+	line-height: 1.78;
+	color: var(--c-ink-variant);
+	max-width: 28rem;
+	margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   2. MISSION
+   ═══════════════════════════════════════════ */
+.dg-careers-mission {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+	background: transparent;
+	text-align: center;
+	position: relative;
+	isolation: isolate;
+}
+
+.dg-careers-mission::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	width: 100vw;
+	transform: translateX(-50%);
+	background: var(--c-surface-low);
+	z-index: -1;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-mission {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-mission-quote {
+	font-family: inherit;
+	font-size: clamp(2rem, 5vw, 2.5rem);
+	font-weight: 300;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	color: var(--c-ink);
+	max-width: 64rem;
+	margin: 0 auto;
+	padding: 0;
+	border: 0;
+}
+
+/* ═══════════════════════════════════════════
+   3. WHY JOIN US
+   ═══════════════════════════════════════════ */
+.dg-careers-why {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-why {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-why-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 4rem;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-why-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--c-gutter);
+	}
+}
+
+.dg-careers-why-tile {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.dg-careers-why-icon {
+	width: 4rem;
+	height: 4rem;
+	margin-bottom: 1.5rem;
+	object-fit: contain;
+	background: var(--c-surface-low);
+}
+
+.dg-careers-why-icon.is-broken {
+	display: none;
+}
+
+.dg-careers-why-title {
+	font-family: inherit;
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--c-ink);
+	margin: 0 0 0.25rem;
+}
+
+.dg-careers-why-body {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--c-ink-variant);
+	margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   4. LIFE HERE
+   ═══════════════════════════════════════════ */
+.dg-careers-life {
+	display: grid;
+	grid-template-columns: 1fr;
+	background: transparent;
+	margin-bottom: var(--c-section-gap);
+	position: relative;
+	isolation: isolate;
+}
+
+.dg-careers-life::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	width: 100vw;
+	transform: translateX(-50%);
+	background:
+		radial-gradient(120% 120% at 0% 0%, rgba(255, 222, 165, 0.28) 0%, rgba(255, 222, 165, 0) 55%),
+		linear-gradient(135deg, #f4e7e9 0%, #eee0e2 100%);
+	z-index: -1;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-life {
+		grid-template-columns: repeat(12, 1fr);
+	}
+}
+
+.dg-careers-life-text {
+	order: 2;
+	padding: 4rem var(--c-margin-mob);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-life-text {
+		order: 1;
+		grid-column: 1 / span 6;
+		padding: 8rem var(--c-margin-desk);
+	}
+}
+
+.dg-careers-life-text .dg-careers-section-title {
+	color: #1c1b1b;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.dg-careers-life-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.dg-careers-life-bullet {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 1.125rem;
+	font-weight: 400;
+	line-height: 1.78;
+	color: #1c1b1b;
+}
+
+.dg-careers-life-rule {
+	flex-shrink: 0;
+	width: 1rem;
+	height: 1px;
+	background: color-mix(in srgb, var(--c-tertiary) 78%, white 22%);
+}
+
+.dg-careers-life-bullet-text {
+	flex: 1;
+}
+
+.dg-careers-life-media {
+	order: 1;
+	height: 50vh;
+	position: relative;
+	background: var(--c-surface-high);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-life-media {
+		order: 2;
+		grid-column: 7 / span 6;
+		height: 80vh;
+	}
+}
+
+.dg-careers-life-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.dg-careers-life-img.is-broken {
+	display: none;
+}
+
+.dg-careers-life-media:has(.is-broken) {
+	background: linear-gradient(135deg, var(--c-surface-low), var(--c-secondary-container));
+}
+
+/* ═══════════════════════════════════════════
+   5. WHAT WE OFFER
+   ═══════════════════════════════════════════ */
+.dg-careers-offer {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-offer {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-offer-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 4rem var(--c-gutter);
+	max-width: 64rem;
+	margin: 0 auto;
+	text-align: center;
+}
+
+@media (min-width: 640px) {
+	.dg-careers-offer-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (min-width: 768px) {
+	.dg-careers-offer-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.dg-careers-offer-tile {
+	--offer-surface: #f7efe6;
+	--offer-accent: var(--c-tertiary);
+	--offer-accent-soft: color-mix(in srgb, var(--offer-accent) 18%, white 82%);
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: 7.5rem;
+	padding: clamp(1.5rem, 3vw, 2.25rem);
+	border: 1px solid rgba(119, 120, 113, 0.24);
+	border-top: 3px solid var(--offer-accent);
+	border-radius: 14px;
+	overflow: hidden;
+	background:
+		linear-gradient(160deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.2) 100%),
+		var(--offer-surface);
+	box-shadow:
+		0 10px 26px rgba(28, 27, 27, 0.06),
+		0 1px 0 rgba(255, 255, 255, 0.7) inset;
+	transform: translateY(0);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, transform 0.3s ease;
+}
+
+.dg-careers-offer-tile::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(120deg, rgba(255, 255, 255, 0) 16%, rgba(255, 255, 255, 0.52) 48%, rgba(255, 255, 255, 0) 78%);
+	transform: translateX(-120%);
+	opacity: 0;
+	pointer-events: none;
+	transition: transform 0.6s ease, opacity 0.3s ease;
+}
+
+.dg-careers-offer-tile:hover {
+	border-color: rgba(28, 27, 27, 0.22);
+	background:
+		linear-gradient(155deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.12) 100%),
+		var(--offer-accent-soft);
+	box-shadow:
+		0 18px 38px rgba(28, 27, 27, 0.12),
+		0 1px 0 rgba(255, 255, 255, 0.82) inset;
+	transform: translateY(-4px);
+}
+
+.dg-careers-offer-tile:hover::after {
+	transform: translateX(120%);
+	opacity: 1;
+}
+
+.dg-careers-offer-tile:focus-within {
+	border-color: var(--offer-accent);
+	background:
+		linear-gradient(155deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.12) 100%),
+		var(--offer-accent-soft);
+	box-shadow:
+		0 0 0 3px color-mix(in srgb, var(--offer-accent) 18%, transparent),
+		0 12px 30px rgba(28, 27, 27, 0.08);
+}
+
+.dg-careers-offer-tile:nth-child(1) {
+	--offer-surface: #f9f1e5;
+	--offer-accent: #c5a059;
+}
+
+.dg-careers-offer-tile:nth-child(2) {
+	--offer-surface: #f3ecfa;
+	--offer-accent: #a285b8;
+}
+
+.dg-careers-offer-tile:nth-child(3) {
+	--offer-surface: #f9edf1;
+	--offer-accent: #c28a95;
+}
+
+.dg-careers-offer-tile:nth-child(4) {
+	--offer-surface: #ebf5ef;
+	--offer-accent: #7ea68f;
+}
+
+.dg-careers-offer-tile:nth-child(5) {
+	--offer-surface: #ebf3fb;
+	--offer-accent: #7698bb;
+}
+
+.dg-careers-offer-tile:nth-child(6) {
+	--offer-surface: #fbefe4;
+	--offer-accent: #c08f63;
+}
+
+.dg-careers-offer-text {
+	font-size: 1.125rem;
+	font-weight: 450;
+	line-height: 1.65;
+	letter-spacing: -0.01em;
+	color: var(--c-ink);
+	margin: 0;
+	max-width: 22ch;
+	transition: color 0.3s ease;
+}
+
+.dg-careers-offer-tile:hover .dg-careers-offer-text,
+.dg-careers-offer-tile:focus-within .dg-careers-offer-text {
+	color: color-mix(in srgb, var(--offer-accent) 48%, var(--c-ink) 52%);
+}
+
+/* ═══════════════════════════════════════════
+   6. OPEN ROLES
+   ═══════════════════════════════════════════ */
+.dg-careers-roles {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+	background: transparent;
+	position: relative;
+	isolation: isolate;
+}
+
+.dg-careers-roles::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	width: 100vw;
+	transform: translateX(-50%);
+	background: var(--c-surface-low);
+	z-index: -1;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-roles {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-roles-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.dg-careers-role-row {
+	display: flex;
+	flex-direction: column;
+	padding: 1.5rem 0;
+	border-bottom: 0.5px solid var(--c-tertiary-soft);
+	transition: background-color 0.3s ease;
+}
+
+.dg-careers-role-row:first-child {
+	border-top: 0.5px solid var(--c-tertiary-soft);
+}
+
+.dg-careers-role-row:hover {
+	background: var(--c-bg);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-role-row {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1.5rem 1rem;
+	}
+}
+
+.dg-careers-role-title {
+	margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-role-title {
+		flex: 0 0 33.333%;
+		margin-bottom: 0;
+	}
+}
+
+.dg-careers-role-name {
+	font-size: 1.125rem;
+	font-weight: 500;
+	color: var(--c-ink);
+}
+
+.dg-careers-role-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	color: var(--c-ink-variant);
+	font-size: 1rem;
+	margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-role-meta {
+		flex: 0 0 50%;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 0;
+		margin-bottom: 0;
+	}
+}
+
+.dg-careers-role-team,
+.dg-careers-role-location,
+.dg-careers-role-type {
+	flex: 1;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-role-type {
+		text-align: right;
+	}
+}
+
+.dg-careers-role-apply {
+	text-align: left;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-role-apply {
+		flex: 0 0 16.666%;
+		text-align: right;
+	}
+}
+
+.dg-careers-role-apply-link {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--c-tertiary);
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+.dg-careers-role-row:hover .dg-careers-role-apply-link {
+	color: var(--c-ink);
+}
+
+.dg-careers-role-apply-link:focus-visible {
+	outline: 2px solid var(--c-tertiary);
+	outline-offset: 3px;
+}
+
+/* scroll-margin-top = chiều cao navbar sticky (~64px) để native anchor
+   (khi JS tắt) không bị navbar che. JS dùng window.scrollTo riêng. */
+
+.dg-careers-roles:focus-visible {
+	outline: 2px solid var(--c-tertiary);
+	outline-offset: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   7. HOW WE HIRE
+   ═══════════════════════════════════════════ */
+.dg-careers-hire {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hire {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-hire-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-hire-grid {
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--c-gutter);
+		text-align: left;
+	}
+}
+
+.dg-careers-hire-step-label {
+	display: block;
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--c-tertiary);
+	margin-bottom: 0.5rem;
+}
+
+.dg-careers-hire-step-title {
+	font-family: inherit;
+	font-size: 1.125rem;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--c-ink);
+	margin: 0 0 0.5rem;
+}
+
+.dg-careers-hire-step-body {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--c-ink-variant);
+	margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   8. EQUAL OPPORTUNITY
+   ═══════════════════════════════════════════ */
+.dg-careers-eo {
+	padding: var(--c-section-gap) var(--c-margin-mob);
+	background: transparent;
+	text-align: center;
+	position: relative;
+	isolation: isolate;
+}
+
+.dg-careers-eo::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	width: 100vw;
+	transform: translateX(-50%);
+	background: var(--c-surface-highest);
+	z-index: -1;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-eo {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-eo-inner {
+	max-width: 48rem;
+	margin: 0 auto;
+}
+
+.dg-careers-eo-body {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.75;
+	color: var(--c-ink-variant);
+	margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   9. CLOSING CTA
+   ═══════════════════════════════════════════ */
+.dg-careers-closing {
+	padding: 6rem var(--c-margin-mob);
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-careers-closing {
+		padding-left: var(--c-margin-desk);
+		padding-right: var(--c-margin-desk);
+	}
+}
+
+.dg-careers-closing-body {
+	font-size: 1.125rem;
+	font-weight: 400;
+	line-height: 1.78;
+	color: var(--c-ink);
+	margin: 0 0 1.5rem;
+}
+
+.dg-careers-closing .dg-careers-btn--primary {
+	margin-bottom: 1rem;
+	background: var(--c-ink);
+	color: var(--c-bg);
+	border-color: var(--c-ink);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	padding: 1rem 2rem;
+	transition: background-color 400ms cubic-bezier(0.2, 0, 0, 1),
+		color 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-careers-closing .dg-careers-btn--primary:hover {
+	background: var(--c-inverse-surface);
+	color: var(--c-inverse-on-surface);
+	border-color: var(--c-inverse-surface);
+}
+
+.dg-careers-closing-email {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--c-ink-variant);
+	margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	.dg-js .dg-careers [data-sr] {
+		opacity: 1 !important;
+	}
+
+	.dg-careers-btn,
+	.dg-careers-offer-tile,
+	.dg-careers-role-row,
+	.dg-careers-role-apply-link {
+		transition: none !important;
+	}
+
+	.dg-apply,
+	.dg-apply-overlay,
+	.dg-apply-dialog {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+
+/* ═══════════════════════════════════════════
+   10. APPLY MODAL
+   Đặt ngoài scope .dg-careers; token riêng để dialog không phụ thuộc Geist.
+   ═══════════════════════════════════════════ */
+.dg-apply {
+	--a-bg:           #fcf9f8;
+	--a-ink:          #1c1b1b;
+	--a-ink-variant:  #464742;
+	--a-tertiary:     #c5a059;
+	--a-surface-low:  #f6f3f2;
+	--a-surface-high: #eae7e7;
+	--a-outline:      #c7c7bf;
+	--a-radius:       0;
+	--a-pad-x:        clamp(20px, 4vw, 32px);
+	--a-shadow:       0 24px 64px rgba(28, 27, 27, 0.18);
+	--a-backdrop:     rgba(28, 27, 27, 0.45);
+
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	display: none;
+	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+	color: var(--a-ink);
+}
+
+.dg-apply[data-open] {
+	display: block;
+}
+
+/* Hidden attribute ưu tiên cao hơn để tắt cho non-JS hoặc khi modal đóng. */
+.dg-apply[hidden] {
+	display: none !important;
+}
+
+.dg-apply-overlay {
+	position: absolute;
+	inset: 0;
+	background: var(--a-backdrop);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	cursor: pointer;
+}
+
+.dg-apply-dialog {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(560px, calc(100vw - 32px));
+	max-height: calc(100vh - 32px);
+	overflow-y: auto;
+	background: var(--a-bg);
+	border: 1px solid var(--a-outline);
+	box-shadow: var(--a-shadow);
+	padding: clamp(24px, 5vw, 40px);
+	border-radius: var(--a-radius);
+}
+
+.dg-apply-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 36px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	border: 1px solid var(--a-outline);
+	color: var(--a-ink);
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-apply-close:hover {
+	background: var(--a-ink);
+	color: var(--a-bg);
+	border-color: var(--a-ink);
+}
+
+.dg-apply-close:focus-visible {
+	outline: 2px solid var(--a-tertiary);
+	outline-offset: 3px;
+}
+
+.dg-apply-header {
+	margin-bottom: 1.75rem;
+}
+
+.dg-apply-eyebrow {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--a-tertiary);
+	margin: 0 0 0.5rem;
+}
+
+.dg-apply-title {
+	font-family: inherit;
+	font-size: clamp(1.5rem, 4vw, 2rem);
+	font-weight: 300;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	color: var(--a-ink);
+	margin: 0 0 1rem;
+}
+
+.dg-apply-role {
+	font-family: inherit;
+	font-size: 0.875rem;
+	color: var(--a-ink-variant);
+	margin: 0 0 1rem;
+}
+
+.dg-apply-role strong {
+	color: var(--a-ink);
+	font-weight: 500;
+	margin-left: 0.25rem;
+}
+
+.dg-apply-colon {
+	margin: 0 0.25rem 0 0;
+}
+
+.dg-apply-desc {
+	font-family: inherit;
+	font-size: 0.95rem;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--a-ink-variant);
+	margin: 0;
+}
+
+.dg-apply-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.dg-apply-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.dg-apply-field--desired-role {
+	display: none;
+}
+
+.dg-apply.is-general-inquiry .dg-apply-field--desired-role {
+	display: flex;
+}
+
+.dg-apply.is-general-inquiry .dg-apply-role {
+	display: none;
+}
+
+.dg-apply-label {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--a-ink);
+}
+
+.dg-apply-required {
+	color: var(--a-tertiary);
+	margin-left: 0.125rem;
+}
+
+.dg-apply-input {
+	font-family: inherit;
+	font-size: 1rem;
+	font-weight: 400;
+	color: var(--a-ink);
+	background: var(--a-bg);
+	border: 1px solid var(--a-outline);
+	padding: 0.75rem 0.875rem;
+	border-radius: var(--a-radius);
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.dg-apply-input:focus {
+	outline: none;
+	border-color: var(--a-tertiary);
+	background: var(--a-surface-low);
+}
+
+.dg-apply-input:focus-visible {
+	outline: 2px solid var(--a-tertiary);
+	outline-offset: 2px;
+}
+
+.dg-apply-input:invalid:not(:placeholder-shown) {
+	border-color: #ba1a1a;
+}
+
+.dg-apply-textarea {
+	resize: vertical;
+	min-height: 96px;
+	font-family: inherit;
+}
+
+.dg-apply-file {
+	padding: 0.5rem;
+	border: 1px dashed var(--a-outline);
+	cursor: pointer;
+	background: var(--a-surface-low);
+}
+
+.dg-apply-file::file-selector-button {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	padding: 0.5rem 0.875rem;
+	margin-right: 0.75rem;
+	background: transparent;
+	color: var(--a-ink);
+	border: 1px solid var(--a-ink);
+	cursor: pointer;
+}
+
+.dg-apply-consent {
+	font-family: inherit;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--a-ink-variant);
+	margin: 0;
+}
+
+.dg-apply-consent label {
+	display: flex;
+	gap: 0.625rem;
+	align-items: flex-start;
+	cursor: pointer;
+}
+
+.dg-apply-consent input[type="checkbox"] {
+	margin-top: 0.2rem;
+	flex-shrink: 0;
+}
+
+.dg-apply-consent a {
+	color: var(--a-ink);
+	text-decoration: underline;
+}
+
+.dg-apply-consent a:hover {
+	color: var(--a-tertiary);
+}
+
+.dg-apply-status {
+	min-height: 1.25rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	margin: 0;
+	color: var(--a-ink-variant);
+}
+
+.dg-apply-status[data-state="error"] {
+	color: #ba1a1a;
+}
+
+.dg-apply-status[data-state="success"] {
+	color: #2d6a30;
+}
+
+.dg-apply-actions {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+	.dg-apply-actions {
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+}
+
+.dg-apply-actions .dg-careers-btn {
+	margin: 0;
+	width: auto;
+}
+
+.dg-apply-actions .dg-careers-btn--primary {
+	min-width: 180px;
+}
+
+.dg-apply-actions .dg-careers-btn[disabled],
+.dg-apply-actions .dg-careers-btn.is-loading {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+/* Tránh body scroll khi modal mở. */
+body.dg-apply-open {
+	overflow: hidden;
+}

@@ -1,0 +1,608 @@
+/* =========================================
+   DRAGON GLOW — WOOCOMMERCE: CHECKOUT
+   Loaded on is_checkout(). Depends on the shared woocommerce.css.
+   Note: the Select2 dropdown menu is styled in the shared file because it is
+   appended to <body> and reused by account and cart country/state selects.
+   ========================================= */
+
+/* =========================================
+   1. PAYMENT BOX (default WooCommerce layout)
+   ========================================= */
+
+.woocommerce-checkout #payment {
+    background: transparent;
+    border: 1px solid #e4e2de;
+    border-radius: 1.5rem;
+    padding: 2rem;
+}
+
+.woocommerce-checkout #payment ul.payment_methods {
+    border-bottom: 1px solid #e4e2de;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce-checkout #payment ul.payment_methods li {
+    padding: 0.75rem 0;
+}
+
+.woocommerce-checkout #payment div.place-order {
+    padding: 0;
+}
+
+.woocommerce-checkout #payment label {
+    color: #1b1c1a;
+}
+
+.woocommerce-checkout #payment div.form-row {
+    margin-bottom: 0;
+}
+
+.woocommerce-checkout #payment .button {
+    background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
+    border-bottom: 2px solid #735c00;
+    color: #734e4e;
+    padding: 1.25rem 3rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.woocommerce-checkout #payment .button:hover {
+    box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
+}
+
+/* =========================================
+   2. CHECKOUT LAYOUT
+   Two-column structure: billing/shipping fields (left) + order summary card (right).
+   ========================================= */
+
+/* ── Card containers for billing/shipping blocks ── */
+.woocommerce-checkout .woocommerce-billing-fields > h3,
+.woocommerce-checkout .woocommerce-shipping-fields > h3,
+.woocommerce-checkout .woocommerce-additional-fields > h3 {
+    display: none;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields,
+.woocommerce-checkout .woocommerce-shipping-fields,
+.woocommerce-checkout .woocommerce-additional-fields {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+}
+
+.woocommerce-checkout .woocommerce-shipping-fields .shipping_address {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(208, 197, 175, 0.4);
+}
+
+.woocommerce-checkout .woocommerce-billing-fields::before,
+.woocommerce-checkout .woocommerce-shipping-fields::before {
+    display: block;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #735c00;
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields::before {
+    content: "Contact Information";
+}
+
+.woocommerce-checkout .woocommerce-shipping-fields::before {
+    content: "Shipping Address";
+}
+
+.woocommerce-checkout .woocommerce-shipping-fields > .ship-to-different-address {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(208, 197, 175, 0.4);
+}
+
+/* ── Two-column field grid (matches mock sm:grid-cols-2) ── */
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper,
+.woocommerce-checkout .woocommerce-additional-fields__field-wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+    .woocommerce-checkout .woocommerce-shipping-fields__field-wrapper,
+    .woocommerce-checkout .woocommerce-additional-fields__field-wrapper {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.woocommerce-checkout .form-row.form-row-wide,
+.woocommerce-checkout .form-row.notes,
+.woocommerce-checkout .form-row.create-account {
+    grid-column: 1 / -1;
+}
+
+/* ── Field labels (matches mock uppercase label-sm) ── */
+.woocommerce-checkout .form-row label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #4d4635;
+    margin-bottom: 0.5rem;
+    padding: 0;
+}
+
+.woocommerce-checkout .form-row label .required {
+    color: #ba1a1a;
+    text-decoration: none;
+    border: none;
+}
+
+/* ── Inputs / selects / textareas (matches mock rounded-xl bordered style) ── */
+.woocommerce-checkout .form-row input.input-text,
+.woocommerce-checkout .form-row input[type="email"],
+.woocommerce-checkout .form-row input[type="tel"],
+.woocommerce-checkout .form-row input[type="text"],
+.woocommerce-checkout .form-row input[type="number"],
+.woocommerce-checkout .form-row input[type="password"],
+.woocommerce-checkout .form-row select,
+.woocommerce-checkout .form-row textarea {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 1px solid #d0c5af !important;
+	border-radius: 0.75rem;
+	background: #ffffff;
+	font-size: 1rem;
+	color: #1c1b1b;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	box-shadow: none;
+}
+
+/* ── Uppercase text-transform for address fields ──
+   Applies to: first name, last name, country/region,
+   street address, apartment, town/city, state. */
+.woocommerce-checkout #billing_first_name,
+.woocommerce-checkout #billing_last_name,
+.woocommerce-checkout #billing_country,
+.woocommerce-checkout #billing_address_1,
+.woocommerce-checkout #billing_address_2,
+.woocommerce-checkout #billing_city,
+.woocommerce-checkout #billing_state,
+.woocommerce-checkout #shipping_first_name,
+.woocommerce-checkout #shipping_last_name,
+.woocommerce-checkout #shipping_country,
+.woocommerce-checkout #shipping_address_1,
+.woocommerce-checkout #shipping_address_2,
+.woocommerce-checkout #shipping_city,
+.woocommerce-checkout #shipping_state {
+	text-transform: uppercase;
+}
+
+/* ── Uppercase for Select2 dropdown text in country/state fields ── */
+.woocommerce-checkout #billing_country + .select2 .select2-selection__rendered,
+.woocommerce-checkout #billing_state + .select2 .select2-selection__rendered,
+.woocommerce-checkout #shipping_country + .select2 .select2-selection__rendered,
+.woocommerce-checkout #shipping_state + .select2 .select2-selection__rendered {
+	text-transform: uppercase;
+}
+
+/* ── Focus state with golden yellow ── */
+.woocommerce-checkout .form-row input.input-text:focus,
+.woocommerce-checkout .form-row input[type="email"]:focus,
+.woocommerce-checkout .form-row input[type="tel"]:focus,
+.woocommerce-checkout .form-row input[type="text"]:focus,
+.woocommerce-checkout .form-row input[type="number"]:focus,
+.woocommerce-checkout .form-row input[type="password"]:focus,
+.woocommerce-checkout .form-row select:focus,
+.woocommerce-checkout .form-row textarea:focus {
+	outline: none;
+	border-color: #FFC107 !important;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+/* ── Select2 dropdown styling (Country/Region, State) ── */
+.woocommerce-checkout .form-row .select2-container .select2-selection--single {
+    border: 1px solid #d0c5af !important;
+    border-radius: 0.75rem !important;
+    height: auto !important;
+    padding: 0.75rem 1rem !important;
+    background: #ffffff !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.woocommerce-checkout .form-row .select2-container .select2-selection--single .select2-selection__rendered {
+    padding: 0 !important;
+    line-height: normal !important;
+    color: #1c1b1b !important;
+    font-size: 1rem !important;
+}
+
+.woocommerce-checkout .form-row .select2-container .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    right: 0.5rem !important;
+    top: 0 !important;
+}
+
+.woocommerce-checkout .form-row .select2-container .select2-selection--single .select2-selection__arrow b {
+    border-color: #735c00 transparent transparent transparent !important;
+    border-width: 6px 5px 0 5px !important;
+}
+
+/* ── Select2 focus state with golden yellow ── */
+.woocommerce-checkout .form-row .select2-container--focus .select2-selection--single,
+.woocommerce-checkout .form-row .select2-container--open .select2-selection--single {
+	border-color: #FFC107 !important;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15) !important;
+}
+
+/* ── Validation states (invalid / valid) ── */
+
+.woocommerce-checkout .form-row input.invalid,
+.woocommerce-checkout .form-row select.invalid,
+.woocommerce-checkout .form-row textarea.invalid {
+	border-color: #DC2626 !important;
+	background-color: #FEF2F2;
+}
+
+.woocommerce-checkout .form-row input.invalid:focus,
+.woocommerce-checkout .form-row select.invalid:focus,
+.woocommerce-checkout .form-row textarea.invalid:focus {
+	border-color: #DC2626 !important;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.woocommerce-checkout .form-row input.valid,
+.woocommerce-checkout .form-row select.valid,
+.woocommerce-checkout .form-row textarea.valid {
+	border-color: #16A34A;
+	background-color: #F0FDF4;
+}
+
+.woocommerce-checkout .form-row input.valid:focus,
+.woocommerce-checkout .form-row select.valid:focus,
+.woocommerce-checkout .form-row textarea.valid:focus {
+	border-color: #16A34A;
+	box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+/* ── Hide state field wrapper when WC marks it as hidden ── */
+.woocommerce-checkout .form-row[style*="display: none"],
+.woocommerce-checkout .form-row[style*="display:none"] {
+	display: none !important;
+}
+
+/* ── Inline field validation messages ── */
+.woocommerce-checkout .form-row .woocommerce-error,
+.woocommerce-checkout .form-row .woocommerce-message {
+	margin-top: 0.5rem;
+	margin-bottom: 0;
+	padding: 0.625rem 0.875rem;
+	font-size: 0.8125rem;
+	border-radius: 0.5rem;
+	border-left-width: 3px;
+}
+
+.woocommerce-checkout .form-row .woocommerce-error::before,
+.woocommerce-checkout .form-row .woocommerce-message::before {
+	font-size: 0.875rem;
+}
+
+/* ── Required field indicator ── */
+.woocommerce-checkout .form-row label .required {
+	color: #DC2626;
+	font-weight: 700;
+}
+
+.woocommerce-checkout .col2-set .col-1,
+.woocommerce-checkout .col2-set .col-2 {
+	width: 100%;
+	float: none;
+	padding: 0;
+}
+
+/* ── Order review table (right column) ── */
+.woocommerce-checkout #order_review {
+    border: none;
+    padding: 0;
+}
+
+.woocommerce-checkout #order_review table.shop_table {
+    border: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce-checkout #order_review table.shop_table th,
+.woocommerce-checkout #order_review table.shop_table td {
+    border: none;
+    padding: 0.75rem 0;
+    color: #4d4635;
+    font-size: 0.9375rem;
+}
+
+.woocommerce-checkout #order_review table.shop_table tfoot th,
+.woocommerce-checkout #order_review table.shop_table tfoot td {
+    font-weight: 600;
+    color: #1c1b1b;
+}
+
+.woocommerce-checkout #order_review table.shop_table .order-total th,
+.woocommerce-checkout #order_review table.shop_table .order-total td {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #735c00;
+    border-top: 1px solid rgba(208, 197, 175, 0.5);
+    padding-top: 1rem;
+}
+
+/* ── Payment list inside order review ── */
+.woocommerce-checkout #payment {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+.woocommerce-checkout #payment ul.payment_methods {
+    border: none;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.woocommerce-checkout #payment ul.payment_methods li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(208, 197, 175, 0.4);
+}
+
+.woocommerce-checkout #payment ul.payment_methods li:last-child {
+    border-bottom: none;
+}
+
+.woocommerce-checkout #payment ul.payment_methods label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1c1b1b;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0;
+}
+
+.woocommerce-checkout #payment div.payment_box {
+    background: #f6f3f2;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: #4d4635;
+}
+
+.woocommerce-checkout #payment div.payment_box::before {
+    display: none;
+}
+
+/* ── Place Order button — matches .dg-shimmer-btn in cart.css
+   (gold gradient + sweep shimmer).
+
+   The button is rendered directly by dg_render_wc_checkout() outside the
+   WC #payment block, so the legacy `#payment #place_order` selector does
+   not match. We target by class `.dg-place-order` (current DOM) and keep
+   the ID selector as a defensive fallback in case WC moves it back. */
+.woocommerce-checkout #payment div.place-order,
+.woocommerce-checkout .dg-place-order-wrap {
+    padding: 1rem 0 0;
+}
+
+.woocommerce-checkout #payment #place_order,
+.woocommerce-checkout .dg-place-order {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    color: var(--color-on-gold);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.25s ease, transform 0.2s ease;
+}
+
+.woocommerce-checkout #payment #place_order::after,
+.woocommerce-checkout .dg-place-order::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -75%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.28),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+    pointer-events: none;
+}
+
+.woocommerce-checkout #payment #place_order:hover::after,
+.woocommerce-checkout .dg-place-order:hover::after {
+    left: 130%;
+}
+
+.woocommerce-checkout #payment #place_order:hover,
+.woocommerce-checkout .dg-place-order:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.woocommerce-checkout #payment #place_order:disabled,
+.woocommerce-checkout .dg-place-order:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.woocommerce-checkout #payment #place_order:disabled::after,
+.woocommerce-checkout .dg-place-order:disabled::after {
+    display: none;
+}
+
+/* ── Selected payment visual (used by checkout.js bindPaymentSelection) ── */
+.selected-payment .payment_method {
+    border: 1.5px solid #735c00;
+}
+
+/* ── Coupon form ── */
+.woocommerce-checkout .woocommerce-form-coupon {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(208, 197, 175, 0.4);
+}
+
+.woocommerce-checkout .woocommerce-form-coupon input.input-text {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.625rem 1rem;
+    border: 1px solid #d0c5af;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    color: #1c1b1b;
+    background: #ffffff;
+    transition: border-color 0.2s;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon input.input-text:focus {
+	outline: none;
+	border-color: #FFC107;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+.woocommerce-checkout .woocommerce-form-coupon button {
+    background: transparent;
+    border: 1px solid #735c00;
+    color: #735c00;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon button:hover {
+    background: #735c00;
+    color: #ffffff;
+}
+
+/* ── Custom Place Order button (mock parity) ── */
+.woocommerce-checkout .dg-place-order {
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: none;
+}
+
+.woocommerce-checkout .dg-place-order .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+/* ── Reduce motion support ── */
+@media (prefers-reduced-motion: reduce) {
+    .woocommerce-checkout #payment #place_order,
+    .woocommerce-checkout .dg-place-order,
+    .woocommerce-checkout .form-row input,
+    .woocommerce-checkout .form-row select {
+        transition: none;
+    }
+    .woocommerce-checkout #payment #place_order::after,
+    .woocommerce-checkout .dg-place-order::after {
+        transition: none;
+    }
+    .woocommerce-checkout #payment #place_order:hover,
+    .woocommerce-checkout .dg-place-order:hover {
+        transform: none;
+    }
+    .woocommerce-checkout #payment #place_order:hover::after,
+    .woocommerce-checkout .dg-place-order:hover::after {
+        left: -75%;
+    }
+}
+
+/* =========================================
+   CHECKOUT TITLE ICON
+   Decorative SVG that sits left of the "Checkout" h1.
+   Uses currentColor so it inherits the heading's text color
+   (works on both light and dark page variants without overrides).
+   ========================================= */
+
+.dg-checkout-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+}
+
+.dg-checkout-title__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5em;
+    height: 1.5em;
+    color: currentColor;
+    flex-shrink: 0;
+    /* Subtle entrance: small scale + tilt overshoot for a luxury "settling" feel. */
+    animation: dg-checkout-icon-enter 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: 0.1s;
+}
+
+/* Gold accent variant — uses --color-checkout-icon token (Material Amber 500).
+   Modifier only; SVG still uses currentColor so it inherits from this rule. */
+.dg-checkout-title__icon--gold {
+    color: var(--color-checkout-icon);
+}
+
+.dg-checkout-title__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+
+@keyframes dg-checkout-icon-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.7) rotate(-10deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-checkout-title__icon {
+        animation: none;
+    }
+}

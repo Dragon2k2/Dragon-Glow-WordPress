@@ -1,0 +1,730 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DRAGON GLOW — GIFT CARDS
+   Elegance to share · Geist · glass-panel · bento 12-col
+   Color tokens per DESIGN.md (Quiet Luxury · Light Dominant)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Scope & tokens ─────────────────────────────────────────────────────── */
+.dg-gift,
+.dg-gift * {
+	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+}
+
+/* Giữ đúng font cho icon Material Symbols (ưu tiên cao hơn scope ở trên). */
+.dg-gift .material-symbols-outlined {
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	display: inline-block;
+	white-space: nowrap;
+	word-wrap: normal;
+	direction: ltr;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-feature-settings: "liga";
+}
+
+.dg-gift {
+	--gift-bg: var(--color-background, #fcf9f8);
+	--gift-surface: var(--color-surface, #fcf9f8);
+	--gift-surface-low: var(--color-surface-container-low, #f6f3f2);
+	--gift-surface-container: var(--color-surface-container, #f0eded);
+	--gift-ink: var(--color-on-surface, #1c1b1b);
+	--gift-muted: var(--color-on-surface-variant, #4b463d);
+	--gift-line: var(--color-outline-variant, #cec5ba);
+	--gift-line-soft: rgba(229, 226, 225, 0.5);
+
+	--gift-pink: var(--color-secondary, #b90760);
+	--gift-pink-soft: rgba(185, 7, 96, 0.06);
+	--gift-pink-glow: rgba(185, 7, 96, 0.08);
+
+	--gift-gold: var(--color-primary, #685d4a);
+	--gift-gold-soft-bg: var(--color-primary-container, #f7e7ce);
+	--gift-gold-soft-ink: var(--color-on-primary-container, #726753);
+
+	--gift-glass-bg-strong: rgba(255, 255, 255, 0.8);   /* input focus */
+	--gift-glass-bg-filled: rgba(255, 255, 255, 0.72);  /* input has-value */
+	--gift-error-glow: rgba(186, 26, 26, 0.08);          /* error ring */
+
+	--gift-radius-sm: 0.25rem;
+	--gift-radius-md: 0.5rem;
+	--gift-radius-lg: 0.75rem;
+	--gift-radius-full: 9999px;
+
+	--gift-easing: cubic-bezier(0.22, 1, 0.36, 1);
+	--gift-duration: 500ms;
+
+	color: var(--gift-ink);
+	background: var(--gift-bg);
+	padding-bottom: clamp(4rem, 10vw, 7rem);
+}
+
+/* FOUC guard: ẩn phần tử sẽ animate cho tới khi JS chạy */
+.dg-js .dg-gift [data-sr] {
+	opacity: 0;
+}
+
+/* ── Wrap ───────────────────────────────────────────────────────────────── */
+.dg-gift-wrap {
+	max-width: 1440px;
+	margin: 0 auto;
+	padding: clamp(4rem, 8vw, 6.5rem)
+		var(--wp--custom--spacing--margin-mobile, 20px) 0;
+}
+
+@media (min-width: 768px) {
+	.dg-gift-wrap {
+		padding-left: var(--wp--custom--spacing--margin-desktop, 80px);
+		padding-right: var(--wp--custom--spacing--margin-desktop, 80px);
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dg-gift-hero {
+	text-align: center;
+	max-width: 48rem;
+	margin: 0 auto clamp(3rem, 7vw, 5rem);
+}
+
+.dg-gift-hero-eyebrow {
+	display: inline-block;
+	font-size: 0.875rem;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: #b90760;
+	margin-bottom: 1.5rem;
+}
+
+.dg-gift-hero-title {
+	font-size: clamp(2.5rem, 8vw, 4rem);
+	font-weight: 200;
+	letter-spacing: -0.04em;
+	line-height: 1.1;
+	color: var(--color-tertiary, #735c00);
+	margin: 0 0 1.5rem;
+}
+
+.dg-gift-hero-lede {
+	font-size: clamp(1rem, 1.8vw, 1.125rem);
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--gift-ink);
+	margin: 0 auto;
+	max-width: 42rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BENTO LAYOUT (12-col grid: visual 7 · config 5)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dg-gift-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: clamp(2rem, 5vw, 3rem);
+	align-items: start;
+}
+
+@media (min-width: 1024px) {
+	.dg-gift-layout {
+		grid-template-columns: 7fr 5fr;
+		gap: 2rem;
+	}
+
+	.dg-gift-layout-visual {
+		position: sticky;
+		top: 8rem; /* dưới header sticky */
+	}
+}
+
+/* ── Visual column (Bento) ───────────────────────────────────────────────── */
+.dg-gift-bento {
+	display: flex;
+	flex-direction: column;
+	gap: clamp(1.5rem, 3vw, 2rem);
+}
+
+.dg-gift-card-preview {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	border-radius: var(--gift-radius-lg);
+	overflow: hidden;
+	background: var(--gift-glass-bg);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--gift-glass-border);
+	box-shadow: 0 8px 32px 0 var(--gift-pink-glow);
+	transition: transform var(--gift-duration) var(--gift-easing),
+		box-shadow var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-card-preview:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 16px 48px 0 var(--gift-pink-glow);
+}
+
+.dg-gift-card-image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-card-preview:hover .dg-gift-card-image {
+	transform: scale(1.04);
+}
+
+.dg-gift-card-tag {
+	position: absolute;
+	top: 1.5rem;
+	left: 1.5rem;
+	display: inline-block;
+	padding: 0.25rem 0.75rem;
+	border-radius: var(--gift-radius-full);
+	background: var(--gift-gold-soft-bg);
+	color: var(--gift-gold-soft-ink);
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	box-shadow: 0 2px 8px var(--gift-shadow-xs);
+}
+
+.dg-gift-card-tag.is-hidden {
+	display: none;
+}
+
+/* Bento row: secondary image + digital tile */
+.dg-gift-bento-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: clamp(1.5rem, 3vw, 2rem);
+}
+
+.dg-gift-card-secondary {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	border-radius: var(--gift-radius-lg);
+	overflow: hidden;
+	background: var(--gift-glass-bg);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid var(--gift-glass-border);
+	box-shadow: 0 4px 16px 0 var(--gift-pink-glow);
+}
+
+.dg-gift-card-secondary-image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-card-secondary:hover .dg-gift-card-secondary-image {
+	transform: scale(1.04);
+}
+
+.dg-gift-card-digital-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1 / 1;
+	padding: 1.5rem;
+	border-radius: var(--gift-radius-lg);
+	background: var(--gift-surface-low);
+	border: 1px solid var(--gift-line-soft);
+	text-align: center;
+	transition: background var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-card-digital-tile:hover {
+	background: var(--gift-surface-container);
+}
+
+.dg-gift-card-digital-icon {
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-size: 3rem;
+	color: var(--gift-pink);
+	font-weight: 300;
+	margin-bottom: 1rem;
+}
+
+.dg-gift-card-digital-title {
+	font-size: 1.5rem;
+	font-weight: 400;
+	line-height: 1.3;
+	letter-spacing: -0.01em;
+	color: var(--gift-ink);
+	margin: 0 0 0.5rem;
+}
+
+.dg-gift-card-digital-text {
+	font-size: 1rem;
+	color: var(--gift-muted);
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONFIGURATION PANEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dg-gift-config {
+	display: flex;
+	flex-direction: column;
+	gap: 1.75rem;
+	padding: clamp(1.5rem, 4vw, 3rem);
+	border-radius: var(--gift-radius-lg);
+	background: var(--gift-glass-panel);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid var(--gift-line-soft);
+	box-shadow: 0 20px 40px -15px var(--gift-pink-glow);
+}
+
+.dg-gift-config-head {
+	margin: 0;
+}
+
+.dg-gift-config-title {
+	font-size: 2rem;
+	font-weight: 300;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	color: var(--gift-ink);
+	margin: 0 0 0.5rem;
+}
+
+.dg-gift-config-subtitle {
+	font-size: 1rem;
+	color: var(--gift-muted);
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* ── Field block ─────────────────────────────────────────────────────────── */
+.dg-gift-field {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.dg-gift-field--recipient {
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--gift-line-soft);
+	gap: 1.25rem;
+}
+
+.dg-gift-label {
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--gift-muted);
+	margin: 0;
+}
+
+.dg-gift-heading {
+	font-size: 1.5rem;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+	color: var(--gift-ink);
+	margin: 0;
+	padding: 0;
+}
+
+/* ── Format grid (Digital / Physical) ────────────────────────────────────── */
+.dg-gift-format-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.75rem;
+}
+
+.dg-gift-format {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 1.5rem 1rem;
+	background: transparent;
+	border: 1px solid var(--gift-line);
+	border-radius: var(--gift-radius-md);
+	color: var(--gift-muted);
+	font: inherit;
+	cursor: pointer;
+	transition: border-color var(--gift-duration) var(--gift-easing),
+		background var(--gift-duration) var(--gift-easing),
+		color var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-format:hover {
+	border-color: var(--gift-pink-border);
+	color: var(--gift-ink);
+}
+
+.dg-gift-format.is-active {
+	border: 2px solid var(--gift-pink);
+	background: var(--gift-pink-soft);
+	color: var(--gift-ink);
+	padding: calc(1.5rem - 1px) calc(1rem - 1px); /* bù 1px border */
+}
+
+.dg-gift-format:focus-visible {
+	outline: 2px solid var(--gift-pink);
+	outline-offset: 2px;
+}
+
+.dg-gift-format-icon {
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+	color: var(--gift-pink);
+}
+
+.dg-gift-format:not(.is-active) .dg-gift-format-icon {
+	color: var(--gift-muted);
+}
+
+.dg-gift-format-label {
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+/* ── Value row (chips $50/$100/$250/$500) ────────────────────────────────── */
+.dg-gift-value-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.dg-gift-value {
+	padding: 0.625rem 1.25rem;
+	border: 1px solid var(--gift-line);
+	border-radius: var(--gift-radius-full);
+	background: transparent;
+	color: var(--gift-muted);
+	font: inherit;
+	font-size: 1rem;
+	font-weight: 400;
+	cursor: pointer;
+	transition: border-color var(--gift-duration) var(--gift-easing),
+		color var(--gift-duration) var(--gift-easing),
+		background var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-value:hover {
+	border-color: var(--gift-pink);
+	color: var(--gift-pink);
+}
+
+.dg-gift-value.is-active {
+	border: 2px solid var(--gift-pink);
+	background: var(--gift-pink-soft);
+	color: var(--gift-ink);
+	font-weight: 500;
+	padding: calc(0.625rem - 1px) calc(1.25rem - 1px);
+}
+
+.dg-gift-value:focus-visible {
+	outline: 2px solid var(--gift-pink);
+	outline-offset: 2px;
+}
+
+/* ── Input fields ────────────────────────────────────────────────────────── */
+.dg-gift-input {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+/* Floating-label wrapper */
+.dg-gift-input--float {
+	position: relative;
+	gap: 0;
+}
+
+.dg-gift-input--float .dg-gift-label {
+	position: absolute;
+	top: 50%;
+	left: 1rem;
+	transform: translateY(-50%);
+	font-size: 0.875rem;
+	font-weight: 400;
+	letter-spacing: 0.04em;
+	text-transform: none;
+	color: var(--gift-muted);
+	pointer-events: none;
+	transition:
+		top var(--gift-duration) var(--gift-easing),
+		font-size var(--gift-duration) var(--gift-easing),
+		font-weight var(--gift-duration) var(--gift-easing),
+		letter-spacing var(--gift-duration) var(--gift-easing),
+		color var(--gift-duration) var(--gift-easing);
+	z-index: 1;
+}
+
+/* Label nổi lên khi focus hoặc có giá trị (placeholder=" " trick) */
+.dg-gift-input--float .dg-gift-input-field:focus ~ .dg-gift-label,
+.dg-gift-input--float .dg-gift-input-field:not(:placeholder-shown) ~ .dg-gift-label {
+	top: 0.6rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--gift-muted);
+}
+
+.dg-gift-input--float .dg-gift-input-field:focus ~ .dg-gift-label {
+	color: var(--gift-pink);
+}
+
+.dg-gift-input--float .dg-gift-input-field {
+	padding: 1.625rem 1rem 0.625rem;
+	background: var(--gift-glass-bg);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid var(--gift-line);
+	border-radius: var(--gift-radius-md);
+	transition:
+		border-color var(--gift-duration) var(--gift-easing),
+		background var(--gift-duration) var(--gift-easing),
+		box-shadow var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-input--float .dg-gift-input-field:focus {
+	border-color: var(--gift-pink);
+	background: var(--gift-glass-focus);
+	box-shadow: 0 0 0 3px var(--gift-pink-glow);
+	outline: 0;
+}
+
+.dg-gift-input--float .dg-gift-input-field:not(:placeholder-shown):not(:focus) {
+	background: var(--gift-glass-filled);
+	border-color: var(--gift-line);
+}
+
+/* Base input (dùng cho trường hợp không có --float) */
+.dg-gift-input-field {
+	width: 100%;
+	padding: 0.75rem 0;
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--gift-line);
+	border-radius: 0;
+	color: var(--gift-ink);
+	font: inherit;
+	font-size: 1rem;
+	line-height: 1.6;
+	transition: border-color var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-input-field::placeholder {
+	color: transparent; /* ẩn placeholder thật — floating label thay thế */
+}
+
+.dg-gift-input--float .dg-gift-input-field::placeholder {
+	color: transparent;
+}
+
+.dg-gift-input-field:focus {
+	outline: 0;
+	border-bottom-color: var(--gift-pink);
+	box-shadow: 0 1px 0 0 var(--gift-pink);
+}
+
+/* Error state */
+.dg-gift-input--has-error .dg-gift-input-field {
+	border-color: var(--color-error, #ba1a1a);
+}
+
+.dg-gift-input--has-error .dg-gift-input-field:focus {
+	box-shadow: 0 0 0 3px var(--gift-error-glow);
+}
+
+.dg-gift-input--has-error .dg-gift-label,
+.dg-gift-input--has-error .dg-gift-input-field:focus ~ .dg-gift-label {
+	color: var(--color-error, #ba1a1a);
+}
+
+/* ── Textarea ────────────────────────────────────────────────────────────── */
+.dg-gift-input--textarea {
+	gap: 0.5rem;
+}
+
+.dg-gift-input--textarea .dg-gift-label {
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--gift-muted);
+	margin-bottom: 0.125rem;
+}
+
+.dg-gift-input-field--textarea {
+	padding: 1rem;
+	background: var(--gift-glass-bg);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid var(--gift-line);
+	border-radius: var(--gift-radius-md);
+	resize: none;
+	color: var(--gift-ink);
+	font: inherit;
+	font-size: 1rem;
+	line-height: 1.6;
+	transition:
+		border-color var(--gift-duration) var(--gift-easing),
+		background var(--gift-duration) var(--gift-easing),
+		box-shadow var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-input-field--textarea::placeholder {
+	color: var(--gift-muted);
+	font-style: italic;
+	font-size: 0.9375rem;
+}
+
+.dg-gift-input-field--textarea:focus {
+	outline: 0;
+	border-color: var(--gift-pink);
+	background: var(--gift-glass-bg-strong);
+	box-shadow: 0 0 0 3px var(--gift-pink-glow);
+}
+
+.dg-gift-input-error {
+	font-size: 0.75rem;
+	color: var(--color-error, #ba1a1a);
+	min-height: 1rem;
+	margin: 0;
+}
+
+/* ── Submit ───────────────────────────────────────────────────────────────── */
+.dg-gift-actions {
+	padding-top: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.dg-gift-submit {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.5rem;
+	padding: 1rem 1.5rem;
+	background: #b90760;
+	color: var(--color-on-secondary, #ffffff);
+	border: 0;
+	border-radius: var(--gift-radius-md);
+	font: inherit;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.2;
+	cursor: pointer;
+	box-shadow: 0 4px 12px 0 var(--gift-pink-glow);
+	transition: transform var(--gift-duration) var(--gift-easing),
+		background var(--gift-duration) var(--gift-easing),
+		box-shadow var(--gift-duration) var(--gift-easing);
+}
+
+.dg-gift-submit:hover:not(:disabled) {
+	transform: translateY(-2px);
+	background: color-mix(in srgb, var(--gift-pink) 90%, black);
+}
+
+.dg-gift-submit:active:not(:disabled) {
+	transform: translateY(0);
+}
+
+.dg-gift-submit:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+
+.dg-gift-submit:focus-visible {
+	outline: 2px solid var(--gift-pink);
+	outline-offset: 3px;
+}
+
+.dg-gift-submit-amount {
+	font-weight: 500;
+	opacity: 0.85;
+}
+
+.dg-gift-submit-sep {
+	margin: 0 0.25rem;
+}
+
+.dg-gift-feedback {
+	margin: 0.5rem 0 0;
+	min-height: 1.25rem;
+	font-size: 0.875rem;
+	color: var(--gift-pink);
+}
+
+.dg-gift-feedback.is-success {
+	color: var(--gift-success);
+}
+
+.dg-gift-feedback.is-error {
+	color: var(--color-error, #ba1a1a);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE TWEAKS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+	.dg-gift-bento-row {
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+	}
+
+	.dg-gift-config {
+		padding: 1.25rem;
+	}
+
+	.dg-gift-format {
+		padding: 1rem 0.5rem;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY — Reduced motion
+   Tắt transition + transform cho mọi thành phần; vẫn hiển thị đầy đủ.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	.dg-gift,
+	.dg-gift *,
+	.dg-gift *::before,
+	.dg-gift *::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.dg-gift-card-preview:hover,
+	.dg-gift-card-secondary:hover .dg-gift-card-secondary-image,
+	.dg-gift-card-preview:hover .dg-gift-card-image,
+	.dg-gift-submit:hover:not(:disabled) {
+		transform: none;
+	}
+
+	/* Tắt gradient animation nền nếu main.css có */
+	.dg-gift .dg-bg-animated {
+		animation: none;
+	}
+}

@@ -1,0 +1,417 @@
+/* ═══════════════════════════════════════════
+   DRAGON GLOW — Accessibility Statement
+   Editorial legal document · Geist · Minimalist
+   Color tokens theo stitch_dragon_glow_accessibility_statement DESIGN.md,
+   pattern copy từ cookie-policy.css để đồng nhất các trang legal.
+   ═══════════════════════════════════════════ */
+
+/* ── Scope & tokens ───────────────────────── */
+.dg-accessibility,
+.dg-accessibility * {
+	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+}
+
+.dg-accessibility {
+	--a11y-bg:           #faf9f6;
+	--a11y-surface-low:  #f4f3f1;
+	--a11y-ink:          #1a1a1a;
+	--a11y-muted:        #444748;
+	--a11y-line:         #e5e4e0;
+	--a11y-line-soft:    rgba(229, 228, 224, 0.5);
+	--a11y-gold:         #c5a059;
+	--a11y-gold-soft:    rgba(197, 160, 89, 0.4);
+	--a11y-glass:        rgba(249, 248, 246, 0.95);
+	--a11y-radius:       0.25rem;
+	--a11y-sidebar-w:    280px;
+	--a11y-content-w:    720px;
+	--a11y-gutter:       40px;
+
+	color: var(--a11y-ink);
+	background: var(--a11y-bg);
+}
+
+/* FOUC guard: ẩn phần tử sẽ reveal cho tới khi JS chạy */
+.dg-js .dg-accessibility [data-sr] {
+	opacity: 0;
+}
+
+/* ── Wrap ─────────────────────────────────── */
+.dg-accessibility-wrap {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: clamp(4rem, 8vw, 6.5rem) 20px 0;
+}
+
+@media (min-width: 768px) {
+	.dg-accessibility-wrap {
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.dg-accessibility-header {
+	max-width: var(--a11y-content-w);
+	margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.dg-accessibility-eyebrow {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--a11y-muted);
+	margin: 0 0 1rem;
+}
+
+.dg-accessibility-title {
+	font-size: clamp(2.5rem, 8vw, 4rem);
+	font-weight: 300;
+	letter-spacing: -0.04em;
+	line-height: 1.05;
+	color: #735C00;
+	margin: 0 0 1.5rem;
+	font-feature-settings: "ss01" 1;
+}
+
+.dg-accessibility-meta {
+	display: none; /* Hero không còn ngày ở bản nội dung mới. */
+}
+
+.dg-accessibility-intro {
+	font-size: 1.125rem;
+	font-weight: 300;
+	line-height: 1.6;
+	color: var(--a11y-ink);
+	max-width: 60ch;
+	margin: 0 0 2rem;
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT: SIDEBAR + CONTENT
+   ═══════════════════════════════════════════ */
+.dg-accessibility-layout {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+/* ── Mobile TOC ─────────────────────────── */
+.dg-accessibility-toc-mobile {
+	display: block;
+	position: sticky;
+	top: 0;
+	z-index: 40;
+	background: var(--a11y-glass);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--a11y-line);
+	padding: 1rem 0;
+	margin: 0 0 2rem;
+}
+
+@media (min-width: 1024px) {
+	.dg-accessibility-toc-mobile {
+		display: none;
+	}
+}
+
+.dg-accessibility-toc-select {
+	width: 100%;
+	height: 48px;
+	border: 1px solid var(--a11y-line);
+	border-radius: var(--a11y-radius);
+	background: transparent;
+	font-family: inherit;
+	font-size: 1rem;
+	font-weight: 400;
+	color: var(--a11y-ink);
+	padding: 0 3rem 0 1rem;
+	appearance: none;
+	-webkit-appearance: none;
+	outline: none;
+	cursor: pointer;
+	transition: border-color 0.2s ease;
+}
+
+.dg-accessibility-toc-select:focus {
+	border-color: var(--a11y-ink);
+}
+
+.dg-accessibility-toc-icon {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--a11y-muted);
+	pointer-events: none;
+	font-family: "Material Symbols Outlined", sans-serif;
+	font-size: 1.25rem;
+	font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+	padding-right: 0.75rem;
+}
+
+/* ── Layout: Grid for desktop ──────────────── */
+@media (min-width: 1024px) {
+	.dg-accessibility-layout {
+		display: grid;
+		grid-template-columns: var(--a11y-sidebar-w) 1fr;
+		gap: var(--a11y-gutter);
+		align-items: start;
+	}
+}
+
+@media (min-width: 1024px) {
+	.dg-accessibility-sidebar {
+		display: block;
+		position: sticky;
+		top: 6rem;
+		height: fit-content;
+		max-height: calc(100vh - 8rem);
+		overflow-y: auto;
+		padding-right: var(--a11y-gutter);
+	}
+}
+
+.dg-accessibility-sidebar::-webkit-scrollbar {
+	width: 4px;
+}
+
+.dg-accessibility-sidebar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.dg-accessibility-sidebar::-webkit-scrollbar-thumb {
+	background: var(--a11y-line);
+	border-radius: 2px;
+}
+
+.dg-accessibility-nav {
+	border-right: 1px solid var(--a11y-line-soft);
+	padding: 0.5rem 1.25rem 0.5rem 0;
+}
+
+.dg-accessibility-nav-label {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--a11y-muted);
+	margin: 0 0 1rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--a11y-line-soft);
+}
+
+.dg-accessibility-nav-link {
+	display: block;
+	font-size: 0.9375rem;
+	font-weight: 400;
+	color: var(--a11y-muted);
+	text-decoration: none;
+	padding: 0.65rem 0 0.65rem 1.25rem;
+	border-right: 2px solid transparent;
+	margin-right: -1px;
+	transition: color 0.3s ease, border-color 0.3s ease, font-weight 0.3s ease;
+}
+
+.dg-accessibility-nav-link:hover {
+	color: var(--a11y-ink);
+}
+
+.dg-accessibility-nav-link.is-active {
+	color: var(--a11y-gold);
+	font-weight: 500;
+	border-right-color: var(--a11y-gold);
+}
+
+.dg-accessibility-nav-link:focus-visible {
+	outline: 2px solid var(--a11y-gold);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* ── Content ─────────────────────────────── */
+.dg-accessibility-content {
+	flex: 1;
+	min-width: 0;
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════ */
+.dg-accessibility-section {
+	padding-top: clamp(2rem, 5vw, 3rem);
+	margin-bottom: clamp(2.5rem, 6vw, 4rem);
+	border-top: 1px solid var(--a11y-line);
+	scroll-margin-top: 5rem;
+}
+
+.dg-accessibility-section:first-of-type {
+	border-top: none;
+	padding-top: 0;
+}
+
+.dg-accessibility-section-title {
+	display: flex;
+	align-items: baseline;
+	gap: 0.85rem;
+	font-size: clamp(1.25rem, 3vw, 1.5rem);
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+	color: var(--a11y-ink);
+	margin: 0 0 1.5rem;
+}
+
+.dg-accessibility-section-num {
+	font-family: inherit;
+	font-size: 0.95em;
+	font-weight: 300;
+	color: #735C00;
+	letter-spacing: 0;
+}
+
+.dg-accessibility-section p {
+	font-size: 1rem;
+	font-weight: 300;
+	line-height: 1.7;
+	color: var(--a11y-ink);
+	margin: 0 0 1rem;
+	max-width: 65ch;
+}
+
+.dg-accessibility-section p:last-child {
+	margin-bottom: 0;
+}
+
+.dg-accessibility-section ul {
+	list-style: disc;
+	padding-left: 1.5rem;
+	margin: 0 0 1.5rem;
+}
+
+.dg-accessibility-section li {
+	font-size: 1rem;
+	font-weight: 300;
+	line-height: 1.7;
+	color: var(--a11y-ink);
+	margin-bottom: 0.5rem;
+	max-width: 65ch;
+}
+
+.dg-accessibility-section li:last-child {
+	margin-bottom: 0;
+}
+
+.dg-accessibility-section li strong {
+	font-weight: 500;
+}
+
+.dg-accessibility-section a {
+	color: var(--a11y-gold);
+	text-decoration: underline;
+	text-decoration-color: var(--a11y-gold);
+	text-underline-offset: 4px;
+	transition: text-decoration-color 0.2s ease;
+}
+
+.dg-accessibility-section a:hover {
+	text-decoration-color: transparent;
+}
+
+.dg-accessibility-section a:focus-visible {
+	outline: 2px solid var(--a11y-gold);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* Back to Top link — chỉ xuất hiện ở section 4 và 10 */
+.dg-accessibility-back-top {
+	display: inline-block;
+	margin-top: 2rem;
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--a11y-ink);
+	text-decoration: none;
+	padding-bottom: 0.25rem;
+	border-bottom: 1px solid var(--a11y-line);
+	transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-accessibility-back-top:hover {
+	color: var(--a11y-gold);
+	border-bottom-color: var(--a11y-gold);
+}
+
+.dg-accessibility-back-top:focus-visible {
+	outline: 2px solid var(--a11y-gold);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 3 — CONTACT BOX
+   ═══════════════════════════════════════════ */
+.dg-accessibility-contact-box {
+	background: var(--a11y-surface-low);
+	border: 1px solid var(--a11y-line);
+	border-radius: var(--a11y-radius);
+	padding: 2rem;
+	margin: 1.5rem 0 0;
+}
+
+.dg-accessibility-contact-box ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.dg-accessibility-contact-box li {
+	font-size: 1rem;
+	font-weight: 300;
+	line-height: 1.7;
+	color: var(--a11y-ink);
+	margin-bottom: 1rem;
+}
+
+.dg-accessibility-contact-box li:last-child {
+	margin-bottom: 0;
+}
+
+.dg-accessibility-contact-box li strong {
+	font-weight: 500;
+	margin-right: 0.4rem;
+}
+
+.dg-accessibility-contact-note {
+	font-size: 0.875rem !important;
+	color: var(--a11y-muted) !important;
+	margin-top: 1.5rem !important;
+	font-style: italic;
+}
+
+/* Section 5 — Known limitations: chỉ là bullet list, không dùng callout. */
+
+/* Section 10 — Formal complaints: chỉ là prose, không dùng timeline. */
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	.dg-js .dg-accessibility [data-sr] {
+		opacity: 1 !important;
+	}
+
+	.dg-accessibility-nav-link,
+	.dg-accessibility-section a,
+	.dg-accessibility-toc-select {
+		transition: none !important;
+	}
+}

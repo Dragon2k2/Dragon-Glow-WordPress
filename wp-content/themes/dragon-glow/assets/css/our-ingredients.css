@@ -1,0 +1,686 @@
+/* ============================================================
+   DRAGON GLOW — OUR INGREDIENTS STYLES
+   Mirrors stitch_dragon_glow_ingredients_page prototype.
+   Geist scoped to [data-page="our-ingredients"] — does not
+   touch the global theme font tokens.
+   Design: Editorial Luxury Minimalism, cream/charcoal palette.
+   ============================================================ */
+
+/* ── FOUC guard ────────────────────────────────────────────── */
+.dg-js [data-page="our-ingredients"] [data-sr] {
+	opacity: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SCOPED GEIST + TOKENS
+   ══════════════════════════════════════════════ */
+[data-page="our-ingredients"] {
+	font-family: 'Geist Variable', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	color: #1c1b1b;
+	background: #fcf9f8;
+
+	/* Stitch design tokens (scoped) */
+	--oi-bg: #fcf9f8;
+	--oi-on-bg: #1c1b1b;
+	--oi-on-surface: #1c1b1b;
+	--oi-on-surface-variant: #4d4635;
+	--oi-secondary: #5f5e5a;
+	--oi-tertiary: #5e5e5d;
+	--oi-primary: #735c00;
+	--oi-primary-container: #d4af37;
+	--oi-on-primary-container: #554300;
+	--oi-outline: #7f7663;
+	--oi-outline-variant: #d0c5af;
+	--oi-surface-container: #f6f3f2;
+	--oi-inverse-surface: #313030;
+	--oi-inverse-on-surface: #f3f0ef;
+
+	/* Spacing tokens */
+	--oi-margin-mobile: 20px;
+	--oi-margin-desktop: 64px;
+	--oi-gutter: 24px;
+	--oi-section-gap: 120px;
+}
+
+/* ── Type scale ───────────────────────────────────────────── */
+[data-page="our-ingredients"] .dg-oi-hero-badge {
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--oi-secondary);
+	margin: 0 0 1.5rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-hero-headline {
+	font-size: clamp(40px, 7vw, 80px);
+	font-weight: 300;
+	line-height: 1.0;
+	letter-spacing: -0.04em;
+	color: var(--oi-primary);
+	margin: 0 0 2rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-hero-body {
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 1.6;
+	letter-spacing: 0.01em;
+	color: var(--oi-secondary);
+	max-width: 38ch;
+	margin: 0 0 2.5rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-pullquote-text {
+	font-size: clamp(28px, 4.5vw, 64px);
+	font-weight: 300;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--oi-primary);
+	margin: 0;
+	text-align: center;
+}
+
+[data-page="our-ingredients"] .dg-oi-signature-badge {
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--oi-secondary);
+	margin: 0 0 0.75rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-signature-title {
+	font-size: clamp(24px, 3vw, 32px);
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: var(--oi-primary);
+	margin: 0 0 0.5rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-signature-subtitle {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--oi-secondary);
+	margin: 0 0 2rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-signature-body {
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 1.6;
+	color: var(--oi-on-surface);
+	max-width: 38ch;
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-ingredients-heading {
+	font-size: clamp(28px, 4vw, 64px);
+	font-weight: 300;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--oi-primary);
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-tile-name {
+	font-size: clamp(20px, 2.5vw, 28px);
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: var(--oi-on-surface);
+	margin: 0 0 0.75rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-tile-source-text {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--oi-secondary);
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-tile-desc {
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.6;
+	color: var(--oi-on-surface);
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-traceable-headline {
+	font-size: clamp(40px, 7vw, 80px);
+	font-weight: 300;
+	line-height: 1.0;
+	letter-spacing: -0.04em;
+	color: var(--oi-bg);
+	margin: 0 0 2rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-traceable-body {
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 1.6;
+	color: var(--oi-on-surface-variant);
+	max-width: 40ch;
+	margin: 0 0 2.5rem;
+}
+
+[data-page="our-ingredients"] .dg-oi-traceable-country {
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	border-bottom: 1px solid rgba(252, 249, 248, 0.3);
+	padding-bottom: 4px;
+	color: var(--oi-bg);
+}
+
+[data-page="our-ingredients"] .dg-oi-traceable-footnote {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: rgba(220, 217, 217, 0.8);
+	margin: 1rem 0 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-leave-out-headline {
+	font-size: clamp(28px, 4vw, 64px);
+	font-weight: 300;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--oi-primary);
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-leave-out-item-text {
+	font-size: clamp(18px, 2vw, 28px);
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: var(--oi-on-surface);
+	margin: 0;
+}
+
+[data-page="our-ingredients"] .dg-oi-outro-headline {
+	font-size: clamp(28px, 4vw, 64px);
+	font-weight: 300;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--oi-primary);
+	margin: 0 0 2.5rem;
+	text-align: center;
+}
+
+/* ── Button ────────────────────────────────────────────────── */
+[data-page="our-ingredients"] .dg-oi-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem 2rem;
+	border: 1px solid var(--oi-on-surface);
+	color: var(--oi-bg);
+	background: var(--oi-on-surface);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
+		color 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-page="our-ingredients"] .dg-oi-btn:hover {
+	background: var(--oi-inverse-surface);
+	color: var(--oi-inverse-on-surface);
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+
+.dg-oi-hero-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--oi-gutter);
+	align-items: center;
+	min-height: 80vh;
+	padding-top: calc(var(--oi-section-gap) * 0.75);
+	padding-bottom: var(--oi-section-gap);
+	padding-left: var(--oi-margin-mobile);
+	padding-right: var(--oi-margin-mobile);
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-hero-inner {
+		grid-template-columns: 5fr 6fr;
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+		column-gap: calc(var(--oi-gutter) * 2);
+		min-height: 85vh;
+	}
+}
+
+.dg-oi-hero-image {
+	width: 100%;
+	height: 60vh;
+	overflow: hidden;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-hero-image {
+		height: clamp(420px, 65vh, 680px);
+	}
+}
+
+.dg-oi-hero-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dg-oi-hero-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 3rem 0;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-hero-content {
+		padding: 0;
+		padding-left: calc(var(--oi-gutter) * 2);
+	}
+}
+
+.dg-oi-hero-accent {
+	width: 48px;
+	height: 1px;
+	background: rgba(28, 27, 27, 0.2);
+	margin: 0 0 2rem;
+}
+
+/* ══════════════════════════════════════════════
+   PULLQUOTE
+   ══════════════════════════════════════════════ */
+.dg-oi-pullquote {
+	padding: var(--oi-section-gap) var(--oi-margin-mobile);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-pullquote {
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+	}
+}
+
+/* ══════════════════════════════════════════════
+   SIGNATURE
+   ══════════════════════════════════════════════ */
+.dg-oi-signature {
+	padding: 0 var(--oi-margin-mobile);
+	margin-bottom: var(--oi-section-gap);
+}
+
+@media (min-width: 768px) {
+	.dg-oi-signature {
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+	}
+}
+
+.dg-oi-signature-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--oi-gutter);
+	align-items: center;
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-signature-inner {
+		grid-template-columns: 5fr 6fr;
+		column-gap: calc(var(--oi-gutter) * 3);
+	}
+
+	.dg-oi-signature-text {
+		order: 2;
+		padding-left: calc(var(--oi-gutter) * 2);
+	}
+
+	.dg-oi-signature-image {
+		order: 1;
+	}
+
+	.dg-oi-signature-image img {
+		height: 70vh;
+		object-fit: cover;
+		width: 100%;
+	}
+}
+
+@media (max-width: 767px) {
+	.dg-oi-signature-image img {
+		height: 50vh;
+		object-fit: cover;
+		width: 100%;
+	}
+}
+
+.dg-oi-signature-header {
+	border-top: 1px solid rgba(28, 27, 27, 0.2);
+	padding-top: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+/* ══════════════════════════════════════════════
+   INGREDIENTS GRID
+   ══════════════════════════════════════════════ */
+.dg-oi-ingredients {
+	padding: 0 var(--oi-margin-mobile);
+	margin-bottom: var(--oi-section-gap);
+}
+
+@media (min-width: 768px) {
+	.dg-oi-ingredients {
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+	}
+}
+
+.dg-oi-ingredients-header {
+	margin-bottom: 4rem;
+	text-align: center;
+}
+
+.dg-oi-ingredients-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--oi-gutter);
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-ingredients-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+/* Offset utilities for editorial asymmetric rhythm */
+.dg-oi-offsets--mt12 {
+	margin-top: 3rem;
+}
+
+.dg-oi-offsets--mt24 {
+	margin-top: 6rem;
+}
+
+.dg-oi-offsets--col3 {
+	margin-top: 3rem;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-offsets--mt12,
+	.dg-oi-offsets--mt24 {
+		margin-top: 0;
+	}
+}
+
+.dg-oi-tile {
+	display: flex;
+	flex-direction: column;
+}
+
+.dg-oi-tile-image {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	overflow: hidden;
+	background: var(--oi-surface-container);
+	margin-bottom: 1.5rem;
+}
+
+.dg-oi-tile-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 700ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-oi-tile:hover .dg-oi-tile-image img {
+	transform: scale(1.05);
+}
+
+.dg-oi-tile-source {
+	border-top: 1px solid rgba(28, 27, 27, 0.2);
+	padding-top: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+/* ══════════════════════════════════════════════
+   TRACEABLE (full-bleed)
+   ══════════════════════════════════════════════ */
+.dg-oi-traceable {
+	position: relative;
+	width: 100%;
+	min-height: 70vh;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	overflow: hidden;
+	margin-bottom: var(--oi-section-gap);
+}
+
+.dg-oi-traceable-bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+}
+
+.dg-oi-traceable-bg img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dg-oi-traceable-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(49, 48, 48, 0.6);
+	mix-blend-mode: multiply;
+}
+
+.dg-oi-traceable-content {
+	position: relative;
+	z-index: 1;
+	padding: var(--oi-section-gap) var(--oi-margin-mobile);
+	max-width: 600px;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-traceable-content {
+		padding-left: var(--oi-margin-desktop);
+	}
+}
+
+.dg-oi-traceable-countries {
+	display: flex;
+	gap: 2rem;
+	flex-wrap: wrap;
+	margin-bottom: 1.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   WHAT WE LEAVE OUT
+   ══════════════════════════════════════════════ */
+.dg-oi-leave-out {
+	padding: 0 var(--oi-margin-mobile);
+	margin-bottom: var(--oi-section-gap);
+	border-top: 1px solid rgba(28, 27, 27, 0.2);
+	padding-top: 4rem;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-leave-out {
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+	}
+}
+
+.dg-oi-leave-out-inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--oi-gutter);
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-leave-out-inner {
+		grid-template-columns: 4fr 8fr;
+		column-gap: calc(var(--oi-gutter) * 4);
+	}
+}
+
+.dg-oi-leave-out-heading {
+	margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-leave-out-heading {
+		margin-bottom: 0;
+	}
+}
+
+.dg-oi-leave-out-items {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+@media (min-width: 640px) {
+	.dg-oi-leave-out-items {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.dg-oi-leave-out-item {
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(28, 27, 27, 0.2);
+}
+
+@media (min-width: 768px) {
+	.dg-oi-leave-out-item {
+		border-top: none;
+		border-left: 1px solid rgba(28, 27, 27, 0.2);
+		padding-top: 0;
+		padding-left: 2rem;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   OUTRO
+   ══════════════════════════════════════════════ */
+.dg-oi-outro {
+	padding: 0 var(--oi-margin-mobile) var(--oi-section-gap);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.dg-oi-outro {
+		padding-left: var(--oi-margin-desktop);
+		padding-right: var(--oi-margin-desktop);
+	}
+}
+
+.dg-oi-outro-inner {
+	max-width: 1280px;
+	margin: 0 auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.dg-oi-outro-hairline {
+	width: 1px;
+	height: 80px;
+	background: rgba(28, 27, 27, 0.2);
+	margin-bottom: 3rem;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+	.dg-oi-pullquote {
+		padding-top: 4rem;
+		padding-bottom: 4rem;
+	}
+
+	.dg-oi-leave-out {
+		padding-top: 3rem;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	[data-page="our-ingredients"] [data-sr] {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	.dg-oi-tile-image img {
+		transition: none !important;
+	}
+
+	.dg-oi-tile:hover .dg-oi-tile-image img {
+		transform: none !important;
+	}
+
+	.dg-oi-btn {
+		transition: none !important;
+	}
+}
+
+/* ══════════════════════════════════════════════
+   FOCUS STATES
+   ══════════════════════════════════════════════ */
+[data-page="our-ingredients"] :focus-visible {
+	outline: 2px solid var(--oi-primary);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+[data-page="our-ingredients"] .dg-oi-btn:focus-visible {
+	outline-offset: 4px;
+}
