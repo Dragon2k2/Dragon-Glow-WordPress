@@ -2,10 +2,6 @@
 /**
  * Edit Address Form — Dragon Glow override.
  *
- * DEBUG MARKER: DG_ADDR_OVERRIDE_V1
- * (Inspect HTML source for this string to verify this template is loaded
- *  instead of WC stock `form-edit-address.php`.)
- *
  * Renders a single address form (billing OR shipping) using WooCommerce's own
  * `woocommerce_form_field()` helper for every field, so:
  *   - the same localisation/priority/required rules apply as on the checkout

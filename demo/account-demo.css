@@ -819,6 +819,93 @@
 	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
 }
 
+/* ── Select2 (country/state dropdowns) — override WC & browser defaults ── */
+.dg-account-address-edit .select2-container .select2-selection--single {
+	width: 100%;
+	min-height: 44px;
+	height: auto;
+	padding: 12px 40px 12px 14px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--color-on-surface);
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	box-shadow: none;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.dg-account-address-edit .select2-container .select2-selection--single:focus,
+.dg-account-address-edit .select2-container.select2-container--focus .select2-selection--single {
+	outline: none;
+	border-color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+}
+
+.dg-account-address-edit .select2-container .select2-selection__rendered {
+	color: var(--color-on-surface);
+	line-height: 1.4;
+	padding: 0;
+}
+
+.dg-account-address-edit .select2-container .select2-selection__arrow {
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: auto;
+	height: auto;
+}
+
+.dg-account-address-edit .select2-container .select2-selection__arrow b {
+	border-color: var(--color-primary) transparent transparent transparent;
+	border-style: solid;
+	border-width: 5px 4px 0 4px;
+}
+
+.dg-account-address-edit .select2-dropdown {
+	background: rgba(255, 255, 255, 0.97);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	box-shadow: 0 12px 32px rgba(115, 92, 0, 0.12);
+	overflow: hidden;
+}
+
+.dg-account-address-edit .select2-container--default .select2-search--dropdown .select2-search__field {
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 8px;
+	padding: 8px 12px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	background: rgba(255, 255, 255, 0.95);
+	color: var(--color-on-surface);
+}
+
+.dg-account-address-edit .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address-edit .select2-results__option {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	color: var(--color-on-surface);
+	padding: 10px 14px;
+}
+
+.dg-account-address-edit .select2-container--default .select2-results__option--highlighted[aria-selected] {
+	background: rgba(115, 92, 0, 0.10);
+	color: var(--color-on-surface);
+}
+
+.dg-account-address-edit .select2-container--default .select2-results__option[aria-selected=true] {
+	background: rgba(115, 92, 0, 0.15);
+	color: var(--color-on-surface);
+	font-weight: 600;
+}
+
 .dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-error,
 .dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message {
 	background: rgba(186, 26, 26, 0.08);
