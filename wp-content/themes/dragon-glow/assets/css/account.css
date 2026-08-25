@@ -1455,7 +1455,649 @@
 	}
 }
 
-/* My-address shortcode */
+/* =========================================
+   18. ADDRESSES — billing/shipping cards + edit form
+   Luminous Ethereal: gradient icon, glass card, default badge, action bar.
+   ========================================= */
+
+/* --- Empty-state wrapper (no addresses yet) --- */
+
+.dg-account-addresses--empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	padding: 32px 16px;
+	text-align: center;
+}
+
+/* --- List grid --- */
+
+.dg-account-addresses {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 18px;
+}
+
+@media (min-width: 768px) {
+	.dg-account-addresses {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+	}
+}
+
+/* --- Card shell --- */
+
+.dg-account-address {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 22px;
+	background: rgba(255, 255, 255, 0.55);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--account-border);
+	border-radius: 20px;
+	box-shadow: var(--account-shadow);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+	overflow: hidden;
+}
+
+.dg-account-address::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(420px 220px at 0% 0%, rgba(115, 92, 0, 0.06), transparent 60%),
+		radial-gradient(380px 200px at 100% 100%, rgba(244, 194, 194, 0.10), transparent 60%);
+	pointer-events: none;
+}
+
+.dg-account-address:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 14px 32px rgba(123, 84, 85, 0.10);
+	border-color: rgba(115, 92, 0, 0.20);
+}
+
+/* --- Card head (icon + title + default badge) --- */
+
+.dg-account-address__head {
+	position: relative;
+}
+
+.dg-account-address__title-block {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.dg-account-address__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	flex-shrink: 0;
+	border-radius: 16px;
+	background: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
+	color: var(--color-primary);
+	box-shadow: inset 0 0 0 1px rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address__icon .material-symbols-outlined {
+	font-size: 26px;
+}
+
+/* Address type accent — billing = warm gold, shipping = cool rose */
+.dg-account-address[data-address-type="billing"] .dg-account-address__icon {
+	background: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+	color: #735c00;
+}
+
+.dg-account-address[data-address-type="shipping"] .dg-account-address__icon {
+	background: linear-gradient(135deg, rgba(244, 194, 194, 0.55), rgba(212, 175, 55, 0.20));
+	color: #734e4e;
+}
+
+.dg-account-address__title {
+	font-family: 'Playfair Display', serif;
+	font-weight: 600;
+	font-size: 20px;
+	line-height: 1.2;
+	color: var(--color-primary);
+	margin: 0 0 6px;
+}
+
+/* Default badge (only on cards marked as default-for-other) */
+.dg-account-address__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	background: rgba(46, 125, 50, 0.10);
+	color: #2e7d32;
+}
+
+.dg-account-address__badge .material-symbols-outlined {
+	font-size: 14px;
+}
+
+.dg-account-address__badge--default {
+	background: linear-gradient(135deg, rgba(46, 125, 50, 0.12), rgba(76, 175, 80, 0.18));
+}
+
+/* --- Body (name + address lines + contacts) --- */
+
+.dg-account-address__body {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.dg-account-address__name {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	margin: 0;
+	word-break: break-word;
+}
+
+.dg-account-address__lines {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-family: 'Montserrat', sans-serif;
+	font-style: normal;
+	font-size: 14px;
+	line-height: 1.55;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+	padding: 14px 16px;
+	background: rgba(255, 255, 255, 0.45);
+	border: 1px solid rgba(115, 92, 0, 0.08);
+	border-radius: 14px;
+	word-break: break-word;
+}
+
+.dg-account-address__lines span {
+	display: block;
+}
+
+/* Contact list (phone/email) — billing card only */
+.dg-account-address__contacts {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+}
+
+.dg-account-address__contacts > div {
+	display: grid;
+	grid-template-columns: 90px 1fr;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	background: rgba(255, 255, 255, 0.35);
+	border-radius: 12px;
+}
+
+.dg-account-address__contacts dt {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.10em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+}
+
+.dg-account-address__contacts dt .material-symbols-outlined {
+	font-size: 16px;
+	color: var(--color-primary);
+	opacity: 0.8;
+}
+
+.dg-account-address__contacts dd {
+	margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-on-surface);
+	overflow-wrap: anywhere;
+}
+
+.dg-account-address__contacts dd a {
+	color: var(--color-primary);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.dg-account-address__contacts dd a:hover {
+	color: #554300;
+	text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+	.dg-account-address__contacts > div {
+		grid-template-columns: 1fr;
+		gap: 4px;
+	}
+}
+
+/* --- Action bar (footer) --- */
+
+.dg-account-address__actions {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding-top: 16px;
+	border-top: 1px solid rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address__action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 10px 18px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.55);
+	border: 1px solid rgba(115, 92, 0, 0.20);
+	border-radius: 999px;
+	text-decoration: none;
+	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-account-address__action .material-symbols-outlined {
+	font-size: 16px;
+}
+
+.dg-account-address__action:hover {
+	background: rgba(115, 92, 0, 0.08);
+	border-color: var(--color-primary);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 14px rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address__action--primary {
+	background: linear-gradient(135deg, var(--color-primary), #554300);
+	color: var(--color-on-primary);
+	border-color: transparent;
+	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.18);
+}
+
+.dg-account-address__action--primary:hover {
+	background: linear-gradient(135deg, #5e4a00, #3d2f00);
+	color: var(--color-on-primary);
+	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+}
+
+/* --- Empty card (one address set, the other missing) --- */
+
+.dg-account-address--empty {
+	text-align: center;
+	align-items: center;
+	gap: 14px;
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.40), rgba(255, 255, 255, 0.20)),
+		repeating-linear-gradient(135deg, transparent 0 14px, rgba(115, 92, 0, 0.04) 14px 15px);
+	border-style: dashed;
+	border-color: rgba(115, 92, 0, 0.25);
+}
+
+.dg-account-address--empty .dg-account-address__icon {
+	background: rgba(255, 255, 255, 0.65);
+	color: var(--color-primary);
+	border: 1px dashed rgba(115, 92, 0, 0.30);
+	box-shadow: none;
+}
+
+.dg-account-address--empty .dg-account-address__title {
+	font-size: 18px;
+}
+
+.dg-account-address__text {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	line-height: 1.55;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+	max-width: 38ch;
+}
+
+/* --- Hint footer --- */
+
+.dg-account-addresses__hint {
+	display: inline-flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 20px 0 0;
+	padding: 12px 16px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--color-on-surface-variant);
+	background: rgba(115, 92, 0, 0.04);
+	border: 1px dashed rgba(115, 92, 0, 0.18);
+	border-radius: 12px;
+}
+
+.dg-account-addresses__hint .material-symbols-outlined {
+	font-size: 18px;
+	color: var(--color-primary);
+	flex-shrink: 0;
+}
+
+/* =========================================
+   18b. EDIT FORM (one address)
+   Wraps WC's myaccount/form-edit-address.php with our chrome.
+   ========================================= */
+
+.dg-account-address-edit {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.dg-account-address-edit__head {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address-edit__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-primary);
+	text-decoration: none;
+	align-self: flex-start;
+	transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.dg-account-address-edit__back .material-symbols-outlined {
+	font-size: 18px;
+}
+
+.dg-account-address-edit__back:hover {
+	gap: 8px;
+	color: #554300;
+}
+
+.dg-account-address-edit__heading {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.dg-account-address-edit__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	flex-shrink: 0;
+	border-radius: 16px;
+	background: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+	color: var(--color-primary);
+}
+
+.dg-account-address-edit__icon .material-symbols-outlined {
+	font-size: 26px;
+}
+
+.dg-account-address-edit__title {
+	font-family: 'Playfair Display', serif;
+	font-weight: 600;
+	font-size: 22px;
+	line-height: 1.2;
+	color: var(--color-primary);
+	margin: 0 0 4px;
+}
+
+.dg-account-address-edit__sub {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+}
+
+/* --- WC form field styling (scoped inside the edit wrapper) --- */
+
+.dg-account-address-edit .woocommerce-EditAddressForm {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-address-fields__field-wrapper {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px 18px;
+}
+
+@media (min-width: 640px) {
+	.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-address-fields__field-wrapper {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.dg-account-address-edit .woocommerce-EditAddressForm .form-row.form-row-wide,
+	.dg-account-address-edit .woocommerce-EditAddressForm .form-row.address-field,
+	.dg-account-address-edit .woocommerce-EditAddressForm .form-row.form-row-first + .form-row.form-row-last {
+		/* keep wide fields full width even on 2-col grid */
+	}
+	.dg-account-address-edit .woocommerce-EditAddressForm .form-row.form-row-wide,
+	.dg-account-address-edit .woocommerce-EditAddressForm .form-row.address-field {
+		grid-column: 1 / -1;
+	}
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm .form-row {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm label,
+.dg-account-address-edit .woocommerce-EditAddressForm .form-row label {
+	display: block;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm label .required {
+	color: var(--color-error);
+	text-decoration: none;
+	margin-left: 2px;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm input[type="text"],
+.dg-account-address-edit .woocommerce-EditAddressForm input[type="email"],
+.dg-account-address-edit .woocommerce-EditAddressForm input[type="tel"],
+.dg-account-address-edit .woocommerce-EditAddressForm input[type="number"],
+.dg-account-address-edit .woocommerce-EditAddressForm input[type="password"],
+.dg-account-address-edit .woocommerce-EditAddressForm select,
+.dg-account-address-edit .woocommerce-EditAddressForm textarea {
+	width: 100%;
+	padding: 12px 14px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	color: var(--color-on-surface);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm select {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23735c00' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	background-size: 10px;
+	padding-right: 40px;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm input::placeholder,
+.dg-account-address-edit .woocommerce-EditAddressForm textarea::placeholder {
+	color: var(--color-outline);
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm input:focus,
+.dg-account-address-edit .woocommerce-EditAddressForm select:focus,
+.dg-account-address-edit .woocommerce-EditAddressForm textarea:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+}
+
+/* Inline validation message */
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-error,
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message {
+	background: rgba(186, 26, 26, 0.08);
+	border: 1px solid rgba(186, 26, 26, 0.25);
+	border-radius: 12px;
+	padding: 12px 16px;
+	margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	color: var(--color-error);
+	list-style: none;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message {
+	background: rgba(46, 125, 50, 0.10);
+	border-color: rgba(46, 125, 50, 0.25);
+	color: #2e7d32;
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-validated input.input-text,
+.dg-account-address-edit .woocommerce-EditAddressForm .form-row.woocommerce-invalid input.input-text {
+	border-color: rgba(186, 26, 26, 0.40);
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm .form-row.woocommerce-validated input.input-text {
+	border-color: rgba(46, 125, 50, 0.40);
+}
+
+/* Save / Cancel actions */
+.dg-account-address-edit__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 8px;
+	padding-top: 18px;
+	border-top: 1px solid rgba(115, 92, 0, 0.10);
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm button[type="submit"],
+.dg-account-address-edit .woocommerce-EditAddressForm .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 12px 24px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	background: linear-gradient(135deg, var(--color-primary), #554300);
+	color: var(--color-on-primary);
+	border: 0;
+	border-radius: 999px;
+	cursor: pointer;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+}
+
+.dg-account-address-edit .woocommerce-EditAddressForm button[type="submit"]:hover,
+.dg-account-address-edit .woocommerce-EditAddressForm .button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+}
+
+@media (max-width: 640px) {
+	.dg-account-address {
+		padding: 18px;
+	}
+	.dg-account-address__title-block {
+		gap: 10px;
+	}
+	.dg-account-address__icon,
+	.dg-account-address-edit__icon {
+		width: 44px;
+		height: 44px;
+	}
+	.dg-account-address__icon .material-symbols-outlined,
+	.dg-account-address-edit__icon .material-symbols-outlined {
+		font-size: 22px;
+	}
+	.dg-account-address__title {
+		font-size: 18px;
+	}
+}
+
+@media (max-width: 480px) {
+	.dg-account-address__title-block {
+		flex-wrap: wrap;
+	}
+	.dg-account-address__action {
+		flex: 1 1 auto;
+		min-width: 0;
+		justify-content: center;
+	}
+}
+
+/* Focus-visible accessibility for address actions */
+.dg-account-address__action:focus-visible,
+.dg-account-address-edit__back:focus-visible,
+.dg-account-address-edit .woocommerce-EditAddressForm button:focus-visible,
+.dg-account-address-edit .woocommerce-EditAddressForm input:focus-visible,
+.dg-account-address-edit .woocommerce-EditAddressForm select:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-address:hover,
+	.dg-account-address__action:hover,
+	.dg-account-address-edit .woocommerce-EditAddressForm button:hover {
+		transform: none;
+	}
+}
+
+/* My-address shortcode (legacy WC shortcode — kept for compatibility) */
 .dg-account-panel .woocommerce-Address {
 	background: rgba(255, 255, 255, 0.45);
 	border: 1px solid var(--account-border);

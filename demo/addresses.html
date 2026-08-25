@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon Glow — Addresses (Demo) | Luminous Ethereal</title>
+
+<!-- Google Fonts: matching theme (Playfair Display + Plus Jakarta Sans) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Material Symbols Outlined: matching theme -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+<!--
+  Dragon Glow — Tokens (mirror of style.css :root)
+  This is the EXACT set used by the theme so the rendering matches
+  what you see in WordPress. No approximation.
+-->
+<style>
+:root {
+  --color-primary: #735c00;
+  --color-primary-rgb: 115, 92, 0;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #f4c2c2;
+  --color-on-primary-container: #734e4e;
+  --color-secondary: #5c5d6e;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #f0dbd3;
+  --color-on-secondary-container: #6f5f59;
+  --color-tertiary: #735c00;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #f1ca50;
+  --color-on-tertiary-container: #6b5500;
+  --color-gold: #d4af37;
+  --color-gold-dark: #c9952a;
+  --color-on-gold: #241a00;
+  --color-background: #fbf9f5;
+  --color-on-background: #1b1c1a;
+  --color-surface: #fbf9f5;
+  --color-surface-container: #efeeea;
+  --color-surface-container-high: #eae8e4;
+  --color-on-surface: #1b1c1a;
+  --color-on-surface-variant: #504444;
+  --color-outline: #827473;
+  --color-outline-variant: #d4c2c2;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+
+  --account-sidebar: 280px;
+  --account-radius: 24px;
+  --account-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
+  --account-border: rgba(255, 255, 255, 0.55);
+}
+
+/* --- Demo shell (purely for the comparison page; NOT in theme) --- */
+* { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-on-background);
+  background: var(--color-background);
+}
+.demo-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  background: rgba(27, 28, 26, 0.92);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.demo-bar__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+.demo-bar__nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.demo-bar__nav button {
+  padding: 8px 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.demo-bar__nav button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.demo-bar__nav button.is-active {
+  background: linear-gradient(135deg, var(--color-primary), #554300);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(115, 92, 0, 0.30);
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+</style>
+
+<!--
+  Below is the EXACT CSS the theme ships for the account area.
+  Pulled verbatim from assets/css/account.css (sections 1, 4, 12, 18, 18b)
+  so the demo renders identically to WordPress.
+-->
+<link rel="stylesheet" href="account-demo.css">
+</head>
+<body>
+
+<header class="demo-bar">
+  <div class="demo-bar__title">Dragon Glow — Addresses Demo</div>
+  <nav class="demo-bar__nav" aria-label="Demo navigation">
+    <button type="button" data-view="list-full" class="is-active">List · Both saved</button>
+    <button type="button" data-view="list-partial">List · Only billing</button>
+    <button type="button" data-view="list-empty">List · Empty</button>
+    <button type="button" data-view="edit-billing">Edit · Billing</button>
+    <button type="button" data-view="edit-shipping">Edit · Shipping</button>
+    <button type="button" data-view="edit-errors">Edit · With errors</button>
+  </nav>
+</header>
+
+<!--
+  ============================================================================
+  VIEW: LIST — both addresses saved (DEFAULT STATE)
+  Markup mirrors dg_render_account_addresses_list() + dg_render_account_address_card()
+  ============================================================================
+-->
+<main class="dg-account" data-view="list-full">
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" id="dg-account-nav-list" role="list">
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span><span class="dg-account-nav__count">12</span></a></li>
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span><span class="dg-account-nav__count">5</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+            <a href="#" class="dg-account-panel__link">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+              Back to dashboard
+            </a>
+          </header>
+
+          <div class="dg-account-addresses" data-sr-group>
+
+            <!-- BILLING CARD -->
+            <article class="dg-account-address" data-sr data-address-type="billing">
+              <header class="dg-account-address__head">
+                <div class="dg-account-address__title-block">
+                  <div class="dg-account-address__icon" aria-hidden="true">
+                    <span class="material-symbols-outlined">receipt</span>
+                  </div>
+                  <div>
+                    <h3 class="dg-account-address__title">Billing address</h3>
+                  </div>
+                </div>
+              </header>
+
+              <div class="dg-account-address__body">
+                <p class="dg-account-address__name">Nguyễn Minh Anh</p>
+
+                <address class="dg-account-address__lines">
+                  <span>27 Trần Hưng Đạo, Phường Phan Chu Trinh</span>
+                  <span>Tầng 5, căn 502</span>
+                  <span>Hoàn Kiếm, Hà Nội 100000</span>
+                  <span>Vietnam</span>
+                </address>
+
+                <dl class="dg-account-address__contacts">
+                  <div>
+                    <dt>
+                      <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                      Phone
+                    </dt>
+                    <dd>
+                      <a href="tel:+84987654321">+84 987 654 321</a>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                      Email
+                    </dt>
+                    <dd>
+                      <a href="mailto:minhanh@example.vn">minhanh@example.vn</a>
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <footer class="dg-account-address__actions">
+                <a href="#" class="dg-account-address__action dg-account-address__action--primary">
+                  <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                  Edit address
+                </a>
+              </footer>
+            </article>
+
+            <!-- SHIPPING CARD (with "default for orders" badge) -->
+            <article class="dg-account-address" data-sr data-address-type="shipping">
+              <header class="dg-account-address__head">
+                <div class="dg-account-address__title-block">
+                  <div class="dg-account-address__icon" aria-hidden="true">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                  </div>
+                  <div>
+                    <h3 class="dg-account-address__title">Shipping address</h3>
+                    <span class="dg-account-address__badge dg-account-address__badge--default">
+                      <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                      Default shipping address
+                    </span>
+                  </div>
+                </div>
+              </header>
+
+              <div class="dg-account-address__body">
+                <p class="dg-account-address__name">Nguyễn Minh Anh</p>
+
+                <address class="dg-account-address__lines">
+                  <span>18 Phan Đình Phùng</span>
+                  <span>Quán Thánh, Ba Đình</span>
+                  <span>Hà Nội 100000</span>
+                  <span>Vietnam</span>
+                </address>
+              </div>
+
+              <footer class="dg-account-address__actions">
+                <a href="#" class="dg-account-address__action dg-account-address__action--primary">
+                  <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                  Edit address
+                </a>
+                <a href="#" class="dg-account-address__action">
+                  <span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>
+                  Use billing instead
+                </a>
+              </footer>
+            </article>
+
+          </div>
+
+          <p class="dg-account-addresses__hint">
+            <span class="material-symbols-outlined" aria-hidden="true">info</span>
+            These addresses will be pre-filled at checkout. You can edit or add a separate shipping address any time.
+          </p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!--
+  ============================================================================
+  VIEW: LIST — only billing saved, shipping empty
+  Markup mirrors dg_render_account_address_empty_card()
+  ============================================================================
+-->
+<main class="dg-account" data-view="list-partial" hidden>
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" role="list">
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span><span class="dg-account-nav__count">2</span></a></li>
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+            <a href="#" class="dg-account-panel__link">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+              Back to dashboard
+            </a>
+          </header>
+
+          <div class="dg-account-addresses" data-sr-group>
+
+            <article class="dg-account-address" data-sr data-address-type="billing">
+              <header class="dg-account-address__head">
+                <div class="dg-account-address__title-block">
+                  <div class="dg-account-address__icon" aria-hidden="true">
+                    <span class="material-symbols-outlined">receipt</span>
+                  </div>
+                  <div>
+                    <h3 class="dg-account-address__title">Billing address</h3>
+                    <span class="dg-account-address__badge dg-account-address__badge--default">
+                      <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                      Default for all orders
+                    </span>
+                  </div>
+                </div>
+              </header>
+              <div class="dg-account-address__body">
+                <p class="dg-account-address__name">Trần Thị Mai</p>
+                <address class="dg-account-address__lines">
+                  <span>15 Lê Lợi, Phường Bến Nghé</span>
+                  <span>Quận 1, Hồ Chí Minh 700000</span>
+                  <span>Vietnam</span>
+                </address>
+                <dl class="dg-account-address__contacts">
+                  <div>
+                    <dt>
+                      <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                      Phone
+                    </dt>
+                    <dd><a href="tel:+84912345678">+84 912 345 678</a></dd>
+                  </div>
+                </dl>
+              </div>
+              <footer class="dg-account-address__actions">
+                <a href="#" class="dg-account-address__action dg-account-address__action--primary">
+                  <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                  Edit address
+                </a>
+              </footer>
+            </article>
+
+            <article class="dg-account-address dg-account-address--empty" data-sr data-address-type="shipping">
+              <div class="dg-account-address__icon" aria-hidden="true">
+                <span class="material-symbols-outlined">add_location_alt</span>
+              </div>
+              <h3 class="dg-account-address__title">Shipping address</h3>
+              <p class="dg-account-address__text">You haven't added a separate shipping address. We currently ship your orders to your billing address.</p>
+              <a href="#" class="dg-btn dg-btn--ghost">
+                <span class="material-symbols-outlined" aria-hidden="true">add</span>
+                Add address
+              </a>
+            </article>
+
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!--
+  ============================================================================
+  VIEW: LIST — completely empty (no addresses yet)
+  Markup mirrors dg_render_account_addresses_list() empty branch
+  ============================================================================
+-->
+<main class="dg-account" data-view="list-empty" hidden>
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" role="list">
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span><span class="dg-account-nav__count">0</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+            <a href="#" class="dg-account-panel__link">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+              Back to dashboard
+            </a>
+          </header>
+
+          <div class="dg-account-addresses dg-account-addresses--empty">
+            <span class="material-symbols-outlined dg-account-empty__icon">home</span>
+            <p class="dg-account-empty__title">No saved addresses yet</p>
+            <p class="dg-account-empty__text">Add your billing address to speed up checkout. You can add a separate shipping address any time.</p>
+            <a href="#" class="dg-btn dg-btn--primary">
+              <span class="material-symbols-outlined" aria-hidden="true">add</span>
+              Add billing address
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!--
+  ============================================================================
+  VIEW: EDIT — billing form (WC myaccount/form-edit-address.php wrapped)
+  ============================================================================
+-->
+<main class="dg-account" data-view="edit-billing" hidden>
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" role="list">
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span></a></li>
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+          </header>
+
+          <article class="dg-account-address-edit" data-sr>
+            <header class="dg-account-address-edit__head">
+              <a href="#" class="dg-account-address-edit__back">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                All addresses
+              </a>
+              <div class="dg-account-address-edit__heading">
+                <div class="dg-account-address-edit__icon" aria-hidden="true">
+                  <span class="material-symbols-outlined">receipt</span>
+                </div>
+                <div>
+                  <h2 class="dg-account-address-edit__title">Billing address</h2>
+                  <p class="dg-account-address-edit__sub">Used for invoices and as the default for your orders.</p>
+                </div>
+              </div>
+            </header>
+
+            <form class="woocommerce-EditAddressForm edit" method="post">
+              <div class="woocommerce-address-fields__field-wrapper">
+                <p class="form-row form-row-first validate-required">
+                  <label for="billing_first_name">First name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_first_name" id="billing_first_name" value="Minh Anh">
+                </p>
+                <p class="form-row form-row-last validate-required">
+                  <label for="billing_last_name">Last name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_last_name" id="billing_last_name" value="Nguyễn">
+                </p>
+                <p class="form-row form-row-wide">
+                  <label for="billing_company">Company name</label>
+                  <input type="text" class="input-text" name="billing_company" id="billing_company" placeholder="Optional">
+                </p>
+                <p class="form-row form-row-wide address-field validate-required">
+                  <label for="billing_address_1">Street address <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_address_1" id="billing_address_1" value="27 Trần Hưng Đạo" placeholder="House number and street name">
+                </p>
+                <p class="form-row form-row-wide address-field">
+                  <label for="billing_address_2">Apartment, suite, unit <span class="optional">(optional)</span></label>
+                  <input type="text" class="input-text" name="billing_address_2" id="billing_address_2" value="Tầng 5, căn 502">
+                </p>
+                <p class="form-row form-row-first address-field validate-required">
+                  <label for="billing_city">Town / City <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_city" id="billing_city" value="Hà Nội">
+                </p>
+                <p class="form-row form-row-last address-field validate-state">
+                  <label for="billing_state">District</label>
+                  <input type="text" class="input-text" name="billing_state" id="billing_state" value="Hoàn Kiếm">
+                </p>
+                <p class="form-row form-row-first address-field validate-required validate-postcode">
+                  <label for="billing_postcode">Postcode / ZIP <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_postcode" id="billing_postcode" value="100000">
+                </p>
+                <p class="form-row form-row-last address-field validate-required">
+                  <label for="billing_country">Country / Region <abbr class="required" title="required">*</abbr></label>
+                  <select name="billing_country" id="billing_country" class="country_to_state country_select">
+                    <option value="">Select a country…</option>
+                    <option value="VN" selected>Vietnam</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                  </select>
+                </p>
+                <p class="form-row form-row-first validate-required validate-phone">
+                  <label for="billing_phone">Phone <abbr class="required" title="required">*</abbr></label>
+                  <input type="tel" class="input-text" name="billing_phone" id="billing_phone" value="+84 987 654 321">
+                </p>
+                <p class="form-row form-row-last validate-required validate-email">
+                  <label for="billing_email">Email address <abbr class="required" title="required">*</abbr></label>
+                  <input type="email" class="input-text" name="billing_email" id="billing_email" value="minhanh@example.vn">
+                </p>
+              </div>
+
+              <p>
+                <button type="submit" class="button" name="save_address" value="Save address">
+                  <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                  Save address
+                </button>
+              </p>
+            </form>
+          </article>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!--
+  ============================================================================
+  VIEW: EDIT — shipping form (different icon, no phone/email)
+  ============================================================================
+-->
+<main class="dg-account" data-view="edit-shipping" hidden>
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" role="list">
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span></a></li>
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+          </header>
+
+          <article class="dg-account-address-edit" data-sr>
+            <header class="dg-account-address-edit__head">
+              <a href="#" class="dg-account-address-edit__back">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                All addresses
+              </a>
+              <div class="dg-account-address-edit__heading">
+                <div class="dg-account-address-edit__icon" aria-hidden="true">
+                  <span class="material-symbols-outlined">local_shipping</span>
+                </div>
+                <div>
+                  <h2 class="dg-account-address-edit__title">Shipping address</h2>
+                  <p class="dg-account-address-edit__sub">Where your luminous ritual kits will be delivered.</p>
+                </div>
+              </div>
+            </header>
+
+            <form class="woocommerce-EditAddressForm edit" method="post">
+              <div class="woocommerce-address-fields__field-wrapper">
+                <p class="form-row form-row-first validate-required">
+                  <label for="shipping_first_name">First name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="shipping_first_name" id="shipping_first_name" value="">
+                </p>
+                <p class="form-row form-row-last validate-required">
+                  <label for="shipping_last_name">Last name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="shipping_last_name" id="shipping_last_name" value="">
+                </p>
+                <p class="form-row form-row-wide">
+                  <label for="shipping_company">Company name</label>
+                  <input type="text" class="input-text" name="shipping_company" id="shipping_company" placeholder="Optional">
+                </p>
+                <p class="form-row form-row-wide address-field validate-required">
+                  <label for="shipping_address_1">Street address <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="shipping_address_1" id="shipping_address_1" placeholder="House number and street name">
+                </p>
+                <p class="form-row form-row-wide address-field">
+                  <label for="shipping_address_2">Apartment, suite, unit <span class="optional">(optional)</span></label>
+                  <input type="text" class="input-text" name="shipping_address_2" id="shipping_address_2" placeholder="Optional">
+                </p>
+                <p class="form-row form-row-first address-field validate-required">
+                  <label for="shipping_city">Town / City <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="shipping_city" id="shipping_city">
+                </p>
+                <p class="form-row form-row-last address-field">
+                  <label for="shipping_state">District</label>
+                  <input type="text" class="input-text" name="shipping_state" id="shipping_state">
+                </p>
+                <p class="form-row form-row-first address-field validate-required validate-postcode">
+                  <label for="shipping_postcode">Postcode / ZIP <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="shipping_postcode" id="shipping_postcode">
+                </p>
+                <p class="form-row form-row-last address-field validate-required">
+                  <label for="shipping_country">Country / Region <abbr class="required" title="required">*</abbr></label>
+                  <select name="shipping_country" id="shipping_country" class="country_to_state country_select">
+                    <option value="">Select a country…</option>
+                    <option value="VN" selected>Vietnam</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="JP">Japan</option>
+                  </select>
+                </p>
+              </div>
+
+              <p>
+                <button type="submit" class="button" name="save_address" value="Save address">
+                  <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                  Save address
+                </button>
+              </p>
+            </form>
+          </article>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!--
+  ============================================================================
+  VIEW: EDIT — with validation errors (post-submit error state)
+  ============================================================================
+-->
+<main class="dg-account" data-view="edit-errors" hidden>
+  <div class="dg-account__wrap">
+    <div class="dg-account__layout">
+      <aside class="dg-account__sidebar" aria-label="Account navigation">
+        <nav class="dg-account-nav">
+          <ul class="dg-account-nav__list" role="list">
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">space_dashboard</span><span class="dg-account-nav__label">Dashboard</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">receipt_long</span><span class="dg-account-nav__label">Orders</span></a></li>
+            <li><a href="#" class="dg-account-nav__link is-active" aria-current="page"><span class="material-symbols-outlined dg-account-nav__icon">home</span><span class="dg-account-nav__label">Addresses</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">manage_accounts</span><span class="dg-account-nav__label">Account details</span></a></li>
+            <li><a href="#" class="dg-account-nav__link"><span class="material-symbols-outlined dg-account-nav__icon">favorite_border</span><span class="dg-account-nav__label">Wishlist</span></a></li>
+            <li class="dg-account-nav__divider" role="separator" aria-hidden="true"></li>
+            <li><a href="#" class="dg-account-nav__link dg-account-nav__link--logout"><span class="material-symbols-outlined dg-account-nav__icon">logout</span><span class="dg-account-nav__label">Sign out</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="dg-account__content">
+        <section class="dg-account-panel dg-account-panel--addresses">
+          <header class="dg-account-panel__header">
+            <h2 class="dg-account-panel__title">Addresses</h2>
+          </header>
+
+          <article class="dg-account-address-edit" data-sr>
+            <header class="dg-account-address-edit__head">
+              <a href="#" class="dg-account-address-edit__back">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                All addresses
+              </a>
+              <div class="dg-account-address-edit__heading">
+                <div class="dg-account-address-edit__icon" aria-hidden="true">
+                  <span class="material-symbols-outlined">receipt</span>
+                </div>
+                <div>
+                  <h2 class="dg-account-address-edit__title">Billing address</h2>
+                  <p class="dg-account-address-edit__sub">Used for invoices and as the default for your orders.</p>
+                </div>
+              </div>
+            </header>
+
+            <form class="woocommerce-EditAddressForm edit" method="post">
+              <ul class="woocommerce-error" role="alert">
+                <li><strong>Billing First name</strong> is a required field.</li>
+                <li><strong>Billing Last name</strong> is a required field.</li>
+                <li><strong>Billing Postcode / ZIP</strong> is not a valid postcode / ZIP.</li>
+              </ul>
+
+              <div class="woocommerce-address-fields__field-wrapper">
+                <p class="form-row form-row-first validate-required woocommerce-invalid">
+                  <label for="billing_first_name_e">First name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_first_name" id="billing_first_name_e" value="">
+                </p>
+                <p class="form-row form-row-last validate-required woocommerce-invalid">
+                  <label for="billing_last_name_e">Last name <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_last_name" id="billing_last_name_e" value="">
+                </p>
+                <p class="form-row form-row-wide address-field validate-required woocommerce-validated">
+                  <label for="billing_address_1_e">Street address <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_address_1" id="billing_address_1_e" value="27 Trần Hưng Đạo" placeholder="House number and street name">
+                </p>
+                <p class="form-row form-row-first address-field validate-required">
+                  <label for="billing_city_e">Town / City <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_city" id="billing_city_e" value="Hà Nội">
+                </p>
+                <p class="form-row form-row-last address-field validate-required validate-postcode woocommerce-invalid">
+                  <label for="billing_postcode_e">Postcode / ZIP <abbr class="required" title="required">*</abbr></label>
+                  <input type="text" class="input-text" name="billing_postcode" id="billing_postcode_e" value="abc">
+                </p>
+              </div>
+
+              <p>
+                <button type="submit" class="button" name="save_address" value="Save address">
+                  <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                  Save address
+                </button>
+              </p>
+            </form>
+          </article>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const buttons = document.querySelectorAll('.demo-bar__nav button');
+  const views = document.querySelectorAll('.dg-account[data-view]');
+
+  function showView(name) {
+    buttons.forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-view') === name);
+    });
+    views.forEach(function (v) {
+      v.hidden = v.getAttribute('data-view') !== name;
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      showView(b.getAttribute('data-view'));
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
