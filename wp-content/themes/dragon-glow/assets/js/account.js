@@ -12,6 +12,7 @@
  *  - History API (pushState/popstate) for browser back/forward.
  *  - Loading states with skeleton screens.
  *  - Address form save UX (disable + spinner; POST handled by WooCommerce).
+ *  - "Use billing instead" branded confirm modal + busy state (POST clears shipping).
  *
  * @package Dragon_Glow
  */
@@ -308,7 +309,10 @@
 		currentEndpoint = endpoint;
 
 		const content = root.querySelector('.dg-account__content');
-		if (!content) return;
+		if (!content) {
+			isLoading = false;
+			return;
+		}
 
 		// Show loading skeleton.
 		showLoadingSkeleton(content);
@@ -335,8 +339,12 @@
 			})
 			.then(function (data) {
 				if (data.success && data.data && data.data.html) {
-					// Inject new content.
+					// Inject new content and unlock pointer events.
+					// showLoadingSkeleton() sets aria-busy="true" which maps to
+					// pointer-events:none on .dg-account__content — must clear
+					// on success or buttons stay unclickable until hard refresh.
 					content.innerHTML = data.data.html;
+					content.removeAttribute('aria-busy');
 
 				// Update document title.
 				if (data.data.title) {
@@ -355,6 +363,7 @@
 						initPasswordToggle(); // Re-bind password toggles in new content.
 						initPaginationLinks(); // Re-bind pagination links in new content.
 						initAddressFormSave(); // Re-bind address save UX after AJAX inject.
+						initUseBillingInstead(); // Re-bind ship-to-billing after AJAX inject.
 					}, 50);
 
 					// Scroll to top of content smoothly.
@@ -533,6 +542,123 @@
 	}
 
 	/**
+	 * "Use billing instead" — branded confirm modal, then POST clear shipping.
+	 * Server handler: dg_handle_use_billing_instead() on template_redirect.
+	 */
+	function initUseBillingInstead() {
+		if (!root) return;
+
+		const modal = document.getElementById('dg-account-confirm');
+		const forms = root.querySelectorAll('[data-dg-use-billing]');
+		if (!modal || forms.length === 0) return;
+
+		const dialog = modal.querySelector('.dg-account-confirm__dialog');
+		const titleEl = modal.querySelector('#dg-account-confirm-title');
+		const bodyEl = modal.querySelector('#dg-account-confirm-body');
+		const okBtn = modal.querySelector('[data-dg-confirm-ok]');
+		const cancelBtn = modal.querySelector('[data-dg-confirm-cancel]');
+		const overlay = modal.querySelector('[data-dg-confirm-dismiss]');
+
+		let pendingForm = null;
+		let lastFocus = null;
+
+		function setBusy(form) {
+			const btn = form.querySelector('.dg-account-use-billing__btn');
+			if (!btn || btn.disabled) return;
+			btn.disabled = true;
+			btn.classList.add('is-saving');
+			btn.setAttribute('aria-busy', 'true');
+			const icon = btn.querySelector('.dg-account-use-billing__icon');
+			const label = btn.querySelector('.dg-account-use-billing__label');
+			if (icon) {
+				icon.textContent = 'progress_activity';
+				icon.classList.add('is-spinning');
+			}
+			if (label) {
+				label.textContent = 'Updating…';
+			}
+		}
+
+		function closeConfirm() {
+			modal.hidden = true;
+			document.documentElement.classList.remove('dg-account-confirm-open');
+			pendingForm = null;
+			if (lastFocus && typeof lastFocus.focus === 'function') {
+				lastFocus.focus();
+			}
+			lastFocus = null;
+		}
+
+		function openConfirm(form) {
+			pendingForm = form;
+			lastFocus = document.activeElement;
+
+			if (titleEl) {
+				titleEl.textContent = form.getAttribute('data-confirm-title') || 'Use billing instead?';
+			}
+			if (bodyEl) {
+				bodyEl.textContent = form.getAttribute('data-confirm') ||
+					'Remove your shipping address and deliver orders to your billing address instead?';
+			}
+			if (okBtn) {
+				okBtn.textContent = form.getAttribute('data-confirm-ok') || 'Use billing';
+			}
+			if (cancelBtn) {
+				cancelBtn.textContent = form.getAttribute('data-confirm-cancel') || 'Cancel';
+			}
+
+			modal.hidden = false;
+			document.documentElement.classList.add('dg-account-confirm-open');
+			if (dialog) {
+				dialog.focus();
+			} else if (okBtn) {
+				okBtn.focus();
+			}
+		}
+
+		forms.forEach(function (form) {
+			if (form.dataset.dgUseBillingBound === '1') return;
+			form.dataset.dgUseBillingBound = '1';
+
+			form.addEventListener('submit', function (event) {
+				if (form.dataset.dgConfirmed === '1') {
+					setBusy(form);
+					return;
+				}
+				event.preventDefault();
+				openConfirm(form);
+			});
+		});
+
+		if (modal.dataset.dgConfirmBound === '1') return;
+		modal.dataset.dgConfirmBound = '1';
+
+		function onConfirmOk() {
+			if (!pendingForm) {
+				closeConfirm();
+				return;
+			}
+			const form = pendingForm;
+			form.dataset.dgConfirmed = '1';
+			setBusy(form);
+			closeConfirm();
+			form.submit();
+		}
+
+		if (okBtn) okBtn.addEventListener('click', onConfirmOk);
+		if (cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+		if (overlay) overlay.addEventListener('click', closeConfirm);
+
+		document.addEventListener('keydown', function (event) {
+			if (modal.hidden) return;
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				closeConfirm();
+			}
+		});
+	}
+
+	/**
 	 * Bind pagination links after content is loaded via AJAX.
 	 * This is called from loadPanel() after injecting new content.
 	 */
@@ -560,6 +686,7 @@
 		initCountUp();
 		initAjaxNavigation();
 		initAddressFormSave();
+		initUseBillingInstead();
 	}
 
 	if (document.readyState === 'loading') {

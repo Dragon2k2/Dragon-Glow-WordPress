@@ -1058,11 +1058,21 @@ function dg_render_account_address_card( string $type, array $data, bool $is_def
 				<?php esc_html_e( 'Edit address', 'dragon-glow' ); ?>
 			</a>
 			<?php if ( 'shipping' === $type ) : ?>
-				<a href="<?php echo esc_url( add_query_arg( 'address', 'billing', dg_account_endpoint_url( 'edit-address' ) ) ); ?>"
-				   class="dg-account-address__action">
-					<span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>
-					<?php esc_html_e( 'Use billing instead', 'dragon-glow' ); ?>
-				</a>
+				<form method="post"
+				      action="<?php echo esc_url( dg_account_endpoint_url( 'edit-address' ) ); ?>"
+				      class="dg-account-use-billing"
+				      data-dg-use-billing
+				      data-confirm-title="<?php echo esc_attr__( 'Use billing instead?', 'dragon-glow' ); ?>"
+				      data-confirm="<?php echo esc_attr__( 'Remove your shipping address and deliver orders to your billing address instead?', 'dragon-glow' ); ?>"
+				      data-confirm-ok="<?php echo esc_attr__( 'Use billing', 'dragon-glow' ); ?>"
+				      data-confirm-cancel="<?php echo esc_attr__( 'Cancel', 'dragon-glow' ); ?>">
+					<?php wp_nonce_field( 'dg_use_billing_instead', 'dg_use_billing_nonce' ); ?>
+					<input type="hidden" name="dg_use_billing_instead" value="1" />
+					<button type="submit" class="dg-account-address__action dg-account-use-billing__btn">
+						<span class="material-symbols-outlined dg-account-use-billing__icon" aria-hidden="true">swap_horiz</span>
+						<span class="dg-account-use-billing__label"><?php esc_html_e( 'Use billing instead', 'dragon-glow' ); ?></span>
+					</button>
+				</form>
 			<?php endif; ?>
 		</footer>
 	</article>
@@ -1374,7 +1384,50 @@ function dg_render_wc_account(): void {
 
 			</div>
 		</div>
+
+		<?php
+		// Confirm dialog lives outside .dg-account__content so AJAX panel
+		// swaps do not destroy it. Used by "Use billing instead".
+		dg_render_account_confirm_modal();
+		?>
 	</main>
+	<?php
+}
+
+/**
+ * Account confirm dialog shell (Luminous Ethereal).
+ *
+ * Markup only — copy/actions filled by account.js when a form with
+ * `data-dg-use-billing` is submitted. Kept outside AJAX content region.
+ *
+ * @return void
+ */
+function dg_render_account_confirm_modal(): void {
+	?>
+	<div class="dg-account-confirm" id="dg-account-confirm" hidden>
+		<div class="dg-account-confirm__overlay" data-dg-confirm-dismiss tabindex="-1"></div>
+		<div class="dg-account-confirm__dialog"
+			 role="alertdialog"
+			 aria-modal="true"
+			 aria-labelledby="dg-account-confirm-title"
+			 aria-describedby="dg-account-confirm-body"
+			 tabindex="-1">
+			<div class="dg-account-confirm__icon" aria-hidden="true">
+				<span class="material-symbols-outlined">swap_horiz</span>
+			</div>
+			<p class="dg-account-confirm__eyebrow"><?php esc_html_e( 'Confirm', 'dragon-glow' ); ?></p>
+			<h2 class="dg-account-confirm__title" id="dg-account-confirm-title"></h2>
+			<p class="dg-account-confirm__body" id="dg-account-confirm-body"></p>
+			<div class="dg-account-confirm__actions">
+				<button type="button" class="dg-account-confirm__btn dg-account-confirm__btn--ghost" data-dg-confirm-cancel>
+					<?php esc_html_e( 'Cancel', 'dragon-glow' ); ?>
+				</button>
+				<button type="button" class="dg-account-confirm__btn dg-account-confirm__btn--primary" data-dg-confirm-ok>
+					<?php esc_html_e( 'Confirm', 'dragon-glow' ); ?>
+				</button>
+			</div>
+		</div>
+	</div>
 	<?php
 }
 
@@ -1614,3 +1667,124 @@ function dg_sync_edit_address_query_var(): void {
 	$wp->query_vars['edit-address'] = $type;
 }
 add_action( 'template_redirect', 'dg_sync_edit_address_query_var', 1 );
+
+/**
+ * Clear the logged-in customer's shipping address fields.
+ *
+ * WC convention: empty shipping meta ⇒ ship to billing at checkout.
+ * Does not modify billing fields.
+ *
+ * @param int $user_id Customer user ID.
+ * @return bool True when cleared and saved.
+ */
+function dg_clear_customer_shipping_address( int $user_id ): bool {
+	if ( $user_id <= 0 || ! class_exists( 'WC_Customer' ) ) {
+		return false;
+	}
+
+	$customer = new WC_Customer( $user_id );
+	$keys     = array(
+		'shipping_first_name',
+		'shipping_last_name',
+		'shipping_company',
+		'shipping_address_1',
+		'shipping_address_2',
+		'shipping_city',
+		'shipping_state',
+		'shipping_postcode',
+		'shipping_country',
+		'shipping_phone',
+	);
+
+	foreach ( $keys as $key ) {
+		$setter = 'set_' . $key;
+		if ( is_callable( array( $customer, $setter ) ) ) {
+			$customer->{$setter}( '' );
+		} else {
+			$customer->update_meta_data( $key, '' );
+		}
+	}
+
+	$customer->save();
+
+	/**
+	 * Fires after shipping address fields are cleared (ship-to-billing).
+	 *
+	 * @param int         $user_id  Customer ID.
+	 * @param WC_Customer $customer Customer object after save.
+	 */
+	do_action( 'dg_customer_cleared_shipping_address', $user_id, $customer );
+
+	return true;
+}
+
+/**
+ * Handle "Use billing instead" — remove shipping so orders ship to billing.
+ *
+ * Expects POST: dg_use_billing_instead=1 + dg_use_billing_nonce.
+ * Mirrors WC My Account form handlers (nonce → mutate → notice → redirect).
+ *
+ * @return void
+ */
+function dg_handle_use_billing_instead(): void {
+	if ( empty( $_POST['dg_use_billing_instead'] ) ) {
+		return;
+	}
+
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+
+	$nonce = isset( $_POST['dg_use_billing_nonce'] )
+		? sanitize_text_field( wp_unslash( $_POST['dg_use_billing_nonce'] ) )
+		: '';
+
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'dg_use_billing_instead' ) ) {
+		wc_add_notice( __( 'Security check failed. Please try again.', 'dragon-glow' ), 'error' );
+		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		exit;
+	}
+
+	$user_id = get_current_user_id();
+	$billing = dg_get_account_address_data( $user_id, 'billing' );
+
+	if ( null === $billing ) {
+		wc_add_notice(
+			__( 'Add a billing address before removing your shipping address.', 'dragon-glow' ),
+			'error'
+		);
+		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		exit;
+	}
+
+	$shipping = dg_get_account_address_data( $user_id, 'shipping' );
+	if ( null === $shipping ) {
+		wc_add_notice(
+			__( 'Orders already ship to your billing address.', 'dragon-glow' ),
+			'notice'
+		);
+		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		exit;
+	}
+
+	if ( ! dg_clear_customer_shipping_address( $user_id ) ) {
+		wc_add_notice(
+			__( 'Could not update your shipping address. Please try again.', 'dragon-glow' ),
+			'error'
+		);
+		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		exit;
+	}
+
+	wc_add_notice(
+		__( 'Shipping address removed. Orders will ship to your billing address.', 'dragon-glow' ),
+		'success'
+	);
+	wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+	exit;
+}
+add_action( 'template_redirect', 'dg_handle_use_billing_instead', 5 );

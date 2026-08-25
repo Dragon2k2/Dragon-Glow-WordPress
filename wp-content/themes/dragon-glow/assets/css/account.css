@@ -1748,6 +1748,212 @@
 	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
 }
 
+/* "Use billing instead" — inline POST form (keeps action-bar layout) */
+.dg-account-use-billing {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+}
+
+.dg-account-use-billing__btn {
+	cursor: pointer;
+	font: inherit;
+}
+
+.dg-account-use-billing__btn:disabled,
+.dg-account-use-billing__btn.is-saving {
+	opacity: 0.72;
+	cursor: wait;
+	transform: none;
+	pointer-events: none;
+}
+
+.dg-account-use-billing__icon.is-spinning {
+	animation: dg-account-save-spin 0.8s linear infinite;
+}
+
+/* =========================================
+   18d. CONFIRM DIALOG (Use billing instead)
+   Branded modal — replaces browser window.confirm().
+   ========================================= */
+
+html.dg-account-confirm-open {
+	overflow: hidden;
+}
+
+.dg-account-confirm[hidden] {
+	display: none !important;
+}
+
+.dg-account-confirm {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.dg-account-confirm__overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(27, 28, 26, 0.42);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	cursor: pointer;
+}
+
+.dg-account-confirm__dialog {
+	position: relative;
+	z-index: 1;
+	width: min(420px, 100%);
+	padding: 28px 24px 24px;
+	text-align: center;
+	background:
+		linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 230, 0.88)),
+		rgba(255, 255, 255, 0.75);
+	border: 1px solid rgba(115, 92, 0, 0.16);
+	border-radius: 22px;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.75) inset,
+		0 24px 48px rgba(27, 28, 26, 0.18);
+	outline: none;
+	animation: dg-account-confirm-in 0.28s ease-out;
+}
+
+@keyframes dg-account-confirm-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.dg-account-confirm__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	margin: 0 auto 14px;
+	border-radius: 18px;
+	background: linear-gradient(135deg, rgba(115, 92, 0, 0.14), rgba(212, 175, 55, 0.22));
+	color: var(--color-primary);
+}
+
+.dg-account-confirm__icon .material-symbols-outlined {
+	font-size: 28px;
+}
+
+.dg-account-confirm__eyebrow {
+	margin: 0 0 6px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-primary);
+}
+
+.dg-account-confirm__title {
+	margin: 0 0 10px;
+	font-family: 'Playfair Display', serif;
+	font-size: clamp(22px, 3vw, 26px);
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--color-primary);
+}
+
+.dg-account-confirm__body {
+	margin: 0 0 22px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.55;
+	color: var(--color-on-surface-variant);
+}
+
+.dg-account-confirm__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+}
+
+.dg-account-confirm__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 120px;
+	padding: 11px 20px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	border-radius: 999px;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-account-confirm__btn--ghost {
+	color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.65);
+	border: 1px solid rgba(115, 92, 0, 0.22);
+}
+
+.dg-account-confirm__btn--ghost:hover {
+	background: rgba(115, 92, 0, 0.08);
+	border-color: var(--color-primary);
+	transform: translateY(-1px);
+}
+
+.dg-account-confirm__btn--primary {
+	color: var(--color-on-primary);
+	background: linear-gradient(135deg, var(--color-primary), #554300);
+	border: 0;
+	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.22);
+}
+
+.dg-account-confirm__btn--primary:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.30);
+}
+
+.dg-account-confirm__btn:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+	.dg-account-confirm__dialog {
+		padding: 24px 18px 18px;
+	}
+
+	.dg-account-confirm__actions {
+		flex-direction: column-reverse;
+	}
+
+	.dg-account-confirm__btn {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-confirm__dialog {
+		animation: none;
+	}
+
+	.dg-account-confirm__btn:hover {
+		transform: none;
+	}
+}
+
 /* --- Empty card (one address set, the other missing) --- */
 
 .dg-account-address--empty {
@@ -2353,6 +2559,10 @@
 	}
 
 	.dg-account-address-edit__save-icon.is-spinning {
+		animation: none;
+	}
+
+	.dg-account-use-billing__icon.is-spinning {
 		animation: none;
 	}
 }
