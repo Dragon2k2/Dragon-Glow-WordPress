@@ -58,8 +58,32 @@ function dg_ajax_load_account_panel(): void {
 		);
 	}
 
-	// Parse endpoint.
+	// Parse endpoint and request URI for pagination support.
+	// URL formats supported:
+	// 1. /my-account/orders/page/2/  (pretty permalinks - WC default)
+	// 2. /my-account/orders/?paged=2 (query string)
 	$endpoint = isset( $_POST['endpoint'] ) ? sanitize_text_field( wp_unslash( $_POST['endpoint'] ) ) : '';
+
+	$paged = 1;
+	if ( isset( $_POST['request_uri'] ) ) {
+		$request_uri = sanitize_text_field( wp_unslash( $_POST['request_uri'] ) );
+
+		// Try /orders/page/N/ pattern first (pretty permalink format)
+		if ( preg_match( '#/orders/page/(\d+)/?$#', $request_uri, $matches ) ) {
+			$paged = max( 1, (int) $matches[1] );
+		}
+
+		// Fallback to ?paged=N query string format
+		if ( 1 === $paged ) {
+			$parsed = wp_parse_url( $request_uri );
+			if ( isset( $parsed['query'] ) ) {
+				parse_str( $parsed['query'], $query_args );
+				if ( isset( $query_args['paged'] ) ) {
+					$paged = max( 1, (int) $query_args['paged'] );
+				}
+			}
+		}
+	}
 
 	// Wrap rendering in try-catch to catch any errors and return them to the client.
 	try {
@@ -69,6 +93,10 @@ function dg_ajax_load_account_panel(): void {
 		// Route to the appropriate renderer based on endpoint.
 		switch ( $endpoint ) {
 			case 'orders':
+				// Set pagination from AJAX request context.
+				if ( $paged > 1 ) {
+					$_GET['paged'] = $paged;
+				}
 				dg_render_account_orders_panel();
 				$title = __( 'My Orders', 'dragon-glow' );
 				break;

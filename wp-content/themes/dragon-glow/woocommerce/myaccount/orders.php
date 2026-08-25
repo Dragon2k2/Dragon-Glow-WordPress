@@ -196,11 +196,16 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 	<?php if ( 1 < $customer_orders->max_num_pages ) : ?>
 		<div class="woocommerce-pagination woocommerce-Pagination">
 			<?php
+			// Build pagination URLs using WC's native /page/N/ format.
+			// This matches WooCommerce's rewrite rules: /my-account/orders/page/2/
+			$orders_base = dg_account_endpoint_url( 'orders' );
+
 			// Previous button
 			if ( 1 !== $current_page ) :
-				$prev_url = 1 === ( $current_page - 1 )
-					? dg_account_endpoint_url( 'orders' )
-					: add_query_arg( 'paged', $current_page - 1, dg_account_endpoint_url( 'orders' ) );
+				$prev_page = $current_page - 1;
+				$prev_url  = 1 === $prev_page
+					? $orders_base
+					: trailingslashit( $orders_base ) . 'page/' . $prev_page . '/';
 				?>
 				<a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" href="<?php echo esc_url( $prev_url ); ?>"><?php esc_html_e( 'Previous', 'woocommerce' ); ?></a>
 				<?php
@@ -213,8 +218,8 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 					echo '<span class="page-numbers current" aria-current="page">' . esc_html( $i ) . '</span>';
 				else :
 					$page_url = 1 === $i
-						? dg_account_endpoint_url( 'orders' )
-						: add_query_arg( 'paged', $i, dg_account_endpoint_url( 'orders' ) );
+						? $orders_base
+						: trailingslashit( $orders_base ) . 'page/' . $i . '/';
 					echo '<a class="page-numbers" href="' . esc_url( $page_url ) . '">' . esc_html( $i ) . '</a>';
 				endif;
 			endfor;
@@ -222,7 +227,7 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 
 			// Next button
 			if ( intval( $customer_orders->max_num_pages ) !== $current_page ) :
-				$next_url = add_query_arg( 'paged', $current_page + 1, dg_account_endpoint_url( 'orders' ) );
+				$next_url = trailingslashit( $orders_base ) . 'page/' . ( $current_page + 1 ) . '/';
 				?>
 				<a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" href="<?php echo esc_url( $next_url ); ?>"><?php esc_html_e( 'Next', 'woocommerce' ); ?></a>
 				<?php

@@ -126,57 +126,138 @@ function dg_account_nav_items(): array {
 }
 
 /**
- * Determine current endpoint slug from WP query vars.
+ * Build rewrite-slug → endpoint-key map from WooCommerce query vars.
  *
- * Mirrors what WC resolves internally (`is_wc_endpoint_url()`); we re-derive
- * to keep this module decoupled from helper scope.
+ * @return array<string, string>
+ */
+function dg_account_endpoint_slug_map(): array {
+	$map = array();
+	if ( ! function_exists( 'WC' ) || ! WC() || ! isset( WC()->query ) || ! is_object( WC()->query ) ) {
+		return $map;
+	}
+	if ( ! method_exists( WC()->query, 'get_query_vars' ) ) {
+		return $map;
+	}
+
+	$vars = WC()->query->get_query_vars();
+	if ( ! is_array( $vars ) ) {
+		return $map;
+	}
+
+	foreach ( $vars as $key => $slug ) {
+		if ( is_string( $key ) && is_string( $slug ) && '' !== $slug ) {
+			$map[ $slug ] = $key;
+		}
+	}
+
+	return $map;
+}
+
+/**
+ * Path segments after the My Account page URI.
  *
- * @return string
+ * Prefers `$wp->request`, then falls back to `REQUEST_URI` so refresh on
+ * `/my-account/orders/` still resolves when query vars / `$wp->request` are
+ * empty (common on shared hosting with incomplete endpoint rewrites).
+ *
+ * @return array<int, string>
+ */
+function dg_account_path_segments_after_base(): array {
+	$page_id = (int) get_option( 'woocommerce_myaccount_page_id' );
+	if ( $page_id <= 0 ) {
+		return array();
+	}
+
+	$account_uri = trim( (string) get_page_uri( $page_id ), '/' );
+	if ( '' === $account_uri ) {
+		$account_uri = 'my-account';
+	}
+
+	$candidates = array();
+
+	global $wp;
+	if ( isset( $wp->request ) && is_string( $wp->request ) && '' !== trim( $wp->request, '/' ) ) {
+		$candidates[] = trim( $wp->request, '/' );
+	}
+
+	if ( isset( $_SERVER['REQUEST_URI'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- path only via wp_parse_url.
+		$uri_path = (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH );
+		$uri_path = trim( $uri_path, '/' );
+
+		// Strip subdirectory home path when WP is not at domain root.
+		$home_path = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+		if ( '' !== $home_path ) {
+			if ( $uri_path === $home_path ) {
+				$uri_path = '';
+			} elseif ( 0 === strpos( $uri_path, $home_path . '/' ) ) {
+				$uri_path = substr( $uri_path, strlen( $home_path ) + 1 );
+			}
+		}
+
+		if ( '' !== $uri_path ) {
+			$candidates[] = $uri_path;
+		}
+	}
+
+	$prefix = $account_uri . '/';
+	foreach ( $candidates as $path ) {
+		if ( $path === $account_uri || 0 !== strpos( $path, $prefix ) ) {
+			continue;
+		}
+		$after = substr( $path, strlen( $prefix ) );
+		$parts = array_values( array_filter( explode( '/', $after ), 'strlen' ) );
+		if ( ! empty( $parts ) ) {
+			return $parts;
+		}
+	}
+
+	return array();
+}
+
+/**
+ * Determine current My Account endpoint key for sidebar + panel switch.
+ *
+ * Resolution order:
+ * 1. WooCommerce native query-var endpoint (`get_current_endpoint`).
+ * 2. First path segment after the My Account page URI (REQUEST_URI fallback).
+ *
+ * Returns the internal endpoint key (e.g. `orders`), not a customized rewrite
+ * slug, so `dg_render_wc_account()` switch cases stay stable.
+ *
+ * @return string Empty string = dashboard.
  */
 function dg_current_account_endpoint(): string {
 	if ( ! function_exists( 'WC' ) || ! WC() ) {
 		return '';
 	}
-	if ( ! isset( WC()->query ) || ! is_object( WC()->query ) || ! method_exists( WC()->query, 'get_endpoints' ) ) {
+	if ( ! isset( WC()->query ) || ! is_object( WC()->query ) ) {
 		return '';
 	}
 
-	global $wp;
-
-	$endpoints = WC()->query->get_endpoints();
-	if ( ! is_array( $endpoints ) || empty( $endpoints ) ) {
-		return '';
-	}
-
-	// Strip account base from current URL.
-	$myaccount_page_id = get_option( 'woocommerce_myaccount_page_id' );
-	if ( ! $myaccount_page_id ) {
-		return '';
-	}
-	$req = isset( $wp->request ) ? trim( (string) $wp->request, '/' ) : '';
-	if ( '' === $req ) {
-		return '';
-	}
-
-	// Compare each endpoint against the trailing URL segment.
-	// Endpoint is always the LAST segment of the request — e.g. request
-	// "my-account/orders/2" still resolves to "orders". Use a regex anchored
-	// to either "slug" alone or "$slug/" so we don't get false positives on
-	// pages whose slug happens to contain the endpoint name.
-	$last_segment = strrchr( $req, '/' );
-	$last_segment = ( false === $last_segment ) ? $req : ltrim( $last_segment, '/' );
-	foreach ( $endpoints as $slug ) {
-		if ( ! is_string( $slug ) || '' === $slug ) {
-			continue;
-		}
-		if ( $last_segment === $slug || 0 === strpos( $last_segment, $slug . '/' ) ) {
-			return $slug;
+	// 1) Native WC — works when rewrite rules registered the endpoint query var.
+	if ( method_exists( WC()->query, 'get_current_endpoint' ) ) {
+		$native = (string) WC()->query->get_current_endpoint();
+		if ( '' !== $native ) {
+			return $native;
 		}
 	}
 
-	// Wishlist endpoint isn't WC core, handled by permalink "wishlist".
-	if ( false !== strpos( $req, 'wishlist' ) ) {
+	// 2) Path after /my-account/ — survives refresh when query vars are missing.
+	$segments = dg_account_path_segments_after_base();
+	if ( empty( $segments ) ) {
+		return '';
+	}
+
+	$candidate = $segments[0];
+
+	// Theme wishlist panel (not a WC core endpoint).
+	if ( 'wishlist' === $candidate || 'dg-wishlist' === $candidate ) {
 		return 'dg-wishlist';
+	}
+
+	$slug_map = dg_account_endpoint_slug_map();
+	if ( isset( $slug_map[ $candidate ] ) ) {
+		return $slug_map[ $candidate ];
 	}
 
 	return '';
@@ -594,9 +675,35 @@ function dg_render_account_dashboard(): void {
  */
 function dg_render_account_orders_panel(): void {
 	$customer_id  = get_current_user_id();
-	// Read page number from query string (?paged=2) or query var (legacy)
-	$current_page = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : max( 1, (int) get_query_var( 'orders', 1 ) );
-	$page_size    = 10;
+
+	// Read page number from the current request.
+	// URL formats supported:
+	// 1. /my-account/orders/page/2/  (pretty permalinks - WC default)
+	// 2. /my-account/orders/?paged=2 (query string)
+	// 3. /my-account/orders/page/2  (without trailing slash)
+	$current_page = 1;
+	$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+
+	// First try get_query_var('page') - standard WP pagination var
+	$qv_page = (int) get_query_var( 'page' );
+	if ( $qv_page > 1 ) {
+		$current_page = $qv_page;
+	}
+
+	// If that didn't work, check REQUEST_URI for /page/N/ pattern
+	// Pattern: /my-account/orders/page/2/ or /my-account/orders/page/2
+	if ( 1 === $current_page && '' !== $request_uri ) {
+		if ( preg_match( '#/orders/page/(\d+)/?$#', $request_uri, $matches ) ) {
+			$current_page = max( 1, (int) $matches[1] );
+		}
+	}
+
+	// Final fallback: check $_GET['paged'] (our custom query string)
+	if ( 1 === $current_page && isset( $_GET['paged'] ) ) {
+		$current_page = max( 1, (int) $_GET['paged'] );
+	}
+
+	$page_size = 10;
 
 	// Query customer orders.
 	$customer_orders = array();

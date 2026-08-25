@@ -216,6 +216,22 @@
 			});
 		});
 
+		// Pagination links (e.g., /my-account/orders/page/2/) must do full page
+		// navigation, not AJAX. AJAX strips query params, so we lose the paged
+		// number. By-passing AJAX here keeps the pagination working correctly.
+		const paginationLinks = root.querySelectorAll('.woocommerce-pagination a.page-numbers, .woocommerce-pagination a.woocommerce-button');
+		paginationLinks.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				// Allow Ctrl/Cmd+Click or middle-click to open in new tab.
+				if (event.ctrlKey || event.metaKey || event.button === 1) {
+					return;
+				}
+				// Full page navigation — no AJAX, no history push.
+				event.preventDefault();
+				window.location.href = link.getAttribute('href');
+			});
+		});
+
 		// Browser back/forward support.
 		window.addEventListener('popstate', function (event) {
 			if (event.state && event.state.endpoint !== undefined) {
@@ -280,7 +296,11 @@
 		const endpoint = extractEndpoint(url);
 
 		// If clicking the same endpoint, do nothing.
-		if (endpoint === currentEndpoint) return;
+		// Exception: allow navigation to same endpoint if URL has ?paged=N
+		// This handles direct page load with pagination parameter.
+		const urlObj = parseURL(url);
+		const hasPaged = urlObj && urlObj.searchParams.has('paged');
+		if (endpoint === currentEndpoint && !hasPaged) return;
 
 		isLoading = true;
 		currentEndpoint = endpoint;
@@ -294,11 +314,12 @@
 		// Update active nav link immediately for instant feedback.
 		updateActiveNav(endpoint);
 
-		// AJAX request.
+		// AJAX request — pass full URL so server can read ?paged=N.
 		const formData = new FormData();
 		formData.append('action', 'dg_load_account_panel');
 		formData.append('endpoint', endpoint);
 		formData.append('nonce', window.dgAjax.nonce);
+		formData.append('request_uri', url); // Pass full URL for pagination support.
 
 		fetch(window.dgAjax.url, {
 			method: 'POST',
@@ -330,6 +351,7 @@
 						initScrollReveal();
 						initCountUp();
 						initPasswordToggle(); // Re-bind password toggles in new content.
+						initPaginationLinks(); // Re-bind pagination links in new content.
 					}, 50);
 
 					// Scroll to top of content smoothly.
@@ -458,6 +480,41 @@
 		const div = document.createElement('div');
 		div.textContent = str;
 		return div.innerHTML;
+	}
+
+	/**
+	 * Parse URL into an object (cross-browser).
+	 *
+	 * @param {string} url URL to parse.
+	 * @return {URL|null} Parsed URL object or null on failure.
+	 */
+	function parseURL(url) {
+		try {
+			return new URL(url, window.location.origin);
+		} catch (e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Bind pagination links after content is loaded via AJAX.
+	 * This is called from loadPanel() after injecting new content.
+	 */
+	function initPaginationLinks() {
+		if (!root) return;
+		const paginationLinks = root.querySelectorAll('.woocommerce-pagination a.page-numbers, .woocommerce-pagination a.woocommerce-button');
+		paginationLinks.forEach(function (link) {
+			// Remove existing listener by cloning (simple way to avoid duplicates).
+			const newLink = link.cloneNode(true);
+			link.parentNode.replaceChild(newLink, link);
+			newLink.addEventListener('click', function (event) {
+				if (event.ctrlKey || event.metaKey || event.button === 1) {
+					return;
+				}
+				event.preventDefault();
+				window.location.href = newLink.getAttribute('href');
+			});
+		});
 	}
 
 	function init() {
