@@ -1135,9 +1135,14 @@ function dg_render_account_addresses_edit( string $type ): void {
 
 		<?php
 		if ( function_exists( 'wc_get_template' ) ) {
-			// WC handles the save action, country/state selects, validation. We
-			// just provide the panel chrome around it.
-			wc_get_template( 'myaccount/form-edit-address.php', array( 'type' => $type ) );
+			// Re-use WC's own shortcode handler — it already builds the
+			// $address array (country-aware fields, current user values,
+			// filtered through woocommerce_address_to_edit) and calls
+			// wc_get_template('myaccount/form-edit-address.php', ...) with
+			// the variable names the template expects. Building $address
+			// by hand here would duplicate that logic and drift from
+			// checkout field customisations set by plugins.
+			\WC_Shortcode_My_Account::edit_address( $type );
 		}
 		?>
 	</article>
