@@ -2069,22 +2069,32 @@
 
 /* Inline validation message */
 .dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-error,
-.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message {
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message,
+.dg-account-panel--addresses .dg-account-notices .woocommerce-error,
+.dg-account-panel--addresses .dg-account-notices .woocommerce-message,
+.dg-account-panel--addresses .dg-account-notices .woocommerce-info {
 	background: rgba(186, 26, 26, 0.08);
 	border: 1px solid rgba(186, 26, 26, 0.25);
 	border-radius: 12px;
 	padding: 12px 16px;
-	margin: 0;
+	margin: 0 0 16px;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 13px;
 	color: var(--color-error);
 	list-style: none;
 }
 
-.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message {
+.dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-message,
+.dg-account-panel--addresses .dg-account-notices .woocommerce-message {
 	background: rgba(46, 125, 50, 0.10);
 	border-color: rgba(46, 125, 50, 0.25);
 	color: #2e7d32;
+}
+
+.dg-account-panel--addresses .dg-account-notices .woocommerce-info {
+	background: rgba(115, 92, 0, 0.08);
+	border-color: rgba(115, 92, 0, 0.22);
+	color: var(--color-on-surface);
 }
 
 .dg-account-address-edit .woocommerce-EditAddressForm .woocommerce-validated input.input-text,
@@ -2096,7 +2106,7 @@
 	border-color: rgba(46, 125, 50, 0.40);
 }
 
-/* Save / Cancel actions */
+/* Save address — WC POST submit (loading via .is-saving). */
 .dg-account-address-edit__actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -2106,8 +2116,8 @@
 	border-top: 1px solid rgba(115, 92, 0, 0.10);
 }
 
-.dg-account-address-edit .woocommerce-EditAddressForm button[type="submit"],
-.dg-account-address-edit .woocommerce-EditAddressForm .button {
+.dg-account-address-edit .woocommerce-EditAddressForm .button,
+.dg-account-address-edit__save {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -2123,14 +2133,33 @@
 	border-radius: 999px;
 	cursor: pointer;
 	text-decoration: none;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
 }
 
-.dg-account-address-edit .woocommerce-EditAddressForm button[type="submit"]:hover,
-.dg-account-address-edit .woocommerce-EditAddressForm .button:hover {
+.dg-account-address-edit .woocommerce-EditAddressForm .button:hover,
+.dg-account-address-edit__save:hover {
 	transform: translateY(-1px);
 	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+}
+
+.dg-account-address-edit__save:disabled,
+.dg-account-address-edit__save.is-saving {
+	opacity: 0.72;
+	cursor: wait;
+	transform: none;
+	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.16);
+	pointer-events: none;
+}
+
+.dg-account-address-edit__save-icon.is-spinning {
+	animation: dg-account-save-spin 0.8s linear infinite;
+}
+
+@keyframes dg-account-save-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @media (max-width: 640px) {
@@ -2181,6 +2210,10 @@
 	.dg-account-address__action:hover,
 	.dg-account-address-edit .woocommerce-EditAddressForm button:hover {
 		transform: none;
+	}
+
+	.dg-account-address-edit__save-icon.is-spinning {
+		animation: none;
 	}
 }
 

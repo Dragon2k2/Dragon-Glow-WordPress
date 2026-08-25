@@ -65,6 +65,7 @@ function dg_ajax_load_account_panel(): void {
 	$endpoint = isset( $_POST['endpoint'] ) ? sanitize_text_field( wp_unslash( $_POST['endpoint'] ) ) : '';
 
 	$paged = 1;
+	$address_type = '';
 	if ( isset( $_POST['request_uri'] ) ) {
 		$request_uri = sanitize_text_field( wp_unslash( $_POST['request_uri'] ) );
 
@@ -73,15 +74,25 @@ function dg_ajax_load_account_panel(): void {
 			$paged = max( 1, (int) $matches[1] );
 		}
 
-		// Fallback to ?paged=N query string format
-		if ( 1 === $paged ) {
-			$parsed = wp_parse_url( $request_uri );
-			if ( isset( $parsed['query'] ) ) {
-				parse_str( $parsed['query'], $query_args );
-				if ( isset( $query_args['paged'] ) ) {
-					$paged = max( 1, (int) $query_args['paged'] );
+		$parsed = wp_parse_url( $request_uri );
+		if ( isset( $parsed['query'] ) ) {
+			parse_str( $parsed['query'], $query_args );
+			// Fallback to ?paged=N query string format
+			if ( 1 === $paged && isset( $query_args['paged'] ) ) {
+				$paged = max( 1, (int) $query_args['paged'] );
+			}
+			// Address edit type — theme uses ?address=billing|shipping
+			if ( isset( $query_args['address'] ) ) {
+				$candidate = sanitize_key( (string) $query_args['address'] );
+				if ( in_array( $candidate, array( 'billing', 'shipping' ), true ) ) {
+					$address_type = $candidate;
 				}
 			}
+		}
+
+		// Path segment fallback — /my-account/edit-address/billing/
+		if ( '' === $address_type && preg_match( '#/edit-address/(billing|shipping)/?#', $request_uri, $addr_matches ) ) {
+			$address_type = sanitize_key( $addr_matches[1] );
 		}
 	}
 
@@ -105,8 +116,17 @@ function dg_ajax_load_account_panel(): void {
 			break;
 
 		case 'edit-address':
+				// Propagate ?address= so dg_current_address_edit_type() works in AJAX.
+				if ( '' !== $address_type ) {
+					$_GET['address'] = $address_type;
+				}
 				dg_render_account_addresses_panel();
 				$title = __( 'Addresses', 'dragon-glow' );
+				if ( 'billing' === $address_type ) {
+					$title = __( 'Billing address', 'dragon-glow' );
+				} elseif ( 'shipping' === $address_type ) {
+					$title = __( 'Shipping address', 'dragon-glow' );
+				}
 				break;
 
 			case 'edit-account':

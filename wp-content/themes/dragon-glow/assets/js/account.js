@@ -11,6 +11,7 @@
  *  - AJAX navigation for account panels (Orders, Addresses, etc.).
  *  - History API (pushState/popstate) for browser back/forward.
  *  - Loading states with skeleton screens.
+ *  - Address form save UX (disable + spinner; POST handled by WooCommerce).
  *
  * @package Dragon_Glow
  */
@@ -296,11 +297,12 @@
 		const endpoint = extractEndpoint(url);
 
 		// If clicking the same endpoint, do nothing.
-		// Exception: allow navigation to same endpoint if URL has ?paged=N
-		// This handles direct page load with pagination parameter.
+		// Exception: allow navigation when URL has ?paged=N or ?address=
+		// (list ↔ edit address within the same endpoint).
 		const urlObj = parseURL(url);
 		const hasPaged = urlObj && urlObj.searchParams.has('paged');
-		if (endpoint === currentEndpoint && !hasPaged) return;
+		const hasAddress = urlObj && urlObj.searchParams.has('address');
+		if (endpoint === currentEndpoint && !hasPaged && !hasAddress) return;
 
 		isLoading = true;
 		currentEndpoint = endpoint;
@@ -352,6 +354,7 @@
 						initCountUp();
 						initPasswordToggle(); // Re-bind password toggles in new content.
 						initPaginationLinks(); // Re-bind pagination links in new content.
+						initAddressFormSave(); // Re-bind address save UX after AJAX inject.
 					}, 50);
 
 					// Scroll to top of content smoothly.
@@ -497,6 +500,39 @@
 	}
 
 	/**
+	 * Address edit form — disable Save on submit to prevent double POST.
+	 * Native form POST still goes to WC_Form_Handler::save_address.
+	 */
+	function initAddressFormSave() {
+		if (!root) return;
+
+		const forms = root.querySelectorAll('.dg-account-address-edit__form');
+		forms.forEach(function (form) {
+			if (form.dataset.dgAddressBound === '1') return;
+			form.dataset.dgAddressBound = '1';
+
+			form.addEventListener('submit', function () {
+				const btn = form.querySelector('.dg-account-address-edit__save');
+				if (!btn || btn.disabled) return;
+
+				btn.disabled = true;
+				btn.classList.add('is-saving');
+				btn.setAttribute('aria-busy', 'true');
+
+				const icon = btn.querySelector('.dg-account-address-edit__save-icon');
+				const label = btn.querySelector('.dg-account-address-edit__save-label');
+				if (icon) {
+					icon.textContent = 'progress_activity';
+					icon.classList.add('is-spinning');
+				}
+				if (label) {
+					label.textContent = 'Saving…';
+				}
+			});
+		});
+	}
+
+	/**
 	 * Bind pagination links after content is loaded via AJAX.
 	 * This is called from loadPanel() after injecting new content.
 	 */
@@ -523,6 +559,7 @@
 		initScrollReveal();
 		initCountUp();
 		initAjaxNavigation();
+		initAddressFormSave();
 	}
 
 	if (document.readyState === 'loading') {

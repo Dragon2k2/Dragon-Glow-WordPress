@@ -1099,11 +1099,9 @@ function dg_render_account_address_empty_card( string $type ): void {
 /**
  * Render the edit-address form (single address).
  *
- * Wraps WC's `myaccount/form-edit-address.php` in our panel shell so the WC
- * save action + `woocommerce_edit_address` hook keep working (we do not
- * reimplement the form — WC handles validation, country select, state field
- * refresh, etc.). The shell just gives it a clear header, breadcrumb back
- * link, and Save/Cancel actions that match the rest of the account area.
+ * Wraps WC's `myaccount/form-edit-address.php` in our panel shell. The shell
+ * gives a clear header and breadcrumb back link. Save posts through WC's
+ * `WC_Form_Handler::save_address` (nonce + validation + redirect).
  *
  * @param string $type 'billing' | 'shipping'.
  * @return void
@@ -1173,6 +1171,15 @@ function dg_render_account_addresses_panel(): void {
 		</header>
 
 		<?php
+		// Success notice after WC save redirects to the list; errors stay on the
+		// edit form (also printed inside form-edit-address.php). Print here so
+		// the list view surfaces "Address changed successfully."
+		if ( '' === $edit_type && function_exists( 'wc_print_notices' ) ) {
+			echo '<div class="dg-account-notices">';
+			wc_print_notices();
+			echo '</div>';
+		}
+
 		if ( '' !== $edit_type ) {
 			dg_render_account_addresses_edit( $edit_type );
 		} else {
@@ -1570,3 +1577,40 @@ function dg_use_wc_account_template( string $template ): string {
 	return $template;
 }
 add_filter( 'template_include', 'dg_use_wc_account_template' );
+
+/**
+ * Sync theme `?address=` / path type into WC's `edit-address` query var.
+ *
+ * Shared hosting often cannot rely on `/edit-address/billing/` rewrites, so
+ * the theme uses `?address=billing|shipping`. `WC_Form_Handler::save_address`
+ * still reads `$wp->query_vars['edit-address']` — without this sync, shipping
+ * saves would fall back to billing (empty query var).
+ *
+ * Runs at priority 1 on `template_redirect`, before WC's save handler (10).
+ *
+ * @return void
+ */
+function dg_sync_edit_address_query_var(): void {
+	global $wp;
+
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+
+	$type = dg_current_address_edit_type();
+	if ( '' === $type ) {
+		return;
+	}
+
+	if ( ! isset( $wp->query_vars ) || ! is_array( $wp->query_vars ) ) {
+		return;
+	}
+
+	$current = isset( $wp->query_vars['edit-address'] ) ? sanitize_key( (string) $wp->query_vars['edit-address'] ) : '';
+	if ( in_array( $current, array( 'billing', 'shipping' ), true ) ) {
+		return;
+	}
+
+	$wp->query_vars['edit-address'] = $type;
+}
+add_action( 'template_redirect', 'dg_sync_edit_address_query_var', 1 );

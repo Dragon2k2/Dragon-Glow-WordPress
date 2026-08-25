@@ -19,19 +19,16 @@
  * here because the panel always passes the correct type from
  * `dg_current_address_edit_type()`).
  *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it
- * does happen. When this occurs the version of the template file will be
- * bumped and the readme will list any important changes.
+ * Persist flow matches WC stock: POST + `woocommerce-edit_address` nonce +
+ * `save_address` submit → `WC_Form_Handler::save_address` (theme syncs
+ * `?address=` into `$wp->query_vars['edit-address']` for shared hosting).
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 9.0.0
+ * @version 9.3.0
  *
- * Dragon Glow override: drops the duplicate <h2>, adds a save icon inside the
- * submit button, and wraps fields in `dg-account-address-edit__form` for the
- * Luminous Ethereal design system to style consistently with the demo.
+ * Dragon Glow override: drops the duplicate <h2>, wraps fields in
+ * `dg-account-address-edit__form`, keeps WC save POST / nonce / action.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -40,14 +37,12 @@ defined( 'ABSPATH' ) || exit;
 // The parent panel always passes this — never invoke this template without it.
 $type = isset( $load_address ) ? sanitize_key( $load_address ) : 'billing';
 
-// Surface any notice (e.g. "Address changed successfully") before the form so
-// the user gets feedback after submitting.
 if ( function_exists( 'wc_print_notices' ) ) {
 	wc_print_notices();
 }
 ?>
 
-<form class="woocommerce-EditAddressForm edit dg-account-address-edit__form" method="post">
+<form method="post" class="woocommerce-EditAddressForm edit dg-account-address-edit__form" novalidate>
 
 	<div class="woocommerce-address-fields">
 		<?php
@@ -59,7 +54,8 @@ if ( function_exists( 'wc_print_notices' ) ) {
 		 *
 		 * @param string $type Address type — 'billing' | 'shipping'.
 		 */
-		do_action( 'woocommerce_before_edit_address_form_' . $type ); ?>
+		do_action( 'woocommerce_before_edit_address_form_' . $type );
+		?>
 
 		<div class="woocommerce-address-fields__field-wrapper">
 			<?php
@@ -75,17 +71,19 @@ if ( function_exists( 'wc_print_notices' ) ) {
 		 *
 		 * @param string $type Address type — 'billing' | 'shipping'.
 		 */
-		do_action( 'woocommerce_after_edit_address_form_' . $type ); ?>
+		do_action( 'woocommerce_after_edit_address_form_' . $type );
+		?>
 	</div>
 
 	<?php do_action( 'woocommerce_edit_address_form_' . $type ); ?>
 
 	<p class="dg-account-address-edit__actions">
 		<button type="submit" class="button dg-account-address-edit__save" name="save_address" value="<?php esc_attr_e( 'Save address', 'woocommerce' ); ?>">
-			<span class="material-symbols-outlined" aria-hidden="true">save</span>
-			<?php esc_html_e( 'Save address', 'woocommerce' ); ?>
+			<span class="material-symbols-outlined dg-account-address-edit__save-icon" aria-hidden="true">save</span>
+			<span class="dg-account-address-edit__save-label"><?php esc_html_e( 'Save address', 'woocommerce' ); ?></span>
 		</button>
 		<?php wp_nonce_field( 'woocommerce-edit_address', 'woocommerce-edit-address-nonce' ); ?>
 		<input type="hidden" name="action" value="edit_address" />
 	</p>
+
 </form>
