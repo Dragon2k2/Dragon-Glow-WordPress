@@ -264,6 +264,64 @@ function dg_current_account_endpoint(): string {
 }
 
 /**
+ * Get current pagination page for account orders endpoint.
+ *
+ * @return int Page number (1-indexed).
+ */
+function dg_get_account_orders_page(): int {
+	$current_page = 1;
+	$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+
+	// Check get_query_var('page') first
+	$qv_page = (int) get_query_var( 'page' );
+	if ( $qv_page > 1 ) {
+		$current_page = $qv_page;
+	}
+
+	// Check REQUEST_URI for /page/N/ pattern
+	if ( 1 === $current_page && '' !== $request_uri ) {
+		if ( preg_match( '#/orders/page/(\d+)/?$#', $request_uri, $matches ) ) {
+			$current_page = max( 1, (int) $matches[1] );
+		}
+	}
+
+	// Fallback: check $_GET['paged']
+	if ( 1 === $current_page && isset( $_GET['paged'] ) ) {
+		$current_page = max( 1, (int) $_GET['paged'] );
+	}
+
+	return $current_page;
+}
+
+/**
+ * Set document title for My Account pages with pagination support.
+ *
+ * @param string $title Original title.
+ * @return string Modified title.
+ */
+function dg_account_document_title( string $title ): string {
+	// Only modify titles on the My Account page.
+	if ( ! is_page( get_option( 'woocommerce_myaccount_page_id' ) ) ) {
+		return $title;
+	}
+
+	$endpoint = dg_current_account_endpoint();
+
+	if ( 'orders' === $endpoint ) {
+		$paged = dg_get_account_orders_page();
+		if ( $paged > 1 ) {
+			/* translators: %d: Page number */
+			$title = sprintf( esc_html__( 'Orders (page %d)', 'dragon-glow' ), $paged );
+		} else {
+			$title = esc_html__( 'Orders', 'dragon-glow' );
+		}
+	}
+
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'dg_account_document_title' );
+
+/**
  * Render the account hero (greeting + member tier).
  *
  * @return void
@@ -680,7 +738,6 @@ function dg_render_account_orders_panel(): void {
 	// URL formats supported:
 	// 1. /my-account/orders/page/2/  (pretty permalinks - WC default)
 	// 2. /my-account/orders/?paged=2 (query string)
-	// 3. /my-account/orders/page/2  (without trailing slash)
 	$current_page = 1;
 	$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
 
@@ -690,15 +747,14 @@ function dg_render_account_orders_panel(): void {
 		$current_page = $qv_page;
 	}
 
-	// If that didn't work, check REQUEST_URI for /page/N/ pattern
-	// Pattern: /my-account/orders/page/2/ or /my-account/orders/page/2
+	// Fallback: check REQUEST_URI for /page/N/ pattern
 	if ( 1 === $current_page && '' !== $request_uri ) {
 		if ( preg_match( '#/orders/page/(\d+)/?$#', $request_uri, $matches ) ) {
 			$current_page = max( 1, (int) $matches[1] );
 		}
 	}
 
-	// Final fallback: check $_GET['paged'] (our custom query string)
+	// Fallback: check $_GET['paged']
 	if ( 1 === $current_page && isset( $_GET['paged'] ) ) {
 		$current_page = max( 1, (int) $_GET['paged'] );
 	}

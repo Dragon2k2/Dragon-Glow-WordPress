@@ -273,6 +273,9 @@ msgstr ""
 msgid "My Orders"
 msgstr ""
 
+msgid "Orders (page %d)"
+msgstr ""
+
 msgid "Addresses"
 msgstr ""
 

@@ -90,18 +90,21 @@ function dg_ajax_load_account_panel(): void {
 		// Start output buffering to capture the panel HTML.
 		ob_start();
 
-		// Route to the appropriate renderer based on endpoint.
-		switch ( $endpoint ) {
-			case 'orders':
-				// Set pagination from AJAX request context.
-				if ( $paged > 1 ) {
-					$_GET['paged'] = $paged;
-				}
-				dg_render_account_orders_panel();
-				$title = __( 'My Orders', 'dragon-glow' );
-				break;
+	// Route to the appropriate renderer based on endpoint.
+	switch ( $endpoint ) {
+		case 'orders':
+			// Set pagination from AJAX request context.
+			if ( $paged > 1 ) {
+				$_GET['paged'] = $paged;
+			}
+			dg_render_account_orders_panel();
+			// translators: %d: Page number (e.g., "Orders (page 2)").
+			$title = $paged > 1
+				? sprintf( esc_html__( 'Orders (page %d)', 'dragon-glow' ), $paged )
+				: esc_html__( 'Orders', 'dragon-glow' );
+			break;
 
-			case 'edit-address':
+		case 'edit-address':
 				dg_render_account_addresses_panel();
 				$title = __( 'Addresses', 'dragon-glow' );
 				break;

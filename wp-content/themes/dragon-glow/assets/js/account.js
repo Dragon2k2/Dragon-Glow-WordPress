@@ -336,10 +336,10 @@
 					// Inject new content.
 					content.innerHTML = data.data.html;
 
-					// Update document title.
-					if (data.data.title) {
-						document.title = data.data.title + ' – ' + getBaseSiteTitle();
-					}
+				// Update document title.
+				if (data.data.title) {
+					document.title = data.data.title + ' – ' + getBaseSiteTitle();
+				}
 
 					// Push history state.
 					if (pushHistory) {
