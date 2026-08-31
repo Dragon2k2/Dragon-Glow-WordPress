@@ -5,7 +5,6 @@
  * Thin loader for the AJAX layer. Every handler lives in a per-concern file
  * under `inc/ajax/` so each feature is easy to locate and maintain:
  *
- *   - wishlist.php       Wishlist toggle (logged-in users).
  *   - newsletter.php     Newsletter subscription.
  *   - contact.php        Contact form submission + admin email.
  *   - cart.php           Cart AJAX: add, buy-now, remove, update, count, identifiers.
@@ -23,7 +22,6 @@
 defined( 'ABSPATH' ) || exit;
 
 // Load per-concern AJAX handler modules.
-require_once DG_DIR . '/inc/ajax/wishlist.php';
 require_once DG_DIR . '/inc/ajax/newsletter.php';
 require_once DG_DIR . '/inc/ajax/contact.php';
 require_once DG_DIR . '/inc/ajax/cart.php';
@@ -32,4 +30,5 @@ require_once DG_DIR . '/inc/ajax/returns.php';
 require_once DG_DIR . '/inc/ajax/brevo.php';       // Must load before careers.php (careers uses dg_send_brevo_email()).
 require_once DG_DIR . '/inc/ajax/careers.php';
 require_once DG_DIR . '/inc/ajax/account.php';
+require_once DG_DIR . '/inc/ajax/wishlist.php';
 require_once DG_DIR . '/inc/ajax/dev-endpoints.php';

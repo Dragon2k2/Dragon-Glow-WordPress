@@ -1,7 +1,7 @@
 <?php
 /**
  * Dragon Glow — Helpers: WooCommerce
- * WooCommerce availability checks, wishlist meta, product categories,
+ * WooCommerce availability checks, product categories,
  * price formatting, and category links.
  *
  * @package Dragon_Glow
@@ -19,43 +19,6 @@ defined( 'ABSPATH' ) || exit;
  */
 function dg_is_woocommerce_active(): bool {
 	return class_exists( 'WooCommerce' );
-}
-
-/**
- * Check if product is in wishlist.
- *
- * @param int $product_id Product ID.
- * @return bool
- */
-function dg_in_wishlist( int $product_id ): bool {
-    if ( ! is_user_logged_in() ) {
-        return false;
-    }
-
-    $wishlist = (array) get_user_meta( get_current_user_id(), 'dg_wishlist', true );
-    return in_array( $product_id, $wishlist, true );
-}
-
-/**
- * Get wishlist product IDs.
- *
- * @return array
- */
-function dg_get_wishlist(): array {
-    if ( ! is_user_logged_in() ) {
-        return array();
-    }
-
-    return (array) get_user_meta( get_current_user_id(), 'dg_wishlist', true );
-}
-
-/**
- * Get wishlist count.
- *
- * @return int
- */
-function dg_get_wishlist_count(): int {
-    return count( dg_get_wishlist() );
 }
 
 /**

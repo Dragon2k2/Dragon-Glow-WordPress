@@ -64,7 +64,7 @@ function dg_privacy_policy_sections_data(): array {
 			'title' => __( 'Information we collect', 'dragon-glow' ),
 			'body'  => '<p><strong>' . esc_html__( 'Information you provide to us:', 'dragon-glow' ) . '</strong></p>'
 				. '<ul><li><strong>' . esc_html__( 'Identity and contact data:', 'dragon-glow' ) . '</strong> ' . esc_html__( 'name, email address, phone number, shipping and billing address.', 'dragon-glow' ) . '</li>'
-				. '<li><strong>' . esc_html__( 'Account data:', 'dragon-glow' ) . '</strong> ' . esc_html__( 'username, password (stored hashed), preferences, wishlist.', 'dragon-glow' ) . '</li>'
+				. '<li><strong>' . esc_html__( 'Account data:', 'dragon-glow' ) . '</strong> ' . esc_html__( 'username, password (stored hashed), preferences.', 'dragon-glow' ) . '</li>'
 				. '<li><strong>' . esc_html__( 'Order and transaction data:', 'dragon-glow' ) . '</strong> ' . esc_html__( 'products purchased, order history, returns, the last four digits and type of payment card (full card details are processed by our payment providers, not stored by us).', 'dragon-glow' ) . '</li>'
 				. '<li><strong>' . esc_html__( 'Communications:', 'dragon-glow' ) . '</strong> ' . esc_html__( 'messages you send to our concierge or privacy team, reviews, and survey responses.', 'dragon-glow' ) . '</li></ul>'
 				. '<p><strong>' . esc_html__( 'Information we collect automatically:', 'dragon-glow' ) . '</strong></p>'

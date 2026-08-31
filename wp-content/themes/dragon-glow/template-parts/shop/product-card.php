@@ -58,7 +58,6 @@ if ($is_on_sale) {
 		$badge_label = strtoupper($cat_terms[0]->name);
 	}
 }
-
 $delay_ms = (int) get_query_var('dg_product_delay', 0);
 $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '';
 ?>
@@ -72,13 +71,32 @@ $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '
 			src="<?php echo esc_url($image_url); ?>" />
 
 		<?php if ($badge_label): ?>
-			<?php $pos_class = $is_dark ? 'absolute top-4 right-4' : 'absolute top-4 left-4'; ?>
-			<div class="<?php echo esc_attr($pos_class); ?>">
+			<div class="absolute top-4 left-4">
 				<span class="<?php echo $is_dark ? 'dg-badge-right' : 'dg-badge-left'; ?>">
 					<?php echo esc_html($badge_label); ?>
 				</span>
 			</div>
 		<?php endif; ?>
+
+		<?php
+		// Heart toggle — universal wishlist action used across shop, related
+		// products, and single product page. Backing JS lives in
+		// assets/js/lib/wishlist-toggle.js (delegated click handler — auto
+		// skips when `data-dg-wl-remove` is present so the wishlist page can
+		// intercept its own remove flow).
+		// SSR-aware: if the product is already saved, render `is-active` so
+		// the heart stays "filled" before any JS runs (no FOUC).
+		// Guest users still see the button — clicking redirects them to login
+		// via the AJAX handler's `data.redirect` field.
+		$dg_wl_active = dg_is_product_in_wishlist( $product_id );
+		?>
+		<button type="button"
+				class="dg-wishlist-toggle absolute top-4 right-4 z-20<?php echo $dg_wl_active ? ' is-active' : ''; ?>"
+				data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
+				aria-label="<?php echo esc_attr( $dg_wl_active ? __( 'Remove from wishlist', 'dragon-glow' ) : __( 'Add to wishlist', 'dragon-glow' ) ); ?>"
+				aria-pressed="<?php echo $dg_wl_active ? 'true' : 'false'; ?>">
+			<span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+		</button>
 
 		<button class="dg-add-to-cart dg-quick-add inline-flex items-center justify-center gap-2"
 			data-product-id="<?php echo esc_attr($product_id); ?>"

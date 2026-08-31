@@ -3,7 +3,7 @@
  * Core UI: scroll reveal, parallax hero, blob parallax, carousel, mobile menu,
  * mobile filter toggle, accordion.
  *
- * Cart feedback (quick-add, cart count, wishlist) lives in lib/cart-feedback.js.
+ * Cart feedback (quick-add, cart count) lives in lib/cart-feedback.js.
  * Newsletter forms live in lib/newsletter.js.
  *
  * @package Dragon_Glow

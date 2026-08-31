@@ -74,12 +74,14 @@ if ( $product->is_featured() ) {
         </div>
         <?php endif; ?>
 
-        <!-- Wishlist button -->
+        <!-- Wishlist heart toggle (SSR-aware: is-active if already saved) -->
         <?php if ( is_user_logged_in() ) : ?>
-        <button class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all dg-wishlist-btn"
-                data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
-                aria-label="<?php esc_attr_e( 'Add to Wishlist', 'dragon-glow' ); ?>">
-            <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' <?php echo dg_in_wishlist( $product->get_id() ) ? '1' : '0'; ?>">favorite</span>
+        <button type="button"
+                class="dg-wishlist-toggle absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-error transition-all <?php echo dg_is_product_in_wishlist( $product->get_id() ) ? 'is-active text-error' : ''; ?>"
+                data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>"
+                aria-label="<?php esc_attr_e( 'Add to wishlist', 'dragon-glow' ); ?>"
+                aria-pressed="<?php echo dg_is_product_in_wishlist( $product->get_id() ) ? 'true' : 'false'; ?>">
+            <span class="material-symbols-outlined text-[18px]">favorite</span>
         </button>
         <?php endif; ?>
 

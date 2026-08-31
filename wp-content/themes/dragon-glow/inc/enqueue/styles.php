@@ -195,4 +195,14 @@ function dg_enqueue_styles(): void {
             DG_VERSION
         );
     }
+
+    // Wishlist page specific styles
+    if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
+        wp_enqueue_style(
+            'dg-wishlist',
+            DG_URI . '/assets/css/wishlist.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
 }

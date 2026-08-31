@@ -39,7 +39,7 @@ function dg_enqueue_scripts_assets(): void {
 
     // Cart API shared module — provides window.DGCart for all cart AJAX.
     // Depends on dg-main so dgAjax (url/nonce/i18n) is available.
-    // Also registered as a dep of dg-quick-add-to-cart, dg-buy-now, dg-wishlist.
+    // Also registered as a dep of dg-quick-add-to-cart, dg-buy-now.
     wp_enqueue_script(
         'dg-cart-api',
         DG_URI . '/assets/js/lib/cart-api.js',
@@ -48,8 +48,8 @@ function dg_enqueue_scripts_assets(): void {
         true
     );
 
-    // Cart feedback — quick-add button feedback, header cart-count refresh,
-    // wishlist toggle. Uses window.DGCart, so depends on dg-cart-api.
+    // Cart feedback — quick-add button feedback, header cart-count refresh.
+    // Uses window.DGCart, so depends on dg-cart-api.
     wp_enqueue_script(
         'dg-cart-feedback',
         DG_URI . '/assets/js/lib/cart-feedback.js',
@@ -178,6 +178,62 @@ function dg_enqueue_scripts_assets(): void {
     if ( is_page_template( 'page-templates/template-our-story.php' ) ) {
         wp_enqueue_script( 'dg-our-story', DG_URI . '/assets/js/our-story.js', array( 'dg-main' ), DG_VERSION, true );
     }
+    if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
+        // ES module — imports Motion for stagger reveal + list/grid animations.
+        wp_enqueue_script_module(
+            'dg-wishlist',
+            DG_URI . '/assets/js/wishlist.js',
+            array(),
+            DG_VERSION
+        );
+
+        // Localize wishlist page strings so the JS layer renders correctly
+        // even before user interaction (filter labels, sort options, bulk
+        // action copy, share-modal strings).
+        wp_localize_script(
+            'dg-wishlist',
+            'dgWishlist',
+            array(
+                'i18n' => array(
+                    'added'          => __( 'Added to your wishlist.', 'dragon-glow' ),
+                    'removed'        => __( 'Removed from your wishlist.', 'dragon-glow' ),
+                    'loginRequired'  => __( 'Please sign in to manage your wishlist.', 'dragon-glow' ),
+                    'selectItems'    => __( 'Select items to use bulk actions.', 'dragon-glow' ),
+                    'confirmClear'   => __( 'Are you sure you want to remove every item from your wishlist?', 'dragon-glow' ),
+                    'clearAll'       => __( 'Clear wishlist', 'dragon-glow' ),
+                    'cancel'         => __( 'Cancel', 'dragon-glow' ),
+                    'addSelected'    => __( 'Add selected to bag', 'dragon-glow' ),
+                    'removeSelected' => __( 'Remove selected', 'dragon-glow' ),
+                    'filterAll'      => __( 'All items', 'dragon-glow' ),
+                    'filterInStock'  => __( 'In stock', 'dragon-glow' ),
+                    'filterOnSale'   => __( 'On sale', 'dragon-glow' ),
+                    'sortDate'       => __( 'Recently saved', 'dragon-glow' ),
+                    'sortPriceAsc'   => __( 'Price: low to high', 'dragon-glow' ),
+                    'sortPriceDesc'  => __( 'Price: high to low', 'dragon-glow' ),
+                    'sortName'       => __( 'Name: A → Z', 'dragon-glow' ),
+                    'shareTitle'     => __( 'Share my wishlist', 'dragon-glow' ),
+                    'shareDesc'      => __( 'Send a private link to your saved pieces. We will email a single-use URL that opens this wishlist.', 'dragon-glow' ),
+                    'shareEmail'     => __( "Friend's email", 'dragon-glow' ),
+                    'shareButton'    => __( 'Send link', 'dragon-glow' ),
+                    'shareCopy'      => __( 'Or copy a private link to share yourself.', 'dragon-glow' ),
+                    'copied'         => __( 'Link copied to clipboard.', 'dragon-glow' ),
+                    'countLabel'     => _n( '%d item saved', '%d items saved', 0, 'dragon-glow' ),
+                ),
+            )
+        );
+    }
+
+    // Wishlist toggle (heart button) — loads site-wide on every page that
+    // has `.dg-wishlist-toggle` buttons (Shop grid, single product, related
+    // products). The wishlist page also benefits from this so any future
+    // heart toggles on the page itself stay in sync.
+    wp_enqueue_script(
+        'dg-wishlist-toggle',
+        DG_URI . '/assets/js/lib/wishlist-toggle.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
     if ( is_page_template( 'page-templates/template-faq.php' ) ) {
         // ES module: faq.js import Motion (motion.dev) trực tiếp từ CDN.
         wp_enqueue_script_module(
@@ -424,10 +480,6 @@ function dg_enqueue_scripts_assets(): void {
             DG_VERSION
         );
     }
-    if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
-        wp_enqueue_script( 'dg-wishlist', DG_URI . '/assets/js/wishlist.js', array( 'dg-cart-api' ), DG_VERSION, true );
-    }
-
     // Localize script — truyền data PHP → JS
     wp_localize_script( 'dg-main', 'dgAjax', array(
         'url'     => admin_url( 'admin-ajax.php' ),

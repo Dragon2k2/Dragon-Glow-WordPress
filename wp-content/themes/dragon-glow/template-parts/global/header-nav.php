@@ -8,7 +8,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$cart_count = dg_get_cart_item_count();
+$cart_count   = dg_get_cart_item_count();
+$wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' );
 ?>
 <nav class="glass-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
 <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
@@ -74,20 +75,11 @@ $cart_count = dg_get_cart_item_count();
             </a>
 
             <!-- Wishlist -->
-            <?php
-            $wishlist_page_id = (int) get_option( 'dg_wishlist_page_id' );
-            if ( $wishlist_page_id <= 0 ) {
-                $fallback = get_page_by_path( 'wishlist' );
-                $wishlist_page_id = $fallback ? (int) $fallback->ID : 0;
-            }
-            $wishlist_url = $wishlist_page_id > 0
-                ? (string) get_permalink( $wishlist_page_id )
-                : home_url( '/wishlist/' );
-            ?>
             <a href="<?php echo esc_url( $wishlist_url ); ?>"
-               class="p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
+               class="p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary relative"
                aria-label="<?php esc_attr_e( 'Wishlist', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">favorite</span>
+                <?php echo dg_render_wishlist_count_badge(); ?>
             </a>
 
             <!-- Cart -->

@@ -5,7 +5,7 @@
  * Custom My Account page renderer. Replaces the default WooCommerce
  * `my-account.php` / `dashboard.php` rendering with a Luminous Ethereal
  * layout: brand-hero greeting card + vertical sidebar nav (Dashboard, Orders,
- * Addresses, Wishlist, Account details, Sign out) on desktop / dropdown on
+ * Addresses, Account details, Sign out) on desktop / dropdown on
  * mobile + content surface.
  *
  * Routing: `dg_use_wc_account_template()` swaps in `page-templates/template-wc-account.php`
@@ -116,11 +116,6 @@ function dg_account_nav_items(): array {
 			'endpoint' => 'edit-account',
 			'label'    => __( 'Account details', 'dragon-glow' ),
 			'icon'     => 'manage_accounts',
-		),
-		array(
-			'endpoint' => 'dg-wishlist',
-			'label'    => __( 'Wishlist', 'dragon-glow' ),
-			'icon'     => 'favorite_border',
 		),
 	);
 }
@@ -249,11 +244,6 @@ function dg_current_account_endpoint(): string {
 	}
 
 	$candidate = $segments[0];
-
-	// Theme wishlist panel (not a WC core endpoint).
-	if ( 'wishlist' === $candidate || 'dg-wishlist' === $candidate ) {
-		return 'dg-wishlist';
-	}
 
 	$slug_map = dg_account_endpoint_slug_map();
 	if ( isset( $slug_map[ $candidate ] ) ) {
@@ -461,8 +451,6 @@ function dg_render_account_sidebar( string $current_endpoint ): void {
 							}
 							?>
 							<span class="dg-account-nav__count"><?php echo esc_html( (string) $_oc ); ?></span>
-						<?php elseif ( 'dg-wishlist' === $item['endpoint'] ) : ?>
-							<span class="dg-account-nav__count"><?php echo esc_html( (string) dg_get_wishlist_count() ); ?></span>
 						<?php endif; ?>
 					</a>
 				</li>
@@ -483,7 +471,7 @@ function dg_render_account_sidebar( string $current_endpoint ): void {
 }
 
 /**
- * Render dashboard content (stats + recent orders + wishlist preview + CTA).
+ * Render dashboard content (stats + recent orders + CTA).
  *
  * Default / fallback view when no endpoint is matched.
  *
@@ -499,8 +487,6 @@ function dg_render_account_dashboard(): void {
 			$order_count = 0;
 		}
 	}
-	$wishlist    = dg_get_wishlist();
-	$wish_count  = count( $wishlist );
 	$total_spent = 0.0;
 	if ( $user_id > 0 && function_exists( 'wc_get_customer_total_spent' ) ) {
 		try {
@@ -521,16 +507,6 @@ function dg_render_account_dashboard(): void {
 				<div class="dg-account-stat__body">
 					<p class="dg-account-stat__value dg-count-to" data-count-to="<?php echo esc_attr( (string) $order_count ); ?>">0</p>
 					<p class="dg-account-stat__label"><?php esc_html_e( 'Total orders', 'dragon-glow' ); ?></p>
-				</div>
-			</a>
-
-			<a href="<?php echo esc_url( dg_account_endpoint_url( 'dg-wishlist' ) ); ?>" class="dg-account-stat" data-sr>
-				<div class="dg-account-stat__icon" data-tone="rose">
-					<span class="material-symbols-outlined">favorite</span>
-				</div>
-				<div class="dg-account-stat__body">
-					<p class="dg-account-stat__value dg-count-to" data-count-to="<?php echo esc_attr( (string) $wish_count ); ?>">0</p>
-					<p class="dg-account-stat__label"><?php esc_html_e( 'Wishlist items', 'dragon-glow' ); ?></p>
 				</div>
 			</a>
 
@@ -632,48 +608,6 @@ function dg_render_account_dashboard(): void {
 						</a>
 					</div>
 				<?php endif; ?>
-			</section>
-		<?php endif; ?>
-
-		<!-- Wishlist preview -->
-		<?php if ( ! empty( $wishlist ) ) : ?>
-			<section class="dg-account-panel" data-sr>
-				<header class="dg-account-panel__header">
-					<h2 class="dg-account-panel__title"><?php esc_html_e( 'From your wishlist', 'dragon-glow' ); ?></h2>
-					<a href="<?php echo esc_url( dg_account_endpoint_url( 'dg-wishlist' ) ); ?>" class="dg-account-panel__link">
-						<?php esc_html_e( 'View wishlist', 'dragon-glow' ); ?>
-						<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-					</a>
-				</header>
-
-				<ul class="dg-account-wishlist" role="list">
-					<?php
-					$wish_preview = array_slice( $wishlist, 0, 4 );
-					foreach ( $wish_preview as $product_id ) :
-						$product = wc_get_product( (int) $product_id );
-						if ( ! $product ) {
-							continue;
-						}
-						?>
-						<li class="dg-account-wishlist__item">
-							<a href="<?php echo esc_url( get_permalink( (int) $product_id ) ); ?>" class="dg-account-wishlist__link">
-								<div class="dg-account-wishlist__thumb">
-									<?php
-									if ( has_post_thumbnail( (int) $product_id ) ) {
-										echo get_the_post_thumbnail( (int) $product_id, 'medium', array( 'class' => 'dg-account-wishlist__img', 'loading' => 'lazy' ) );
-									} else {
-										echo '<span class="material-symbols-outlined dg-account-wishlist__placeholder">spa</span>';
-									}
-									?>
-								</div>
-								<div class="dg-account-wishlist__body">
-									<p class="dg-account-wishlist__name"><?php echo esc_html( $product->get_name() ); ?></p>
-									<p class="dg-account-wishlist__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></p>
-								</div>
-							</a>
-						</li>
-					<?php endforeach; ?>
-				</ul>
 			</section>
 		<?php endif; ?>
 
@@ -1225,73 +1159,6 @@ function dg_render_account_edit_panel(): void {
 }
 
 /**
- * Wishlist panel — visual shell that shows the user's saved products.
- *
- * Renders the same product grid layout used on the dashboard preview so the
- * counts in the sidebar nav (`.dg-account-nav__count`) always match the
- * rendered content. Intentionally does NOT echo `post_content` from the
- * wishlist Page — that previous behaviour showed admin-edited text instead
- * of the user's actual wishlist and produced mismatched counts.
- *
- * @return void
- */
-function dg_render_account_wishlist_panel(): void {
-	$wishlist = dg_get_wishlist();
-	?>
-	<section class="dg-account-panel" data-sr>
-		<header class="dg-account-panel__header">
-			<h2 class="dg-account-panel__title"><?php esc_html_e( 'Wishlist', 'dragon-glow' ); ?></h2>
-			<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-account-panel__link">
-				<span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-				<?php esc_html_e( 'Back to dashboard', 'dragon-glow' ); ?>
-			</a>
-		</header>
-
-		<?php if ( empty( $wishlist ) ) : ?>
-			<div class="dg-account-empty">
-				<span class="material-symbols-outlined dg-account-empty__icon">favorite_border</span>
-				<p class="dg-account-empty__title"><?php esc_html_e( 'Your wishlist is empty', 'dragon-glow' ); ?></p>
-				<p class="dg-account-empty__text">
-					<?php esc_html_e( 'Save your favourite products here so they\'re easy to find next time.', 'dragon-glow' ); ?>
-				</p>
-				<a href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop' ) ); ?>"
-				   class="dg-btn dg-btn--primary">
-					<?php esc_html_e( 'Explore products', 'dragon-glow' ); ?>
-				</a>
-			</div>
-		<?php else : ?>
-			<ul class="dg-account-wishlist" role="list">
-				<?php foreach ( array_slice( $wishlist, 0, 8 ) as $product_id ) :
-					$product = wc_get_product( (int) $product_id );
-					if ( ! $product ) {
-						continue;
-					}
-					?>
-					<li class="dg-account-wishlist__item">
-						<a href="<?php echo esc_url( get_permalink( (int) $product_id ) ); ?>" class="dg-account-wishlist__link">
-							<div class="dg-account-wishlist__thumb">
-								<?php
-								if ( has_post_thumbnail( (int) $product_id ) ) {
-									echo get_the_post_thumbnail( (int) $product_id, 'medium', array( 'class' => 'dg-account-wishlist__img', 'loading' => 'lazy' ) );
-								} else {
-									echo '<span class="material-symbols-outlined dg-account-wishlist__placeholder">spa</span>';
-								}
-								?>
-							</div>
-							<div class="dg-account-wishlist__body">
-								<p class="dg-account-wishlist__name"><?php echo esc_html( $product->get_name() ); ?></p>
-								<p class="dg-account-wishlist__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></p>
-							</div>
-						</a>
-					</li>
-				<?php endforeach; ?>
-			</ul>
-		<?php endif; ?>
-	</section>
-	<?php
-}
-
-/**
  * Sign-out confirmation page.
  *
  * WC's default `customer-logout` endpoint just logs the user out; we wrap
@@ -1309,7 +1176,7 @@ function dg_render_account_logout_panel(): void {
 		<span class="material-symbols-outlined dg-account-empty__icon">logout</span>
 		<h2 class="dg-account-panel__title"><?php esc_html_e( 'Sign out of Dragon Glow', 'dragon-glow' ); ?></h2>
 		<p class="dg-account-empty__text">
-			<?php esc_html_e( 'You can keep your wishlist and saved addresses by staying signed in.', 'dragon-glow' ); ?>
+			<?php esc_html_e( 'You can keep your saved addresses by staying signed in.', 'dragon-glow' ); ?>
 		</p>
 		<div class="dg-account-logout__actions">
 			<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-btn dg-btn--ghost">
@@ -1368,9 +1235,6 @@ function dg_render_wc_account(): void {
 							break;
 						case 'edit-account':
 							dg_render_account_edit_panel();
-							break;
-						case 'dg-wishlist':
-							dg_render_account_wishlist_panel();
 							break;
 						case 'customer-logout':
 							dg_render_account_logout_panel();
@@ -1455,7 +1319,7 @@ function dg_render_account_signed_out(): void {
 					<?php esc_html_e( 'Welcome back', 'dragon-glow' ); ?>
 				</h1>
 				<p class="dg-account-auth__sub">
-					<?php esc_html_e( 'Sign in to access your orders, wishlist, and saved addresses.', 'dragon-glow' ); ?>
+					<?php esc_html_e( 'Sign in to access your orders and saved addresses.', 'dragon-glow' ); ?>
 				</p>
 			</header>
 

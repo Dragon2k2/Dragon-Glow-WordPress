@@ -42,10 +42,7 @@ function dg_nav_setup_pages_map(): array {
 /**
  * Register default menu pages and assign them to the primary navigation.
  *
- * Creates: Home, Shop, Our Story, Contact, Shipping & Returns, FAQ, Help Center,
- * Wishlist. The Wishlist page id is persisted to the `dg_wishlist_page_id`
- * option so other modules (header nav, account wishlist panel) can resolve it
- * without re-running page-by-slug lookups on every request.
+ * Creates: Home, Shop, Our Story, Contact, Shipping & Returns, FAQ, Help Center.
  *
  * @return void
  */
@@ -84,7 +81,6 @@ function dg_register_default_menu_pages(): void {
 		'shipping-returns' => 0,
 		'faq'              => 0,
 		'help-center'      => 0,
-		'wishlist'         => 0,
 	);
 
 	// Shop: prefer WC shop page id, otherwise fall back to creating a Page.
@@ -97,15 +93,9 @@ function dg_register_default_menu_pages(): void {
 
 	// Other editorial pages — straight pass through dg_ensure_page().
 	$map = dg_nav_setup_pages_map();
-	foreach ( array( 'our-story', 'contact', 'shipping-returns', 'faq', 'help-center', 'wishlist' ) as $slug ) {
+	foreach ( array( 'our-story', 'contact', 'shipping-returns', 'faq', 'help-center' ) as $slug ) {
 		$cfg           = $map[ $slug ] ?? array( ucwords( str_replace( '-', ' ', $slug ) ), '' );
 		$page_ids[ $slug ] = (int) dg_ensure_page( $slug, $cfg[0], $cfg[1] );
-	}
-
-	// Persist wishlist page id so it can be referenced by header-nav +
-	// account wishlist panel without re-resolving the slug every request.
-	if ( $page_ids['wishlist'] > 0 ) {
-		update_option( 'dg_wishlist_page_id', $page_ids['wishlist'] );
 	}
 
 	// Clear any existing menu items — we'll rebuild from the map.

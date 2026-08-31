@@ -134,11 +134,6 @@ function dg_ajax_load_account_panel(): void {
 				$title = __( 'Account Details', 'dragon-glow' );
 				break;
 
-			case 'dg-wishlist':
-				dg_render_account_wishlist_panel();
-				$title = __( 'Wishlist', 'dragon-glow' );
-				break;
-
 			case 'customer-logout':
 				dg_render_account_logout_panel();
 				$title = __( 'Sign Out', 'dragon-glow' );

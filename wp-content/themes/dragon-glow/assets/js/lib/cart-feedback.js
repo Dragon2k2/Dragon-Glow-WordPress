@@ -1,7 +1,7 @@
 ﻿/**
  * Dragon Glow — Cart Feedback
- * AJAX quick-add button feedback (.wc-add-to-cart-btn), header cart-count
- * refresh, and wishlist toggle.
+ * AJAX quick-add button feedback (.wc-add-to-cart-btn) and header cart-count
+ * refresh.
  *
  * Depends on window.DGCart (lib/cart-api.js) and dgAjax (localized on dg-main).
  * Exposes window.DGUpdateCartCount for other modules (e.g. cart-api.js).
@@ -99,44 +99,5 @@
             });
     }
     window.DGUpdateCartCount = updateCartCount;
-
-    // ── AJAX: Wishlist Toggle ──────────────────────────────────
-    document.addEventListener('click', function (e) {
-        var btn = e.target.closest('.dg-wishlist-btn');
-        if (!btn) return;
-        e.preventDefault();
-
-        var productId = btn.dataset.productId;
-        var icon = btn.querySelector('.material-symbols-outlined');
-
-        var formData = new FormData();
-        formData.append('action', 'dg_toggle_wishlist');
-        formData.append('product_id', productId);
-        formData.append('nonce', dgAjax.nonce);
-
-        fetch(dgAjax.url, {
-            method: 'POST',
-            body: formData
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.success) {
-                var added = data.data.added;
-                if (icon) {
-                    icon.style.fontVariationSettings = "'FILL' " + (added ? '1' : '0');
-                }
-
-                // Update button text if applicable
-                if (btn.dataset.wishlistText) {
-                    btn.textContent = added ? btn.dataset.wishlistSavedText : btn.dataset.wishlistText;
-                }
-            } else if (data.data && data.data.redirect) {
-                window.location.href = data.data.redirect;
-            }
-        })
-        .catch(function (err) {
-            console.error('Wishlist error:', err);
-        });
-    });
 
 })();

@@ -90,24 +90,6 @@ msgstr ""
 msgid "Bestseller"
 msgstr ""
 
-msgid "Add to Bag"
-msgstr ""
-
-msgid "Save to Wishlist"
-msgstr ""
-
-msgid "Saved to Wishlist"
-msgstr ""
-
-msgid "Add to Wishlist"
-msgstr ""
-
-msgid "Removed from wishlist"
-msgstr ""
-
-msgid "Added to wishlist"
-msgstr ""
-
 msgid "Invalid product."
 msgstr ""
 
@@ -291,24 +273,7 @@ msgstr ""
 msgid "Edit Account"
 msgstr ""
 
-msgid "My Wishlist"
-msgstr ""
-
-msgid "%d item saved"
-msgid_plural "%d items saved"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Your wishlist is empty"
-msgstr ""
-
-msgid "Save your favorite products here so you can easily find them later. Start exploring our collection!"
-msgstr ""
-
-msgid "Back to Home"
-msgstr ""
-
-msgid "Out of Stock"
+msgid "Description"
 msgstr ""
 
 msgid "Description"

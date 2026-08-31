@@ -48,7 +48,6 @@ Create these pages and assign templates:
 | Home | Homepage — Dragon Glow |
 | Our Story | About Us — Dragon Glow |
 | Contact Us | Contact Us — Dragon Glow |
-| Wishlist | Wishlist — Dragon Glow |
 
 ### Navigation Menus
 

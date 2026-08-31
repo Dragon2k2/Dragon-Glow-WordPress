@@ -360,3 +360,149 @@
     font-style: italic !important;
 }
 
+/* =========================================
+   WISHLIST HEART TOGGLE
+   Universal save-to-wishlist button rendered on every product surface:
+   shop grid, single product gallery, related products. Position is owned
+   by Tailwind utilities on the button itself (e.g. `absolute top-4
+   right-4 z-20`) so the parent layout decides where the heart lives —
+   this block only owns the visual.
+   Backing handler: assets/js/lib/wishlist-toggle.js (delegated click).
+   ========================================= */
+.dg-wishlist-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border-radius: 9999px;
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	background-color: rgba(255, 255, 255, 0.78);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	color: var(--color-on-surface-variant, #4d4635);
+	box-shadow: 0 2px 8px rgba(123, 84, 85, 0.10);
+	cursor: pointer;
+	transition:
+		transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+	-webkit-tap-highlight-color: transparent;
+}
+
+.dg-wishlist-toggle .material-symbols-outlined {
+	font-size: 1.125rem;
+	line-height: 1;
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+	transition: font-variation-settings 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover — subtle lift + warm tint, signals interactivity */
+.dg-wishlist-toggle:hover {
+	transform: scale(1.08);
+	background-color: rgba(255, 255, 255, 0.92);
+	box-shadow: 0 4px 14px rgba(123, 84, 85, 0.16);
+}
+
+/* Focus ring for keyboard users (CLAUDE.md §8) */
+.dg-wishlist-toggle:focus-visible {
+	outline: 2px solid var(--color-primary, #735c00);
+	outline-offset: 2px;
+}
+
+/* Active (saved) — filled heart in error color, slightly stronger surface.
+   Mirrors the wishlist page's `dg-wishlist-card__heart.is-active` so the
+   visual language stays consistent everywhere a heart can live. */
+.dg-wishlist-toggle.is-active {
+	background-color: rgba(255, 255, 255, 0.95);
+	color: var(--color-error, #ba1a1a);
+	border-color: rgba(186, 26, 26, 0.18);
+}
+
+.dg-wishlist-toggle.is-active .material-symbols-outlined {
+	font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.dg-wishlist-toggle.is-active:hover {
+	background-color: var(--color-error-container, #ffdad6);
+	color: var(--color-on-error-container, #93000a);
+	border-color: transparent;
+}
+
+/* In-flight AJAX — dim + disable further interaction. The JS handler
+   toggles `is-busy` while the request is pending and strips it on
+   resolve/reject. */
+.dg-wishlist-toggle.is-busy {
+	pointer-events: none;
+	opacity: 0.75;
+}
+
+/* Reduced motion — drop the lift/scale animations but keep the color
+   change so state is still legible (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-wishlist-toggle,
+	.dg-wishlist-toggle .material-symbols-outlined {
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+	.dg-wishlist-toggle:hover {
+		transform: none;
+	}
+}
+
+/* =========================================
+   WISHLIST COUNT BADGE (header nav)
+   Sits on top of the heart icon in the global nav. Painted by
+   `dg_render_wishlist_count_badge()` in PHP and refreshed from JS via
+   `applyBadgeCount(count)` in lib/wishlist-toggle.js — both paths share
+   the same `.dg-wishlist-count` selector so a single CSS block governs
+   the look + the change-detection animation.
+
+   Animation strategy — chosen for **perceived speed**:
+   - Subtle scale + ring pulse fires when JS adds the `is-pulse` class
+     (toggled every time the count changes). Uses `animation` (not
+     `transition`) so it restarts cleanly even if the class is added
+     twice in a row.
+   - First appearance (`hidden → visible`) gets a stronger entrance so
+     users notice the badge for the first time.
+   - Reduced-motion users get no animation, just an instant color flash.
+   ========================================= */
+.dg-wishlist-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 0 0 2px var(--color-surface, #fbf9f5),
+		0 4px 10px rgba(115, 92, 0, 0.25);
+	transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.dg-wishlist-count.is-pulse {
+	animation: dgWishlistBadgePop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-wishlist-count.is-first-show {
+	animation: dgWishlistBadgeFirstShow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dgWishlistBadgePop {
+	0%   { transform: scale(1); }
+	35%  { transform: scale(1.35); }
+	60%  { transform: scale(0.94); }
+	100% { transform: scale(1); }
+}
+
+@keyframes dgWishlistBadgeFirstShow {
+	0%   { transform: scale(0); opacity: 0; }
+	60%  { transform: scale(1.45); opacity: 1; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reduced motion — disable all badge animations (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-wishlist-count.is-pulse,
+	.dg-wishlist-count.is-first-show {
+		animation: none;
+	}
+}
+
