@@ -350,9 +350,6 @@
 	border-radius: var(--wl-radius-lg);
 	padding: 14px 18px;
 	box-shadow: var(--wl-glass-shadow);
-	position: sticky;
-	top: 96px;
-	z-index: 30;
 }
 
 .dg-wishlist-toolbar__row {
@@ -1436,7 +1433,6 @@
    ========================================= */
 @media (max-width: 767px) {
 	.dg-wishlist-toolbar {
-		position: static;
 		padding: 12px 14px;
 	}
 

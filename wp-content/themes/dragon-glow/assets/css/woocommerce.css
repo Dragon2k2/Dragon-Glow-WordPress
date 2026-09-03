@@ -431,11 +431,14 @@
 	border-color: transparent;
 }
 
-/* In-flight AJAX — dim + disable further interaction. The JS handler
-   toggles `is-busy` while the request is pending and strips it on
-   resolve/reject. */
+/* In-flight AJAX — dim for visual feedback. We deliberately do NOT set
+   `pointer-events: none` here. The heart sits at z-index 20 above the
+   `.dg-product-stretched-link` (z-index 1), so rapid repeat clicks would
+   otherwise pass through the dimmed button and hit the stretched anchor
+   beneath — navigating away to the product page mid-toggle. The JS
+   handler short-circuits on `is-busy` instead, keeping the heart
+   clickable while ignoring re-entrant clicks. */
 .dg-wishlist-toggle.is-busy {
-	pointer-events: none;
 	opacity: 0.75;
 }
 

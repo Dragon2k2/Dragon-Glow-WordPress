@@ -4,25 +4,36 @@
  * wishlist (Shop grid, single product, related products, wishlist page).
  *
  * Listens for clicks on `.dg-wishlist-toggle` and POSTs to `dg_wishlist_toggle`.
- * Updates the heart's `is-active` state optimistically and rolls back on error.
  *
- * Header badge update — **zero perceived latency**:
- *   1. On click, derive the new count locally from the badge's current text
- *      (`computeOptimisticCount()`) and paint it synchronously. The header
- *      reflects the toggle in the same frame as the click — no waiting for
- *      the network round-trip at all. Same UX pattern as `is-active`.
- *   2. When the toggle response comes back, reconcile: if the server's
- *      authoritative `count` matches what we painted, do nothing (would
- *      be visual noise to re-animate). If it differs — fix it via
- *      `paintBadgeCount()` (silent, no pulse).
- *   3. On error or network failure, re-sync from the server so stale
- *      optimistic values get corrected on the user's next interaction.
+ * Click feel — **always responsive, never blocked**:
+ *   1. The heart toggles its `is-active` state synchronously on every click —
+ *      no waiting on the network round-trip. Same for the header badge
+ *      (`computeOptimisticCount()` / `applyBadgeCount()`).
+ *   2. Clicks within a 350 ms burst are coalesced. Only the *last* click in
+ *      the burst schedules an actual AJAX call. If that final burst has an
+ *      odd click count the state genuinely changed (toggle), so we sync. If
+ *      it's even the user clicked back to where they started — no-op, no
+ *      server round-trip.
+ *   3. When the sync response lands we tag-check: if a newer sync has been
+ *      scheduled in the meantime, the stale response is discarded. This
+ *      protects against an out-of-order response flipping the UI back to
+ *      a value the user has already moved past.
+ *   4. On error or network failure we roll back to the burst's recorded
+ *      initial state and re-sync the header badge from the server.
+ *
+ * Heart sits at z-index 20 above `.dg-product-stretched-link` (z-index 1),
+ * so clicks never fall through to the card link — see woocommerce.css.
  *
  * @package Dragon_Glow
  */
 
 (function () {
 	'use strict';
+
+	// Coalesce rapid clicks into a single AJAX sync. Tuned for "feels
+	// instant" on a human double-click / triple-click burst while still
+	// short enough that a deliberate pause + click feels responsive.
+	const SYNC_DELAY_MS = 350;
 
 	document.addEventListener('click', function (e) {
 		const btn = e.target.closest('.dg-wishlist-toggle');
@@ -40,21 +51,74 @@
 		const productId = parseInt(btn.dataset.productId || '0', 10);
 		if (!productId) return;
 
-		const wasActive = btn.classList.contains('is-active');
-		btn.classList.add('is-busy');
-		btn.classList.toggle('is-active', !wasActive);
+		onHeartClick(btn, productId);
+	});
 
-		// Optimistic badge update — paint the new count synchronously so the
-		// header reflects the toggle immediately, without waiting for the
-		// network round-trip. On response we either confirm (the value
-		// matches) or correct (server's authoritative `count` wins, no
-		// rollback because the user-visible state is already what they
-		// expect). This is the same UX pattern the heart icon already
-		// uses for its own `is-active` state.
-		const optimisticCount = computeOptimisticCount(!wasActive);
+	/**
+	 * Handle a heart click. Toggles UI synchronously and (debounced)
+	 * schedules a server sync.
+	 *
+	 * @param {HTMLElement} btn        The .dg-wishlist-toggle button.
+	 * @param {number}      productId  Numeric WP product ID.
+	 */
+	function onHeartClick(btn, productId) {
+		// First click of a rapid burst — capture the initial state so we
+		// know what to roll back to on error, and start counting.
+		if (btn._dgBurst === undefined) {
+			btn._dgBurst = {
+				count: 0,
+				initialActive: btn.classList.contains('is-active'),
+			};
+		}
+		btn._dgBurst.count++;
+
+		// Visual feedback (in-flight). Always set on click so the dim
+		// is visible immediately; cleared on resolve/reject.
+		btn.classList.add('is-busy');
+
+		// Toggle UI synchronously.
+		const willBeActive = !btn.classList.contains('is-active');
+		btn.classList.toggle('is-active', willBeActive);
+
+		// Optimistic badge update — paint the new count synchronously so
+		// the header reflects the toggle immediately, without waiting for
+		// the network round-trip.
+		const optimisticCount = computeOptimisticCount(willBeActive);
 		if (optimisticCount !== null) {
 			applyBadgeCount(optimisticCount);
 		}
+
+		// Debounce: only the *last* click in a rapid burst schedules a
+		// sync. If that final count is odd the user ended on a different
+		// state than they started (toggle); if even they're back where
+		// they started (no-op, no round-trip needed).
+		clearTimeout(btn._dgTimer);
+		btn._dgTimer = setTimeout(function () {
+			const burst = btn._dgBurst;
+			delete btn._dgBurst;
+			btn._dgTimer = null;
+
+			if (burst.count % 2 === 1) {
+				sendSync(btn, productId, burst.initialActive);
+			} else {
+				// No real state change — clear the busy flag and stop.
+				btn.classList.remove('is-busy');
+			}
+		}, SYNC_DELAY_MS);
+	}
+
+	/**
+	 * Send the actual AJAX sync. Tag the request so a stale response
+	 * from a superseded sync can't overwrite the UI.
+	 *
+	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
+	 * @param {number}      productId      Numeric WP product ID.
+	 * @param {boolean}     initialActive  Pre-burst `is-active` state,
+	 *                                     used to roll back on error.
+	 */
+	function sendSync(btn, productId, initialActive) {
+		const myReqId = (btn._dgReqId || 0) + 1;
+		btn._dgReqId = myReqId;
 
 		const fd = new FormData();
 		fd.append('action', 'dg_wishlist_toggle');
@@ -68,23 +132,27 @@
 		})
 			.then(function (r) { return r.json(); })
 			.then(function (data) {
+				// Stale response — a newer sync has been scheduled since
+				// this one fired. Discard so it can't flip the UI back to
+				// a value the user has already moved past.
+				if (btn._dgReqId !== myReqId) return;
+
 				btn.classList.remove('is-busy');
+
 				if (!data.success) {
-					btn.classList.toggle('is-active', wasActive);
-					// Roll back optimistic badge to whatever the server says.
+					btn.classList.toggle('is-active', initialActive);
 					if (data.data && typeof data.data.count === 'number') {
 						applyBadgeCount(data.data.count);
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
 						return;
 					} else {
-						// No authoritative count from the error path — just
-						// re-sync from the server's source of truth.
 						fetchHeaderBadge();
 					}
 					console.warn('[DG Wishlist] toggle failed:', data.data);
 					return;
 				}
+
 				btn.classList.toggle('is-active', !!data.data.added);
 
 				// Pop animation if we just added.
@@ -102,16 +170,10 @@
 					}
 				}
 
-				// Reconcile with the server's authoritative count.
-				// If it matches our optimistic value — great, skip the
-				// re-render so we don't re-trigger the animation. If it
-				// differs (rare; e.g. concurrent toggle from another tab,
-				// or stale baseline from a different user) — paint the
-				// correct value silently (no pulse — user is already happy).
+				// Reconcile with the server's authoritative count. Paint
+				// silently — the user already saw the optimistic update,
+				// firing the badge pulse again would be visual noise.
 				if (data.data && typeof data.data.count === 'number') {
-					if (typeof optimisticCount === 'number' && optimisticCount === data.data.count) {
-						return; // matches, nothing to do.
-					}
 					paintBadgeCount(data.data.count);
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
 						window.DGWishlist.onCountChange(data.data.count);
@@ -125,17 +187,17 @@
 					return;
 				}
 
-				// Last resort: separate count fetch (only when toggle response
-				// somehow omitted the count — defensive).
+				// Last resort: separate count fetch (only when toggle
+				// response somehow omitted the count — defensive).
 				fetchHeaderBadge();
 			})
 			.catch(function () {
+				if (btn._dgReqId !== myReqId) return;
 				btn.classList.remove('is-busy');
-				btn.classList.toggle('is-active', wasActive);
-				// Network error — re-sync from server to drop stale optimistics.
+				btn.classList.toggle('is-active', initialActive);
 				fetchHeaderBadge();
 			});
-	});
+	}
 
 	/**
 	 * Derive the new badge count locally from the current badge value.
