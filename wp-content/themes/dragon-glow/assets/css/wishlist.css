@@ -8,6 +8,24 @@
 /* =========================================
    0. SCOPED TOKENS
    ========================================= */
+
+/* Visually hidden but accessible to AT — used by the sort dropdown
+   live region that announces sort changes to screen readers.
+   Same recipe as the existing .dg-wishlist-toolbar__sort-select rule
+   above; kept as its own utility so any future sr-only content can
+   share the pattern without coupling to a specific element. */
+.dg-wishlist-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
 .dg-wishlist {
 	--wl-bg: var(--color-background, #fbf9f5);
 	--wl-surface: var(--color-surface, #fbf9f5);
@@ -221,10 +239,19 @@
 	margin-bottom: 6px;
 }
 
+.dg-wishlist-hero__stat-label--stacked > span {
+	display: block;
+}
+
+.dg-wishlist-hero__stat-label--stacked > span + span {
+	margin-top: 2px;
+}
+
 .dg-wishlist-hero__stat-value {
-	font-family: 'Playfair Display', serif;
+	font-family: 'Montserrat', sans-serif;
 	font-size: clamp(24px, 3vw, 32px);
 	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 	line-height: 1.05;
 	color: #fff;
 	margin: 0;
@@ -240,7 +267,6 @@
 }
 
 .dg-wishlist-hero__stat-value .woocommerce-Price-currencySymbol {
-	font-size: 0.7em;
 	opacity: 0.9;
 }
 
@@ -331,11 +357,39 @@
 	--btn-border: var(--wl-error);
 }
 
+.dg-wishlist-btn--danger:hover {
+	background: #a31515;
+	border-color: #a31515;
+	transform: translateY(-1px);
+	box-shadow: 0 8px 22px rgba(186, 26, 26, 0.30);
+}
+
+.dg-wishlist-btn--danger-ghost {
+	--btn-bg: transparent;
+	--btn-ink: var(--wl-error);
+	--btn-border: rgba(186, 26, 26, 0.35);
+}
+
+.dg-wishlist-btn--danger-ghost:hover {
+	--btn-bg: rgba(186, 26, 26, 0.08);
+	--btn-border: rgba(186, 26, 26, 0.55);
+	color: #a31515;
+}
+
+.dg-wishlist-btn--danger-ghost:focus-visible {
+	outline-color: var(--wl-error);
+}
+
 .dg-wishlist-btn:disabled {
 	opacity: 0.55;
 	cursor: not-allowed;
 	transform: none;
 	box-shadow: none;
+}
+
+.dg-wishlist-btn.is-busy .material-symbols-outlined {
+	animation: wlSpin 0.9s linear infinite;
+	font-variation-settings: "FILL" 0, "wght" 400;
 }
 
 /* =========================================
@@ -350,6 +404,8 @@
 	border-radius: var(--wl-radius-lg);
 	padding: 14px 18px;
 	box-shadow: var(--wl-glass-shadow);
+	position: relative; /* anchor + create stacking context so sort panel floats above cards */
+	z-index: 50;
 }
 
 .dg-wishlist-toolbar__row {
@@ -400,6 +456,11 @@
 	color: var(--wl-primary);
 }
 
+.dg-wishlist-toolbar__seg:hover .dg-wishlist-toolbar__count {
+	background: rgba(115, 92, 0, 0.12);
+	color: var(--wl-primary);
+}
+
 .dg-wishlist-toolbar__seg.is-active {
 	--seg-bg: var(--wl-primary);
 	--seg-ink: #fff;
@@ -409,6 +470,7 @@
 }
 
 .dg-wishlist-toolbar__count {
+	font-family: 'Montserrat', sans-serif;
 	min-width: 22px;
 	height: 22px;
 	padding: 0 6px;
@@ -420,6 +482,7 @@
 	color: var(--seg-count-ink);
 	font-size: 11px;
 	font-weight: 700;
+	font-variant-numeric: tabular-nums;
 }
 
 .dg-wishlist-toolbar__right {
@@ -461,41 +524,46 @@
 	border-color: var(--wl-primary);
 }
 
-.dg-wishlist-toolbar__checkbox:checked,
-.dg-wishlist-card__checkbox:checked {
-	background: var(--wl-primary);
-	border-color: var(--wl-primary);
-}
-
-.dg-wishlist-toolbar__checkbox:checked::before,
-.dg-wishlist-card__checkbox:checked::before {
-	content: "✓";
-	color: #fff;
-	font-size: 12px;
-	font-weight: 700;
-	line-height: 1;
-}
-
-.dg-wishlist-toolbar__checkbox:focus-visible,
-.dg-wishlist-card__checkbox:focus-visible {
-	outline: 2px solid var(--wl-primary);
-	outline-offset: 2px;
-}
-
 .dg-wishlist-toolbar__select-all-label {
 	color: var(--wl-muted);
 }
 
 .dg-wishlist-toolbar__select-count {
+	font-family: 'Montserrat', sans-serif;
 	font-weight: 700;
 	color: var(--wl-primary);
+	font-variant-numeric: tabular-nums;
 }
 
+/* =========================================
+   4b. SORT BY — custom dropdown
+   Visual: sample 8 (ethereal soft glow) + per-option icons (sample 7).
+   Native <select> is kept for a11y + JS source-of-truth, but visually
+   replaced by a custom trigger + panel that mirrors the same options.
+   ========================================= */
 .dg-wishlist-toolbar__sort {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	z-index: 25; /* raise panel above sibling elements when open */
+}
+
+/* Visually-hidden native <select>: kept for screen readers + JS sort logic. */
+.dg-wishlist-toolbar__sort-select {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+.dg-wishlist-toolbar__sort-select:focus-visible + .dg-wishlist-toolbar__sort-trigger {
+	outline: 2px solid var(--wl-primary);
+	outline-offset: 2px;
 }
 
 .dg-wishlist-toolbar__sort-label {
@@ -507,34 +575,182 @@
 	color: var(--wl-muted);
 }
 
-.dg-wishlist-toolbar__sort-select {
-	appearance: none;
-	-webkit-appearance: none;
-	background: transparent;
-	border: 0;
-	border-bottom: 1px solid var(--wl-line);
-	padding: 6px 24px 6px 0;
+/* Trigger — ivory gradient + soft glow (sample 8). */
+.dg-wishlist-toolbar__sort-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 18px;
+	background: linear-gradient(135deg, #ffffff 0%, #faf6ec 100%);
+	border: 1px solid var(--wl-line);
+	border-radius: var(--wl-radius-full);
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 13px;
 	font-weight: 600;
 	color: var(--wl-ink);
 	cursor: pointer;
-	min-width: 180px;
+	transition: box-shadow 0.25s var(--wl-ease);
+	box-shadow: 0 2px 8px rgba(115, 92, 0, 0.06);
 }
-
-.dg-wishlist-toolbar__sort-select:focus {
-	outline: none;
-	border-color: var(--wl-primary);
+.dg-wishlist-toolbar__sort-trigger:hover {
+	box-shadow: 0 4px 16px rgba(115, 92, 0, 0.15);
 }
-
+.dg-wishlist-toolbar__sort-trigger:focus-visible {
+	outline: 2px solid var(--wl-primary);
+	outline-offset: 2px;
+}
+.dg-wishlist-toolbar__sort-trigger[aria-expanded="true"] {
+	box-shadow: 0 6px 20px rgba(115, 92, 0, 0.18);
+}
 .dg-wishlist-toolbar__sort-icon {
+	color: var(--wl-primary);
+	font-size: 20px;
+}
+.dg-wishlist-toolbar__sort-current {
+	color: var(--wl-ink);
+}
+.dg-wishlist-toolbar__sort-chevron {
+	color: var(--wl-primary);
+	font-size: 20px;
+	transition: transform 0.25s var(--wl-ease);
+}
+.dg-wishlist-toolbar__sort-trigger[aria-expanded="true"] .dg-wishlist-toolbar__sort-chevron {
+	transform: rotate(180deg);
+}
+
+/* Panel — same ivory gradient + glow ring. */
+.dg-wishlist-toolbar__sort-panel {
 	position: absolute;
+	top: calc(100% + 8px);
 	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	pointer-events: none;
-	font-size: 18px;
+	min-width: 280px;
+	background: linear-gradient(180deg, #ffffff 0%, #faf6ec 100%);
+	border: 1px solid var(--wl-line);
+	border-radius: var(--wl-radius-md);
+	box-shadow:
+		0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+		0 20px 48px rgba(115, 92, 0, 0.18);
+	padding: 8px;
+	z-index: 30;
+	display: none;
+}
+.dg-wishlist-toolbar__sort-panel:not([hidden]) {
+	display: block;
+	animation: wlSortPanelIn 0.2s var(--wl-ease);
+}
+@keyframes wlSortPanelIn {
+	from { opacity: 0; transform: translateY(-6px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Option — icon pill + 2-line label/sub + check (sample 7+8 hybrid). */
+.dg-wishlist-toolbar__sort-option {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 10px 12px;
+	border: 0;
+	background: transparent;
+	border-radius: var(--wl-radius-sm);
+	font-family: inherit;
+	color: var(--wl-ink);
+	cursor: pointer;
+	text-align: left;
+	transition: all 0.2s var(--wl-ease);
+}
+.dg-wishlist-toolbar__sort-option:hover {
+	background: rgba(255, 255, 255, 0.7);
+	box-shadow: 0 2px 8px rgba(115, 92, 0, 0.08);
+}
+.dg-wishlist-toolbar__sort-option:focus-visible {
+	outline: 2px solid var(--wl-primary);
+	outline-offset: 2px;
+}
+.dg-wishlist-toolbar__sort-option.is-active {
+	background: linear-gradient(135deg, #fff4d4 0%, #ffe2e2 100%);
+	color: var(--wl-primary);
+}
+.dg-wishlist-toolbar__sort-option.is-active .dg-wishlist-toolbar__sort-option-label {
+	font-weight: 700;
+}
+.dg-wishlist-toolbar__sort-option.is-active .dg-wishlist-toolbar__sort-option-sub {
+	color: var(--wl-on-primary-container);
+}
+
+.dg-wishlist-toolbar__sort-option-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.04);
 	color: var(--wl-muted);
+	font-size: 18px;
+	flex-shrink: 0;
+	transition: all 0.2s var(--wl-ease);
+}
+.dg-wishlist-toolbar__sort-option.is-active .dg-wishlist-toolbar__sort-option-icon {
+	background: var(--wl-primary);
+	color: var(--wl-on-primary);
+}
+
+.dg-wishlist-toolbar__sort-option-body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+.dg-wishlist-toolbar__sort-option-label {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+.dg-wishlist-toolbar__sort-option-sub {
+	font-size: 11px;
+	color: var(--wl-muted);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.dg-wishlist-toolbar__sort-option-check {
+	color: var(--wl-primary);
+	font-size: 18px;
+	opacity: 0;
+	flex-shrink: 0;
+	transition: opacity 0.2s var(--wl-ease);
+}
+.dg-wishlist-toolbar__sort-option.is-active .dg-wishlist-toolbar__sort-option-check {
+	opacity: 1;
+}
+
+/* Reduced-motion: keep panel usable without animation. */
+@media (prefers-reduced-motion: reduce) {
+	.dg-wishlist-toolbar__sort-panel:not([hidden]) {
+		animation: none;
+	}
+	.dg-wishlist-toolbar__sort-chevron,
+	.dg-wishlist-toolbar__sort-trigger,
+	.dg-wishlist-toolbar__sort-option,
+	.dg-wishlist-toolbar__sort-option-icon {
+		transition: none;
+	}
+}
+
+/* Responsive — keep trigger on the right, panel can stretch to viewport. */
+@media (max-width: 768px) {
+	.dg-wishlist-toolbar__sort {
+		flex: 1;
+		min-width: 0;
+		justify-content: flex-end;
+	}
+	.dg-wishlist-toolbar__sort-panel {
+		right: 0;
+		min-width: 240px;
+		max-width: calc(100vw - 32px);
+	}
 }
 
 /* =========================================
@@ -735,6 +951,7 @@
 }
 
 .dg-wishlist-card__sale {
+	font-family: 'Montserrat', sans-serif;
 	position: absolute;
 	top: 50px;
 	left: 14px;
@@ -742,6 +959,7 @@
 	color: #fff;
 	font-size: 11px;
 	font-weight: 700;
+	font-variant-numeric: tabular-nums;
 	padding: 5px 10px;
 	border-radius: var(--wl-radius-full);
 	z-index: 2;
@@ -824,17 +1042,21 @@
 }
 
 .dg-wishlist-card__price {
+	font-family: 'Montserrat', sans-serif;
 	font-weight: 700;
 	font-size: 14px;
 	color: var(--wl-primary);
+	font-variant-numeric: tabular-nums;
 }
 
 .dg-wishlist-card__rating {
+	font-family: 'Montserrat', sans-serif;
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
 	font-size: 12px;
 	color: var(--wl-muted);
+	font-variant-numeric: tabular-nums;
 }
 
 .dg-wishlist-card__rating .material-symbols-outlined {
@@ -1066,7 +1288,7 @@
 	transform: translateX(-50%) translateY(20px);
 	bottom: 24px;
 	z-index: 60;
-	width: min(640px, calc(100% - 32px));
+	width: min(550px, calc(100% - 32px));
 	background: rgba(255, 255, 255, 0.94);
 	backdrop-filter: blur(24px);
 	-webkit-backdrop-filter: blur(24px);
@@ -1103,9 +1325,10 @@
 
 .dg-wishlist-bulkbar__count span {
 	display: inline-block;
-	font-family: 'Playfair Display', serif;
+	font-family: 'Montserrat', sans-serif;
 	font-size: 18px;
 	font-weight: 700;
+	font-variant-numeric: tabular-nums;
 	color: var(--wl-primary);
 	margin-right: 4px;
 }
@@ -1133,7 +1356,7 @@
 .dg-wishlist-modal {
 	position: fixed;
 	inset: 0;
-	z-index: 70;
+	z-index: 1000; /* above sticky nav (z-100) — sibling modals use 9k–10k */
 	display: grid;
 	place-items: center;
 	padding: 20px;
@@ -1327,14 +1550,154 @@
 }
 
 /* =========================================
-   9. TOASTS
+   9. CONFIRM MODAL
+   Glassmorphism panel for destructive actions
+   (bulk-remove / clear-all). Same DNA as the share
+   modal but with a danger-toned icon variant.
+   ========================================= */
+.dg-wishlist-confirm {
+	position: fixed;
+	inset: 0;
+	z-index: 1000; /* above sticky nav (z-100) — sibling modals use 9k–10k */
+	display: grid;
+	place-items: center;
+	padding: 20px;
+}
+
+.dg-wishlist-confirm[hidden] {
+	display: none;
+}
+
+.dg-wishlist-confirm__overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	animation: wlConfirmOverlayIn 0.3s var(--wl-ease);
+	z-index: 0;
+	cursor: pointer;
+}
+
+@keyframes wlConfirmOverlayIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+.dg-wishlist-confirm__panel {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 480px;
+	background: var(--wl-bg);
+	border: 1px solid var(--wl-glass-border);
+	border-radius: var(--wl-radius-xl);
+	padding: clamp(1.5rem, 4vw, 2rem);
+	box-shadow: 0 32px 80px rgba(0, 0, 0, 0.20);
+	max-height: calc(100vh - 40px);
+	overflow-y: auto;
+	animation: wlConfirmPanelIn 0.4s var(--wl-ease);
+}
+
+@keyframes wlConfirmPanelIn {
+	from { opacity: 0; transform: translateY(20px) scale(0.96); }
+	to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dg-wishlist-confirm__head {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 16px;
+	align-items: flex-start;
+	margin-bottom: 24px;
+}
+
+.dg-wishlist-confirm__icon {
+	width: 44px;
+	height: 44px;
+	display: grid;
+	place-items: center;
+	background: var(--wl-primary-container);
+	color: var(--wl-on-primary-container);
+	border-radius: 12px;
+	flex-shrink: 0;
+}
+
+.dg-wishlist-confirm__icon .material-symbols-outlined {
+	font-size: 22px;
+}
+
+/* Warning variant — used for the clear-all instance. Same shape as the
+   default icon, but tinted with the error color to signal a more severe
+   action than a partial bulk remove. */
+.dg-wishlist-confirm__icon--warning {
+	background: rgba(186, 26, 26, 0.12);
+	color: var(--wl-error);
+}
+
+.dg-wishlist-confirm__text {
+	min-width: 0;
+}
+
+.dg-wishlist-confirm__title {
+	font-family: 'Playfair Display', serif;
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--wl-primary);
+	margin: 0 0 6px;
+	line-height: 1.2;
+}
+
+.dg-wishlist-confirm__message {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.55;
+	color: var(--wl-muted);
+}
+
+.dg-wishlist-confirm__count {
+	display: inline-block;
+	font-family: 'Montserrat', sans-serif;
+	font-weight: 700;
+	color: var(--wl-primary);
+	font-variant-numeric: tabular-nums;
+	padding: 1px 8px;
+	background: var(--wl-primary-container);
+	border-radius: var(--radius-sm);
+	margin: 0 2px;
+}
+
+.dg-wishlist-confirm__actions {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	flex-wrap: wrap-reverse;
+}
+
+.dg-wishlist-confirm__actions .dg-wishlist-btn {
+	padding: 12px 20px;
+}
+
+@media (max-width: 480px) {
+	.dg-wishlist-confirm__actions {
+		flex-direction: column-reverse;
+	}
+
+	.dg-wishlist-confirm__actions .dg-wishlist-btn {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+/* =========================================
+   10. TOASTS
    ========================================= */
 .dg-wishlist-toasts {
 	position: fixed;
 	left: 50%;
 	bottom: 100px;
 	transform: translateX(-50%);
-	z-index: 80;
+	z-index: 1100; /* above modals (1000) so success toasts land after confirm */
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -1406,7 +1769,7 @@
 }
 
 /* =========================================
-   10. ACCESSIBILITY + REDUCED MOTION
+   11. ACCESSIBILITY + REDUCED MOTION
    ========================================= */
 @media (prefers-reduced-motion: reduce) {
 	.dg-wishlist .dg-wishlist-empty__ring,
@@ -1417,11 +1780,14 @@
 	.dg-wishlist-card,
 	.dg-wishlist-card__heart,
 	.dg-wishlist-card__heart .material-symbols-outlined,
+	.dg-wishlist-btn.is-busy .material-symbols-outlined,
 	.dg-wishlist-card__img,
 	.dg-wishlist-card__cta,
 	.dg-wishlist-bulkbar,
 	.dg-wishlist-modal__overlay,
 	.dg-wishlist-modal__panel,
+	.dg-wishlist-confirm__overlay,
+	.dg-wishlist-confirm__panel,
 	.dg-wishlist-toast {
 		transition: none !important;
 		animation: none !important;
@@ -1429,7 +1795,7 @@
 }
 
 /* =========================================
-   11. RESPONSIVE TUNING
+   12. RESPONSIVE TUNING
    ========================================= */
 @media (max-width: 767px) {
 	.dg-wishlist-toolbar {
@@ -1448,16 +1814,6 @@
 	.dg-wishlist-toolbar__right {
 		width: 100%;
 		justify-content: space-between;
-	}
-
-	.dg-wishlist-toolbar__sort {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.dg-wishlist-toolbar__sort-select {
-		min-width: 0;
-		width: 100%;
 	}
 
 	.dg-wishlist-card__select {

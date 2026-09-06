@@ -5,15 +5,16 @@
  * Responsibilities:
  *   - Reveal: stagger các phần tử data-sr (Motion inView + animate + stagger).
  *   - Stat count-up cho [data-count-to] (mirror account.js).
- *   - Filter (All / In stock / On sale) + sort (date / price-asc / price-desc
- *     / name) — client-side, no AJAX. Hides non-matching cards and reorders
- *     the remaining ones with Motion.
+ *   - Filter (All / In stock / On sale) — client-side, no AJAX. Hides
+ *     non-matching cards with Motion.
  *   - Bulk select: master checkbox + per-card checkboxes; floating bulk bar
- *     fades in when ≥ 1 card is selected. Bulk remove / bulk add-to-bag.
+ *     fades in when ≥ 1 card is selected. Bulk remove and bulk add-to-bag.
+ *   - Bulk add uses one server request, preserves failed selections for retry,
+ *     and reports products that need options or are unavailable.
  *   - Optimize: single-card remove (heart icon on the card) with optimistic
  *     UI + rollback on error.
  *   - Share modal: email share (POST → dg_wishlist_share) + copy-link button.
- *   - Clear wishlist (with native confirm()).
+ *   - Clear wishlist (with glassmorphism confirm modal).
  *   - Toast feedback: shared toaster, auto-dismiss after 3.5s.
  *
  * Tôn trọng prefers-reduced-motion.
@@ -43,16 +44,20 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 	const EASE = [0.22, 1, 0.36, 1];
 
-	// Boot.
+	// Boot. initSortDropdown runs BEFORE initReveal so the DOM is already
+	// in the user's chosen order by the time the cards fade in — that
+	// way the reveal animation lands on the sorted layout with no flash
+	// of the un-sorted baseline.
+	initSortDropdown();
 	initReveal();
 	initCountTo();
 	initFilter();
-	initSort();
 	initSelectAll();
 	initSingleRemove();
 	initBulkBar();
 	initShareModal();
 	initClearAll();
+	initConfirmModal();
 	updateCounts();
 
 	// Expose a tiny API for other modules (e.g. lib/wishlist-toggle.js)
@@ -177,43 +182,303 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		}
 	}
 
-	/* ── Sort ─────────────────────────────────────────────────────────────── */
-	function initSort() {
-		const select = root.querySelector('[data-dg-wl-sort]');
-		if (!select || !grid) return;
+	/* ── Sort dropdown — visual trigger + DOM reorder + persistence ───────
+	 * Implementation contract:
+	 *   - Native <select> stays the JS source-of-truth (form-submit safe).
+	 *   - Hidden select value mirrors the active panel option.
+	 *   - On selection the grid is reordered client-side using the
+	 *     per-card data-* attributes (data-price, data-name). For the
+	 *     "date" sort we reverse the existing DOM order — the user_meta
+	 *     array that drives the page renders oldest-first, so reversing
+	 *     gives "newest first" without needing a per-item timestamp.
+	 *   - Persistence: URL ?sort=<value> (shareable, takes precedence on
+	 *     load) > localStorage dg-wl-sort (per-user preference) > the
+	 *     native <select> default. Writes are debounced into one URL
+	 *     replaceState + one localStorage.setItem per selection.
+	 *   - Keyboard model: WAI-ARIA APG listbox pattern. Arrow keys move
+	 *     between options via roving tabindex; Home/End jump to ends;
+	 *     Enter/Space select the focused option; Esc/Tab close and
+	 *     return focus appropriately.
+	 *   - A polite live region announces the new sort to screen readers
+	 *     so the change isn't silent for AT users.
+	 */
+	function initSortDropdown() {
+		const wrap    = root.querySelector('[data-dg-wl-sort-wrap]');
+		const select  = root.querySelector('[data-dg-wl-sort]');
+		const trigger = root.querySelector('[data-dg-wl-sort-trigger]');
+		const panel   = root.querySelector('[data-dg-wl-sort-panel]');
+		const iconEl  = root.querySelector('[data-dg-wl-sort-icon]');
+		const curEl   = root.querySelector('[data-dg-wl-sort-current]');
+		const options = Array.from(root.querySelectorAll('[data-dg-wl-sort-option]'));
+		if (!wrap || !select || !trigger || !panel || !options.length) {
+			return;
+		}
 
-		select.addEventListener('change', function () {
-			const mode = select.value;
-			const cards = Array.from(grid.querySelectorAll('[data-dg-wl-card]'));
+		// Stable IDs for ARIA references + roving tabindex.
+		if (!panel.id) {
+			panel.id = 'dg-wl-sort-panel';
+		}
+		trigger.setAttribute('aria-controls', panel.id);
+		options.forEach(function (opt, idx) {
+			opt.id = 'dg-wl-sort-opt-' + idx;
+			opt.setAttribute('tabindex', '-1');
+		});
 
-			cards.sort(function (a, b) {
-				const aPrice = parseFloat(a.getAttribute('data-price') || '0');
-				const bPrice = parseFloat(b.getAttribute('data-price') || '0');
-				const aName = (a.getAttribute('data-name') || '').toLowerCase();
-				const bName = (b.getAttribute('data-name') || '').toLowerCase();
+		let activeIndex = 0;
 
-				switch (mode) {
-					case 'price-asc':  return aPrice - bPrice;
-					case 'price-desc': return bPrice - aPrice;
-					case 'name':       return aName.localeCompare(bName);
-					case 'date':
-					default:           return 0; // SSR order = save order
+		function indexOfValue(value) {
+			return options.findIndex(function (o) {
+				return o.getAttribute('data-value') === value;
+			});
+		}
+
+		/* ── Persistence: URL > localStorage > native <select> default ─── */
+		function readInitialValue() {
+			try {
+				const urlSort = new URL(window.location.href).searchParams.get('sort');
+				if (urlSort && indexOfValue(urlSort) >= 0) {
+					return urlSort;
+				}
+			} catch (e) { /* silent */ }
+			try {
+				const stored = localStorage.getItem('dg-wl-sort');
+				if (stored && indexOfValue(stored) >= 0) {
+					return stored;
+				}
+			} catch (e) { /* silent */ }
+			return select.value || 'date';
+		}
+
+		function persist(value) {
+			try {
+				const url = new URL(window.location.href);
+				if (value === 'date') {
+					url.searchParams.delete('sort'); // keep clean for the default
+				} else {
+					url.searchParams.set('sort', value);
+				}
+				window.history.replaceState({}, '', url);
+			} catch (e) { /* silent */ }
+			try {
+				localStorage.setItem('dg-wl-sort', value);
+			} catch (e) { /* silent */ }
+		}
+
+		/* ── UI sync: trigger label/icon + option is-active + native <select> ── */
+		function syncUI(value) {
+			const idx = indexOfValue(value);
+			if (idx < 0) {
+				return;
+			}
+			activeIndex = idx;
+			options.forEach(function (opt, i) {
+				const isActive = i === idx;
+				opt.classList.toggle('is-active', isActive);
+				opt.setAttribute('aria-selected', isActive ? 'true' : 'false');
+				opt.setAttribute('tabindex', isActive ? '0' : '-1');
+				if (isActive) {
+					if (iconEl) {
+						iconEl.textContent = opt.getAttribute('data-icon') || 'schedule';
+					}
+					if (curEl) {
+						curEl.textContent = opt.getAttribute('data-label') || '';
+					}
 				}
 			});
+			if (select.value !== value) {
+				select.value = value;
+			}
+			panel.setAttribute('aria-activedescendant', options[idx].id);
+		}
 
-			// Reattach in new order with Motion FLIP-like animation.
+		/* ── Reorder the grid cards according to the chosen sort key ───── */
+		function applySort(value, animateIn) {
+			if (!grid) {
+				return;
+			}
+			const cards = Array.from(grid.querySelectorAll('[data-dg-wl-card]'));
+			if (!cards.length) {
+				return;
+			}
+
+			let sorted;
+			if (value === 'date') {
+				// Recently saved = newest first. Original DOM order mirrors
+				// the user_meta array (oldest first, newest last), so reverse.
+				sorted = cards.slice().reverse();
+			} else if (value === 'price-asc') {
+				sorted = cards.slice().sort(function (a, b) {
+					return getPrice(a) - getPrice(b);
+				});
+			} else if (value === 'price-desc') {
+				sorted = cards.slice().sort(function (a, b) {
+					return getPrice(b) - getPrice(a);
+				});
+			} else if (value === 'name') {
+				sorted = cards.slice().sort(function (a, b) {
+					return getName(a).localeCompare(getName(b));
+				});
+			} else {
+				return;
+			}
+
+			// Reorder DOM — appending an existing child moves it. Using a
+			// fragment keeps this to a single reflow instead of N.
 			const frag = document.createDocumentFragment();
-			cards.forEach(function (c) { frag.appendChild(c); });
+			sorted.forEach(function (c) { frag.appendChild(c); });
 			grid.appendChild(frag);
 
-			if (!reduce) {
+			if (animateIn && !reduce) {
 				animate(
-					cards,
-					{ opacity: [0.6, 1], scale: [0.98, 1] },
-					{ duration: 0.3, ease: EASE, delay: stagger(0.02) }
+					sorted,
+					{ opacity: [0.4, 1], y: [8, 0] },
+					{ duration: 0.35, ease: EASE, delay: stagger(0.02) }
 				);
 			}
+		}
+
+		function getPrice(card) {
+			return parseFloat(card.getAttribute('data-price') || '0') || 0;
+		}
+		function getName(card) {
+			return (card.getAttribute('data-name') || '').toLowerCase();
+		}
+
+		/* ── Live region: announce sort change to AT users ────────────── */
+		let live = root.querySelector('[data-dg-wl-sort-live]');
+		if (!live) {
+			live = document.createElement('div');
+			live.setAttribute('data-dg-wl-sort-live', '');
+			live.setAttribute('role', 'status');
+			live.setAttribute('aria-live', 'polite');
+			live.setAttribute('aria-atomic', 'true');
+			live.className = 'dg-wishlist-sr-only';
+			root.appendChild(live);
+		}
+		function announce(value) {
+			const opt = options[indexOfValue(value)];
+			if (!opt) {
+				return;
+			}
+			const label  = opt.getAttribute('data-label') || '';
+			const sub    = opt.getAttribute('data-sub') || '';
+			const prefix = (i18n && i18n.sortedBy) || 'Sorted by';
+			// Defer one frame so screen readers reliably pick up the change
+			// even when focus is mid-transition.
+			setTimeout(function () {
+				live.textContent = sub
+					? prefix + ' ' + label + '. ' + sub + '.'
+					: prefix + ' ' + label + '.';
+			}, 30);
+		}
+
+		/* ── Selection pipeline (option click / Enter / Space) ────────── */
+		function selectOption(value) {
+			if (indexOfValue(value) < 0) {
+				return;
+			}
+			syncUI(value);
+			persist(value);
+			applySort(value, true);
+			announce(value);
+		}
+
+		/* ── Open / close with focus management ──────────────────────── */
+		function open() {
+			panel.hidden = false;
+			trigger.setAttribute('aria-expanded', 'true');
+			const target = options[activeIndex] || options[0];
+			if (target) {
+				target.focus();
+			}
+		}
+		function close(returnFocus) {
+			panel.hidden = true;
+			trigger.setAttribute('aria-expanded', 'false');
+			if (returnFocus) {
+				trigger.focus();
+			}
+		}
+
+		/* ── Events ─────────────────────────────────────────────────── */
+		trigger.addEventListener('click', function (e) {
+			e.stopPropagation();
+			if (panel.hidden) {
+				open();
+			} else {
+				close(true);
+			}
 		});
+
+		options.forEach(function (opt) {
+			opt.addEventListener('click', function (e) {
+				e.stopPropagation();
+				const value = opt.getAttribute('data-value');
+				if (!value) {
+					return;
+				}
+				selectOption(value);
+				close(true);
+			});
+		});
+
+		// Keyboard navigation: arrow / Home / End / Enter / Space / Esc / Tab.
+		panel.addEventListener('keydown', function (e) {
+			if (panel.hidden) {
+				return;
+			}
+			let next = activeIndex;
+			let handled = true;
+			if (e.key === 'ArrowDown') {
+				next = Math.min(options.length - 1, activeIndex + 1);
+			} else if (e.key === 'ArrowUp') {
+				next = Math.max(0, activeIndex - 1);
+			} else if (e.key === 'Home') {
+				next = 0;
+			} else if (e.key === 'End') {
+				next = options.length - 1;
+			} else if (e.key === 'Enter' || e.key === ' ') {
+				const value = options[activeIndex].getAttribute('data-value');
+				if (value) {
+					selectOption(value);
+				}
+				close(true);
+				return;
+			} else if (e.key === 'Escape') {
+				close(true);
+				return;
+			} else if (e.key === 'Tab') {
+				// Let focus move naturally out of the panel.
+				close(false);
+				return;
+			} else {
+				handled = false;
+			}
+			if (handled) {
+				e.preventDefault();
+				if (next !== activeIndex && next >= 0) {
+					activeIndex = next;
+					syncUI(options[activeIndex].getAttribute('data-value'));
+					options[activeIndex].focus();
+				}
+			}
+		});
+
+		// Click outside closes (without yanking focus — the user is going
+		// somewhere else on purpose).
+		document.addEventListener('click', function (e) {
+			if (panel.hidden) {
+				return;
+			}
+			if (!wrap.contains(e.target)) {
+				close(false);
+			}
+		});
+
+		/* ── Boot: read preference, sync UI, apply sort (no animation) ── */
+		const initial = readInitialValue();
+		syncUI(initial);
+		applySort(initial, false); // apply on init so default = newest-first matches the trigger label
 	}
 
 	/* ── Select all + per-card checkboxes ──────────────────────────────────── */
@@ -264,20 +529,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		const removeBtn = root.querySelector('[data-dg-wl-bulk-remove]');
 		const addBtn = root.querySelector('[data-dg-wl-bulk-add]');
 
-		if (removeBtn) {
-			removeBtn.addEventListener('click', function () {
-				const ids = getSelectedIds();
-				if (!ids.length) {
-					toast(i18n.selectItems || 'Select items to use bulk actions.', 'info');
-					return;
-				}
-				if (!confirm(sprintf(i18n.confirmClear || 'Remove %d item(s) from your wishlist?', ids.length))) {
-					return;
-				}
-				bulkRemove(ids);
-			});
-		}
-
 		if (addBtn) {
 			addBtn.addEventListener('click', function () {
 				const ids = getSelectedIds();
@@ -285,7 +536,21 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 					toast(i18n.selectItems || 'Select items to use bulk actions.', 'info');
 					return;
 				}
-				bulkAddToBag(ids);
+				bulkAddToBag(ids, addBtn);
+			});
+		}
+
+		if (removeBtn) {
+			removeBtn.addEventListener('click', function () {
+				const ids = getSelectedIds();
+				if (!ids.length) {
+					toast(i18n.selectItems || 'Select items to use bulk actions.', 'info');
+					return;
+				}
+				askConfirm({ type: 'bulk', count: ids.length }).then(function (ok) {
+					if (!ok) return;
+					bulkRemove(ids);
+				});
 			});
 		}
 	}
@@ -334,52 +599,113 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		});
 	}
 
-	function bulkAddToBag(ids) {
-		if (!window.DGCart) {
-			toast('Cart is not available.', 'error');
+	function bulkAddToBag(ids, addBtn) {
+		if (!window.DGCart || typeof window.DGCart.addMany !== 'function') {
+			toast(i18n.cartUnavailable || 'Your bag is currently unavailable.', 'error');
 			return;
 		}
 
-		// Sequence-add with progress feedback.
-		let pending = ids.length;
-		let failed = 0;
-		ids.forEach(function (id) {
-			const card = grid.querySelector('[data-product-id="' + id + '"]');
-			const cta = card ? card.querySelector('.wc-add-to-cart-btn') : null;
-			if (cta) {
-				cta.setAttribute('disabled', 'disabled');
-				cta.dataset.originalText = cta.textContent;
-				cta.textContent = i18n.added ? '…' : '…';
-			}
+		setBulkActionBusy(true, addBtn);
 
-			window.DGCart.add({
-				productId: id,
-				slug: card ? (card.querySelector('.wc-add-to-cart-btn')?.dataset.productSlug || '') : '',
-				quantity: 1,
-			}).then(function (data) {
-				if (!data.success) failed++;
-				if (cta) {
-					cta.textContent = data.success ? '✓' : (cta.dataset.originalText || '');
-					setTimeout(function () {
-						cta.removeAttribute('disabled');
-						cta.textContent = cta.dataset.originalText || cta.textContent;
-					}, 1200);
-				}
-			}).catch(function () {
-				failed++;
-			}).then(function () {
-				pending--;
-				if (pending === 0) {
-					if (window.DGCart.refreshCount) window.DGCart.refreshCount();
-					if (failed === 0) {
-						toast('Added ' + ids.length + ' item(s) to your bag.', 'success');
-					} else if (failed === ids.length) {
-						toast('Could not add to bag.', 'error');
-					} else {
-						toast(failed + ' item(s) failed to add.', 'info');
+		window.DGCart.addMany({ productIds: ids })
+			.then(function (data) {
+				if (!data || !data.success) {
+					if (data && data.data && data.data.redirect) {
+						window.location.href = data.data.redirect;
+						return;
 					}
+					toast(
+						(data && data.data && data.data.message) || i18n.addError || 'Could not add to bag.',
+						'error'
+					);
+					return;
 				}
+
+				const result = data.data || {};
+				const addedIds = normalizeIds(result.added_ids);
+				clearSelectedIds(addedIds);
+				updateMasterCheckbox();
+				updateBulkBar();
+
+				if (window.DGCart.refreshCount && result.added_count > 0) {
+					window.DGCart.refreshCount();
+				}
+
+				const hasSkipped = (parseInt(result.requires_options_count, 10) || 0) > 0
+					|| (parseInt(result.unavailable_count, 10) || 0) > 0
+					|| (parseInt(result.failed_count, 10) || 0) > 0;
+				const type = result.added_count > 0
+					? (hasSkipped ? 'info' : 'success')
+					: 'info';
+				toast(result.message || i18n.addError || 'Could not add to bag.', type);
+			})
+			.catch(function () {
+				toast(i18n.networkError || 'Network error. Please try again.', 'error');
+			})
+			.then(function () {
+				setBulkActionBusy(false, addBtn);
 			});
+	}
+
+	/**
+	 * Lock bulk controls while the server processes the selected products.
+	 * Keeping the current selection intact lets customers retry only the items
+	 * that could not be added after a partial-success response.
+	 *
+	 * @param {boolean} busy
+	 * @param {HTMLElement} addBtn
+	 * @return {void}
+	 */
+	function setBulkActionBusy(busy, addBtn) {
+		const buttons = root.querySelectorAll('[data-dg-wl-bulkbar] .dg-wishlist-btn');
+		const checkboxes = root.querySelectorAll('[data-dg-wl-select], [data-dg-wl-select-all]');
+		const label = addBtn ? addBtn.querySelector('[data-dg-wl-bulk-add-label]') : null;
+		const icon = addBtn ? addBtn.querySelector('[data-dg-wl-bulk-add-icon]') : null;
+
+		buttons.forEach(function (button) {
+			button.disabled = busy;
+		});
+		checkboxes.forEach(function (checkbox) {
+			checkbox.disabled = busy;
+		});
+
+		if (!addBtn) {
+			return;
+		}
+
+		if (!addBtn.dataset.defaultLabel && label) {
+			addBtn.dataset.defaultLabel = label.textContent.trim();
+		}
+		addBtn.classList.toggle('is-busy', busy);
+		if (busy) {
+			addBtn.setAttribute('aria-busy', 'true');
+			if (label) label.textContent = i18n.processing || 'Adding selected items…';
+			if (icon) icon.textContent = 'progress_activity';
+		} else {
+			addBtn.removeAttribute('aria-busy');
+			if (label) label.textContent = addBtn.dataset.defaultLabel || 'Add selected to bag';
+			if (icon) icon.textContent = 'shopping_bag';
+		}
+	}
+
+	function normalizeIds(value) {
+		return Array.isArray(value)
+			? value.map(function (id) { return parseInt(id, 10) || 0; }).filter(function (id) { return id > 0; })
+			: [];
+	}
+
+	function clearSelectedIds(ids) {
+		const added = new Set(ids);
+		root.querySelectorAll('[data-dg-wl-select]:checked').forEach(function (checkbox) {
+			const id = parseInt(checkbox.value, 10) || 0;
+			if (!added.has(id)) {
+				return;
+			}
+			checkbox.checked = false;
+			const card = checkbox.closest('[data-dg-wl-card]');
+			if (card) {
+				card.classList.remove('is-selected');
+			}
 		});
 	}
 
@@ -541,30 +867,112 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		const btn = root.querySelector('[data-dg-wl-clear-all]');
 		if (!btn) return;
 		btn.addEventListener('click', function () {
-			if (!confirm(i18n.confirmClear || 'Remove every item from your wishlist?')) {
-				return;
-			}
-			const fd = new FormData();
-			fd.append('action', 'dg_wishlist_clear');
-			fd.append('nonce', dgAjax.nonce);
-			post(fd).then(function (data) {
-				if (!data.success) {
-					toast((data.data && data.data.message) || 'Could not clear.', 'error');
-					return;
-				}
-				// Empty out the grid.
-				if (grid) {
-					const cards = grid.querySelectorAll('[data-dg-wl-card]');
-					cards.forEach(function (c) { c.classList.add('is-leaving'); });
-					setTimeout(function () {
-						cards.forEach(function (c) { c.remove(); });
-						afterMutation({ removed: cards.length });
-					}, 320);
-				}
-			}).catch(function () {
-				toast('Network error.', 'error');
+			askConfirm({ type: 'clear' }).then(function (ok) {
+				if (!ok) return;
+				const fd = new FormData();
+				fd.append('action', 'dg_wishlist_clear');
+				fd.append('nonce', dgAjax.nonce);
+				post(fd).then(function (data) {
+					if (!data.success) {
+						toast((data.data && data.data.message) || 'Could not clear.', 'error');
+						return;
+					}
+					// Empty out the grid.
+					if (grid) {
+						const cards = grid.querySelectorAll('[data-dg-wl-card]');
+						cards.forEach(function (c) { c.classList.add('is-leaving'); });
+						setTimeout(function () {
+							cards.forEach(function (c) { c.remove(); });
+							afterMutation({ removed: cards.length });
+						}, 320);
+					}
+				}).catch(function () {
+					toast('Network error.', 'error');
+				});
 			});
 		});
+	}
+
+	/* ── Confirm modal — glassmorphism confirm for destructive actions ──
+	   askConfirm({ type, count }) opens the matching instance (bulk /
+	   clear), updates the live count placeholders, focuses the cancel
+	   button (safer default), and returns a Promise<boolean>. */
+	let confirmResolver = null;
+	let confirmModalEl = null;
+	let confirmPrevFocus = null;
+
+	function initConfirmModal() {
+		const modals = document.querySelectorAll('[data-dg-wl-confirm]');
+		if (!modals.length) return;
+		modals.forEach(function (modal) {
+			modal.addEventListener('click', function (e) {
+				if (e.target.closest('[data-dg-wl-confirm-close]')) {
+					closeConfirm(modal, false);
+				} else if (e.target.closest('[data-dg-wl-confirm-yes]')) {
+					closeConfirm(modal, true);
+				}
+			});
+		});
+		document.addEventListener('keydown', function (e) {
+			if (e.key !== 'Escape') return;
+			modals.forEach(function (m) {
+				if (!m.hidden) closeConfirm(m, false);
+			});
+		});
+	}
+
+	function askConfirm(opts) {
+		opts = opts || {};
+		const type = opts.type || 'bulk';
+		const count = opts.count || 0;
+		const modal = document.querySelector('[data-dg-wl-confirm="' + type + '"]');
+		if (!modal) {
+			// Defensive fallback — modal markup missing. Preserve the old
+			// native confirm() path so the destructive action still gates.
+			return Promise.resolve(window.confirm(opts.message || ''));
+		}
+
+		modal.querySelectorAll('[data-dg-wl-confirm-count]').forEach(function (el) {
+			el.textContent = String(count);
+		});
+		if (type === 'bulk') {
+			const labelEl = modal.querySelector('[data-dg-wl-confirm-confirm-label]');
+			if (labelEl) {
+				labelEl.textContent = sprintf(
+					i18n.confirmRemoveLabel || 'Remove %d items',
+					count
+				);
+			}
+		}
+
+		confirmPrevFocus = document.activeElement;
+		modal.hidden = false;
+		modal.setAttribute('aria-hidden', 'false');
+		confirmModalEl = modal;
+
+		// Focus the safer default — Cancel. Tiny defer so the modal
+		// renders before focus() runs (Firefox quirk).
+		const cancelBtn = modal.querySelector('[data-dg-wl-confirm-close]');
+		if (cancelBtn) {
+			setTimeout(function () { cancelBtn.focus(); }, 50);
+		}
+
+		return new Promise(function (resolve) { confirmResolver = resolve; });
+	}
+
+	function closeConfirm(modal, ok) {
+		if (!modal) return;
+		modal.hidden = true;
+		modal.setAttribute('aria-hidden', 'true');
+		if (confirmModalEl === modal) confirmModalEl = null;
+		if (confirmResolver) {
+			confirmResolver(ok);
+			confirmResolver = null;
+		}
+		if (confirmPrevFocus && confirmPrevFocus.focus) {
+			try { confirmPrevFocus.focus({ preventScroll: true }); } catch (e) { /* noop */ }
+		}
+		confirmPrevFocus = null;
 	}
 
 	/* ── After any mutation: update counts + show/hide empty state ────────── */

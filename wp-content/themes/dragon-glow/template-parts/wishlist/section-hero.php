@@ -81,7 +81,10 @@ $greet = '' !== $first ? $first : $user->display_name;
 			</div>
 
 			<div class="dg-wishlist-hero__stat" data-sr>
-				<dt class="dg-wishlist-hero__stat-label"><?php esc_html_e( 'On sale', 'dragon-glow' ); ?></dt>
+				<dt class="dg-wishlist-hero__stat-label dg-wishlist-hero__stat-label--stacked">
+					<span><?php esc_html_e( 'On', 'dragon-glow' ); ?></span>
+					<span><?php esc_html_e( 'sale', 'dragon-glow' ); ?></span>
+				</dt>
 				<dd class="dg-wishlist-hero__stat-value">
 					<span data-dg-wl-stat="on_sale"><?php echo esc_html( (string) $stats['on_sale'] ); ?></span>
 				</dd>

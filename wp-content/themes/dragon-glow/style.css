@@ -147,6 +147,15 @@ input, textarea, select {
 /* Focus styles */
 :focus-visible {
     outline: 2px solid var(--color-primary);
+}
+
+/* Override browser default focus for checkboxes & radios */
+input[type="checkbox"]:focus,
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus,
+input[type="radio"]:focus-visible {
+    outline: none;
+    box-shadow: none;
     outline-offset: 2px;
 }
 

@@ -9,6 +9,7 @@
  *
  * Methods
  *   add({productId, slug, size, quantity}) → Promise
+ *   addMany({productIds})                 → Promise
  *   remove({productId, slug})              → Promise
  *   getIdentifiers()                       → Promise<{productIds, slugs}>
  *   refreshCount()                          → Promise<void>
@@ -98,6 +99,27 @@
     }
 
     /**
+     * Add multiple simple wishlist products to the cart in one request.
+     *
+     * The wishlist endpoint validates ownership and eligibility server-side,
+     * then returns per-item outcomes for partial-success feedback.
+     *
+     * @param {Object}   opts
+     * @param {number[]} [opts.productIds] Wishlist product IDs.
+     * @return {Promise<Object>}
+     */
+    function addMany(opts) {
+        opts = opts || {};
+        var productIds = Array.isArray(opts.productIds)
+            ? opts.productIds.map(function (id) { return parseInt(id, 10) || 0; }).filter(function (id) { return id > 0; })
+            : [];
+
+        return post('dg_wishlist_add_to_cart', {
+            product_ids: productIds.join(','),
+        });
+    }
+
+    /**
      * Remove a product from the cart.
      *
      * Accepts productId (for WooCommerce products) OR slug (for mock products).
@@ -153,6 +175,7 @@
 
     window.DGCart = {
         add:           add,
+        addMany:       addMany,
         remove:        remove,
         getIdentifiers: getIdentifiers,
         refreshCount:  refreshCount,

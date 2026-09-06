@@ -188,8 +188,8 @@ function dg_enqueue_scripts_assets(): void {
         );
 
         // Localize wishlist page strings so the JS layer renders correctly
-        // even before user interaction (filter labels, sort options, bulk
-        // action copy, share-modal strings).
+        // even before user interaction (filter labels, bulk action copy,
+        // share-modal strings).
         wp_localize_script(
             'dg-wishlist',
             'dgWishlist',
@@ -200,17 +200,20 @@ function dg_enqueue_scripts_assets(): void {
                     'loginRequired'  => __( 'Please sign in to manage your wishlist.', 'dragon-glow' ),
                     'selectItems'    => __( 'Select items to use bulk actions.', 'dragon-glow' ),
                     'confirmClear'   => __( 'Are you sure you want to remove every item from your wishlist?', 'dragon-glow' ),
+                    'confirmRemoveLabel' => __( 'Remove %d items', 'dragon-glow' ),
                     'clearAll'       => __( 'Clear wishlist', 'dragon-glow' ),
                     'cancel'         => __( 'Cancel', 'dragon-glow' ),
                     'addSelected'    => __( 'Add selected to bag', 'dragon-glow' ),
+                    'processing'     => __( 'Adding selected items…', 'dragon-glow' ),
+                    'cartUnavailable' => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ),
+                    'addError'       => __( 'Could not add to bag.', 'dragon-glow' ),
+                    'networkError'   => __( 'Network error. Please try again.', 'dragon-glow' ),
                     'removeSelected' => __( 'Remove selected', 'dragon-glow' ),
                     'filterAll'      => __( 'All items', 'dragon-glow' ),
                     'filterInStock'  => __( 'In stock', 'dragon-glow' ),
                     'filterOnSale'   => __( 'On sale', 'dragon-glow' ),
-                    'sortDate'       => __( 'Recently saved', 'dragon-glow' ),
-                    'sortPriceAsc'   => __( 'Price: low to high', 'dragon-glow' ),
-                    'sortPriceDesc'  => __( 'Price: high to low', 'dragon-glow' ),
-                    'sortName'       => __( 'Name: A → Z', 'dragon-glow' ),
+                    'sortBy'         => __( 'Sort by', 'dragon-glow' ),
+                    'sortedBy'       => __( 'Sorted by', 'dragon-glow' ),
                     'shareTitle'     => __( 'Share my wishlist', 'dragon-glow' ),
                     'shareDesc'      => __( 'Send a private link to your saved pieces. We will email a single-use URL that opens this wishlist.', 'dragon-glow' ),
                     'shareEmail'     => __( "Friend's email", 'dragon-glow' ),

@@ -249,11 +249,11 @@ $dg_wl_stats = dg_wishlist_page_stats( $dg_wl_items );
 					<button type="button"
 					        class="dg-wishlist-btn dg-wishlist-btn--primary"
 					        data-dg-wl-bulk-add>
-						<span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
-						<?php esc_html_e( 'Add selected to bag', 'dragon-glow' ); ?>
+						<span class="material-symbols-outlined" data-dg-wl-bulk-add-icon aria-hidden="true">shopping_bag</span>
+						<span data-dg-wl-bulk-add-label aria-live="polite"><?php esc_html_e( 'Add selected to bag', 'dragon-glow' ); ?></span>
 					</button>
 					<button type="button"
-					        class="dg-wishlist-btn dg-wishlist-btn--text"
+					        class="dg-wishlist-btn dg-wishlist-btn--danger-ghost"
 					        data-dg-wl-clear-all>
 						<span class="material-symbols-outlined" aria-hidden="true">layers_clear</span>
 						<?php esc_html_e( 'Clear wishlist', 'dragon-glow' ); ?>
@@ -264,6 +264,9 @@ $dg_wl_stats = dg_wishlist_page_stats( $dg_wl_items );
 
 		<!-- 7. Share modal -->
 		<?php get_template_part( 'template-parts/wishlist/share-modal' ); ?>
+
+		<!-- 7b. Confirm modal (bulk-remove + clear-all) -->
+		<?php get_template_part( 'template-parts/wishlist/confirm-modal' ); ?>
 
 		<!-- 8. Toasts (shared) -->
 		<div class="dg-wishlist-toasts" data-dg-wl-toasts aria-live="polite" aria-atomic="true"></div>

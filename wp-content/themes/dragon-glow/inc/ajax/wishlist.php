@@ -7,6 +7,7 @@
  * Actions:
  *   wp_ajax_dg_wishlist_toggle        — toggle a single product in/out.
  *   wp_ajax_dg_wishlist_remove_many   — bulk remove a list of product IDs.
+ *   wp_ajax_dg_wishlist_add_to_cart   — add selected simple products to cart.
  *   wp_ajax_dg_wishlist_clear         — empty the entire wishlist.
  *   wp_ajax_dg_wishlist_count         — return the current count for the
  *                                       header badge refresh.
@@ -124,6 +125,145 @@ function dg_ajax_wishlist_remove_many(): void {
 	);
 }
 add_action( 'wp_ajax_dg_wishlist_remove_many', 'dg_ajax_wishlist_remove_many' );
+
+/**
+ * AJAX: add selected wishlist products to the WooCommerce cart.
+ *
+ * The server re-checks wishlist ownership and product eligibility instead of
+ * trusting IDs from the browser. Simple products are added immediately;
+ * variable products are reported separately because a variation cannot be
+ * chosen safely from the wishlist card alone.
+ */
+function dg_ajax_wishlist_add_to_cart(): void {
+	$user_id = dg_wishlist_verify_request();
+
+	if ( ! dg_is_woocommerce_active() || ! function_exists( 'WC' ) || ! WC() || ! WC()->cart ) {
+		wp_send_json_error(
+			array( 'message' => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ) ),
+			503
+		);
+	}
+
+	$raw_ids = isset( $_POST['product_ids'] ) ? wp_unslash( $_POST['product_ids'] ) : '';
+	if ( is_array( $raw_ids ) ) {
+		$requested_ids = array_map( 'absint', $raw_ids );
+	} else {
+		$requested_ids = array_map( 'absint', explode( ',', sanitize_text_field( (string) $raw_ids ) ) );
+	}
+
+	$requested_ids = array_values(
+		array_unique(
+			array_filter(
+				$requested_ids,
+				static function ( int $id ): bool {
+					return $id > 0;
+				}
+			)
+		)
+	);
+
+	if ( empty( $requested_ids ) ) {
+		wp_send_json_error(
+			array( 'message' => __( 'Please select at least one product to add to your bag.', 'dragon-glow' ) ),
+			400
+		);
+	}
+
+	// Only process IDs that are still in this user's wishlist.
+	$wishlist_ids = dg_get_wishlist( $user_id );
+	$product_ids  = array_values( array_intersect( $requested_ids, $wishlist_ids ) );
+	if ( empty( $product_ids ) ) {
+		wp_send_json_error(
+			array( 'message' => __( 'The selected products are no longer in your wishlist.', 'dragon-glow' ) ),
+			403
+		);
+	}
+
+	$added_ids             = array();
+	$requires_options_ids  = array();
+	$unavailable_ids       = array();
+	$failed_ids            = array();
+
+	foreach ( $product_ids as $product_id ) {
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			$unavailable_ids[] = $product_id;
+			continue;
+		}
+
+		// A variable product needs a variation selection before it is safe to add.
+		if ( ! $product->is_type( 'simple' ) ) {
+			$requires_options_ids[] = $product_id;
+			continue;
+		}
+
+		if ( ! $product->is_in_stock() || ! $product->is_purchasable() ) {
+			$unavailable_ids[] = $product_id;
+			continue;
+		}
+
+		if ( dg_wc_add_to_cart( $product_id, 1 ) ) {
+			$added_ids[] = $product_id;
+		} else {
+			$failed_ids[] = $product_id;
+		}
+	}
+
+	$added_count            = count( $added_ids );
+	$requires_options_count = count( $requires_options_ids );
+	$unavailable_count      = count( $unavailable_ids );
+	$failed_count           = count( $failed_ids );
+	$message_parts          = array();
+
+	if ( $added_count > 0 ) {
+		$message_parts[] = sprintf(
+			/* translators: %d: number of products added to the bag. */
+			_n( '%d item added to your bag.', '%d items added to your bag.', $added_count, 'dragon-glow' ),
+			$added_count
+		);
+	}
+	if ( $requires_options_count > 0 ) {
+		$message_parts[] = sprintf(
+			/* translators: %d: number of products that need options. */
+			_n( '%d selected item needs options before it can be added.', '%d selected items need options before they can be added.', $requires_options_count, 'dragon-glow' ),
+			$requires_options_count
+		);
+	}
+	if ( $unavailable_count > 0 ) {
+		$message_parts[] = sprintf(
+			/* translators: %d: number of unavailable products. */
+			_n( '%d selected item is unavailable.', '%d selected items are unavailable.', $unavailable_count, 'dragon-glow' ),
+			$unavailable_count
+		);
+	}
+	if ( $failed_count > 0 ) {
+		$message_parts[] = sprintf(
+			/* translators: %d: number of products that could not be added. */
+			_n( '%d selected item could not be added. Please try again.', '%d selected items could not be added. Please try again.', $failed_count, 'dragon-glow' ),
+			$failed_count
+		);
+	}
+	if ( empty( $message_parts ) ) {
+		$message_parts[] = __( 'None of the selected items could be added to your bag.', 'dragon-glow' );
+	}
+
+	wp_send_json_success(
+		array(
+			'added_ids'             => $added_ids,
+			'requires_options_ids'  => $requires_options_ids,
+			'unavailable_ids'       => $unavailable_ids,
+			'failed_ids'            => $failed_ids,
+			'added_count'            => $added_count,
+			'requires_options_count' => $requires_options_count,
+			'unavailable_count'      => $unavailable_count,
+			'failed_count'           => $failed_count,
+			'cart_count'             => dg_get_cart_item_count(),
+			'cart_url'               => dg_get_cart_url(),
+			'message'                => implode( ' ', $message_parts ),
+		)
+	);
+}
+add_action( 'wp_ajax_dg_wishlist_add_to_cart', 'dg_ajax_wishlist_add_to_cart' );
 
 /**
  * AJAX: clear the entire wishlist.

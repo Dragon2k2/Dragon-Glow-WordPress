@@ -59,18 +59,102 @@ defined( 'ABSPATH' ) || exit;
 				</span>
 			</label>
 
-			<label class="dg-wishlist-toolbar__sort" for="dg-wl-sort">
+			<div class="dg-wishlist-toolbar__sort" data-dg-wl-sort-wrap>
 				<span class="dg-wishlist-toolbar__sort-label"><?php esc_html_e( 'Sort by', 'dragon-glow' ); ?></span>
+
 				<select id="dg-wl-sort"
 				        class="dg-wishlist-toolbar__sort-select"
-				        data-dg-wl-sort>
+				        data-dg-wl-sort
+				        aria-label="<?php esc_attr_e( 'Sort wishlist items', 'dragon-glow' ); ?>">
 					<option value="date"><?php esc_html_e( 'Recently saved', 'dragon-glow' ); ?></option>
 					<option value="price-asc"><?php esc_html_e( 'Price: low to high', 'dragon-glow' ); ?></option>
 					<option value="price-desc"><?php esc_html_e( 'Price: high to low', 'dragon-glow' ); ?></option>
 					<option value="name"><?php esc_html_e( 'Name: A → Z', 'dragon-glow' ); ?></option>
 				</select>
-				<span class="material-symbols-outlined dg-wishlist-toolbar__sort-icon" aria-hidden="true">expand_more</span>
-			</label>
+
+				<button type="button"
+				        class="dg-wishlist-toolbar__sort-trigger"
+				        data-dg-wl-sort-trigger
+				        aria-haspopup="listbox"
+				        aria-expanded="false">
+					<span class="dg-wishlist-toolbar__sort-icon material-symbols-outlined"
+					      data-dg-wl-sort-icon
+					      aria-hidden="true">schedule</span>
+					<span class="dg-wishlist-toolbar__sort-current" data-dg-wl-sort-current><?php esc_html_e( 'Recently saved', 'dragon-glow' ); ?></span>
+					<span class="dg-wishlist-toolbar__sort-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+				</button>
+
+				<div class="dg-wishlist-toolbar__sort-panel"
+				     data-dg-wl-sort-panel
+				     role="listbox"
+				     aria-label="<?php esc_attr_e( 'Sort wishlist items', 'dragon-glow' ); ?>"
+				     hidden>
+					<button type="button"
+					        class="dg-wishlist-toolbar__sort-option is-active"
+					        role="option"
+					        aria-selected="true"
+					        data-dg-wl-sort-option
+					        data-value="date"
+					        data-icon="schedule"
+					        data-label="<?php esc_attr_e( 'Recently saved', 'dragon-glow' ); ?>"
+					        data-sub="<?php esc_attr_e( 'Newest items first', 'dragon-glow' ); ?>">
+						<span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">schedule</span>
+						<span class="dg-wishlist-toolbar__sort-option-body">
+							<span class="dg-wishlist-toolbar__sort-option-label"><?php esc_html_e( 'Recently saved', 'dragon-glow' ); ?></span>
+							<span class="dg-wishlist-toolbar__sort-option-sub"><?php esc_html_e( 'Newest items first', 'dragon-glow' ); ?></span>
+						</span>
+						<span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+					</button>
+					<button type="button"
+					        class="dg-wishlist-toolbar__sort-option"
+					        role="option"
+					        aria-selected="false"
+					        data-dg-wl-sort-option
+					        data-value="price-asc"
+					        data-icon="arrow_upward"
+					        data-label="<?php esc_attr_e( 'Price: low to high', 'dragon-glow' ); ?>"
+					        data-sub="<?php esc_attr_e( 'Cheapest first', 'dragon-glow' ); ?>">
+						<span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">arrow_upward</span>
+						<span class="dg-wishlist-toolbar__sort-option-body">
+							<span class="dg-wishlist-toolbar__sort-option-label"><?php esc_html_e( 'Price: low to high', 'dragon-glow' ); ?></span>
+							<span class="dg-wishlist-toolbar__sort-option-sub"><?php esc_html_e( 'Cheapest first', 'dragon-glow' ); ?></span>
+						</span>
+						<span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+					</button>
+					<button type="button"
+					        class="dg-wishlist-toolbar__sort-option"
+					        role="option"
+					        aria-selected="false"
+					        data-dg-wl-sort-option
+					        data-value="price-desc"
+					        data-icon="arrow_downward"
+					        data-label="<?php esc_attr_e( 'Price: high to low', 'dragon-glow' ); ?>"
+					        data-sub="<?php esc_attr_e( 'Premium first', 'dragon-glow' ); ?>">
+						<span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">arrow_downward</span>
+						<span class="dg-wishlist-toolbar__sort-option-body">
+							<span class="dg-wishlist-toolbar__sort-option-label"><?php esc_html_e( 'Price: high to low', 'dragon-glow' ); ?></span>
+							<span class="dg-wishlist-toolbar__sort-option-sub"><?php esc_html_e( 'Premium first', 'dragon-glow' ); ?></span>
+						</span>
+						<span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+					</button>
+					<button type="button"
+					        class="dg-wishlist-toolbar__sort-option"
+					        role="option"
+					        aria-selected="false"
+					        data-dg-wl-sort-option
+					        data-value="name"
+					        data-icon="sort_by_alpha"
+					        data-label="<?php esc_attr_e( 'Name: A → Z', 'dragon-glow' ); ?>"
+					        data-sub="<?php esc_attr_e( 'Alphabetical', 'dragon-glow' ); ?>">
+						<span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">sort_by_alpha</span>
+						<span class="dg-wishlist-toolbar__sort-option-body">
+							<span class="dg-wishlist-toolbar__sort-option-label"><?php esc_html_e( 'Name: A → Z', 'dragon-glow' ); ?></span>
+							<span class="dg-wishlist-toolbar__sort-option-sub"><?php esc_html_e( 'Alphabetical', 'dragon-glow' ); ?></span>
+						</span>
+						<span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+					</button>
+				</div>
+			</div>
 
 		</div>
 	</div>
