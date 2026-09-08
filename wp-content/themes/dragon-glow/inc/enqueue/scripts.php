@@ -37,6 +37,20 @@ function dg_enqueue_scripts_assets(): void {
         true
     );
 
+    // Debug-mode gate for JS console logging.
+    //
+    // In production (WP_DEBUG off) window.dgDebug.enabled === false and
+    // JS-side console output stays at `error`-level only — no noise for
+    // end users opening DevTools. When WP_DEBUG is true (development /
+    // staging) the full set of warn/info/debug messages is emitted so
+    // developers can triage without re-instrumenting the code.
+    //
+    // Localized on dg-main so every page-scoped script that depends on
+    // dg-main inherits the flag without further wiring.
+    wp_localize_script( 'dg-main', 'dgDebug', array(
+        'enabled' => defined( 'WP_DEBUG' ) && WP_DEBUG,
+    ) );
+
     // Cart API shared module — provides window.DGCart for all cart AJAX.
     // Depends on dg-main so dgAjax (url/nonce/i18n) is available.
     // Also registered as a dep of dg-quick-add-to-cart, dg-buy-now.
@@ -80,7 +94,34 @@ function dg_enqueue_scripts_assets(): void {
                 array( 'dg-main' ),
                 DG_VERSION
             );
-            wp_enqueue_script( 'dg-cart', DG_URI . '/assets/js/cart.js', array( 'dg-main' ), DG_VERSION, true );
+            wp_enqueue_script(
+                'dg-cart',
+                DG_URI . '/assets/js/cart.js',
+                array( 'dg-main', 'dg-cart-api' ),
+                DG_VERSION,
+                true
+            );
+
+            // Localize cart-page i18n so JS-side fallbacks stay translatable.
+            // Server-side messages from dg_ajax_*_cart_* remain the primary
+            // copy the user sees — these are only for client-only toasts and
+            // confirm-button labels.
+            wp_localize_script(
+                'dg-cart',
+                'dgCart',
+                array(
+                    'i18n' => array(
+                        'selectItems'        => __( 'Select items first.', 'dragon-glow' ),
+                        'confirmRemoveLabel' => __( 'Remove %d items', 'dragon-glow' ),
+                        'network'            => __( 'Network error. Please try again.', 'dragon-glow' ),
+                        'bagUnavailable'     => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ),
+                        'cleared'            => __( 'Your bag has been cleared.', 'dragon-glow' ),
+                        'alreadyEmpty'       => __( 'Your bag is already empty.', 'dragon-glow' ),
+                        'removed'            => __( 'Items removed.', 'dragon-glow' ),
+                        'confirmClearTitle'  => __( 'Clear your cart?', 'dragon-glow' ),
+                    ),
+                )
+            );
         }
         if ( is_checkout() ) {
             // Force clear WC locale cache to ensure our country locale modifications take effect
@@ -201,10 +242,13 @@ function dg_enqueue_scripts_assets(): void {
                     'selectItems'    => __( 'Select items to use bulk actions.', 'dragon-glow' ),
                     'confirmClear'   => __( 'Are you sure you want to remove every item from your wishlist?', 'dragon-glow' ),
                     'confirmRemoveLabel' => __( 'Remove %d items', 'dragon-glow' ),
+                    'cleared'        => __( 'Your wishlist has been cleared.', 'dragon-glow' ),
                     'clearAll'       => __( 'Clear wishlist', 'dragon-glow' ),
                     'cancel'         => __( 'Cancel', 'dragon-glow' ),
                     'addSelected'    => __( 'Add selected to bag', 'dragon-glow' ),
                     'processing'     => __( 'Adding selected items…', 'dragon-glow' ),
+                    'optimisticAdded' => __( 'Selected items added to your bag.', 'dragon-glow' ),
+                    'noDirectItems'  => __( 'The selected items need options or are unavailable.', 'dragon-glow' ),
                     'cartUnavailable' => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ),
                     'addError'       => __( 'Could not add to bag.', 'dragon-glow' ),
                     'networkError'   => __( 'Network error. Please try again.', 'dragon-glow' ),

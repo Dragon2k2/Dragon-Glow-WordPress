@@ -43,14 +43,25 @@ function dg_wc_add_to_cart( int $product_id, int $quantity = 1, int $variation_i
  * Add a WooCommerce product to cart without redirect.
  *
  * @param array $args {
- *     @type int $product_id
- *     @type int $quantity
+ *     @type int    $product_id
+ *     @type int    $quantity
+ *     @type int    $variation_id        Optional — direct variation ID. Skips
+ *                                       size → variation lookup.
+ *     @type array  $variation_attributes Optional — attribute slug => value.
+ *     @type array  $cart_item_data      Optional — extra cart-item metadata.
  * }
  * @return array{success: bool, message?: string, redirect?: string}
  */
 function dg_add_to_cart_silently( array $args ): array {
-	$product_id = absint( $args['product_id'] ?? 0 );
-	$quantity   = absint( $args['quantity'] ?? 1 );
+	$product_id          = absint( $args['product_id'] ?? 0 );
+	$quantity            = absint( $args['quantity'] ?? 1 );
+	$variation_id        = absint( $args['variation_id'] ?? 0 );
+	$variation_attributes = isset( $args['variation_attributes'] ) && is_array( $args['variation_attributes'] )
+		? $args['variation_attributes']
+		: array();
+	$cart_item_data      = isset( $args['cart_item_data'] ) && is_array( $args['cart_item_data'] )
+		? $args['cart_item_data']
+		: array();
 
 	if ( $product_id <= 0 ) {
 		return array(
@@ -59,7 +70,7 @@ function dg_add_to_cart_silently( array $args ): array {
 		);
 	}
 
-	$added = dg_wc_add_to_cart( $product_id, $quantity );
+	$added = dg_wc_add_to_cart( $product_id, $quantity, $variation_id, $variation_attributes, $cart_item_data );
 	if ( $added ) {
 		return array(
 			'success'  => true,

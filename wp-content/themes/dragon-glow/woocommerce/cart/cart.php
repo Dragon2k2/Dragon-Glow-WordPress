@@ -72,6 +72,15 @@ $has_items  = ! empty( $cart_items );
 
                         <thead class="hidden md:table-header-group">
                             <tr class="text-left dg-gold-border">
+                                <th class="pb-5 w-12" scope="col">
+                                    <label class="dg-cart-select-all-label">
+                                        <input type="checkbox"
+                                               class="dg-cart-select-all"
+                                               data-dg-cart-select-all
+                                               aria-label="<?php esc_attr_e( 'Select all items', 'dragon-glow' ); ?>" />
+                                        <span aria-hidden="true" class="dg-cart-select-all-mark"></span>
+                                    </label>
+                                </th>
                                 <th class="pb-5 font-label-sm text-label-sm text-on-surface-variant uppercase">
                                     <?php esc_html_e( 'Product', 'dragon-glow' ); ?>
                                 </th>
@@ -81,7 +90,6 @@ $has_items  = ! empty( $cart_items );
                                 <th class="pb-5 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">
                                     <?php esc_html_e( 'Price', 'dragon-glow' ); ?>
                                 </th>
-                                <th class="pb-5 w-10"></th>
                             </tr>
                         </thead>
 
@@ -109,11 +117,39 @@ $has_items  = ! empty( $cart_items );
                             );
 
                             $current_qty = (int) $cart_item['quantity'];
+                            $variation_id = (int) ( $cart_item['variation_id'] ?? 0 );
+                            // Encode for JS-side undo restore. Empty object for simple products.
+                            $variation_attrs_json = '{}';
+                            if ( ! empty( $cart_item['variation'] ) && is_array( $cart_item['variation'] ) ) {
+                                $variation_attrs_json = wp_json_encode( $cart_item['variation'] );
+                            }
+                            // Product name (transient — used by the undo toast message).
+                            $product_name = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
+                            $product_name_plain = wp_strip_all_tags( (string) $product_name );
                         ?>
 
                         <tr class="dg-cart-row group border-b border-outline-variant/20 last:border-0"
                             id="dg-row-<?php echo esc_attr( $cart_item_key ); ?>"
-                            data-cart-key="<?php echo esc_attr( $cart_item_key ); ?>">
+                            data-cart-key="<?php echo esc_attr( $cart_item_key ); ?>"
+                            data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
+                            data-variation-id="<?php echo esc_attr( (string) $variation_id ); ?>"
+                            data-quantity="<?php echo esc_attr( (string) $current_qty ); ?>"
+                            data-variation="<?php echo esc_attr( $variation_attrs_json ); ?>"
+                            data-product-name="<?php echo esc_attr( $product_name_plain ); ?>">
+
+                            <!-- Bulk-select checkbox (used by select-all + bulk-remove) -->
+                            <td class="dg-cart-row__select-cell py-7 pr-2 align-top">
+                                <label class="dg-cart-row__select-label" aria-label="<?php
+                                    /* translators: %s: product name */
+                                    echo esc_attr( sprintf( __( 'Select %s', 'dragon-glow' ), $product_name_plain ) );
+                                ?>">
+                                    <input type="checkbox"
+                                           class="dg-cart-row__select"
+                                           data-dg-cart-select
+                                           value="<?php echo esc_attr( $cart_item_key ); ?>" />
+                                    <span aria-hidden="true" class="dg-cart-row__select-mark"></span>
+                                </label>
+                            </td>
 
                             <!-- Product: image + name/variant -->
                             <td class="py-7 pr-4">
@@ -198,16 +234,6 @@ $has_items  = ! empty( $cart_items );
                                 </span>
                             </td>
 
-                            <!-- Remove (AJAX) -->
-                            <td class="py-7 text-right pl-2">
-                                <button type="button"
-                                        class="dg-remove-btn"
-                                        data-cart-key="<?php echo esc_attr( $cart_item_key ); ?>"
-                                        aria-label="<?php esc_attr_e( 'Remove this item', 'dragon-glow' ); ?>">
-                                    <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
-                                </button>
-                            </td>
-
                         </tr>
 
                         <?php endforeach; ?>
@@ -265,7 +291,7 @@ $has_items  = ! empty( $cart_items );
 
                     <div class="flex justify-between items-center text-on-surface-variant font-body-md text-sm">
                         <span><?php esc_html_e( 'Subtotal', 'dragon-glow' ); ?></span>
-                        <span class="font-medium text-on-surface">
+                        <span class="font-medium text-on-surface" id="dg-cart-subtotal">
                             <?php wc_cart_totals_subtotal_html(); ?>
                         </span>
                     </div>
@@ -334,7 +360,7 @@ $has_items  = ! empty( $cart_items );
                             <?php esc_html_e( 'Inclusive of all taxes', 'dragon-glow' ); ?>
                         </span>
                     </div>
-                    <div class="font-body text-[28px] text-primary text-right">
+                    <div class="font-body text-[28px] text-primary text-right" id="dg-cart-total">
                         <?php wc_cart_totals_order_total_html(); ?>
                     </div>
                 </div>
@@ -362,11 +388,131 @@ $has_items  = ! empty( $cart_items );
         </aside>
 
     </div><!-- #dg-cart-view -->
+
+    <!-- ── Bulk action bar ──────────────────────────────────────────────────
+         Fixed bottom bar, hidden until at least one row is checked. JS
+         toggles .is-visible when the selection count crosses 0 ↔ ≥1.
+         The .dg-cart-bulkbar__count span reflects the live selection
+         count. Server-rendered (not JS-built) so the markup is in
+         the accessibility tree from first paint. -->
+    <div class="dg-cart-bulkbar" data-dg-cart-bulkbar aria-live="polite" aria-atomic="true">
+        <div class="dg-cart-bulkbar__inner">
+            <p class="dg-cart-bulkbar__count">
+                <span data-dg-cart-bulk-count>0</span>
+                <?php esc_html_e( 'selected', 'dragon-glow' ); ?>
+            </p>
+            <div class="dg-cart-bulkbar__actions">
+                <button type="button"
+                        class="dg-cart-bulkbar__btn dg-cart-bulkbar__btn--ghost"
+                        data-dg-cart-bulk-remove>
+                    <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                    <?php esc_html_e( 'Remove selected', 'dragon-glow' ); ?>
+                </button>
+                <button type="button"
+                        class="dg-cart-bulkbar__btn dg-cart-bulkbar__btn--danger"
+                        data-dg-cart-clear-all>
+                    <span class="material-symbols-outlined" aria-hidden="true">layers_clear</span>
+                    <?php esc_html_e( 'Clear cart', 'dragon-glow' ); ?>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Confirm modal — bulk-remove + clear-all ──────────────────────────
+         Glassmorphism panel reused for both destructive actions. JS opens
+         the matching instance via data-dg-cart-confirm="bulk" / "clear"
+         and resolves a Promise when the user clicks a button. Pattern
+         mirrors the wishlist confirm modal for consistency. -->
+    <div class="dg-cart-confirm"
+         data-dg-cart-confirm="bulk"
+         hidden
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="dg-cart-confirm-bulk-title">
+        <div class="dg-cart-confirm__overlay" data-dg-cart-confirm-close></div>
+        <div class="dg-cart-confirm__panel" role="document">
+            <div class="dg-cart-confirm__head">
+                <div class="dg-cart-confirm__icon" aria-hidden="true">
+                    <span class="material-symbols-outlined">delete_sweep</span>
+                </div>
+                <div class="dg-cart-confirm__text">
+                    <h2 class="dg-cart-confirm__title" id="dg-cart-confirm-bulk-title">
+                        <?php esc_html_e( 'Remove selected items?', 'dragon-glow' ); ?>
+                    </h2>
+                    <p class="dg-cart-confirm__message">
+                        <?php esc_html_e( 'You are about to remove', 'dragon-glow' ); ?>
+                        &nbsp;<span class="dg-cart-confirm__count" data-dg-cart-confirm-count>0</span>&nbsp;
+                        <?php esc_html_e( 'item(s) from your bag. This action cannot be undone.', 'dragon-glow' ); ?>
+                    </p>
+                </div>
+            </div>
+            <div class="dg-cart-confirm__actions">
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--ghost"
+                        data-dg-cart-confirm-close>
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                    <?php esc_html_e( 'Cancel', 'dragon-glow' ); ?>
+                </button>
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--danger"
+                        data-dg-cart-confirm-yes>
+                    <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                    <span data-dg-cart-confirm-confirm-label>
+                        <?php esc_html_e( 'Remove items', 'dragon-glow' ); ?>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dg-cart-confirm"
+         data-dg-cart-confirm="clear"
+         hidden
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="dg-cart-confirm-clear-title">
+        <div class="dg-cart-confirm__overlay" data-dg-cart-confirm-close></div>
+        <div class="dg-cart-confirm__panel" role="document">
+            <div class="dg-cart-confirm__head">
+                <div class="dg-cart-confirm__icon dg-cart-confirm__icon--warning" aria-hidden="true">
+                    <span class="material-symbols-outlined">warning</span>
+                </div>
+                <div class="dg-cart-confirm__text">
+                    <h2 class="dg-cart-confirm__title" id="dg-cart-confirm-clear-title">
+                        <?php esc_html_e( 'Clear your cart?', 'dragon-glow' ); ?>
+                    </h2>
+                    <p class="dg-cart-confirm__message">
+                        <?php esc_html_e( 'Every item in your cart will be permanently removed. This action cannot be undone.', 'dragon-glow' ); ?>
+                    </p>
+                </div>
+            </div>
+            <div class="dg-cart-confirm__actions">
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--ghost"
+                        data-dg-cart-confirm-close>
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                    <?php esc_html_e( 'Cancel', 'dragon-glow' ); ?>
+                </button>
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--danger"
+                        data-dg-cart-confirm-yes>
+                    <span class="material-symbols-outlined" aria-hidden="true">layers_clear</span>
+                    <?php esc_html_e( 'Clear cart', 'dragon-glow' ); ?>
+                </button>
+            </div>
+        </div>
+    </div>
     <?php endif; // $has_items ?>
 
-    <!-- ── Empty cart state (server-side check) ── -->
-    <?php if ( ! $has_items ) : ?>
-    <div id="dg-empty-cart-view" class="text-center py-20">
+    <!-- ── Empty cart state ──────────────────────────────────────────────────
+         Always rendered (hidden by default via CSS) so the JS layer can
+         smoothly transition into it after the user removes the last item
+         without a page reload. The initial server-side render adds the
+         `is-visible` class when the cart is already empty. -->
+    <div id="dg-empty-cart-view"
+         class="text-center py-20<?php echo $has_items ? '' : ' is-visible'; ?>">
         <div class="w-32 h-32 mx-auto mb-8 bg-primary-container/10 rounded-full flex items-center justify-center">
             <span class="material-symbols-outlined text-primary" style="font-size:64px; font-variation-settings:'FILL' 0;">shopping_basket</span>
         </div>
@@ -381,9 +527,14 @@ $has_items  = ! empty( $cart_items );
             <?php esc_html_e( 'Shop New Arrivals', 'dragon-glow' ); ?>
         </a>
     </div>
-    <?php endif; ?>
 
 </div><!-- .max-w-container-max -->
 </div><!-- .min-h-screen -->
+
+<!-- ── Toasts (undo remove + status feedback) ──────────────────────────────
+     Fixed-position container, sibling of the cart view. The JS layer injects
+     individual toast nodes here. aria-live="polite" announces changes to
+     assistive tech without interrupting the user. -->
+<div class="dg-cart-toasts" id="dg-cart-toasts" aria-live="polite" aria-atomic="false"></div>
 
 <?php do_action( 'woocommerce_after_cart' ); ?>

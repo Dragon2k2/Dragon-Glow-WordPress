@@ -204,20 +204,148 @@
     color: #1c1b1b;
 }
 
-/* ── Remove button ───────────────────────────────────────── */
-.dg-remove-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: rgba(77, 70, 53, 0.4);
-    transition: color 0.2s ease;
-    display: flex;
-    align-items: center;
+/* ── Row remove animation ──────────────────────────────────
+   One state the JS layer toggles:
+   - is-removing   — row is fading out + collapsing in height. JS keeps
+                     the row in DOM during this window, removes the
+                     <tr> from the DOM after the transition completes. */
+.dg-cart-row {
+    transition:
+        opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: left center;
 }
 
-.dg-remove-btn:hover {
-    color: #ba1a1a;
+.dg-cart-row.is-removing {
+    opacity: 0;
+    transform: translateX(28px) scale(0.98);
+    pointer-events: none;
+}
+
+/* ── Empty state transition ──────────────────────────────────
+   The empty cart state is always rendered (hidden by default via
+   `.dg-empty-cart-view` below); JS adds `.is-visible` and the
+   `.dg-empty-cart-clone` class so the entry animation runs. */
+.dg-empty-cart-clone {
+    animation: dgEmptyStateIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dgEmptyStateIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Toasts (bulk feedback) ────────────────────────────────────
+   Bottom-center floating stack, glassmorphism. Each toast holds:
+   - an icon (success/info/error)
+   - a body line
+   Used by bulk-remove and clear-all flows to surface success or error. */
+.dg-cart-toasts {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: min(440px, calc(100% - 32px));
+    pointer-events: none;
+}
+
+.dg-cart-toast {
+    position: relative;
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: var(--color-on-surface);
+    box-shadow:
+        0 12px 32px rgba(115, 92, 0, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+    animation: dgCartToastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+}
+
+@keyframes dgCartToastIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.dg-cart-toast.is-leaving {
+    animation: dgCartToastOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes dgCartToastOut {
+    to { opacity: 0; transform: translateY(20px); }
+}
+
+.dg-cart-toast__icon {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: rgba(115, 92, 0, 0.10);
+    color: var(--color-primary);
+}
+
+.dg-cart-toast__icon .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.dg-cart-toast--success .dg-cart-toast__icon {
+    background: rgba(46, 125, 50, 0.12);
+    color: #2e7d32;
+}
+
+.dg-cart-toast--error .dg-cart-toast__icon {
+    background: rgba(186, 26, 26, 0.12);
+    color: var(--color-error);
+}
+
+.dg-cart-toast__body {
+    min-width: 0;
+    line-height: 1.45;
+}
+
+.dg-cart-toast__body strong {
+    font-weight: 700;
+    color: var(--color-on-surface);
+}
+
+/* Stacking: keep toasts above the sticky nav. */
+.dg-cart-toasts { z-index: 1000; }
+
+@media (min-width: 1024px) {
+    .dg-cart-toasts { bottom: 32px; }
+}
+
+@media (max-width: 480px) {
+    .dg-cart-toasts { bottom: 16px; }
+    .dg-cart-toast { padding: 12px 14px; }
+}
+
+/* Reduced motion — kill the animations but keep the visual outcome. */
+@media (prefers-reduced-motion: reduce) {
+    .dg-cart-row,
+    .dg-cart-row.is-removing,
+    .dg-cart-toast,
+    .dg-cart-toast.is-leaving,
+    .dg-cart-toast__icon {
+        transition: none !important;
+        animation: none !important;
+    }
 }
 
 /* ── Coupon / promo code input ────────────────────────────── */
@@ -276,17 +404,6 @@
     letter-spacing: 0.08em;
 }
 
-/* ── Row remove animation ────────────────────────────────── */
-.dg-cart-row {
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.dg-cart-row.is-removing {
-    opacity: 0;
-    transform: translateX(24px);
-    pointer-events: none;
-}
-
 /* ── Coupon discount row ─────────────────────────────────── */
 .cart-discount .woocommerce-Price-amount,
 .cart-discount td {
@@ -301,6 +418,453 @@
 
 #dg-empty-cart-view.is-visible {
     display: block;
+}
+
+/* ── Bulk-select checkboxes ──────────────────────────────────
+   Per-row checkbox + master "select all" in the table header.
+   Visually consistent with the wishlist toolbar: custom mark, gold
+   accent on check, focus ring, hover state. The native input is
+   visually hidden but still focusable + click-via-label for a11y. */
+.dg-cart-row__select-label,
+.dg-cart-select-all-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 6px;
+}
+
+.dg-cart-row__select,
+.dg-cart-select-all {
+    appearance: none;
+    -webkit-appearance: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 1;
+}
+
+.dg-cart-row__select-mark,
+.dg-cart-select-all-mark {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(115, 92, 0, 0.40);
+    border-radius: 6px;
+    background: #fff;
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.dg-cart-row__select-mark::after,
+.dg-cart-select-all-mark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border-right: 2px solid var(--color-on-primary);
+    border-bottom: 2px solid var(--color-on-primary);
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-cart-row__select:hover + .dg-cart-row__select-mark,
+.dg-cart-select-all:hover + .dg-cart-select-all-mark,
+.dg-cart-row__select:focus-visible + .dg-cart-row__select-mark,
+.dg-cart-select-all:focus-visible + .dg-cart-select-all-mark {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(115, 92, 0, 0.10);
+}
+
+.dg-cart-row__select:checked + .dg-cart-row__select-mark,
+.dg-cart-select-all:checked + .dg-cart-select-all-mark {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.dg-cart-row__select:checked + .dg-cart-row__select-mark::after,
+.dg-cart-select-all:checked + .dg-cart-select-all-mark::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.dg-cart-select-all:indeterminate + .dg-cart-select-all-mark {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.dg-cart-select-all:indeterminate + .dg-cart-select-all-mark::after {
+    left: 4px;
+    top: 7px;
+    width: 8px;
+    height: 0;
+    border-right: 0;
+    border-bottom: 2px solid var(--color-on-primary);
+    transform: scale(1) rotate(0);
+}
+
+/* Row selected state — subtle outline so the user can see which rows
+   their bulk action will affect, but not so loud it competes with the
+   remove button hover state. */
+.dg-cart-row.is-selected {
+    background: linear-gradient(90deg, rgba(115, 92, 0, 0.04), transparent 70%);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.dg-cart-row.is-selected .dg-cart-row__select-label {
+    color: var(--color-primary);
+}
+
+/* The first column is narrower on mobile so the checkbox doesn't eat
+   too much real estate from the product image. */
+.dg-cart-row__select-cell {
+    width: 36px;
+}
+
+@media (max-width: 767px) {
+    .dg-cart-row__select-cell {
+        width: 28px;
+    }
+    .dg-cart-row__select-mark,
+    .dg-cart-select-all-mark {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* ── Bulk action bar ─────────────────────────────────────────
+   Floating bottom bar that appears when ≥1 row is checked.
+   Matches the wishlist bulkbar glassmorphism aesthetic. */
+.dg-cart-bulkbar {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    bottom: 24px;
+    z-index: 60;
+    width: min(620px, calc(100% - 32px));
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 18px;
+    box-shadow: 0 18px 48px rgba(123, 84, 85, 0.22);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-cart-bulkbar.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dg-cart-bulkbar__inner {
+    padding: 14px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.dg-cart-bulkbar__count {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+}
+
+.dg-cart-bulkbar__count span {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-primary);
+    margin-right: 4px;
+}
+
+.dg-cart-bulkbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dg-cart-bulkbar__btn {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 9999px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-cart-bulkbar__btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.dg-cart-bulkbar__btn--ghost {
+    border-color: rgba(115, 92, 0, 0.30);
+    color: var(--color-primary);
+}
+
+.dg-cart-bulkbar__btn--ghost:hover {
+    background: rgba(115, 92, 0, 0.08);
+    border-color: var(--color-primary);
+}
+
+.dg-cart-bulkbar__btn--danger {
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: var(--color-on-error);
+}
+
+.dg-cart-bulkbar__btn--danger:hover {
+    background: #a31515;
+    border-color: #a31515;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(186, 26, 26, 0.30);
+}
+
+.dg-cart-bulkbar__btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.dg-cart-bulkbar__btn--danger:focus-visible {
+    outline-color: var(--color-error);
+}
+
+.dg-cart-bulkbar__btn:disabled {
+    opacity: 0.55;
+    cursor: progress;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ── Confirm modal ────────────────────────────────────────────
+   Glassmorphism panel for destructive bulk actions. Same DNA as the
+   wishlist confirm modal but with `dg-cart-*` prefix to keep BEM
+   scope cart-only. */
+.dg-cart-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 1100; /* above toasts (1000) and bulkbar (60) */
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.dg-cart-confirm[hidden] {
+    display: none;
+}
+
+.dg-cart-confirm__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: dgCartConfirmOverlayIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 0;
+    cursor: pointer;
+}
+
+@keyframes dgCartConfirmOverlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.dg-cart-confirm__panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    background: var(--color-background, #fbf9f5);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 24px;
+    padding: clamp(1.5rem, 4vw, 2rem);
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.20);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    animation: dgCartConfirmPanelIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dgCartConfirmPanelIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dg-cart-confirm__head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.dg-cart-confirm__icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: var(--color-primary-container, #f4c2c2);
+    color: var(--color-on-primary-container, #734e4e);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.dg-cart-confirm__icon .material-symbols-outlined {
+    font-size: 22px;
+}
+
+.dg-cart-confirm__icon--warning {
+    background: rgba(186, 26, 26, 0.12);
+    color: var(--color-error);
+}
+
+.dg-cart-confirm__text {
+    min-width: 0;
+}
+
+.dg-cart-confirm__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0 0 6px;
+    line-height: 1.2;
+}
+
+.dg-cart-confirm__message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-on-surface-variant, #504444);
+}
+
+.dg-cart-confirm__count {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-variant-numeric: tabular-nums;
+    padding: 1px 8px;
+    background: var(--color-primary-container, #f4c2c2);
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.dg-cart-confirm__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap-reverse;
+}
+
+/* Reusable button styling for confirm modal — same shape as the
+   wishlist .dg-wishlist-btn but with cart prefix so we don't pull
+   wishlist CSS into cart.css. */
+.dg-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--color-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dg-cart-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.dg-cart-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.dg-cart-btn--ghost {
+    border-color: rgba(115, 92, 0, 0.30);
+    color: var(--color-primary);
+}
+
+.dg-cart-btn--ghost:hover {
+    background: rgba(115, 92, 0, 0.08);
+    color: var(--color-primary);
+}
+
+.dg-cart-btn--danger {
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: var(--color-on-error);
+}
+
+.dg-cart-btn--danger:hover {
+    background: #a31515;
+    border-color: #a31515;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(186, 26, 26, 0.30);
+}
+
+.dg-cart-btn--danger:focus-visible {
+    outline-color: var(--color-error);
+}
+
+@media (max-width: 480px) {
+    .dg-cart-confirm__actions {
+        flex-direction: column-reverse;
+    }
+    .dg-cart-confirm__actions .dg-cart-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .dg-cart-bulkbar__inner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .dg-cart-bulkbar__actions {
+        justify-content: stretch;
+    }
+    .dg-cart-bulkbar__actions .dg-cart-bulkbar__btn {
+        flex: 1;
+        justify-content: center;
+    }
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
@@ -320,5 +884,20 @@
 
     .dg-glass-panel {
         padding: 1.25rem;
+    }
+}
+
+/* Reduced motion — also kill bulkbar + confirm modal animations. */
+@media (prefers-reduced-motion: reduce) {
+    .dg-cart-bulkbar,
+    .dg-cart-confirm__overlay,
+    .dg-cart-confirm__panel,
+    .dg-cart-bulkbar__btn,
+    .dg-cart-row__select-mark,
+    .dg-cart-select-all-mark,
+    .dg-cart-row__select-mark::after,
+    .dg-cart-select-all-mark::after {
+        transition: none !important;
+        animation: none !important;
     }
 }

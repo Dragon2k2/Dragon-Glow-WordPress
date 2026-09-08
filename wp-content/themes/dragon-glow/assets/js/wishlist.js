@@ -43,6 +43,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	const toasts = root.querySelector('[data-dg-wl-toasts]');
 
 	const EASE = [0.22, 1, 0.36, 1];
+	let bulkAddPending = false;
 
 	// Boot. initSortDropdown runs BEFORE initReveal so the DOM is already
 	// in the user's chosen order by the time the cards fade in — that
@@ -58,6 +59,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	initShareModal();
 	initClearAll();
 	initConfirmModal();
+	initInitialEmptyState();
 	updateCounts();
 
 	// Expose a tiny API for other modules (e.g. lib/wishlist-toggle.js)
@@ -531,12 +533,15 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 		if (addBtn) {
 			addBtn.addEventListener('click', function () {
+				if (bulkAddPending) {
+					return;
+				}
 				const ids = getSelectedIds();
 				if (!ids.length) {
 					toast(i18n.selectItems || 'Select items to use bulk actions.', 'info');
 					return;
 				}
-				bulkAddToBag(ids, addBtn);
+				bulkAddToBag(ids);
 			});
 		}
 
@@ -565,6 +570,16 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		if (selectCountEl) {
 			selectCountEl.textContent = '(' + ids.length + ')';
 		}
+	}
+
+	/** Immediately hide the bulk bar without reading DOM. Used by clear-all
+	    optimistic path so the bar disappears the instant the user confirms. */
+	function updateBulkBarImmediately() {
+		if (!bulkBar || !bulkCountEl) return;
+		bulkCountEl.textContent = '0';
+		bulkBar.classList.remove('is-visible');
+		const selectCountEl = root.querySelector('[data-dg-wl-selected-count]');
+		if (selectCountEl) selectCountEl.textContent = '(0)';
 	}
 
 	function getSelectedIds() {
@@ -599,17 +614,37 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		});
 	}
 
-	function bulkAddToBag(ids, addBtn) {
+	function bulkAddToBag(ids) {
 		if (!window.DGCart || typeof window.DGCart.addMany !== 'function') {
 			toast(i18n.cartUnavailable || 'Your bag is currently unavailable.', 'error');
 			return;
 		}
 
-		setBulkActionBusy(true, addBtn);
+		// The template renders this CTA only for simple, in-stock, purchasable items.
+		const directIds = getDirectAddableIds(ids);
+		if (!directIds.length) {
+			toast(i18n.noDirectItems || 'The selected items need options or are unavailable.', 'info');
+			return;
+		}
 
-		window.DGCart.addMany({ productIds: ids })
+		bulkAddPending = true;
+		setBulkActionPending(true);
+
+		// Optimistic feedback: make the successful path feel immediate while the
+		// server request continues in the background.
+		clearSelectedIds(directIds);
+		updateMasterCheckbox();
+		updateBulkBar();
+		bumpCartCountOptimistically(directIds.length);
+		toast(i18n.optimisticAdded || 'Selected items added to your bag.', 'success');
+
+		window.DGCart.addMany({ productIds: directIds })
 			.then(function (data) {
 				if (!data || !data.success) {
+					restoreSelectedIds(directIds);
+					updateMasterCheckbox();
+					updateBulkBar();
+					bumpCartCountOptimistically(-directIds.length);
 					if (data && data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
 						return;
@@ -623,69 +658,58 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 				const result = data.data || {};
 				const addedIds = normalizeIds(result.added_ids);
-				clearSelectedIds(addedIds);
-				updateMasterCheckbox();
-				updateBulkBar();
+				const added = new Set(addedIds);
+				const retryIds = directIds.filter(function (id) { return !added.has(id); });
 
-				if (window.DGCart.refreshCount && result.added_count > 0) {
-					window.DGCart.refreshCount();
+				if (retryIds.length) {
+					restoreSelectedIds(retryIds);
+					updateMasterCheckbox();
+					updateBulkBar();
+					bumpCartCountOptimistically(-retryIds.length);
+					toast(result.message || i18n.addError || 'Could not add to bag.', 'info');
 				}
 
-				const hasSkipped = (parseInt(result.requires_options_count, 10) || 0) > 0
-					|| (parseInt(result.unavailable_count, 10) || 0) > 0
-					|| (parseInt(result.failed_count, 10) || 0) > 0;
-				const type = result.added_count > 0
-					? (hasSkipped ? 'info' : 'success')
-					: 'info';
-				toast(result.message || i18n.addError || 'Could not add to bag.', type);
+				if (addedIds.length && window.DGCart.refreshCount) {
+					window.DGCart.refreshCount();
+				}
 			})
 			.catch(function () {
+				restoreSelectedIds(directIds);
+				updateMasterCheckbox();
+				updateBulkBar();
+				bumpCartCountOptimistically(-directIds.length);
 				toast(i18n.networkError || 'Network error. Please try again.', 'error');
 			})
 			.then(function () {
-				setBulkActionBusy(false, addBtn);
+				bulkAddPending = false;
+				setBulkActionPending(false);
 			});
 	}
 
+	function getDirectAddableIds(ids) {
+		return ids.filter(function (id) {
+			const card = grid ? grid.querySelector('[data-product-id="' + id + '"]') : null;
+			return card && card.querySelector('.wc-add-to-cart-btn');
+		});
+	}
+
 	/**
-	 * Lock bulk controls while the server processes the selected products.
-	 * Keeping the current selection intact lets customers retry only the items
-	 * that could not be added after a partial-success response.
+	 * Lock bulk controls while the optimistic request is in flight.
+	 * The button's icon and label stay unchanged; only interaction is locked.
 	 *
-	 * @param {boolean} busy
-	 * @param {HTMLElement} addBtn
+	 * @param {boolean} pending
 	 * @return {void}
 	 */
-	function setBulkActionBusy(busy, addBtn) {
+	function setBulkActionPending(pending) {
 		const buttons = root.querySelectorAll('[data-dg-wl-bulkbar] .dg-wishlist-btn');
 		const checkboxes = root.querySelectorAll('[data-dg-wl-select], [data-dg-wl-select-all]');
-		const label = addBtn ? addBtn.querySelector('[data-dg-wl-bulk-add-label]') : null;
-		const icon = addBtn ? addBtn.querySelector('[data-dg-wl-bulk-add-icon]') : null;
 
 		buttons.forEach(function (button) {
-			button.disabled = busy;
+			button.disabled = pending;
 		});
 		checkboxes.forEach(function (checkbox) {
-			checkbox.disabled = busy;
+			checkbox.disabled = pending;
 		});
-
-		if (!addBtn) {
-			return;
-		}
-
-		if (!addBtn.dataset.defaultLabel && label) {
-			addBtn.dataset.defaultLabel = label.textContent.trim();
-		}
-		addBtn.classList.toggle('is-busy', busy);
-		if (busy) {
-			addBtn.setAttribute('aria-busy', 'true');
-			if (label) label.textContent = i18n.processing || 'Adding selected items…';
-			if (icon) icon.textContent = 'progress_activity';
-		} else {
-			addBtn.removeAttribute('aria-busy');
-			if (label) label.textContent = addBtn.dataset.defaultLabel || 'Add selected to bag';
-			if (icon) icon.textContent = 'shopping_bag';
-		}
 	}
 
 	function normalizeIds(value) {
@@ -695,10 +719,10 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	}
 
 	function clearSelectedIds(ids) {
-		const added = new Set(ids);
+		const selected = new Set(ids);
 		root.querySelectorAll('[data-dg-wl-select]:checked').forEach(function (checkbox) {
 			const id = parseInt(checkbox.value, 10) || 0;
-			if (!added.has(id)) {
+			if (!selected.has(id)) {
 				return;
 			}
 			checkbox.checked = false;
@@ -706,6 +730,48 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			if (card) {
 				card.classList.remove('is-selected');
 			}
+		});
+	}
+
+	function restoreSelectedIds(ids) {
+		const selected = new Set(ids);
+		root.querySelectorAll('[data-dg-wl-select]').forEach(function (checkbox) {
+			const id = parseInt(checkbox.value, 10) || 0;
+			if (!selected.has(id)) {
+				return;
+			}
+			checkbox.checked = true;
+			const card = checkbox.closest('[data-dg-wl-card]');
+			if (card) {
+				card.classList.add('is-selected');
+			}
+		});
+	}
+
+	/**
+	 * Optimistically adjust the cart-count badge by the given amount.
+	 *
+	 * Positive values bump the count up (e.g. after a bulk-add); negative
+	 * values roll back the optimistic change when the server confirms a
+	 * failure. The badge lives in the header (outside the wishlist scope)
+	 * so the query runs against `document`, matching `DGCart.refreshCount()`.
+	 * The success handler in `bulkAddToBag()` still calls
+	 * `DGCart.refreshCount()` so the server count can reconcile if
+	 * partial-success drops any items.
+	 *
+	 * @param {number} by Signed integer — positive to add, negative to subtract.
+	 * @return {void}
+	 */
+	function bumpCartCountOptimistically(by) {
+		const delta = parseInt(by, 10) || 0;
+		if (delta === 0) {
+			return;
+		}
+		document.querySelectorAll('.dg-cart-count').forEach(function (el) {
+			const current = parseInt(el.textContent, 10) || 0;
+			const next = current + delta;
+			el.textContent = String(next);
+			el.classList.toggle('hidden', next <= 0);
 		});
 	}
 
@@ -862,31 +928,89 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		setTimeout(function () { feedback.classList.remove('is-visible'); }, 2500);
 	}
 
-	/* ── Clear all ────────────────────────────────────────────────────────── */
+	/* ── Initial empty-state sync ──────────────────────────────────────────
+	   On page load, the template renders `empty-state` with `hidden`
+	   unconditionally, and hides the grid-shell when there are no items.
+	   On a fresh empty wishlist that means both are hidden — the user
+	   sees a blank gap where the onboarding panel should be. Read the
+	   server-rendered `data-empty` flag on the root and flip the empty
+	   state visible so the initial render matches what the JS would
+	   produce after a clear-all action. */
+	function initInitialEmptyState() {
+		if (!emptyState) return;
+		const isEmpty = root.getAttribute('data-empty') === '1';
+		emptyState.hidden = !isEmpty;
+		if (isEmpty && shell) {
+			shell.hidden = true;
+		}
+	}
+
+	/* ── Clear all ──────────────────────────────────────────────────────────
+	   Optimistic flow: as soon as the user confirms, fade the cards and
+	   surface the success toast immediately. The AJAX round-trip runs in
+	   parallel; on failure we reverse-animate the cards back to visible.
+
+	   Note on the fade: the `.is-leaving` CSS rule does NOT actually fade
+	   these cards because `initReveal()` sets `opacity: 1` as an inline
+	   style via Motion, and inline styles win over class selectors. We
+	   therefore animate with Motion directly so the fade is guaranteed
+	   to take effect regardless of CSS specificity. */
 	function initClearAll() {
 		const btn = root.querySelector('[data-dg-wl-clear-all]');
 		if (!btn) return;
+		let pending = false;
 		btn.addEventListener('click', function () {
+			if (pending || !grid) return;
 			askConfirm({ type: 'clear' }).then(function (ok) {
 				if (!ok) return;
+
+				const cards = Array.from(grid.querySelectorAll('[data-dg-wl-card]'));
+
+				// Optimistic UI: fade cards + show toast + update counts RIGHT NOW.
+				const dur = reduce ? 0 : 0.18;
+				cards.forEach(function (c) {
+					animate(c, { opacity: [1, 0], scale: [1, 0.92] }, { duration: dur, ease: EASE });
+				});
+				toast(i18n.cleared || 'Your wishlist has been cleared.', 'success');
+				// Update stats and hide bulk bar immediately — don't wait for AJAX.
+				updateCountsImmediately(0, 0, 0);
+				updateBulkBarImmediately();
+
+				pending = true;
+				btn.disabled = true;
+
 				const fd = new FormData();
 				fd.append('action', 'dg_wishlist_clear');
 				fd.append('nonce', dgAjax.nonce);
 				post(fd).then(function (data) {
+					pending = false;
+					btn.disabled = false;
 					if (!data.success) {
+						// Rollback: reverse-fade cards back to visible.
+						cards.forEach(function (c) {
+							animate(c, { opacity: [0, 1], scale: [0.92, 1] }, { duration: dur, ease: EASE });
+						});
+						updateCounts();
+						updateBulkBar();
 						toast((data.data && data.data.message) || 'Could not clear.', 'error');
 						return;
 					}
-					// Empty out the grid.
-					if (grid) {
-						const cards = grid.querySelectorAll('[data-dg-wl-card]');
-						cards.forEach(function (c) { c.classList.add('is-leaving'); });
-						setTimeout(function () {
-							cards.forEach(function (c) { c.remove(); });
-							afterMutation({ removed: cards.length });
-						}, 320);
+					cards.forEach(function (c) { c.remove(); });
+					if (shell) shell.hidden = true;
+					if (emptyState) {
+						emptyState.hidden = false;
+						if (!reduce) {
+							animate(emptyState, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: EASE });
+						}
 					}
 				}).catch(function () {
+					pending = false;
+					btn.disabled = false;
+					cards.forEach(function (c) {
+						animate(c, { opacity: [0, 1], scale: [0.92, 1] }, { duration: dur, ease: EASE });
+					});
+					updateCounts();
+					updateBulkBar();
 					toast('Network error.', 'error');
 				});
 			});
@@ -1031,6 +1155,33 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		if (segSale)  segSale.textContent  = String(onSale);
 
 		// Saved-amount stat is rendered server-side; skip updating here for now.
+	}
+
+	/** Immediately set stat + segment counters without reading DOM.
+	    Used by the clear-all optimistic path to zero the counters the
+	    instant the user confirms — no waiting for AJAX or DOM re-read. */
+	function updateCountsImmediately(total, inStock, onSale) {
+		total   = total   || 0;
+		inStock = inStock || 0;
+		onSale  = onSale  || 0;
+
+		const statTotal = root.querySelector('[data-dg-wl-stat="total"]');
+		const statStock = root.querySelector('[data-dg-wl-stat="in_stock"]');
+		const statSale  = root.querySelector('[data-dg-wl-stat="on_sale"]');
+
+		if (statTotal) {
+			statTotal.setAttribute('data-count-to', String(total));
+			statTotal.textContent = String(total);
+		}
+		if (statStock) statStock.textContent = String(inStock);
+		if (statSale)  statSale.textContent  = String(onSale);
+
+		const segTotal = root.querySelector('[data-dg-wl-count="all"]');
+		const segStock = root.querySelector('[data-dg-wl-count="in_stock"]');
+		const segSale  = root.querySelector('[data-dg-wl-count="on_sale"]');
+		if (segTotal) segTotal.textContent = String(total);
+		if (segStock) segStock.textContent = String(inStock);
+		if (segSale)  segSale.textContent  = String(onSale);
 	}
 
 	/* ── Refresh header badge (called from other pages too) ───────────────── */
