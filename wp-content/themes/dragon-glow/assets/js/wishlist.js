@@ -594,22 +594,29 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		fd.append('nonce', dgAjax.nonce);
 		fd.append('product_ids', ids.join(','));
 
-		// Optimistic removal.
+		// Optimistic removal: remove cards IMMEDIATELY for instant feedback.
 		const cards = ids.map(function (id) { return grid.querySelector('[data-product-id="' + id + '"]'); }).filter(Boolean);
-		cards.forEach(function (c) { c.classList.add('is-leaving'); });
+		
+		// Show toast immediately
+		toast(
+			ids.length === 1 
+				? (i18n.removedSingle || '1 item removed from wishlist.')
+				: (i18n.removed || ids.length + ' items removed from wishlist.'),
+			'success'
+		);
+		
+		// Remove cards from DOM immediately (no fade delay)
+		cards.forEach(function (c) { c.remove(); });
+		afterMutation({ removed: cards.length });
 
+		// AJAX runs in background
 		post(fd).then(function (data) {
 			if (!data.success) {
-				cards.forEach(function (c) { c.classList.remove('is-leaving'); });
-				toast((data.data && data.data.message) || 'Could not remove items.', 'error');
-				return;
+				// If server fails, show error but keep the optimistic state
+				// (simpler than trying to restore removed cards)
+				toast((data.data && data.data.message) || 'Could not remove items from server.', 'error');
 			}
-			setTimeout(function () {
-				cards.forEach(function (c) { c.remove(); });
-				afterMutation({ removed: cards.length });
-			}, 350);
 		}).catch(function () {
-			cards.forEach(function (c) { c.classList.remove('is-leaving'); });
 			toast('Network error.', 'error');
 		});
 	}
@@ -781,15 +788,29 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		grid.addEventListener('click', function (e) {
 			const btn = e.target.closest('[data-dg-wl-remove]');
 			if (!btn) return;
+
+			// STOP PROPAGATION — prevent wishlist-toggle.js lib from also
+			// handling this click. The lib checks for [data-dg-wl-remove]
+			// and skips, but we stop bubbling here to be absolutely safe
+			// and prevent any race condition with pending responses.
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+
 			const card = btn.closest('[data-dg-wl-card]');
 			if (!card) return;
 			const productId = parseInt(card.getAttribute('data-product-id') || '0', 10);
 			if (!productId) return;
 
-			// Optimistic animation.
+			// Optimistic UI: remove card IMMEDIATELY + show toast.
 			btn.classList.add('is-busy');
-			card.classList.add('is-leaving');
+			toast(i18n.removedSingle || '1 item removed from wishlist.', 'success');
+			
+			// Remove card from DOM immediately (no fade delay)
+			card.remove();
+			afterMutation({ removed: 1 });
 
+			// AJAX runs in background
 			const fd = new FormData();
 			fd.append('action', 'dg_wishlist_toggle');
 			fd.append('nonce', dgAjax.nonce);
@@ -797,18 +818,10 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 			post(fd).then(function (data) {
 				if (!data.success) {
-					btn.classList.remove('is-busy');
-					card.classList.remove('is-leaving');
-					toast((data.data && data.data.message) || 'Could not remove.', 'error');
-					return;
+					// If server fails, show error but keep the optimistic state
+					toast((data.data && data.data.message) || 'Could not remove from server.', 'error');
 				}
-				setTimeout(function () {
-					card.remove();
-					afterMutation({ removed: 1 });
-				}, 320);
 			}).catch(function () {
-				btn.classList.remove('is-busy');
-				card.classList.remove('is-leaving');
 				toast('Network error.', 'error');
 			});
 		});
@@ -966,19 +979,32 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 				const cards = Array.from(grid.querySelectorAll('[data-dg-wl-card]'));
 
-				// Optimistic UI: fade cards + show toast + update counts RIGHT NOW.
-				const dur = reduce ? 0 : 0.18;
-				cards.forEach(function (c) {
-					animate(c, { opacity: [1, 0], scale: [1, 0.92] }, { duration: dur, ease: EASE });
-				});
+				// Optimistic UI: remove cards IMMEDIATELY + show toast + update counts.
 				toast(i18n.cleared || 'Your wishlist has been cleared.', 'success');
-				// Update stats and hide bulk bar immediately — don't wait for AJAX.
+				
+				// Remove cards from DOM immediately (no fade delay)
+				cards.forEach(function (c) { c.remove(); });
+				
+				// Update stats and hide bulk bar immediately
 				updateCountsImmediately(0, 0, 0);
 				updateBulkBarImmediately();
+				
+				// Update header badge immediately
+				updateWishlistBadge();
+				
+				// Show empty state immediately
+				if (shell) shell.hidden = true;
+				if (emptyState) {
+					emptyState.hidden = false;
+					if (!reduce) {
+						animate(emptyState, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: EASE });
+					}
+				}
 
 				pending = true;
 				btn.disabled = true;
 
+				// AJAX runs in background
 				const fd = new FormData();
 				fd.append('action', 'dg_wishlist_clear');
 				fd.append('nonce', dgAjax.nonce);
@@ -986,31 +1012,12 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 					pending = false;
 					btn.disabled = false;
 					if (!data.success) {
-						// Rollback: reverse-fade cards back to visible.
-						cards.forEach(function (c) {
-							animate(c, { opacity: [0, 1], scale: [0.92, 1] }, { duration: dur, ease: EASE });
-						});
-						updateCounts();
-						updateBulkBar();
-						toast((data.data && data.data.message) || 'Could not clear.', 'error');
-						return;
-					}
-					cards.forEach(function (c) { c.remove(); });
-					if (shell) shell.hidden = true;
-					if (emptyState) {
-						emptyState.hidden = false;
-						if (!reduce) {
-							animate(emptyState, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: EASE });
-						}
+						// If server fails, show error but keep the optimistic state
+						toast((data.data && data.data.message) || 'Could not clear on server.', 'error');
 					}
 				}).catch(function () {
 					pending = false;
 					btn.disabled = false;
-					cards.forEach(function (c) {
-						animate(c, { opacity: [0, 1], scale: [0.92, 1] }, { duration: dur, ease: EASE });
-					});
-					updateCounts();
-					updateBulkBar();
 					toast('Network error.', 'error');
 				});
 			});
@@ -1103,6 +1110,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	function afterMutation(opts) {
 		updateCounts();
 		updateBulkBar();
+		updateWishlistBadge(); // Update header badge immediately
 
 		const remaining = grid ? grid.querySelectorAll('[data-dg-wl-card]').length : 0;
 		if (remaining === 0) {
@@ -1119,14 +1127,8 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			noResult.hidden = true;
 		}
 
-		if (opts && opts.removed) {
-			toast(
-				(opts.removed === 1
-					? (i18n.removed || 'Removed from your wishlist.')
-					: sprintf('%d items removed.', opts.removed)),
-				'success'
-			);
-		}
+		// Toast is now shown directly in remove functions (optimistic UI)
+		// so we don't need to show it again here.
 	}
 
 	function updateCounts() {
@@ -1182,6 +1184,17 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		if (segTotal) segTotal.textContent = String(total);
 		if (segStock) segStock.textContent = String(inStock);
 		if (segSale)  segSale.textContent  = String(onSale);
+	}
+
+	/** Update wishlist badge in header (optimistic) — instant visual feedback
+	    by reading the current grid DOM count, no AJAX wait. */
+	function updateWishlistBadge() {
+		if (!grid) return;
+		const count = grid.querySelectorAll('[data-dg-wl-card]').length;
+		document.querySelectorAll('.dg-wishlist-count').forEach(function (el) {
+			el.textContent = String(count);
+			el.classList.toggle('hidden', count === 0);
+		});
 	}
 
 	/* ── Refresh header badge (called from other pages too) ───────────────── */

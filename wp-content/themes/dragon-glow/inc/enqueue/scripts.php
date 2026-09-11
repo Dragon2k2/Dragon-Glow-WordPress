@@ -219,6 +219,21 @@ function dg_enqueue_scripts_assets(): void {
     if ( is_page_template( 'page-templates/template-our-story.php' ) ) {
         wp_enqueue_script( 'dg-our-story', DG_URI . '/assets/js/our-story.js', array( 'dg-main' ), DG_VERSION, true );
     }
+    
+    // Wishlist toggle (heart button) — loads site-wide on every page that
+    // has `.dg-wishlist-toggle` buttons (Shop grid, single product, related
+    // products). The wishlist page also benefits from this so any future
+    // heart toggles on the page itself stay in sync.
+    // MUST be enqueued BEFORE wishlist.js so the lib handler runs first and
+    // can early-return on [data-dg-wl-remove] before wishlist.js stops propagation.
+    wp_enqueue_script(
+        'dg-wishlist-toggle',
+        DG_URI . '/assets/js/lib/wishlist-toggle.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
+    
     if ( is_page_template( 'page-templates/template-wishlist.php' ) ) {
         // ES module — imports Motion for stagger reveal + list/grid animations.
         wp_enqueue_script_module(
@@ -269,18 +284,7 @@ function dg_enqueue_scripts_assets(): void {
             )
         );
     }
-
-    // Wishlist toggle (heart button) — loads site-wide on every page that
-    // has `.dg-wishlist-toggle` buttons (Shop grid, single product, related
-    // products). The wishlist page also benefits from this so any future
-    // heart toggles on the page itself stay in sync.
-    wp_enqueue_script(
-        'dg-wishlist-toggle',
-        DG_URI . '/assets/js/lib/wishlist-toggle.js',
-        array( 'dg-main' ),
-        DG_VERSION,
-        true
-    );
+    
     if ( is_page_template( 'page-templates/template-faq.php' ) ) {
         // ES module: faq.js import Motion (motion.dev) trực tiếp từ CDN.
         wp_enqueue_script_module(

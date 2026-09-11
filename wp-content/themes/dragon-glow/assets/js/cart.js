@@ -259,68 +259,37 @@
      *
      * Flow:
      *   1. Lock all bulk controls (prevent double-click).
-     *   2. Optimistic UI — fade out the affected rows, remove from DOM
-     *      after the transition completes. If 0 rows would remain,
-     *      transition straight into the empty-cart state.
-     *   3. POST to dg_ajax_remove_cart_items.
-     *   4. On success: refresh totals by reloading. The reload also
-     *      renders the empty-cart state server-side if everything was
-     *      removed. A success toast briefly surfaces before reload so
-     *      the user sees confirmation.
-     *   5. On failure: rollback — restore the rows to visible, re-enable
-     *      controls, show an error toast.
+     *   2. Optimistic UI: show toast + fade-out animation + reset selection IMMEDIATELY.
+     *   3. POST to dg_ajax_remove_cart_items in parallel.
+     *   4a. On success (cart still has items): remove DOM after fade, reload.
+     *   4b. On success (cart now empty): show empty state IMMEDIATELY, skip reload.
+     *   5. On failure: show error toast, reload to restore correct state.
      */
     function bulkRemove(keys) {
         if (!window.DGCart || typeof window.DGCart.removeMany !== 'function') {
-            // Diagnose: log exactly what is on window.DGCart (if anything)
-            // so the developer can tell at a glance whether it's missing
-            // entirely (DGCart === undefined — script never ran) or just
-            // out-of-date (DGCart exists but is missing the bulk API).
             dgLog(
                 'warn',
                 '[Dragon Glow] bulkRemove: window.DGCart.removeMany is unavailable.',
                 { hasDGCart: typeof window.DGCart, keys: window.DGCart && Object.keys(window.DGCart) }
             );
-            // Most likely cause: a caching layer (browser HTTP cache,
-            // service worker, CDN, or a full-page cache plugin) is serving
-            // an older cart-api.js that pre-dates the bulk-remove methods.
-            // The URL has the new ?ver=1.2.0 cache-buster, so the page
-            // itself is fresh — but the cached script body may be stale.
             showToast(i18n.bagUnavailable || 'Your bag is currently unavailable. Please try again later.', 'error');
             return;
         }
 
         var rows = keys
             .map(function (k) {
-                // Resolve the row via [data-cart-key] attribute selector
-                // rather than getElementById('dg-row-' + ...):
-                //   1. cart_item_key is a 32-char MD5 hex by default, but
-                //      some plugins (HPOS helpers, multilingual, etc.)
-                //      filter woocommerce_cart_id to include non-alnum
-                //      chars. CSS.escape protects us in those cases.
-                //   2. It decouples the lookup from the raw ID we render
-                //      server-side, so any future escape mismatch between
-                //      esc_attr() and CSS.escape() can't silently break
-                //      the bulk action.
                 return document.querySelector('.dg-cart-row[data-cart-key="' + cssEscape(k) + '"]');
             })
             .filter(function (row) { return row; });
 
         if (!rows.length) {
-            // Two distinct failures collapse to "rows.length === 0":
-            //   (a) the caller passed no keys at all (no checkbox was
-            //       actually ticked when the button was pressed)
-            //   (b) the keys were real but the row lookup failed (the
-            //       cart_item_key didn't resolve to a DOM row).
-            // Show a different toast and log a different warning so the
-            // developer can tell them apart in DevTools.
             var stillChecked = document.querySelectorAll('[data-dg-cart-select]:checked').length;
             if (stillChecked === 0) {
                 showToast(i18n.selectItems || 'Select items first.', 'info');
             } else {
                 dgLog(
                     'warn',
-                    '[Dragon Glow] bulkRemove: ' + stillChecked + ' checkbox(es) ticked but no matching rows found. The cart_item_key(s) passed to the AJAX handler do not match any row in the DOM — likely a stale render after a failed prior remove, or a key-shape change between WP/WC versions.',
+                    '[Dragon Glow] bulkRemove: ' + stillChecked + ' checkbox(es) ticked but no matching rows found. ...',
                     { requestedKeys: keys }
                 );
                 showToast(i18n.bagUnavailable || 'Your bag is currently unavailable. Please try again later.', 'error');
@@ -332,73 +301,87 @@
         var wouldEmpty = rows.length >= totalRows;
 
         setBusy(true);
-        // Optimistic UI — fade out the selected rows.
-        rows.forEach(function (row) { row.classList.add('is-removing'); });
 
-        // Remove from DOM after the transition (450ms in CSS, but be a
-        // little defensive in case the user has reduced motion enabled).
-        var removalDelay = reduce ? 0 : 480;
-        setTimeout(function () {
+        // Optimistic UI: show success toast + fade-out IMMEDIATELY for instant feedback.
+        var count = keys.length;
+        var optimisticMsg = sprintf(
+            count === 1 
+                ? (i18n.removedSingle || '%d item removed from your bag.')
+                : (i18n.removed || '%d items removed from your bag.'),
+            count
+        );
+        showToast(optimisticMsg, 'success');
+
+        // Update cart count badge IMMEDIATELY (optimistic).
+        updateCartCountBadge(totalRows - rows.length);
+
+        rows.forEach(function (row) { row.classList.add('is-removing'); });
+        resetSelection();
+
+        var fadeMs = reduce ? 0 : 480;
+
+        // Special case: removing last item(s) → show empty state IMMEDIATELY.
+        if (wouldEmpty) {
             rows.forEach(function (row) { row.remove(); });
-            // If nothing left, swap into the empty-cart state immediately
-            // so the user doesn't see a blank panel before the reload.
-            if (wouldEmpty) {
-                swapToEmptyState();
-            }
-            resetSelection();
-        }, removalDelay);
+            swapToEmptyState();
+        }
 
         window.DGCart.removeMany({ cartItemKeys: keys })
             .then(function (response) {
-                // WP returns `0` (the digit zero) when no handler matches
-                // the action — that's a valid JSON value but it carries no
-                // `data.message`. Detect that case and route it through
-                // the proper "unknown action" branch instead of falling
-                // back to a misleading "network error".
                 if (response === 0 || response === '0' || response === '' || response === null) {
-                    rollbackRows(rows);
-                    setBusy(false);
                     dgLog('warn', '[Dragon Glow] bulkRemove: server returned empty/unknown response. Check that the dg_ajax_remove_cart_items action is registered and the nonce is valid.');
                     showToast(i18n.bagUnavailable || 'Your bag is currently unavailable. Please try again later.', 'error');
+                    if (!wouldEmpty) {
+                        setTimeout(function () { window.location.reload(); }, fadeMs);
+                    }
                     return;
                 }
 
                 var data = response && response.data;
                 if (!response || !response.success) {
-                    rollbackRows(rows);
-                    setBusy(false);
                     var msg = (data && data.message) || i18n.bagUnavailable || 'Could not remove items.';
                     showToast(msg, 'error');
+                    if (!wouldEmpty) {
+                        setTimeout(function () { window.location.reload(); }, fadeMs);
+                    }
                     return;
                 }
-                // Brief delay so the toast is perceived before the reload
-                // wipes the DOM. Long enough to read the success message
-                // on slow connections, short enough to feel snappy.
-                setTimeout(function () {
-                    showToast(data.message || i18n.removed || 'Items removed.', 'success');
-                }, 60);
-                setTimeout(function () {
-                    window.location.reload();
-                }, reduce ? 60 : 600);
+
+                // SUCCESS: server confirmed (toast already shown optimistically).
+
+                // Update header cart count if available in response.
+                if (data.cart_count !== undefined && window.DGCart && window.DGCart.refreshCount) {
+                    window.DGCart.refreshCount();
+                }
+
+                // If cart still has items → reload after fade to update totals.
+                // If cart is empty → already showed empty state, no reload needed.
+                if (!wouldEmpty) {
+                    setTimeout(function () {
+                        rows.forEach(function (row) { row.remove(); });
+                        window.location.reload();
+                    }, fadeMs);
+                }
             })
             .catch(function (err) {
-                // fetch only rejects on a true network failure (DNS, CORS,
-                // offline, abort, …) or when r.json() can't parse the body.
-                // The most common real-world cause in WP is a PHP fatal that
-                // leaves admin-ajax.php returning an HTML error page.
-                rollbackRows(rows);
-                setBusy(false);
                 dgLog('warn', '[Dragon Glow] bulkRemove: fetch/parse failure. Inspect Network tab for the actual response.', err);
                 showToast(i18n.network || 'Network error. Please try again.', 'error');
+                // Reload after fade to restore correct state (only if cart not empty).
+                if (!wouldEmpty) {
+                    setTimeout(function () { window.location.reload(); }, fadeMs);
+                }
             });
     }
 
     /**
      * Clear the entire cart.
      *
-     * Flow mirrors `bulkRemove` but operates on every row at once. The
-     * server returns the previous count so we can confirm the action
-     * in the toast even after the reload.
+     * Flow:
+     *   1. Lock all bulk controls (prevent double-click).
+     *   2. Optimistic UI: show toast + remove rows + show empty state IMMEDIATELY.
+     *   3. POST to dg_ajax_clear_cart in parallel.
+     *   4. On success: update cart count, no reload needed.
+     *   5. On failure: show error toast (state already changed, keep it simple).
      */
     function clearCart() {
         if (!window.DGCart || typeof window.DGCart.clear !== 'function') {
@@ -413,28 +396,26 @@
 
         var rows = Array.prototype.slice.call(document.querySelectorAll('.dg-cart-row'));
         if (!rows.length) {
-            // Nothing to clear — already empty. Reflect the truth to the user.
             swapToEmptyState();
             showToast(i18n.alreadyEmpty || 'Your bag is already empty.', 'info');
             return;
         }
 
         setBusy(true);
-        // Optimistic UI — fade every row.
-        rows.forEach(function (row) { row.classList.add('is-removing'); });
 
-        var removalDelay = reduce ? 0 : 480;
-        setTimeout(function () {
-            rows.forEach(function (row) { row.remove(); });
-            swapToEmptyState();
-            resetSelection();
-        }, removalDelay);
+        // Optimistic UI: show success toast + remove rows + show empty state IMMEDIATELY.
+        showToast(i18n.cleared || 'Your bag has been cleared.', 'success');
+        
+        // Update cart count badge to 0 IMMEDIATELY (optimistic).
+        updateCartCountBadge(0);
+        
+        rows.forEach(function (row) { row.remove(); });
+        resetSelection();
+        swapToEmptyState();
 
         window.DGCart.clear()
             .then(function (response) {
                 if (response === 0 || response === '0' || response === '' || response === null) {
-                    rollbackRows(rows);
-                    setBusy(false);
                     dgLog('warn', '[Dragon Glow] clearCart: server returned empty/unknown response. Check that the dg_ajax_clear_cart action is registered.');
                     showToast(i18n.bagUnavailable || 'Your bag is currently unavailable. Please try again later.', 'error');
                     return;
@@ -442,37 +423,22 @@
 
                 var data = response && response.data;
                 if (!response || !response.success) {
-                    rollbackRows(rows);
-                    setBusy(false);
                     var msg = (data && data.message) || i18n.bagUnavailable || 'Could not clear your bag.';
                     showToast(msg, 'error');
                     return;
                 }
-                setTimeout(function () {
-                    showToast(data.message || i18n.cleared || 'Your bag has been cleared.', 'success');
-                }, 60);
-                setTimeout(function () {
-                    window.location.reload();
-                }, reduce ? 60 : 600);
+
+                // SUCCESS: server confirmed (toast already shown optimistically).
+
+                // Update header cart count if available.
+                if (data.cart_count !== undefined && window.DGCart && window.DGCart.refreshCount) {
+                    window.DGCart.refreshCount();
+                }
             })
             .catch(function (err) {
-                rollbackRows(rows);
-                setBusy(false);
                 dgLog('warn', '[Dragon Glow] clearCart: fetch/parse failure. Inspect Network tab for the actual response.', err);
                 showToast(i18n.network || 'Network error. Please try again.', 'error');
             });
-    }
-
-    /**
-     * Restore rows to visible state after a failed AJAX call.
-     * `is-removing` is removed and any inline display none is cleared
-     * (defensive — keep order table accessible again).
-     */
-    function rollbackRows(rows) {
-        rows.forEach(function (row) {
-            row.classList.remove('is-removing');
-            row.style.display = '';
-        });
     }
 
     /**
@@ -714,6 +680,23 @@
 
     function getNonce() {
         return (window.dgAjax && window.dgAjax.nonce) ? window.dgAjax.nonce : '';
+    }
+
+    /**
+     * Update cart count badge in header (optimistic UI).
+     * 
+     * @param {number} newCount - The new cart item count.
+     */
+    function updateCartCountBadge(newCount) {
+        var badges = document.querySelectorAll('.dg-cart-count');
+        badges.forEach(function (badge) {
+            badge.textContent = String(newCount);
+            if (newCount === 0) {
+                badge.classList.add('hidden');
+            } else {
+                badge.classList.remove('hidden');
+            }
+        });
     }
 
     /**

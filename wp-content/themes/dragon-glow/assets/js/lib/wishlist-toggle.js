@@ -20,6 +20,9 @@
  *      a value the user has already moved past.
  *   4. On error or network failure we roll back to the burst's recorded
  *      initial state and re-sync the header badge from the server.
+ *   5. **Global request queue**: when clicking multiple items rapidly,
+ *      requests are queued and processed one-by-one to prevent race conditions
+ *      where out-of-order responses flip UI state incorrectly.
  *
  * Heart sits at z-index 20 above `.dg-product-stretched-link` (z-index 1),
  * so clicks never fall through to the card link — see woocommerce.css.
@@ -34,6 +37,11 @@
 	// instant" on a human double-click / triple-click burst while still
 	// short enough that a deliberate pause + click feels responsive.
 	const SYNC_DELAY_MS = 350;
+
+	// Global request queue: only 1 product sync at a time to prevent
+	// race conditions when clicking multiple items rapidly.
+	let pendingRequest = false;
+	const requestQueue = [];
 
 	document.addEventListener('click', function (e) {
 		const btn = e.target.closest('.dg-wishlist-toggle');
@@ -65,9 +73,16 @@
 		// First click of a rapid burst — capture the initial state so we
 		// know what to roll back to on error, and start counting.
 		if (btn._dgBurst === undefined) {
+			const badges = document.querySelectorAll('.dg-wishlist-count');
+			const baselineCount = badges.length > 0
+				? (badges[0].classList.contains('hidden') ? 0 : parseInt(badges[0].textContent || '0', 10) || 0)
+				: null;
+
 			btn._dgBurst = {
 				count: 0,
+				// Capture CURRENT state (may have pending request changing it)
 				initialActive: btn.classList.contains('is-active'),
+				baselineCount: baselineCount,
 			};
 		}
 		btn._dgBurst.count++;
@@ -80,11 +95,11 @@
 		const willBeActive = !btn.classList.contains('is-active');
 		btn.classList.toggle('is-active', willBeActive);
 
-		// Optimistic badge update — paint the new count synchronously so
-		// the header reflects the toggle immediately, without waiting for
-		// the network round-trip.
-		const optimisticCount = computeOptimisticCount(willBeActive);
-		if (optimisticCount !== null) {
+		// Optimistic badge update — derive from burst baseline so rapid
+		// clicks within the same burst don't compound on each other's
+		// intermediate DOM updates.
+		if (btn._dgBurst.baselineCount !== null) {
+			const optimisticCount = computeOptimisticCountFromBurst(btn._dgBurst, willBeActive);
 			applyBadgeCount(optimisticCount);
 		}
 
@@ -99,12 +114,53 @@
 			btn._dgTimer = null;
 
 			if (burst.count % 2 === 1) {
-				sendSync(btn, productId, burst.initialActive);
+				// Pass CURRENT UI state, not burst.initialActive
+				// (may have changed if previous request completed during burst)
+				const currentActive = btn.classList.contains('is-active');
+				queueSync(btn, productId, !currentActive); // rollback state = opposite of current
 			} else {
 				// No real state change — clear the busy flag and stop.
 				btn.classList.remove('is-busy');
 			}
 		}, SYNC_DELAY_MS);
+	}
+
+	/**
+	 * Queue a sync request. If no request is pending, execute immediately.
+	 * Otherwise, push to queue and wait for current request to finish.
+	 *
+	 * **Deduplication:** if the same productId is already in the queue,
+	 * remove the old queued request (it's stale — user has toggled again).
+	 * Only keep the LATEST intent for each product.
+	 *
+	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
+	 * @param {number}      productId      Numeric WP product ID.
+	 * @param {boolean}     initialActive  Pre-burst `is-active` state.
+	 */
+	function queueSync(btn, productId, initialActive) {
+		// Remove any existing queued request for the same product (stale).
+		// Keep only the current request — it represents the user's latest intent.
+		for (let i = requestQueue.length - 1; i >= 0; i--) {
+			if (requestQueue[i].productId === productId) {
+				requestQueue.splice(i, 1);
+			}
+		}
+
+		requestQueue.push({ btn: btn, productId: productId, initialActive: initialActive });
+		processQueue();
+	}
+
+	/**
+	 * Process the next request in the queue if no request is pending.
+	 */
+	function processQueue() {
+		if (pendingRequest || requestQueue.length === 0) {
+			return;
+		}
+
+		const item = requestQueue.shift();
+		pendingRequest = true;
+		sendSync(item.btn, item.productId, item.initialActive);
 	}
 
 	/**
@@ -135,7 +191,10 @@
 				// Stale response — a newer sync has been scheduled since
 				// this one fired. Discard so it can't flip the UI back to
 				// a value the user has already moved past.
-				if (btn._dgReqId !== myReqId) return;
+				if (btn._dgReqId !== myReqId) {
+					finishRequest();
+					return;
+				}
 
 				btn.classList.remove('is-busy');
 
@@ -145,11 +204,13 @@
 						applyBadgeCount(data.data.count);
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
+						finishRequest();
 						return;
 					} else {
 						fetchHeaderBadge();
 					}
 					console.warn('[DG Wishlist] toggle failed:', data.data);
+					finishRequest();
 					return;
 				}
 
@@ -178,55 +239,56 @@
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
 						window.DGWishlist.onCountChange(data.data.count);
 					}
+					finishRequest();
 					return;
 				}
 
 				// Slower path: defer to page-local module if it exposes one.
 				if (window.DGWishlist && typeof window.DGWishlist.refreshCount === 'function') {
 					window.DGWishlist.refreshCount();
+					finishRequest();
 					return;
 				}
 
 				// Last resort: separate count fetch (only when toggle
 				// response somehow omitted the count — defensive).
 				fetchHeaderBadge();
+				finishRequest();
 			})
 			.catch(function () {
-				if (btn._dgReqId !== myReqId) return;
+				if (btn._dgReqId !== myReqId) {
+					finishRequest();
+					return;
+				}
 				btn.classList.remove('is-busy');
 				btn.classList.toggle('is-active', initialActive);
 				fetchHeaderBadge();
+				finishRequest();
 			});
 	}
 
 	/**
-	 * Derive the new badge count locally from the current badge value.
-	 *
-	 * Returns null if we have no baseline to work from — in that case the
-	 * caller should fall back to the server response and skip the optimistic
-	 * update entirely (we won't fake a count we have no basis for).
-	 *
-	 * Mirrors `dg_get_wishlist_count()` semantics: count of saved items,
-	 * 0 = empty, hidden when 0.
-	 *
-	 * @param {boolean} willBeAdded  true = user just added this product.
-	 * @return {number|null}         New count, or null if no baseline.
+	 * Mark current request as finished and process next item in queue.
 	 */
-	function computeOptimisticCount(willBeAdded) {
-		const badges = document.querySelectorAll('.dg-wishlist-count');
-		if (!badges.length) return null;
+	function finishRequest() {
+		pendingRequest = false;
+		processQueue();
+	}
 
-		// Read from the first badge — there should only ever be one in the
-		// page (the header nav), but the helper was built to handle many in
-		// case a mobile drawer or sticky variant lands in the future.
-		const el = badges[0];
-		const wasHidden = el.classList.contains('hidden');
-		const baseline = parseInt(el.textContent || '0', 10) || 0;
-
-		// If the baseline badge was hidden we treated it as "0 saved".
-		// From there, adding bumps to 1, removing stays at 0.
-		const effectiveBaseline = wasHidden ? 0 : baseline;
-		return willBeAdded ? effectiveBaseline + 1 : Math.max(0, effectiveBaseline - 1);
+	/**
+	 * Derive the new badge count from the burst's captured baseline.
+	 *
+	 * This ensures rapid clicks within the same burst (< 350ms) don't
+	 * compound on each other's intermediate DOM updates — we always
+	 * compute relative to the state at the start of the burst.
+	 *
+	 * @param {Object}  burst       The burst state object.
+	 * @param {boolean} willBeAdded true = user just added this product.
+	 * @return {number}             New count.
+	 */
+	function computeOptimisticCountFromBurst(burst, willBeAdded) {
+		const baseline = burst.baselineCount;
+		return willBeAdded ? baseline + 1 : Math.max(0, baseline - 1);
 	}
 
 	/**
