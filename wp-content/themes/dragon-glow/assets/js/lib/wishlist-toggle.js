@@ -8,7 +8,7 @@
  * Click feel — **always responsive, never blocked**:
  *   1. The heart toggles its `is-active` state synchronously on every click —
  *      no waiting on the network round-trip. Same for the header badge
- *      (`computeOptimisticCount()` / `applyBadgeCount()`).
+ *      (optimistic update via `globalPendingDelta`).
  *   2. Clicks within a 350 ms burst are coalesced. Only the *last* click in
  *      the burst schedules an actual AJAX call. If that final burst has an
  *      odd click count the state genuinely changed (toggle), so we sync. If
@@ -124,8 +124,7 @@
 		globalPendingDelta += clickDelta;
 
 		// Optimistic badge update using global tracking for instant accuracy.
-		const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
-		applyBadgeCount(optimisticCount);
+		applyBadgeCount(computeOptimisticCount());
 
 		// Debounce: only the *last* click in a rapid burst schedules a
 		// sync. If that final count is odd the user ended on a different
@@ -150,8 +149,7 @@
 				// User clicked back to original state, so revert the TOTAL delta.
 				globalPendingDelta -= burstTotalDelta;
 				// Recalculate and update badge immediately.
-				const correctedCount = Math.max(0, globalBaseline + globalPendingDelta);
-				paintBadgeCount(correctedCount);
+				paintBadgeCount(computeOptimisticCount());
 				// Clear the busy flag and stop.
 				btn.classList.remove('is-busy');
 			}
@@ -298,16 +296,8 @@
 				if (!data.success) {
 					btn.classList.toggle('is-active', initialActive);
 					if (data.data && typeof data.data.count === 'number') {
-						// Server count is authoritative on error — reset global baseline.
-						// Keep pending delta if other operations are in flight.
-						const serverCount = data.data.count;
-						globalBaseline = serverCount;
-						if (globalPendingDelta === 0) {
-							applyBadgeCount(serverCount);
-						} else {
-							const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
-							applyBadgeCount(optimisticCount);
-						}
+						// Server count is authoritative on error — reset baseline and reconcile.
+						reconcileServerCount(data.data.count);
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
 						finishRequest();
@@ -361,18 +351,7 @@
 				// If other buttons still have pending deltas, preserve them.
 				if (data.data && typeof data.data.count === 'number') {
 					const serverCount = data.data.count;
-					
-					// Reset baseline to server count only if all pending operations completed.
-					if (globalPendingDelta === 0) {
-						globalBaseline = serverCount;
-						paintBadgeCount(serverCount);
-					} else {
-						// Still have pending operations (other buttons clicked during this request).
-						// Update baseline but keep pending delta for accurate optimistic count.
-						globalBaseline = serverCount;
-						const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
-						paintBadgeCount(optimisticCount);
-					}
+					reconcileServerCount(serverCount);
 					
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
 						window.DGWishlist.onCountChange(serverCount);
@@ -415,6 +394,31 @@
 	function finishRequest() {
 		pendingRequest = false;
 		processQueue();
+	}
+
+	/**
+	 * Compute optimistic count: baseline + pending delta, clamped to 0.
+	 * Used for instant UI updates before server confirms.
+	 *
+	 * @return {number} The optimistic wishlist count (>= 0).
+	 */
+	function computeOptimisticCount() {
+		return Math.max(0, globalBaseline + globalPendingDelta);
+	}
+
+	/**
+	 * Reconcile global baseline with server count and update badge.
+	 * If pending operations exist, apply optimistic count; otherwise, paint server count directly.
+	 *
+	 * @param {number} serverCount Authoritative count from server.
+	 */
+	function reconcileServerCount(serverCount) {
+		globalBaseline = serverCount;
+		if (globalPendingDelta === 0) {
+			paintBadgeCount(serverCount);
+		} else {
+			paintBadgeCount(computeOptimisticCount());
+		}
 	}
 
 	/**
