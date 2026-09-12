@@ -45,6 +45,12 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	const EASE = [0.22, 1, 0.36, 1];
 	let bulkAddPending = false;
 
+	// Tracks productIds with in-flight add requests from the wishlist CTAs.
+	// Module-level so paintNotAdded() — defined at module scope — can check
+	// without each bind() creating a fresh closure Set. Cleared from both
+	// success and failure paths of the click handler in initQuickAddOptimistic().
+	const inFlightAdds = new Set();
+
 	// Boot. initSortDropdown runs BEFORE initReveal so the DOM is already
 	// in the user's chosen order by the time the cards fade in — that
 	// way the reveal animation lands on the sorted layout with no flash
@@ -55,6 +61,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	initFilter();
 	initSelectAll();
 	initSingleRemove();
+	initQuickAddOptimistic();
 	initBulkBar();
 	initShareModal();
 	initClearAll();
@@ -780,6 +787,236 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			el.textContent = String(next);
 			el.classList.toggle('hidden', next <= 0);
 		});
+	}
+
+	/* ── Quick-add persistent "Added!" state ────────────────────────────────────────
+	   Click on `.dg-wishlist-card__cta.wc-add-to-cart-btn` flips the button
+	   to a sticky "✓ Added!" state with a green background (#22C55E).
+	   The state persists until the product is REMOVED from the cart — not
+	   a 2-second pulse like the lib's quick-feedback.
+
+	   State is anchored to the server's cart identifiers so it survives
+	   page reloads and stays in sync when the user adds/removes the same
+	   product from another tab or page (cart, single product, …).
+
+	   Why this handler stops propagation:
+	     The same `.wc-add-to-cart-btn` selector is also handled by the
+	     global `cart-feedback.js` lib. That lib paints a transient "Added!"
+	     pulse with bg-green-500. On wishlist cards the lib's utility loses
+	     to the page-specific `.dg-wishlist-card__cta { background: var(--wl-primary) }`
+	     rule (same specificity, wishlist.css loads after Tailwind), so the
+	     green background would never actually paint.
+
+	   By running in CAPTURE phase and stopping immediate propagation, the
+	   wishlist visuals win and we own the AJAX call too — no double
+	   requests.
+
+	   Re-sync strategy:
+	     - On boot: fetch identifiers once, paint initial state.
+	     - After a successful add: assume "added", paint immediately
+	       (optimistic), then refresh identifiers in background.
+	     - On focus / pageshow (bfcache): re-fetch identifiers and repaint.
+	     This keeps the badge/button truthful across the most common
+	     cross-page flows without polling.
+
+	   Reduced motion:
+	     The text swap + class toggle is instantaneous and animates via
+	     the existing `.dg-wishlist-card__cta { transition: all 0.25s
+	     var(--wl-ease) }` rule, which is visual flair only — safe to
+	     leave in place for prefers-reduced-motion users. */
+	function initQuickAddOptimistic() {
+		if (!grid) return;
+
+		// ES module (dg-wishlist) executes BEFORE classic scripts like
+		// dg-cart-api (which exposes `window.DGCart`) even when both are
+		// queued in the footer — module scripts are deferred by spec, but
+		// classic scripts via wp_enqueue_script may run after. Waiting for
+		// `window.load` guarantees both are ready before we bind anything.
+		// Without this, `syncAddedState()` would early-return on its first
+		// guard and the "Added!" state would never survive a page reload.
+		const bind = function () {
+			if (!window.DGCart || typeof window.DGCart.add !== 'function') return;
+
+				grid.addEventListener('click', function (e) {
+				const btn = e.target.closest('.dg-wishlist-card__cta.wc-add-to-cart-btn');
+				if (!btn || btn.disabled) return;
+
+				// Skip when button is already in the "Added!" state —
+				// re-clicking would re-add the product (quantity++) and
+				// re-bump the cart count optimistically. The state is
+				// sticky by design (see initQuickAddOptimistic() docblock).
+				if (btn.classList.contains('is-added')) return;
+
+				// Capture-phase: run before cart-feedback.js so we own the visuals.
+				e.preventDefault();
+				e.stopImmediatePropagation();
+
+				const productId = parseInt(btn.dataset.productId || '0', 10) || 0;
+				if (!productId) return;
+
+				// Cache original label on the button NOW (before any text
+				// mutation) so paintNotAdded can restore without relying on
+				// live textContent, and a later syncAddedState() can't
+				// accidentally snapshot "✓ Added!" as the original.
+				const labelNode = captureLabelNode(btn);
+				const restore = function () {
+					btn.classList.remove('is-added');
+					if (labelNode) {
+						labelNode.textContent = btn.dataset.originalLabel || 'Add to bag';
+					}
+				};
+
+				// 1) Optimistic: register in-flight add + paint "Added!" + bump
+				// badge. Registering in `inFlightAdds` lets paintNotAdded()
+				// (called by any concurrent syncAddedState()) skip this
+				// button until the AJAX resolves — see paintNotAdded() for
+				// the full race analysis.
+				inFlightAdds.add(productId);
+				paintAdded(btn, labelNode);
+				bumpCartCountOptimistically(1);
+
+				// 2) Fire the real add via DGCart. We replace the lib's call so
+				//    only ONE AJAX round-trip happens per click.
+				window.DGCart.add({
+					productId: productId,
+					slug:      btn.dataset.productSlug || '',
+					size:      '',
+					quantity:  1,
+				})
+					.then(function (data) {
+						inFlightAdds.delete(productId);
+						if (!data || !data.success) {
+							// Revert badge + button on failure.
+							bumpCartCountOptimistically(-1);
+							restore();
+							return;
+						}
+						// Success — let DGCart.refreshCount() reconcile the badge
+						// with the authoritative server count.
+						if (window.DGCart.refreshCount) {
+							window.DGCart.refreshCount();
+						}
+					})
+					.catch(function () {
+						inFlightAdds.delete(productId);
+						bumpCartCountOptimistically(-1);
+						restore();
+					});
+			}, true); // capture: true — run before cart-feedback.js
+
+			// Initial sync + re-sync hooks (bfcache, tab refocus).
+			syncAddedState();
+			window.addEventListener('pageshow', syncAddedState);
+			window.addEventListener('focus', syncAddedState);
+		};
+
+		if (document.readyState === 'complete') {
+			bind();
+		} else {
+			window.addEventListener('load', bind, { once: true });
+		}
+	}
+
+	/** Find the visible text node inside a CTA button and snapshot the
+	    current label as `data-original-label` if it isn't already cached.
+	    Shared by the click handler and syncAddedState() so the cache
+	    invariant ("original label is always the default 'Add to bag'/'View
+	    options' text, never '✓ Added!'") is enforced in one place. */
+	function captureLabelNode(btn) {
+		const labelNode = Array.from(btn.childNodes).find(function (n) {
+			return n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0;
+		});
+		if (labelNode && !btn.dataset.originalLabel) {
+			const trimmed = labelNode.textContent.trim();
+			// Skip caching when the current label is already "✓ Added!"
+			// (e.g. server-rendered state) — otherwise we'd lock that as
+			// the "original" and restore would re-paint "✓ Added!".
+			if (trimmed && trimmed !== '✓ Added!') {
+				btn.dataset.originalLabel = labelNode.textContent;
+			}
+		}
+		return labelNode;
+	}
+
+	/** Swap the CTA label to "✓ Added!" and add the .is-added class.
+	    No-op when the button is already in that state. */
+	function paintAdded(btn, labelNode) {
+		if (btn.classList.contains('is-added')) {
+			// Still ensure the label is correct in case the markup was rebuilt.
+			if (labelNode && labelNode.textContent !== '✓ Added!') {
+				labelNode.textContent = '✓ Added!';
+			}
+			return;
+		}
+		btn.classList.add('is-added');
+		if (labelNode) {
+			labelNode.textContent = '✓ Added!';
+		} else {
+			// Fallback for text-only markup — rebuild with icon + label.
+			btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>✓ Added!';
+		}
+	}
+
+	/** Restore the CTA to the default "Add to bag" label and remove the
+	    .is-added class. Safe to call on buttons already in default state.
+
+	    Skips buttons whose productId is in `inFlightAdds` — the Set
+	    tracks click-handler adds still waiting on an AJAX response. Without
+	    this guard, any concurrent syncAddedState() (a slow boot sync,
+	    pageshow/focus listener, etc.) can resolve AFTER the click handler
+	    painted "✓ Added!" and observe an empty cart on the server (because
+	    the add AJAX hasn't reached WC yet) — repainting the freshly painted
+	    "✓ Added!" back to "Add to bag". That causes the click to look like
+	    it didn't stick. The Set is cleared on both success and failure
+	    paths in the click handler so cross-tab removes still reconcile. */
+	function paintNotAdded(btn, labelNode) {
+		const pid = parseInt(btn.dataset.productId || '0', 10) || 0;
+		if (pid > 0 && inFlightAdds.has(pid)) {
+			// Optimistic add in flight — trust the click + local paintAdded().
+			return;
+		}
+		if (!btn.classList.contains('is-added') && (!labelNode || labelNode.textContent !== '✓ Added!')) {
+			return;
+		}
+		btn.classList.remove('is-added');
+		if (labelNode) {
+			labelNode.textContent = btn.dataset.originalLabel || 'Add to bag';
+		}
+	}
+
+	/** Fetch authoritative cart identifiers and repaint every CTA in the
+	    grid to match. Cheaper than re-rendering: we only flip the
+	    per-button class + label. Runs on boot, pageshow, and focus so the
+	    page reflects any cross-tab add/remove without polling.
+
+	    Response shape mirrors quick-add-to-cart.js#restoreCartState():
+	      { success: true, data: { product_ids: number[], slugs: string[] } }
+	    — `data.data` is required, and field names are snake_case (not
+	    camelCase). */
+	function syncAddedState() {
+		if (!grid || !window.DGCart || typeof window.DGCart.getIdentifiers !== 'function') return;
+
+		window.DGCart.getIdentifiers()
+			.then(function (response) {
+				const payload = (response && response.data) || {};
+				const inCart  = new Set(payload.product_ids || []);
+				const slugs   = new Set(payload.slugs || []);
+
+			const buttons = grid.querySelectorAll('.dg-wishlist-card__cta.wc-add-to-cart-btn');
+			buttons.forEach(function (btn) {
+				const productId = parseInt(btn.dataset.productId || '0', 10) || 0;
+				const slug      = btn.dataset.productSlug || '';
+				const isInCart  = (productId > 0 && inCart.has(productId)) || (slug && slugs.has(slug));
+				const labelNode = captureLabelNode(btn);
+
+				if (isInCart) {
+					paintAdded(btn, labelNode);
+				} else {
+					paintNotAdded(btn, labelNode);
+				}
+			});
+			})
+			.catch(function () { /* silent — keep current visual state */ });
 	}
 
 	/* ── Single card remove (heart icon) ──────────────────────────────────── */

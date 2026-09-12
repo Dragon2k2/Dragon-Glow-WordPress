@@ -1119,6 +1119,34 @@
 	box-shadow: none;
 }
 
+/* Added state — sticky "Added!" indicator after the product is in the
+   bag. Specificity (2 classes) beats the base `.dg-wishlist-card__cta`
+   rule (1 class), so this wins the cascade regardless of which utility
+   classes are also present. Triggered by wishlist.js based on the
+   server's authoritative cart identifiers, so the state survives page
+   reloads and re-syncs on focus/pageshow. */
+.dg-wishlist-card__cta.is-added {
+	background: #22C55E;
+	border-color: #22C55E;
+	color: #ffffff;
+}
+
+/* Hide the bag icon once added — the "✓ Added!" label + green pill is
+   the visual signal; the icon would compete with the checkmark for
+   attention. The button still reads "✓ Added!" in a 2-word label, so
+   no aria-hidden is needed on the text (it's the live label). */
+.dg-wishlist-card__cta.is-added .dg-wishlist-card__icon {
+	display: none;
+}
+
+.dg-wishlist-card__cta.is-added:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 20px rgba(34, 197, 94, 0.30);
+	background: #22C55E;
+	color: #ffffff;
+}
+}
+
 /* ---- No results ---- */
 .dg-wishlist-noresult {
 	margin-top: 48px;

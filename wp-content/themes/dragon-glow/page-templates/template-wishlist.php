@@ -84,12 +84,32 @@ $dg_wl_stats = dg_wishlist_page_stats( $dg_wl_items );
 		<section class="dg-wishlist-grid-shell" data-dg-wl-grid-shell <?php echo empty( $dg_wl_items ) ? 'hidden' : ''; ?>>
 
 			<div class="dg-wishlist-grid" data-dg-wl-grid>
+				<?php
+				/*
+				 * Server-rendered "Added!" state (no FOUC before JS boots).
+				 * Reuses dg_get_cart_identifiers() — same source as the
+				 * AJAX endpoint, so we can't drift from the server.
+				 * Mock-mode slug tracking lives in the browser's localStorage
+				 * (lib/cart-api.js), so JS-only — see wishlist.js#syncAddedState.
+				 */
+				$dg_wl_cart_ids  = dg_get_cart_identifiers();
+				$dg_wl_in_cart_p = array_flip( array_map( 'intval', (array) ( $dg_wl_cart_ids['product_ids'] ?? array() ) ) );
+				?>
 				<?php foreach ( $dg_wl_items as $item ) : ?>
 					<?php
 					$product_id  = (int) $item['id'];
 					$has_hover   = ! empty( $item['image_hover'] ) && $item['image_hover'] !== $item['image'];
 					$is_simple   = ( 'simple' === $item['type'] );
 					$button_text = $is_simple ? __( 'Add to bag', 'dragon-glow' ) : __( 'View options', 'dragon-glow' );
+
+					// Server-rendered "Added!" state — eliminates the FOUC flash
+					// between HTML parse and the JS syncAddedState() AJAX round-trip.
+					$dg_wl_in_cart = isset( $dg_wl_in_cart_p[ $product_id ] );
+					$dg_wl_cta_classes = 'dg-wishlist-card__cta wc-add-to-cart-btn';
+					if ( $dg_wl_in_cart ) {
+						$dg_wl_cta_classes .= ' is-added';
+						$button_text       = __( '✓ Added!', 'dragon-glow' );
+					}
 					?>
 					<article class="dg-wishlist-card"
 					         data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
@@ -98,7 +118,6 @@ $dg_wl_stats = dg_wishlist_page_stats( $dg_wl_items );
 					         data-on-sale="<?php echo $item['on_sale'] ? '1' : '0'; ?>"
 					         data-price="<?php echo esc_attr( (string) ( $item['sale_price'] > 0 ? $item['sale_price'] : $item['regular_price'] ) ); ?>"
 					         data-name="<?php echo esc_attr( $item['name'] ); ?>"
-					         data-saved-at="<?php echo esc_attr( (string) time() ); ?>"
 					         data-sr>
 
 						<!-- Selection checkbox -->
@@ -197,11 +216,11 @@ $dg_wl_stats = dg_wishlist_page_stats( $dg_wl_items );
 
 							<?php if ( $item['in_stock'] && $item['purchasable'] && $is_simple ) : ?>
 								<button type="button"
-								        class="dg-wishlist-card__cta wc-add-to-cart-btn"
+								        class="<?php echo esc_attr( $dg_wl_cta_classes ); ?>"
 								        data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
 								        data-product-slug="<?php echo esc_attr( $item['slug'] ); ?>"
 								        data-product-type="<?php echo esc_attr( $item['type'] ); ?>">
-									<span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
+									<span class="material-symbols-outlined dg-wishlist-card__icon" aria-hidden="true">shopping_bag</span>
 									<?php echo esc_html( $button_text ); ?>
 								</button>
 							<?php elseif ( ! $item['in_stock'] ) : ?>
