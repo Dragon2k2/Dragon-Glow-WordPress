@@ -49,6 +49,13 @@
 	// _dgReqId for per-button deduplication.
 	let globalSequence = 0;
 
+	// Global optimistic count tracking: baseline captured once at first
+	// interaction, plus a running delta of all pending add/remove operations.
+	// This ensures rapid clicks on multiple different items show the correct
+	// total immediately (e.g., click 3 items → badge shows 3, not 1→2→3).
+	let globalBaseline = null;
+	let globalPendingDelta = 0;
+
 	document.addEventListener('click', function (e) {
 		const btn = e.target.closest('.dg-wishlist-toggle');
 		if (!btn) return;
@@ -76,19 +83,23 @@
 	 * @param {number}      productId  Numeric WP product ID.
 	 */
 	function onHeartClick(btn, productId) {
+		// Capture global baseline on very first interaction (any button).
+		if (globalBaseline === null) {
+			const badges = document.querySelectorAll('.dg-wishlist-count');
+			globalBaseline = badges.length > 0
+				? (badges[0].classList.contains('hidden') ? 0 : parseInt(badges[0].textContent || '0', 10) || 0)
+				: 0;
+		}
+
 		// First click of a rapid burst — capture the initial state so we
 		// know what to roll back to on error, and start counting.
 		if (btn._dgBurst === undefined) {
-			const badges = document.querySelectorAll('.dg-wishlist-count');
-			const baselineCount = badges.length > 0
-				? (badges[0].classList.contains('hidden') ? 0 : parseInt(badges[0].textContent || '0', 10) || 0)
-				: null;
-
 			btn._dgBurst = {
 				count: 0,
 				// Capture CURRENT state (may have pending request changing it)
 				initialActive: btn.classList.contains('is-active'),
-				baselineCount: baselineCount,
+				// Track total delta accumulated in this burst for accurate revert.
+				totalDelta: 0,
 			};
 		}
 		btn._dgBurst.count++;
@@ -97,17 +108,24 @@
 		// is visible immediately; cleared on resolve/reject.
 		btn.classList.add('is-busy');
 
+		// Calculate delta for this specific click.
+		// IMPORTANT: Capture BEFORE toggle to know the state transition.
+		const wasActive = btn.classList.contains('is-active'); // state BEFORE toggle
+		const willBeActive = !wasActive;
+		const clickDelta = willBeActive ? 1 : -1;
+
 		// Toggle UI synchronously.
-		const willBeActive = !btn.classList.contains('is-active');
 		btn.classList.toggle('is-active', willBeActive);
 
-		// Optimistic badge update — derive from burst baseline so rapid
-		// clicks within the same burst don't compound on each other's
-		// intermediate DOM updates.
-		if (btn._dgBurst.baselineCount !== null) {
-			const optimisticCount = computeOptimisticCountFromBurst(btn._dgBurst, willBeActive);
-			applyBadgeCount(optimisticCount);
-		}
+		// Accumulate delta in burst for accurate revert if burst count is even.
+		btn._dgBurst.totalDelta += clickDelta;
+
+		// Update global pending delta immediately.
+		globalPendingDelta += clickDelta;
+
+		// Optimistic badge update using global tracking for instant accuracy.
+		const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
+		applyBadgeCount(optimisticCount);
 
 		// Debounce: only the *last* click in a rapid burst schedules a
 		// sync. If that final count is odd the user ended on a different
@@ -116,6 +134,7 @@
 		clearTimeout(btn._dgTimer);
 		btn._dgTimer = setTimeout(function () {
 			const burst = btn._dgBurst;
+			const burstTotalDelta = burst.totalDelta; // Total delta for entire burst
 			delete btn._dgBurst;
 			btn._dgTimer = null;
 
@@ -123,9 +142,17 @@
 				// Pass CURRENT UI state, not burst.initialActive
 				// (may have changed if previous request completed during burst)
 				const currentActive = btn.classList.contains('is-active');
-				queueSync(btn, productId, !currentActive);
+				// NOTE: globalPendingDelta is NOT decremented here.
+				// It will be decremented when server response arrives.
+				queueSync(btn, productId, !currentActive, burstTotalDelta);
 			} else {
-				// No real state change — clear the busy flag and stop.
+				// No real state change (even clicks = back to start).
+				// User clicked back to original state, so revert the TOTAL delta.
+				globalPendingDelta -= burstTotalDelta;
+				// Recalculate and update badge immediately.
+				const correctedCount = Math.max(0, globalBaseline + globalPendingDelta);
+				paintBadgeCount(correctedCount);
+				// Clear the busy flag and stop.
 				btn.classList.remove('is-busy');
 			}
 		}, SYNC_DELAY_MS);
@@ -151,8 +178,9 @@
 	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state.
+	 * @param {number}      delta          The delta (+1 or -1) for this request.
 	 */
-	function queueSync(btn, productId, initialActive) {
+	function queueSync(btn, productId, initialActive, delta) {
 		// Increment request ID immediately to invalidate any pending request
 		// for the same button. This ensures old responses are discarded.
 		const myReqId = (btn._dgReqId || 0) + 1;
@@ -164,9 +192,13 @@
 
 		// Remove any existing queued request for the same product (stale).
 		// Keep only the current request — it represents the user's latest intent.
+		// CRITICAL: When removing a stale request from queue, revert its delta
+		// because it will never get a server response to reconcile.
 		for (let i = requestQueue.length - 1; i >= 0; i--) {
 			if (requestQueue[i].productId === productId) {
-				requestQueue.splice(i, 1);
+				const staleRequest = requestQueue.splice(i, 1)[0];
+				// Revert the stale request's delta immediately.
+				globalPendingDelta -= staleRequest.delta;
 			}
 		}
 
@@ -174,7 +206,8 @@
 			btn: btn, 
 			productId: productId, 
 			initialActive: initialActive, 
-			sequence: mySequence  // Attach global sequence to this request
+			sequence: mySequence,  // Attach global sequence to this request
+			delta: delta           // Track delta for global accounting
 		});
 		processQueue();
 	}
@@ -189,7 +222,7 @@
 
 		const item = requestQueue.shift();
 		pendingRequest = true;
-		sendSync(item.btn, item.productId, item.initialActive, item.sequence);
+		sendSync(item.btn, item.productId, item.initialActive, item.sequence, item.delta);
 	}
 
 	/**
@@ -201,8 +234,9 @@
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state,
 	 *                                     used to roll back on error.
 	 * @param {number}      mySequence     Global sequence number for this request.
+	 * @param {number}      delta          The delta (+1 or -1) for this request.
 	 */
-	function sendSync(btn, productId, initialActive, mySequence) {
+	function sendSync(btn, productId, initialActive, mySequence, delta) {
 		// NOTE: Request ID was already incremented in queueSync() to invalidate
 		// any pending requests. We just read the current ID here.
 		const myReqId = btn._dgReqId || 0;
@@ -232,7 +266,9 @@
 				// STALENESS CHECK 1: Per-button Request ID
 				// A newer sync for THIS BUTTON has been scheduled since this one fired.
 				// Discard so it can't flip the UI back to a value the user has already moved past.
+				// CRITICAL: Revert delta because this response won't reconcile global state.
 				if (btn._dgReqId !== myReqId) {
+					globalPendingDelta -= delta;
 					finishRequest();
 					return;
 				}
@@ -242,9 +278,11 @@
 				// This prevents out-of-order responses from overwriting newer state.
 				// Example: Click I1-add (seq=1) → Click I1-remove (seq=2) → Response seq=2 applies → Response seq=1 arrives
 				// Without this check, Response seq=1 would overwrite the newer seq=2 state.
+				// CRITICAL: Revert delta because this response won't reconcile global state.
 				//
 				// Note: undefined > number = false in JavaScript, so first response always passes.
 				if (btn._dgLastAppliedSeq > mySequence) {
+					globalPendingDelta -= delta;
 					finishRequest();
 					return;
 				}
@@ -252,12 +290,24 @@
 				// Mark this sequence as applied for this button
 				btn._dgLastAppliedSeq = mySequence;
 
+				// Reconcile global pending delta: this request has now completed.
+				globalPendingDelta -= delta;
+
 				btn.classList.remove('is-busy');
 
 				if (!data.success) {
 					btn.classList.toggle('is-active', initialActive);
 					if (data.data && typeof data.data.count === 'number') {
-						applyBadgeCount(data.data.count);
+						// Server count is authoritative on error — reset global baseline.
+						// Keep pending delta if other operations are in flight.
+						const serverCount = data.data.count;
+						globalBaseline = serverCount;
+						if (globalPendingDelta === 0) {
+							applyBadgeCount(serverCount);
+						} else {
+							const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
+							applyBadgeCount(optimisticCount);
+						}
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
 						finishRequest();
@@ -307,10 +357,25 @@
 				// Reconcile with the server's authoritative count. Paint
 				// silently — the user already saw the optimistic update,
 				// firing the badge pulse again would be visual noise.
+				// IMPORTANT: Only reset global baseline when no pending operations remain.
+				// If other buttons still have pending deltas, preserve them.
 				if (data.data && typeof data.data.count === 'number') {
-					paintBadgeCount(data.data.count);
+					const serverCount = data.data.count;
+					
+					// Reset baseline to server count only if all pending operations completed.
+					if (globalPendingDelta === 0) {
+						globalBaseline = serverCount;
+						paintBadgeCount(serverCount);
+					} else {
+						// Still have pending operations (other buttons clicked during this request).
+						// Update baseline but keep pending delta for accurate optimistic count.
+						globalBaseline = serverCount;
+						const optimisticCount = Math.max(0, globalBaseline + globalPendingDelta);
+						paintBadgeCount(optimisticCount);
+					}
+					
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
-						window.DGWishlist.onCountChange(data.data.count);
+						window.DGWishlist.onCountChange(serverCount);
 					}
 					finishRequest();
 					return;
@@ -330,9 +395,13 @@
 			})
 			.catch(function () {
 				if (btn._dgReqId !== myReqId) {
+					// CRITICAL: Revert delta for discarded error response.
+					globalPendingDelta -= delta;
 					finishRequest();
 					return;
 				}
+				// Reconcile global pending delta on error.
+				globalPendingDelta -= delta;
 				btn.classList.remove('is-busy');
 				btn.classList.toggle('is-active', initialActive);
 				fetchHeaderBadge();
@@ -346,22 +415,6 @@
 	function finishRequest() {
 		pendingRequest = false;
 		processQueue();
-	}
-
-	/**
-	 * Derive the new badge count from the burst's captured baseline.
-	 *
-	 * This ensures rapid clicks within the same burst (< 350ms) don't
-	 * compound on each other's intermediate DOM updates — we always
-	 * compute relative to the state at the start of the burst.
-	 *
-	 * @param {Object}  burst       The burst state object.
-	 * @param {boolean} willBeAdded true = user just added this product.
-	 * @return {number}             New count.
-	 */
-	function computeOptimisticCountFromBurst(burst, willBeAdded) {
-		const baseline = burst.baselineCount;
-		return willBeAdded ? baseline + 1 : Math.max(0, baseline - 1);
 	}
 
 	/**
@@ -438,7 +491,11 @@
 			.then(function (r) { return r.json(); })
 			.then(function (data) {
 				if (!data || !data.success) return;
-				applyBadgeCount((data.data && data.data.count) || 0);
+				// Reset global baseline when fetching authoritative count.
+				const serverCount = (data.data && data.data.count) || 0;
+				globalBaseline = serverCount;
+				globalPendingDelta = 0;
+				applyBadgeCount(serverCount);
 			})
 			.catch(function () { /* silent */ });
 	}
