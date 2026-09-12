@@ -1,0 +1,28 @@
+---
+description: Always respond to user messages in Vietnamese
+alwaysApply: true
+---
+
+# Vietnamese Response Language
+
+Always respond to user messages in Vietnamese (Tiếng Việt), unless the user explicitly requests a different language.
+
+## Examples
+
+✅ GOOD:
+```
+User: "Làm sao để thêm animation vào trang?"
+Assistant: "Để thêm animation vào trang, bạn có thể sử dụng thư viện Motion..."
+```
+
+❌ BAD:
+```
+User: "Làm sao để thêm animation vào trang?"
+Assistant: "To add animations to the page, you can use the Motion library..."
+```
+
+## Exceptions
+
+- Technical terms, code, and variable names remain in English
+- Documentation and comments in code follow project standards (English for this project)
+- Only switch to another language if user explicitly asks (e.g., "please respond in English")

@@ -78,11 +78,16 @@
 				? (badges[0].classList.contains('hidden') ? 0 : parseInt(badges[0].textContent || '0', 10) || 0)
 				: null;
 
+			// Increment burst version counter — used to detect when a new burst
+			// starts while an old request is still pending.
+			btn._dgBurstVersion = (btn._dgBurstVersion || 0) + 1;
+
 			btn._dgBurst = {
 				count: 0,
 				// Capture CURRENT state (may have pending request changing it)
 				initialActive: btn.classList.contains('is-active'),
 				baselineCount: baselineCount,
+				version: btn._dgBurstVersion, // Tag this burst with version
 			};
 		}
 		btn._dgBurst.count++;
@@ -117,7 +122,7 @@
 				// Pass CURRENT UI state, not burst.initialActive
 				// (may have changed if previous request completed during burst)
 				const currentActive = btn.classList.contains('is-active');
-				queueSync(btn, productId, !currentActive); // rollback state = opposite of current
+				queueSync(btn, productId, !currentActive, burst.version); // Pass burst version
 			} else {
 				// No real state change — clear the busy flag and stop.
 				btn.classList.remove('is-busy');
@@ -136,8 +141,9 @@
 	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state.
+	 * @param {number}      burstVersion   Version tag for this burst.
 	 */
-	function queueSync(btn, productId, initialActive) {
+	function queueSync(btn, productId, initialActive, burstVersion) {
 		// Remove any existing queued request for the same product (stale).
 		// Keep only the current request — it represents the user's latest intent.
 		for (let i = requestQueue.length - 1; i >= 0; i--) {
@@ -146,7 +152,7 @@
 			}
 		}
 
-		requestQueue.push({ btn: btn, productId: productId, initialActive: initialActive });
+		requestQueue.push({ btn: btn, productId: productId, initialActive: initialActive, burstVersion: burstVersion });
 		processQueue();
 	}
 
@@ -160,7 +166,7 @@
 
 		const item = requestQueue.shift();
 		pendingRequest = true;
-		sendSync(item.btn, item.productId, item.initialActive);
+		sendSync(item.btn, item.productId, item.initialActive, item.burstVersion);
 	}
 
 	/**
@@ -171,10 +177,17 @@
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state,
 	 *                                     used to roll back on error.
+	 * @param {number}      burstVersion   Version tag (not used - kept for compatibility).
 	 */
-	function sendSync(btn, productId, initialActive) {
+	function sendSync(btn, productId, initialActive, burstVersion) {
 		const myReqId = (btn._dgReqId || 0) + 1;
 		btn._dgReqId = myReqId;
+
+		// Capture the UI state at the moment we send this request.
+		// We'll use this to detect drift: if the UI has changed by the time
+		// the response arrives, it means the user clicked again and we should
+		// NOT force-apply the server state.
+		const expectedActive = btn.classList.contains('is-active');
 
 		const fd = new FormData();
 		fd.append('action', 'dg_wishlist_toggle');
@@ -192,7 +205,7 @@
 				// this one fired. Discard so it can't flip the UI back to
 				// a value the user has already moved past.
 				if (btn._dgReqId !== myReqId) {
-					finishRequest();
+					finishRequest(btn);
 					return;
 				}
 
@@ -204,32 +217,57 @@
 						applyBadgeCount(data.data.count);
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
-						finishRequest();
+						finishRequest(btn);
 						return;
 					} else {
 						fetchHeaderBadge();
 					}
 					console.warn('[DG Wishlist] toggle failed:', data.data);
-					finishRequest();
+					finishRequest(btn);
 					return;
 				}
 
-				btn.classList.toggle('is-active', !!data.data.added);
+				// STATE DRIFT DETECTION: Only reconcile UI with server if BOTH:
+				// 1. This is still the latest request (no newer request has been queued)
+				// 2. UI state hasn't changed since we sent this request
+				// If either has changed, the user clicked again and a newer request
+				// is coming — let that newer request handle the reconciliation.
+				const currentActive = btn.classList.contains('is-active');
+				const serverActive = !!data.data.added;
+				const isLatestRequest = (btn._dgReqId === myReqId);
+				const uiUnchanged = (currentActive === expectedActive);
 
-				// Pop animation if we just added.
-				if (data.data.added) {
-					const icon = btn.querySelector('.material-symbols-outlined');
-					if (icon && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-						icon.animate(
-							[
-								{ transform: 'scale(1)' },
-								{ transform: 'scale(1.35)', offset: 0.4 },
-								{ transform: 'scale(1)' },
-							],
-							{ duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-						);
+				const noDrift = isLatestRequest && uiUnchanged;
+
+				if (noDrift) {
+					// No drift — UI is still in the state we expected when we sent
+					// this request. Server and UI should match.
+					if (currentActive !== serverActive) {
+						// Server disagrees with our optimistic state. This should be
+						// rare (session changed, another tab, race condition). 
+						// Log for debugging but DO NOT force-apply server state to UI.
+						// Forcing UI changes can cause flicker if user is still interacting.
+						// If there's a real mismatch, user will notice and click again.
+						console.warn('[DG Wishlist] State mismatch - UI:', currentActive, 'Server:', serverActive, 'Product:', productId);
+					} else {
+						// Pop animation ONLY if server confirms our optimistic add.
+						if (serverActive && currentActive === true) {
+							const icon = btn.querySelector('.material-symbols-outlined');
+							if (icon && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+								icon.animate(
+									[
+										{ transform: 'scale(1)' },
+										{ transform: 'scale(1.35)', offset: 0.4 },
+										{ transform: 'scale(1)' },
+									],
+									{ duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+								);
+							}
+						}
 					}
 				}
+				// else: Drift detected (newer request queued OR UI changed) → 
+				// user clicked again → don't touch UI, let newer request handle it.
 
 				// Reconcile with the server's authoritative count. Paint
 				// silently — the user already saw the optimistic update,
@@ -239,38 +277,40 @@
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
 						window.DGWishlist.onCountChange(data.data.count);
 					}
-					finishRequest();
+					finishRequest(btn);
 					return;
 				}
 
 				// Slower path: defer to page-local module if it exposes one.
 				if (window.DGWishlist && typeof window.DGWishlist.refreshCount === 'function') {
 					window.DGWishlist.refreshCount();
-					finishRequest();
+					finishRequest(btn);
 					return;
 				}
 
 				// Last resort: separate count fetch (only when toggle
 				// response somehow omitted the count — defensive).
 				fetchHeaderBadge();
-				finishRequest();
+				finishRequest(btn);
 			})
 			.catch(function () {
 				if (btn._dgReqId !== myReqId) {
-					finishRequest();
+					finishRequest(btn);
 					return;
 				}
 				btn.classList.remove('is-busy');
 				btn.classList.toggle('is-active', initialActive);
 				fetchHeaderBadge();
-				finishRequest();
+				finishRequest(btn);
 			});
 	}
 
 	/**
 	 * Mark current request as finished and process next item in queue.
+	 *
+	 * @param {HTMLElement} btn The button whose request just finished (optional).
 	 */
-	function finishRequest() {
+	function finishRequest(btn) {
 		pendingRequest = false;
 		processQueue();
 	}
