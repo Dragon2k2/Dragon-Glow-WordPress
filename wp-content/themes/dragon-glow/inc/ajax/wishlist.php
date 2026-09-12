@@ -59,6 +59,9 @@ function dg_wishlist_verify_request(): int {
 
 /**
  * AJAX: toggle a product in/out of the current user's wishlist.
+ * 
+ * Supports both toggle mode (legacy) and explicit intent mode (add/remove).
+ * Intent mode prevents race conditions when requests arrive out of order.
  */
 function dg_ajax_wishlist_toggle(): void {
 	$user_id    = dg_wishlist_verify_request();
@@ -71,18 +74,62 @@ function dg_ajax_wishlist_toggle(): void {
 		);
 	}
 
-	$result = dg_wishlist_toggle( $user_id, $product_id );
+	// Check if intent (add/remove) is specified for idempotent operation
+	$intent = isset( $_POST['intent'] ) ? sanitize_text_field( wp_unslash( $_POST['intent'] ) ) : '';
 
-	wp_send_json_success(
-		array(
-			'added'      => $result['added'],
-			'count'      => $result['count'],
-			'product_id' => $product_id,
-			'message'    => $result['added']
-				? __( 'Added to your wishlist.', 'dragon-glow' )
-				: __( 'Removed from your wishlist.', 'dragon-glow' ),
-		)
-	);
+	if ( 'add' === $intent || 'remove' === $intent ) {
+		// Idempotent mode: explicit add or remove
+		$current = dg_get_wishlist( $user_id );
+		$in_list = in_array( $product_id, $current, true );
+
+		if ( 'add' === $intent ) {
+			if ( ! $in_list ) {
+				// Add to wishlist
+				$updated = array_values( array_merge( $current, array( $product_id ) ) );
+				dg_set_wishlist( $user_id, $updated );
+			} else {
+				// Already in wishlist, no-op
+				$updated = $current;
+			}
+			$added = true;
+		} else {
+			// intent === 'remove'
+			if ( $in_list ) {
+				// Remove from wishlist
+				$updated = array_values( array_diff( $current, array( $product_id ) ) );
+				dg_set_wishlist( $user_id, $updated );
+			} else {
+				// Already not in wishlist, no-op
+				$updated = $current;
+			}
+			$added = false;
+		}
+
+		wp_send_json_success(
+			array(
+				'added'      => $added,
+				'count'      => count( $updated ),
+				'product_id' => $product_id,
+				'message'    => $added
+					? __( 'Added to your wishlist.', 'dragon-glow' )
+					: __( 'Removed from your wishlist.', 'dragon-glow' ),
+			)
+		);
+	} else {
+		// Legacy toggle mode (blind toggle)
+		$result = dg_wishlist_toggle( $user_id, $product_id );
+
+		wp_send_json_success(
+			array(
+				'added'      => $result['added'],
+				'count'      => $result['count'],
+				'product_id' => $product_id,
+				'message'    => $result['added']
+					? __( 'Added to your wishlist.', 'dragon-glow' )
+					: __( 'Removed from your wishlist.', 'dragon-glow' ),
+			)
+		);
+	}
 }
 add_action( 'wp_ajax_dg_wishlist_toggle', 'dg_ajax_wishlist_toggle' );
 

@@ -43,6 +43,12 @@
 	let pendingRequest = false;
 	const requestQueue = [];
 
+	// Global sequence counter: monotonically increasing ID for all requests
+	// across all products. Used to discard stale responses when user clicks
+	// multiple different products rapidly. Each button also has its own
+	// _dgReqId for per-button deduplication.
+	let globalSequence = 0;
+
 	document.addEventListener('click', function (e) {
 		const btn = e.target.closest('.dg-wishlist-toggle');
 		if (!btn) return;
@@ -138,12 +144,30 @@
 	 * remove the old queued request (it's stale — user has toggled again).
 	 * Only keep the LATEST intent for each product.
 	 *
+	 * **Pending request handling:** If the same product already has a pending
+	 * request, we CANNOT cancel it (fetch API limitation). Instead, we mark
+	 * the button with a higher request ID so when the old response arrives,
+	 * it will be discarded as stale. The new request will queue normally.
+	 *
+	 * **Global sequence:** Each request gets a global sequence number to
+	 * track order across all products. This prevents race conditions when
+	 * clicking multiple different products rapidly.
+	 *
 	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state.
 	 * @param {number}      burstVersion   Version tag for this burst.
 	 */
 	function queueSync(btn, productId, initialActive, burstVersion) {
+		// Increment request ID immediately to invalidate any pending request
+		// for the same button. This ensures old responses are discarded.
+		const myReqId = (btn._dgReqId || 0) + 1;
+		btn._dgReqId = myReqId;
+
+		// Increment global sequence for this request (cross-product tracking).
+		globalSequence++;
+		const mySequence = globalSequence;
+
 		// Remove any existing queued request for the same product (stale).
 		// Keep only the current request — it represents the user's latest intent.
 		for (let i = requestQueue.length - 1; i >= 0; i--) {
@@ -152,7 +176,13 @@
 			}
 		}
 
-		requestQueue.push({ btn: btn, productId: productId, initialActive: initialActive, burstVersion: burstVersion });
+		requestQueue.push({ 
+			btn: btn, 
+			productId: productId, 
+			initialActive: initialActive, 
+			burstVersion: burstVersion,
+			sequence: mySequence  // Attach global sequence to this request
+		});
 		processQueue();
 	}
 
@@ -166,7 +196,7 @@
 
 		const item = requestQueue.shift();
 		pendingRequest = true;
-		sendSync(item.btn, item.productId, item.initialActive, item.burstVersion);
+		sendSync(item.btn, item.productId, item.initialActive, item.burstVersion, item.sequence);
 	}
 
 	/**
@@ -178,10 +208,12 @@
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state,
 	 *                                     used to roll back on error.
 	 * @param {number}      burstVersion   Version tag (not used - kept for compatibility).
+	 * @param {number}      mySequence     Global sequence number for this request.
 	 */
-	function sendSync(btn, productId, initialActive, burstVersion) {
-		const myReqId = (btn._dgReqId || 0) + 1;
-		btn._dgReqId = myReqId;
+	function sendSync(btn, productId, initialActive, burstVersion, mySequence) {
+		// NOTE: Request ID was already incremented in queueSync() to invalidate
+		// any pending requests. We just read the current ID here.
+		const myReqId = btn._dgReqId || 0;
 
 		// Capture the UI state at the moment we send this request.
 		// We'll use this to detect drift: if the UI has changed by the time
@@ -193,6 +225,10 @@
 		fd.append('action', 'dg_wishlist_toggle');
 		fd.append('nonce', (window.dgAjax && window.dgAjax.nonce) || '');
 		fd.append('product_id', productId);
+		// Send the intended action (add/remove) instead of blind toggle.
+		// This makes the operation idempotent and prevents race conditions
+		// when requests arrive at server out of order.
+		fd.append('intent', expectedActive ? 'add' : 'remove');
 
 		fetch((window.dgAjax && window.dgAjax.url) || '/wp-admin/admin-ajax.php', {
 			method: 'POST',
@@ -201,13 +237,28 @@
 		})
 			.then(function (r) { return r.json(); })
 			.then(function (data) {
-				// Stale response — a newer sync has been scheduled since
-				// this one fired. Discard so it can't flip the UI back to
-				// a value the user has already moved past.
+				// STALENESS CHECK 1: Per-button Request ID
+				// A newer sync for THIS BUTTON has been scheduled since this one fired.
+				// Discard so it can't flip the UI back to a value the user has already moved past.
 				if (btn._dgReqId !== myReqId) {
 					finishRequest(btn);
 					return;
 				}
+
+				// STALENESS CHECK 2: Global Sequence Number
+				// A newer sync for THIS BUTTON has been applied since this one was sent.
+				// This prevents out-of-order responses from overwriting newer state.
+				// Example: Click I1-add (seq=1) → Click I1-remove (seq=2) → Response seq=2 applies → Response seq=1 arrives
+				// Without this check, Response seq=1 would overwrite the newer seq=2 state.
+				//
+				// Note: undefined > number = false in JavaScript, so first response always passes.
+				if (btn._dgLastAppliedSeq > mySequence) {
+					finishRequest(btn);
+					return;
+				}
+
+				// Mark this sequence as applied for this button
+				btn._dgLastAppliedSeq = mySequence;
 
 				btn.classList.remove('is-busy');
 
@@ -222,7 +273,6 @@
 					} else {
 						fetchHeaderBadge();
 					}
-					console.warn('[DG Wishlist] toggle failed:', data.data);
 					finishRequest(btn);
 					return;
 				}
@@ -242,14 +292,7 @@
 				if (noDrift) {
 					// No drift — UI is still in the state we expected when we sent
 					// this request. Server and UI should match.
-					if (currentActive !== serverActive) {
-						// Server disagrees with our optimistic state. This should be
-						// rare (session changed, another tab, race condition). 
-						// Log for debugging but DO NOT force-apply server state to UI.
-						// Forcing UI changes can cause flicker if user is still interacting.
-						// If there's a real mismatch, user will notice and click again.
-						console.warn('[DG Wishlist] State mismatch - UI:', currentActive, 'Server:', serverActive, 'Product:', productId);
-					} else {
+					if (currentActive === serverActive) {
 						// Pop animation ONLY if server confirms our optimistic add.
 						if (serverActive && currentActive === true) {
 							const icon = btn.querySelector('.material-symbols-outlined');
