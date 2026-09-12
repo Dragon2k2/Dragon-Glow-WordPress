@@ -84,16 +84,11 @@
 				? (badges[0].classList.contains('hidden') ? 0 : parseInt(badges[0].textContent || '0', 10) || 0)
 				: null;
 
-			// Increment burst version counter — used to detect when a new burst
-			// starts while an old request is still pending.
-			btn._dgBurstVersion = (btn._dgBurstVersion || 0) + 1;
-
 			btn._dgBurst = {
 				count: 0,
 				// Capture CURRENT state (may have pending request changing it)
 				initialActive: btn.classList.contains('is-active'),
 				baselineCount: baselineCount,
-				version: btn._dgBurstVersion, // Tag this burst with version
 			};
 		}
 		btn._dgBurst.count++;
@@ -128,7 +123,7 @@
 				// Pass CURRENT UI state, not burst.initialActive
 				// (may have changed if previous request completed during burst)
 				const currentActive = btn.classList.contains('is-active');
-				queueSync(btn, productId, !currentActive, burst.version); // Pass burst version
+				queueSync(btn, productId, !currentActive);
 			} else {
 				// No real state change — clear the busy flag and stop.
 				btn.classList.remove('is-busy');
@@ -156,9 +151,8 @@
 	 * @param {HTMLElement} btn            The .dg-wishlist-toggle button.
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state.
-	 * @param {number}      burstVersion   Version tag for this burst.
 	 */
-	function queueSync(btn, productId, initialActive, burstVersion) {
+	function queueSync(btn, productId, initialActive) {
 		// Increment request ID immediately to invalidate any pending request
 		// for the same button. This ensures old responses are discarded.
 		const myReqId = (btn._dgReqId || 0) + 1;
@@ -180,7 +174,6 @@
 			btn: btn, 
 			productId: productId, 
 			initialActive: initialActive, 
-			burstVersion: burstVersion,
 			sequence: mySequence  // Attach global sequence to this request
 		});
 		processQueue();
@@ -196,7 +189,7 @@
 
 		const item = requestQueue.shift();
 		pendingRequest = true;
-		sendSync(item.btn, item.productId, item.initialActive, item.burstVersion, item.sequence);
+		sendSync(item.btn, item.productId, item.initialActive, item.sequence);
 	}
 
 	/**
@@ -207,10 +200,9 @@
 	 * @param {number}      productId      Numeric WP product ID.
 	 * @param {boolean}     initialActive  Pre-burst `is-active` state,
 	 *                                     used to roll back on error.
-	 * @param {number}      burstVersion   Version tag (not used - kept for compatibility).
 	 * @param {number}      mySequence     Global sequence number for this request.
 	 */
-	function sendSync(btn, productId, initialActive, burstVersion, mySequence) {
+	function sendSync(btn, productId, initialActive, mySequence) {
 		// NOTE: Request ID was already incremented in queueSync() to invalidate
 		// any pending requests. We just read the current ID here.
 		const myReqId = btn._dgReqId || 0;
@@ -241,7 +233,7 @@
 				// A newer sync for THIS BUTTON has been scheduled since this one fired.
 				// Discard so it can't flip the UI back to a value the user has already moved past.
 				if (btn._dgReqId !== myReqId) {
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 
@@ -253,7 +245,7 @@
 				//
 				// Note: undefined > number = false in JavaScript, so first response always passes.
 				if (btn._dgLastAppliedSeq > mySequence) {
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 
@@ -268,12 +260,12 @@
 						applyBadgeCount(data.data.count);
 					} else if (data.data && data.data.redirect) {
 						window.location.href = data.data.redirect;
-						finishRequest(btn);
+						finishRequest();
 						return;
 					} else {
 						fetchHeaderBadge();
 					}
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 
@@ -320,40 +312,38 @@
 					if (window.DGWishlist && typeof window.DGWishlist.onCountChange === 'function') {
 						window.DGWishlist.onCountChange(data.data.count);
 					}
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 
 				// Slower path: defer to page-local module if it exposes one.
 				if (window.DGWishlist && typeof window.DGWishlist.refreshCount === 'function') {
 					window.DGWishlist.refreshCount();
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 
 				// Last resort: separate count fetch (only when toggle
 				// response somehow omitted the count — defensive).
 				fetchHeaderBadge();
-				finishRequest(btn);
+				finishRequest();
 			})
 			.catch(function () {
 				if (btn._dgReqId !== myReqId) {
-					finishRequest(btn);
+					finishRequest();
 					return;
 				}
 				btn.classList.remove('is-busy');
 				btn.classList.toggle('is-active', initialActive);
 				fetchHeaderBadge();
-				finishRequest(btn);
+				finishRequest();
 			});
 	}
 
 	/**
 	 * Mark current request as finished and process next item in queue.
-	 *
-	 * @param {HTMLElement} btn The button whose request just finished (optional).
 	 */
-	function finishRequest(btn) {
+	function finishRequest() {
 		pendingRequest = false;
 		processQueue();
 	}
