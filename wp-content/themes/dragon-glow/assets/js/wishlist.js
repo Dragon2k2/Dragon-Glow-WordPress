@@ -845,9 +845,15 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		// Without this, `syncAddedState()` would early-return on its first
 		// guard and the "Added!" state would never survive a page reload.
 		const bind = function () {
-			if (!window.DGCart || typeof window.DGCart.add !== 'function') return;
+			console.log('[WISHLIST] bind() function executing, DGCart available:', !!window.DGCart);
+			
+			if (!window.DGCart || typeof window.DGCart.add !== 'function') {
+				console.warn('[WISHLIST] bind() aborted — DGCart.add not available');
+				return;
+			}
 
-				grid.addEventListener('click', function (e) {
+			console.log('[WISHLIST] Registering click event listener on grid');
+			grid.addEventListener('click', function (e) {
 					const btn = e.target.closest('.dg-wishlist-card__cta.wc-add-to-cart-btn');
 				if (!btn || btn.disabled) return;
 
@@ -890,7 +896,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 						inFlightAdds.delete(productId);
 						if (!data || !data.success) {
 							// Revert badge + button on failure.
-							console.warn('[WISHLIST] DGCart.remove(' + productId + ') failed:', data);
 							bumpCartCountOptimistically(1);
 							paintAdded(btn, labelNode);
 							return;
@@ -926,7 +931,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 						inFlightAdds.delete(productId);
 						if (!data || !data.success) {
 							// Revert badge + button on failure.
-							console.warn('[WISHLIST] DGCart.add(' + productId + ') failed:', data);
 							bumpCartCountOptimistically(-1);
 							restore();
 							return;
@@ -962,22 +966,36 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			//   4. paintNotAdded(A) sees server says "not in cart" → reverts
 			//      A's button to "Add to bag", even though A was just
 			//      clicked and painted to "✓ Added!".
-			// The Set guard in paintNotAdded() is not enough here because
-			// it only protects the CURRENT click from being clobbered; a
-			// sync fired by Item B's click still walks every CTA in the
-			// grid and repaints the ones not in inFlightAdds. After Item
-			// A's response arrives A leaves inFlightAdds, but if B's sync
-			// resolved before A's response, A was already repainted to
-			// "Add to bag" and never recovered.
+			//
+			// Backend idempotent fix (inc/cart/operations.php): the remove
+			// endpoint now returns success if the item doesn't exist,
+			// preventing frontend revert logic from triggering on race
+			// conditions where optimistic remove arrives before pending add
+			// commits. Combined with 100% optimistic UI (no server sync
+			// during session), rapid clicks stay stable.
 			//
 			// Trust the optimistic paint + inFlightAdds guard for the
 			// session lifetime. Cross-tab reconciliation is out of scope
 			// (would require a storage event listener, separate feature).
-			// 
-			// syncAddedState() DISABLED — see function comment for race
-			// condition details. Rely on 100% optimistic UI instead.
+
+			// Sync cart state on initial page load and bfcache restore.
+			// pageshow fires on:
+			//   - Initial page load (persisted=false)
+			//   - Back/forward navigation from bfcache (persisted=true)
+			// This ensures buttons reflect server state after refresh or
+			// browser back, without polling during active session.
+			console.log('[WISHLIST] Registering pageshow event listener');
+			window.addEventListener('pageshow', function (e) {
+				console.log('[WISHLIST] pageshow event fired, persisted:', e.persisted);
+				// Always sync on pageshow — covers both initial load and bfcache.
+				// syncAddedState() has its own inFlightAdds guard to skip
+				// when user is actively clicking buttons.
+				syncAddedState();
+			});
 		};
 
+		console.log('[WISHLIST] initQuickAddOptimistic bind() called, readyState:', document.readyState);
+		
 		if (document.readyState === 'complete') {
 			bind();
 		} else {
@@ -1009,18 +1027,27 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	/** Swap the CTA label to "✓ Added!" and add the .is-added class.
 	    No-op when the button is already in that state. */
 	function paintAdded(btn, labelNode) {
+		const pid = parseInt(btn.dataset.productId || '0', 10);
+		const currentText = labelNode ? labelNode.textContent.trim() : '(no label node)';
+		const hasClass = btn.classList.contains('is-added');
+		
+		console.log('[WISHLIST] paintAdded(' + pid + ') — current text:', currentText, ', has .is-added:', hasClass);
+		
 		if (btn.classList.contains('is-added')) {
 			// Still ensure the label is correct in case the markup was rebuilt.
 			if (labelNode && labelNode.textContent !== '✓ Added!') {
+				console.log('[WISHLIST] paintAdded(' + pid + ') — fixing text to "✓ Added!"');
 				labelNode.textContent = '✓ Added!';
 			}
 			return;
 		}
 		btn.classList.add('is-added');
 		if (labelNode) {
+			console.log('[WISHLIST] paintAdded(' + pid + ') — setting text to "✓ Added!"');
 			labelNode.textContent = '✓ Added!';
 		} else {
 			// Fallback for text-only markup — rebuild with icon + label.
+			console.log('[WISHLIST] paintAdded(' + pid + ') — rebuilding innerHTML');
 			btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>✓ Added!';
 		}
 	}
@@ -1040,56 +1067,89 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	    cross-tab removes still reconcile. */
 	function paintNotAdded(btn, labelNode) {
 		const pid = parseInt(btn.dataset.productId || '0', 10) || 0;
+		const currentText = labelNode ? labelNode.textContent.trim() : '(no label node)';
+		const hasClass = btn.classList.contains('is-added');
+		
+		console.log('[WISHLIST] paintNotAdded(' + pid + ') — current text:', currentText, ', has .is-added:', hasClass);
+		
 		if (pid > 0 && inFlightAdds.has(pid)) {
 			// Optimistic add in flight — trust the click + local paintAdded().
+			console.log('[WISHLIST] paintNotAdded(' + pid + ') — skipped (in-flight)');
 			return;
 		}
 		if (!btn.classList.contains('is-added') && (!labelNode || labelNode.textContent !== '✓ Added!')) {
+			console.log('[WISHLIST] paintNotAdded(' + pid + ') — skipped (already in default state)');
 			return;
 		}
 		btn.classList.remove('is-added');
 		if (labelNode) {
-			labelNode.textContent = btn.dataset.originalLabel || 'Add to bag';
+			const originalLabel = btn.dataset.originalLabel || 'Add to bag';
+			console.log('[WISHLIST] paintNotAdded(' + pid + ') — setting text to:', originalLabel);
+			labelNode.textContent = originalLabel;
 		}
 	}
 
 	/** Fetch authoritative cart identifiers and repaint every CTA in the
 	    grid to match. Cheaper than re-rendering: we only flip the
-	    per-button class + label. Runs on boot and on bfcache restore
-	    (pageshow) so the page reflects any cross-tab add/remove without
-	    polling.
+	    per-button class + label. Runs ONLY on initial page load and
+	    bfcache restore (pageshow event), NOT during user interactions.
 
 	    Guard: skip the entire fetch + repaint while at least one CTA
 	    add/remove is in flight. Otherwise a pageshow restore (e.g. user
 	    hits Back after a freshly-started add that hasn't committed yet)
 	    can fetch identifiers that omit the pending item, then repaint
 	    its freshly-painted "✓ Added!" button back to "Add to bag".
-	    paintNotAdded()'s per-button inFlightAdds check isn't sufficient
-	    here because the response can resolve AFTER the in-flight add
-	    completed and the productId left the Set — by that point we've
-	    already overwritten the optimistic paint.
 
-	    Response shape mirrors quick-add-to-cart.js#restoreCartState():
-	      { success: true, data: { product_ids: number[], slugs: string[] } }
-	    — `data.data` is required, and field names are snake_case (not
-	    camelCase).
-	    
-	    IMPORTANT: This function is DISABLED during rapid user interactions
-	    to prevent server lag from clobbering user's optimistic UI. We only
-	    sync on initial pageshow, not during active session. */
+	    Response shape: { success: true, data: { product_ids: number[] } }
+	    — `data.data.product_ids` is snake_case (WordPress convention). */
 	function syncAddedState() {
-		// DISABLED: Sync from server causes race conditions where server lag
-		// overwrites user's optimistic clicks. Even with guards (syncInProgress,
-		// inFlightAdds, dgWishlistSyncDone), the timing window between user click
-		// and server response completing allows stale server state to repaint
-		// buttons that user just clicked:
-		//   1. Page loads → syncAddedState() fires → getIdentifiers() fetch starts
-		//   2. User clicks Button A (optimistic paint "✓ Added!")
-		//   3. getIdentifiers() response arrives (doesn't include A yet)
-		//   4. Loop paints all buttons → Button A reverts to "Add to bag"
-		// Solution: Trust ONLY optimistic UI. Cart badge syncs via DGCart.refreshCount()
-		// after each successful add/remove. If user needs fresh state, they refresh page.
-		return;
+		console.log('[WISHLIST] syncAddedState() called');
+		
+		// Skip if any add/remove is in flight — trust optimistic paint.
+		if (inFlightAdds.size > 0) {
+			console.log('[WISHLIST] syncAddedState() skipped — inFlightAdds.size =', inFlightAdds.size);
+			return;
+		}
+
+		// Skip if DGCart API not ready yet.
+		if (!window.DGCart || typeof window.DGCart.getIdentifiers !== 'function') {
+			console.warn('[WISHLIST] syncAddedState() skipped — DGCart.getIdentifiers not available');
+			return;
+		}
+
+		console.log('[WISHLIST] Fetching cart identifiers...');
+		window.DGCart.getIdentifiers()
+			.then(function (response) {
+				console.log('[WISHLIST] getIdentifiers response:', response);
+				
+				if (!response || !response.success || !response.data || !response.data.product_ids) {
+					console.warn('[WISHLIST] Invalid response shape');
+					return;
+				}
+
+				const cartPids = new Set(response.data.product_ids);
+				console.log('[WISHLIST] Cart product IDs:', Array.from(cartPids));
+				
+				const buttons = grid.querySelectorAll('.dg-wishlist-card__cta.wc-add-to-cart-btn');
+				console.log('[WISHLIST] Found', buttons.length, 'buttons to sync');
+
+				buttons.forEach(function (btn) {
+					const pid = parseInt(btn.dataset.productId || '0', 10);
+					if (!pid) return;
+
+					const labelNode = captureLabelNode(btn);
+					if (cartPids.has(pid)) {
+						console.log('[WISHLIST] Painting ADDED for product', pid);
+						paintAdded(btn, labelNode);
+					} else {
+						console.log('[WISHLIST] Painting NOT ADDED for product', pid);
+						paintNotAdded(btn, labelNode);
+					}
+				});
+			})
+			.catch(function (err) {
+				console.error('[WISHLIST] getIdentifiers error:', err);
+			});
 	}
 
 	/* ── Single card remove (heart icon) ──────────────────────────────────── */
