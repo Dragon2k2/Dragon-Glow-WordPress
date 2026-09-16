@@ -795,6 +795,14 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	   The state persists until the product is REMOVED from the cart — not
 	   a 2-second pulse like the lib's quick-feedback.
 
+	   Click model (toggle):
+	     - Default state (.is-added absent) → click ADDS to bag, flips to
+	       "✓ Added!" + green background. Sticky by design.
+	     - Added state (.is-added present) → click REMOVES the item from
+	       bag, swaps back to "Add to bag" + primary background. Same icon
+	       (`shopping_bag`) so the only visible delta is the label + color,
+	       giving a true toggle feel without layout shift.
+
 	   State is anchored to the server's cart identifiers so it survives
 	   page reloads and stays in sync when the user adds/removes the same
 	   product from another tab or page (cart, single product, …).
@@ -815,7 +823,9 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	     - On boot: fetch identifiers once, paint initial state.
 	     - After a successful add: assume "added", paint immediately
 	       (optimistic), then refresh identifiers in background.
-	     - On focus / pageshow (bfcache): re-fetch identifiers and repaint.
+	     - On pageshow (bfcache): re-fetch identifiers and repaint —
+	       guarded by `inFlightAdds.size > 0` so a Back-navigation during
+	       a pending add can't clobber the optimistic paint.
 	     This keeps the badge/button truthful across the most common
 	     cross-page flows without polling.
 
@@ -838,21 +848,17 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			if (!window.DGCart || typeof window.DGCart.add !== 'function') return;
 
 				grid.addEventListener('click', function (e) {
-				const btn = e.target.closest('.dg-wishlist-card__cta.wc-add-to-cart-btn');
+					const btn = e.target.closest('.dg-wishlist-card__cta.wc-add-to-cart-btn');
 				if (!btn || btn.disabled) return;
 
-				// Skip when button is already in the "Added!" state —
-				// re-clicking would re-add the product (quantity++) and
-				// re-bump the cart count optimistically. The state is
-				// sticky by design (see initQuickAddOptimistic() docblock).
-				if (btn.classList.contains('is-added')) return;
+				const productId = parseInt(btn.dataset.productId || '0', 10) || 0;
+				if (!productId) return;
+
+				const isAdded = btn.classList.contains('is-added');
 
 				// Capture-phase: run before cart-feedback.js so we own the visuals.
 				e.preventDefault();
 				e.stopImmediatePropagation();
-
-				const productId = parseInt(btn.dataset.productId || '0', 10) || 0;
-				if (!productId) return;
 
 				// Cache original label on the button NOW (before any text
 				// mutation) so paintNotAdded can restore without relying on
@@ -866,17 +872,50 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 					}
 				};
 
-				// 1) Optimistic: register in-flight add + paint "Added!" + bump
-				// badge. Registering in `inFlightAdds` lets paintNotAdded()
-				// (called by any concurrent syncAddedState()) skip this
-				// button until the AJAX resolves — see paintNotAdded() for
-				// the full race analysis.
+				if (isAdded) {
+					// Toggle-off path: item is already in bag → REMOVE from
+					// bag, swap back to "Add to bag" + primary background.
+					// Optimistic paint first, then fire AJAX. On failure,
+					// re-flip back to "✓ Added!" so the UI matches the
+					// server's state.
+					inFlightAdds.add(productId);
+					restore();
+					bumpCartCountOptimistically(-1);
+
+					window.DGCart.remove({
+						productId: productId,
+						slug:      btn.dataset.productSlug || '',
+					})
+					.then(function (data) {
+						inFlightAdds.delete(productId);
+						if (!data || !data.success) {
+							// Revert badge + button on failure.
+							console.warn('[WISHLIST] DGCart.remove(' + productId + ') failed:', data);
+							bumpCartCountOptimistically(1);
+							paintAdded(btn, labelNode);
+							return;
+						}
+							// Success — let DGCart.refreshCount() reconcile
+							// the badge with the authoritative server count.
+							if (window.DGCart.refreshCount) {
+								window.DGCart.refreshCount();
+							}
+						})
+						.catch(function () {
+							inFlightAdds.delete(productId);
+							bumpCartCountOptimistically(1);
+							paintAdded(btn, labelNode);
+						});
+					return;
+				}
+
+				// Toggle-on path: item NOT in bag → ADD to bag, flip to
+				// "✓ Added!" + green background. Optimistic paint first,
+				// then fire AJAX. On failure, roll back to the original label.
 				inFlightAdds.add(productId);
 				paintAdded(btn, labelNode);
 				bumpCartCountOptimistically(1);
 
-				// 2) Fire the real add via DGCart. We replace the lib's call so
-				//    only ONE AJAX round-trip happens per click.
 				window.DGCart.add({
 					productId: productId,
 					slug:      btn.dataset.productSlug || '',
@@ -887,6 +926,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 						inFlightAdds.delete(productId);
 						if (!data || !data.success) {
 							// Revert badge + button on failure.
+							console.warn('[WISHLIST] DGCart.add(' + productId + ') failed:', data);
 							bumpCartCountOptimistically(-1);
 							restore();
 							return;
@@ -904,10 +944,38 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 					});
 			}, true); // capture: true — run before cart-feedback.js
 
-			// Initial sync + re-sync hooks (bfcache, tab refocus).
-			syncAddedState();
-			window.addEventListener('pageshow', syncAddedState);
-			window.addEventListener('focus', syncAddedState);
+			// Initial sync + re-sync hooks (bfcache).
+			//
+			// pageshow — covers bfcache (back/forward navigation restores
+			// the page from cache, firing pageshow with persisted=true).
+			// This is safe to run unconditionally; nothing else fires it
+			// during normal user interaction.
+			//
+			// focus — INTENTIONALLY NOT BOUND. Binding a `focus` listener
+			// to syncAddedState() was the root cause of the bug where
+			// clicking multiple "Add to bag" buttons in rapid succession
+			// reverted them back to "Add to bag":
+			//   1. User clicks Item A → add AJAX in flight → paintAdded().
+			//   2. User clicks Item B → focus moves to B → syncAddedState()
+			//      fires → getIdentifiers() fetches server state.
+			//   3. Server hasn't committed A's add yet → response omits A.
+			//   4. paintNotAdded(A) sees server says "not in cart" → reverts
+			//      A's button to "Add to bag", even though A was just
+			//      clicked and painted to "✓ Added!".
+			// The Set guard in paintNotAdded() is not enough here because
+			// it only protects the CURRENT click from being clobbered; a
+			// sync fired by Item B's click still walks every CTA in the
+			// grid and repaints the ones not in inFlightAdds. After Item
+			// A's response arrives A leaves inFlightAdds, but if B's sync
+			// resolved before A's response, A was already repainted to
+			// "Add to bag" and never recovered.
+			//
+			// Trust the optimistic paint + inFlightAdds guard for the
+			// session lifetime. Cross-tab reconciliation is out of scope
+			// (would require a storage event listener, separate feature).
+			// 
+			// syncAddedState() DISABLED — see function comment for race
+			// condition details. Rely on 100% optimistic UI instead.
 		};
 
 		if (document.readyState === 'complete') {
@@ -961,14 +1029,15 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	    .is-added class. Safe to call on buttons already in default state.
 
 	    Skips buttons whose productId is in `inFlightAdds` — the Set
-	    tracks click-handler adds still waiting on an AJAX response. Without
-	    this guard, any concurrent syncAddedState() (a slow boot sync,
-	    pageshow/focus listener, etc.) can resolve AFTER the click handler
-	    painted "✓ Added!" and observe an empty cart on the server (because
-	    the add AJAX hasn't reached WC yet) — repainting the freshly painted
-	    "✓ Added!" back to "Add to bag". That causes the click to look like
-	    it didn't stick. The Set is cleared on both success and failure
-	    paths in the click handler so cross-tab removes still reconcile. */
+	    tracks click-handler adds still waiting on an AJAX response. With
+	    the `focus` listener removed (see initQuickAddOptimistic), the
+	    remaining sync trigger is pageshow (bfcache), and syncAddedState()
+	    itself short-circuits when inFlightAdds is non-empty. This guard
+	    is a second line of defence: even if syncAddedState() somehow
+	    runs while an add is in flight, paintNotAdded() won't clobber the
+	    optimistic "✓ Added!" paint for the pending productId. The Set is
+	    cleared on both success and failure paths in the click handler so
+	    cross-tab removes still reconcile. */
 	function paintNotAdded(btn, labelNode) {
 		const pid = parseInt(btn.dataset.productId || '0', 10) || 0;
 		if (pid > 0 && inFlightAdds.has(pid)) {
@@ -986,37 +1055,41 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 	/** Fetch authoritative cart identifiers and repaint every CTA in the
 	    grid to match. Cheaper than re-rendering: we only flip the
-	    per-button class + label. Runs on boot, pageshow, and focus so the
-	    page reflects any cross-tab add/remove without polling.
+	    per-button class + label. Runs on boot and on bfcache restore
+	    (pageshow) so the page reflects any cross-tab add/remove without
+	    polling.
+
+	    Guard: skip the entire fetch + repaint while at least one CTA
+	    add/remove is in flight. Otherwise a pageshow restore (e.g. user
+	    hits Back after a freshly-started add that hasn't committed yet)
+	    can fetch identifiers that omit the pending item, then repaint
+	    its freshly-painted "✓ Added!" button back to "Add to bag".
+	    paintNotAdded()'s per-button inFlightAdds check isn't sufficient
+	    here because the response can resolve AFTER the in-flight add
+	    completed and the productId left the Set — by that point we've
+	    already overwritten the optimistic paint.
 
 	    Response shape mirrors quick-add-to-cart.js#restoreCartState():
 	      { success: true, data: { product_ids: number[], slugs: string[] } }
 	    — `data.data` is required, and field names are snake_case (not
-	    camelCase). */
+	    camelCase).
+	    
+	    IMPORTANT: This function is DISABLED during rapid user interactions
+	    to prevent server lag from clobbering user's optimistic UI. We only
+	    sync on initial pageshow, not during active session. */
 	function syncAddedState() {
-		if (!grid || !window.DGCart || typeof window.DGCart.getIdentifiers !== 'function') return;
-
-		window.DGCart.getIdentifiers()
-			.then(function (response) {
-				const payload = (response && response.data) || {};
-				const inCart  = new Set(payload.product_ids || []);
-				const slugs   = new Set(payload.slugs || []);
-
-			const buttons = grid.querySelectorAll('.dg-wishlist-card__cta.wc-add-to-cart-btn');
-			buttons.forEach(function (btn) {
-				const productId = parseInt(btn.dataset.productId || '0', 10) || 0;
-				const slug      = btn.dataset.productSlug || '';
-				const isInCart  = (productId > 0 && inCart.has(productId)) || (slug && slugs.has(slug));
-				const labelNode = captureLabelNode(btn);
-
-				if (isInCart) {
-					paintAdded(btn, labelNode);
-				} else {
-					paintNotAdded(btn, labelNode);
-				}
-			});
-			})
-			.catch(function () { /* silent — keep current visual state */ });
+		// DISABLED: Sync from server causes race conditions where server lag
+		// overwrites user's optimistic clicks. Even with guards (syncInProgress,
+		// inFlightAdds, dgWishlistSyncDone), the timing window between user click
+		// and server response completing allows stale server state to repaint
+		// buttons that user just clicked:
+		//   1. Page loads → syncAddedState() fires → getIdentifiers() fetch starts
+		//   2. User clicks Button A (optimistic paint "✓ Added!")
+		//   3. getIdentifiers() response arrives (doesn't include A yet)
+		//   4. Loop paints all buttons → Button A reverts to "Add to bag"
+		// Solution: Trust ONLY optimistic UI. Cart badge syncs via DGCart.refreshCount()
+		// after each successful add/remove. If user needs fresh state, they refresh page.
+		return;
 	}
 
 	/* ── Single card remove (heart icon) ──────────────────────────────────── */

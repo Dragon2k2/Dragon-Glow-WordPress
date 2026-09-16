@@ -109,21 +109,26 @@ function dg_remove_from_cart_silently( array $args ): array {
 		);
 	}
 
+	$found = false;
 	$removed = false;
 	foreach ( WC()->cart->get_cart() as $cart_item_key => $item ) {
 		if ( (int) $item['product_id'] === $product_id ) {
+			$found = true;
 			$removed = WC()->cart->remove_cart_item( $cart_item_key );
 			break;
 		}
 	}
 
-	if ( $removed ) {
+	// Success if item was removed, OR if it was never in the cart
+	// (idempotent remove — user's intent "not in cart" is satisfied).
+	if ( $removed || ! $found ) {
 		return array(
 			'success' => true,
 			'count'   => WC()->cart->get_cart_contents_count(),
 		);
 	}
 
+	// Only fail if item EXISTS but removal failed (WC internal error).
 	return array(
 		'success' => false,
 		'message' => __( 'Could not remove item.', 'dragon-glow' ),

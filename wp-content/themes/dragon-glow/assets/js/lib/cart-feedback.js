@@ -17,6 +17,13 @@
         var btn = e.target.closest('.wc-add-to-cart-btn');
         if (!btn) return;
 
+        // Early-return on wishlist page — wishlist.js handles .wc-add-to-cart-btn
+        // with its own optimistic UI + syncAddedState() logic. If both handlers
+        // run, cart-feedback.js will paint "✓ Added!" on buttons that wishlist.js
+        // already controls, causing visual conflicts.
+        var isWishlistPage = document.body.classList.contains('page-template-template-wishlist');
+        if (isWishlistPage) return;
+
         var productId = btn.dataset.productId;
         var productType = btn.dataset.productType;
 
