@@ -91,8 +91,8 @@ $fallback_products = array(
     <!-- Floating organic shape background -->
     <div class="absolute top-0 right-0 w-1/2 h-full bg-primary-container/10 blur-[120px] rounded-full translate-x-1/2"></div>
 
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+    <div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
+        <div class="flex justify-between items-end mb-16 reveal">
             <div>
                 <h2 class="font-headline text-headline-lg text-primary mb-4">
                     <?php esc_html_e( 'Glow Favorites', 'dragon-glow' ); ?>

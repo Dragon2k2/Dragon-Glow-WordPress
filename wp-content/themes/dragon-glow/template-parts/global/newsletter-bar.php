@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
     <div class="absolute top-0 left-0 w-64 h-64 bg-primary-container/30 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-0 right-0 w-64 h-64 bg-tertiary-container/20 rounded-full blur-[80px] pointer-events-none"></div>
 
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
+    <div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
         <div class="max-w-2xl mx-auto text-center reveal">
             <span class="material-symbols-outlined text-primary text-4xl mb-4">auto_awesome</span>
             <h2 class="font-headline text-headline-lg text-primary mb-4">

@@ -119,8 +119,12 @@ function dg_remove_from_cart_silently( array $args ): array {
 		}
 	}
 
-	// Success if item was removed, OR if it was never in the cart
-	// (idempotent remove — user's intent "not in cart" is satisfied).
+	// Idempotent remove: succeed if the item was removed, OR if it never
+	// existed in the cart. Either outcome satisfies the user's intent
+	// ("item not in cart"). This prevents race conditions when frontend
+	// optimistic UI fires remove before a pending add commits — the remove
+	// request arrives first, finds nothing, and returns success rather than
+	// failing and triggering UI revert logic.
 	if ( $removed || ! $found ) {
 		return array(
 			'success' => true,
@@ -128,7 +132,8 @@ function dg_remove_from_cart_silently( array $args ): array {
 		);
 	}
 
-	// Only fail if item EXISTS but removal failed (WC internal error).
+	// Only fail if the item EXISTS but WC's remove_cart_item() failed
+	// (internal WooCommerce error, extremely rare).
 	return array(
 		'success' => false,
 		'message' => __( 'Could not remove item.', 'dragon-glow' ),
