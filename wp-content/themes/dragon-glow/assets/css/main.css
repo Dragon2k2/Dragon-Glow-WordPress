@@ -342,6 +342,16 @@ html {
     background: #7b5455;
 }
 
+/* Hide scrollbar for carousel — navigation via prev/next buttons only */
+#dg-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+#dg-carousel {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 /* =========================================
    13. MATERIAL SYMBOLS
    ========================================= */
@@ -353,7 +363,7 @@ html {
 
 /* ── Star rating — golden (shared, used by both mock & WooCommerce product pages) ──
    All stars (full / half / empty) share the same color #f1ca50.
-   Three visual states rendered in PHP (dg_mock_stars in mock-products-loader.php):
+   Three visual states rendered in PHP (dg_star_rating in ui-components.php):
      Full star  — single "star" glyph, --dg-star-fill:1 inline.
      Half star  — .dg-star-half wrapper with two overlaid "star" glyphs:
                    dg-star-half__fill  : --dg-star-fill:1 inline, clipped to left half
@@ -368,10 +378,17 @@ html {
    FILL axis is controlled exclusively via inline --dg-star-fill on each span.
    The single rule below reads that var; no per-state font-variation-settings
    override is needed, which avoids CSS specificity battles. */
+.dg-stars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
 .dg-stars .material-symbols-outlined {
-    color: #f1ca50;
-    font-size: 20px;
-    font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    color: #f1ca50 !important;
+    font-size: 16px;
+    font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24 !important;
 }
 
 .dg-star-half {
@@ -679,4 +696,111 @@ table th {
 .dg-related-price,
 .dg-sticky-price {
     font-family: 'Bodoni Moda', Georgia, serif !important;
+}
+
+/* =========================================
+   27. BEST SELLERS CAROUSEL — 3 PRODUCTS VISIBLE
+   ========================================= */
+
+/* Carousel container — span full width of parent so 3 product cards
+   fill the container, matching the right edge with the prev/next buttons. */
+#dg-carousel {
+    max-width: 100%;
+}
+
+/* Carousel navigation buttons — perfectly circular with tertiary-container background */
+.dg-carousel-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    padding: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    
+    /* Tertiary container background */
+    background: #f1ca50;
+    border: 1px solid var(--color-tertiary-container);
+    
+    /* Text color */
+    color: var(--color-on-tertiary-container);
+    
+    /* Smooth transitions */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Subtle shadow for depth */
+    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+}
+
+.dg-carousel-nav-btn:hover {
+    background: var(--color-gold);
+    border-color: var(--color-gold-dark);
+    box-shadow: 0 4px 16px rgba(115, 92, 0, 0.16);
+    transform: translateY(-2px);
+}
+
+.dg-carousel-nav-btn:active {
+    transform: translateY(0) scale(0.96);
+    background: var(--color-gold-dark);
+    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+}
+
+.dg-carousel-nav-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.dg-carousel-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f1ca50;
+}
+
+.dg-carousel-nav-btn:disabled:hover {
+    transform: none;
+    background: #f1ca50;
+    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+}
+
+.dg-carousel-nav-btn .material-symbols-outlined {
+    font-size: 24px;
+    line-height: 1;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .dg-carousel-nav-btn {
+        transition: none;
+    }
+    
+    .dg-carousel-nav-btn:hover {
+        transform: none;
+    }
+    
+    .dg-carousel-nav-btn:active {
+        transform: scale(0.96);
+    }
+}
+
+/* 3 product cards fill the carousel width (full container - 2 gaps of 32px).
+   Override Tailwind's w-[320px] / max-w-[320px] for #dg-carousel children only. */
+#dg-carousel > article {
+    width: calc((100% - 64px) / 3);
+    max-width: none;
+    min-width: 0;
+}
+
+@media (max-width: 1023px) {
+    /* Tablet: show 2 cards */
+    #dg-carousel > article {
+        width: calc((100% - 32px) / 2);
+    }
+}
+
+@media (max-width: 767px) {
+    /* Mobile: show 1 card + peek of next */
+    #dg-carousel > article {
+        width: calc(100% - 96px);
+    }
 }

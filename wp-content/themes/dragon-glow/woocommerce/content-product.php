@@ -114,7 +114,17 @@ if ( $product->is_featured() ) {
         </p>
 
         <div class="mt-auto">
-            <?php dg_star_rating( (float) $product->get_average_rating(), $product->get_review_count() ); ?>
+            <?php
+            $rating = $product->get_average_rating();
+            $count  = $product->get_review_count();
+            
+            // Fallback: nếu chưa có review, dùng mock rating đa dạng (4.0-5.0)
+            if ( $rating == 0 && $count == 0 ) {
+                $rating = dg_get_mock_rating( $product->get_id() );
+            }
+            
+            dg_star_rating( (float) $rating, $count );
+            ?>
         </div>
     </div>
 

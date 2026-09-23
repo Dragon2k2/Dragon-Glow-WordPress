@@ -109,10 +109,16 @@ $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '
 	</div>
 	<a href="<?php echo esc_url($product_link); ?>" class="text-center px-2 dg-product-info-link">
 		<?php
-		// Display product rating, minimum 4 stars
-		$product_rating = (float) $_product->get_average_rating();
-		$display_rating = max( 4.0, $product_rating );
-		dg_wc_stars( $display_rating );
+		// Display product rating with mock fallback (4.0-5.0)
+		$rating = $_product->get_average_rating();
+		$count  = $_product->get_review_count();
+		
+		// Fallback: nếu chưa có review, dùng mock rating đa dạng (4.0-5.0)
+		if ( $rating == 0 && $count == 0 ) {
+			$rating = dg_get_mock_rating( $product_id );
+		}
+		
+		dg_star_rating( (float) $rating, $count );
 		?>
 		<h3 class="dg-product-name">
 			<?php echo esc_html($product_name); ?>

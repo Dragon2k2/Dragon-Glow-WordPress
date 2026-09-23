@@ -102,10 +102,10 @@ $fallback_products = array(
                 </p>
             </div>
             <div class="flex gap-4">
-                <button class="p-4 rounded-full border border-outline-variant hover:bg-white transition-all text-primary" id="dg-prev-btn" aria-label="<?php esc_attr_e( 'Previous', 'dragon-glow' ); ?>">
+                <button class="dg-carousel-nav-btn" id="dg-prev-btn" aria-label="<?php esc_attr_e( 'Previous', 'dragon-glow' ); ?>">
                     <span class="material-symbols-outlined">chevron_left</span>
                 </button>
-                <button class="p-4 rounded-full border border-outline-variant hover:bg-white transition-all text-primary" id="dg-next-btn" aria-label="<?php esc_attr_e( 'Next', 'dragon-glow' ); ?>">
+                <button class="dg-carousel-nav-btn" id="dg-next-btn" aria-label="<?php esc_attr_e( 'Next', 'dragon-glow' ); ?>">
                     <span class="material-symbols-outlined">chevron_right</span>
                 </button>
             </div>
@@ -125,10 +125,16 @@ $fallback_products = array(
                     $price    = $product->get_price_html();
                     $stars    = $product->get_average_rating();
                     $count    = $product->get_review_count();
+                    
+                    // Fallback: nếu chưa có review, dùng mock rating đa dạng (4.0-5.0)
+                    if ( $stars == 0 && $count == 0 ) {
+                        $stars = dg_get_mock_rating( $product->get_id() );
+                    }
+                    
                     $is_sale  = $product->is_on_sale();
                     $is_new   = $product->is_featured();
             ?>
-            <article <?php wc_product_class( 'min-w-[320px] glass-card p-4 rounded-3xl group flex-shrink-0 snap-start reveal', $product ); ?>
+            <article <?php wc_product_class( 'w-[320px] max-w-[320px] glass-card p-4 rounded-3xl group flex-shrink-0 snap-start reveal', $product ); ?>
                      style="transition-delay: <?php echo esc_attr( $delay ); ?>ms">
 
                 <div class="relative overflow-hidden rounded-2xl aspect-square mb-6">
@@ -183,7 +189,7 @@ $fallback_products = array(
                 // Use fallback products if no WooCommerce products
                 foreach ( $fallback_products as $index => $fp ) :
             ?>
-            <article class="min-w-[320px] glass-card p-4 rounded-3xl group flex-shrink-0 snap-start reveal" style="transition-delay: <?php echo esc_attr( $index * 100 ); ?>ms;">
+            <article class="w-[320px] max-w-[320px] glass-card p-4 rounded-3xl group flex-shrink-0 snap-start reveal" style="transition-delay: <?php echo esc_attr( $index * 100 ); ?>ms;">
                 <div class="relative overflow-hidden rounded-2xl aspect-square mb-6">
                     <img src="<?php echo esc_url( $fp['image'] ); ?>"
                          alt="<?php echo esc_attr( $fp['name'] ); ?>"
@@ -212,12 +218,7 @@ $fallback_products = array(
 
                     <p class="text-sm text-on-surface-variant mb-4"><?php echo esc_html( $fp['desc'] ); ?></p>
 
-                    <div class="flex items-center gap-1 text-tertiary text-sm">
-                        <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' <?php echo $i <= $fp['rating'] ? '1' : '0'; ?>;">star</span>
-                        <?php endfor; ?>
-                        <span class="ml-2 text-on-surface-variant">(<?php echo esc_html( $fp['reviews'] ); ?>)</span>
-                    </div>
+                    <?php dg_star_rating( (float) $fp['rating'], (int) $fp['reviews'] ); ?>
                 </div>
             </article>
             <?php

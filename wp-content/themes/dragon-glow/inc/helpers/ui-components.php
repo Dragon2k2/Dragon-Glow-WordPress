@@ -53,17 +53,23 @@ function dg_wc_stars( float $rating = 5.0, int $count = 0 ): void {
  * @return void
  */
 function dg_star_rating( float $rating = 5.0, int $count = 0 ): void {
-	$rating = max( 0, min( 5, $rating ) );
+	$rating    = max( 0, min( 5, $rating ) );
+	$fractional = $rating - floor( $rating );
+	$use_half  = ( $fractional >= 0.5 ) ? 1 : 0;
+	$floor     = (int) floor( $rating );
 	?>
-	<div class="flex items-center gap-0.5 text-tertiary-container dg-stars">
-		<?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-			<?php
-			$fill = $i <= $rating ? '1' : '0';
-			printf(
-				'<span class="material-symbols-outlined text-[16px]" style="--dg-star-fill:%s">star</span>',
-				esc_attr( $fill )
-			);
-			?>
+	<div class="flex items-center gap-0.5 dg-stars">
+		<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
+			<?php if ( $s <= $floor ) : ?>
+				<span class="material-symbols-outlined" style="--dg-star-fill:1;">star</span>
+			<?php elseif ( $s === $floor + 1 && $use_half ) : ?>
+				<span class="dg-star-half" style="--dg-star-size:16px;">
+					<span class="material-symbols-outlined dg-star-half__fill" style="--dg-star-fill:1;">star</span>
+					<span class="material-symbols-outlined dg-star-half__base" style="--dg-star-fill:0;">star</span>
+				</span>
+			<?php else : ?>
+				<span class="material-symbols-outlined" style="--dg-star-fill:0;">star</span>
+			<?php endif; ?>
 		<?php endfor; ?>
 		<?php if ( $count ) : ?>
 			<span class="text-[12px] text-on-surface-variant ml-1">(<?php echo esc_html( $count ); ?>)</span>

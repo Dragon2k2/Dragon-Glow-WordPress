@@ -76,3 +76,26 @@ function dg_ensure_page( string $slug, string $title, string $template = '' ): i
 	}
 	return (int) $id;
 }
+
+/**
+ * Get mock rating for products that have no reviews yet.
+ *
+ * Generates deterministic rating (4.0-5.0) based on product ID.
+ * Same product always gets same rating.
+ *
+ * @param int $product_id Product ID.
+ * @return float Rating between 4.0 and 5.0.
+ */
+function dg_get_mock_rating( int $product_id ): float {
+	// Use a hash to distribute ratings more evenly across any ID range
+	// This ensures we get all three rating types (4.0, 4.5, 5.0)
+	$hash = ( $product_id * 17 + 7 ) % 10;
+	
+	if ( $hash < 3 ) {
+		return 4.0;  // 30%
+	} elseif ( $hash < 6 ) {
+		return 4.5;  // 30%
+	} else {
+		return 5.0;  // 40%
+	}
+}
