@@ -25,7 +25,7 @@ function dg_wc_stars( float $rating = 5.0, int $count = 0 ): void {
 	$use_half  = ( $fractional >= 0.5 ) ? 1 : 0;
 	$floor     = (int) floor( $rating );
 	?>
-	<div class="dg-stars-card" style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:6px;">
+	<div class="dg-stars-card">
 		<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
 			<?php if ( $s <= $floor ) : ?>
 				<span class="material-symbols-outlined dg-star" style="--dg-star-fill:1;">star</span>
@@ -48,17 +48,18 @@ function dg_wc_stars( float $rating = 5.0, int $count = 0 ): void {
 /**
  * Render star rating HTML.
  *
- * @param float $rating Rating value (0-5).
- * @param int   $count  Review count.
+ * @param float  $rating      Rating value (0-5).
+ * @param int    $count       Review count.
+ * @param string $extra_class Optional extra class on the wrapper (e.g. 'dg-stars-card' to center on shop cards).
  * @return void
  */
-function dg_star_rating( float $rating = 5.0, int $count = 0 ): void {
+function dg_star_rating( float $rating = 5.0, int $count = 0, string $extra_class = '' ): void {
 	$rating    = max( 0, min( 5, $rating ) );
 	$fractional = $rating - floor( $rating );
 	$use_half  = ( $fractional >= 0.5 ) ? 1 : 0;
 	$floor     = (int) floor( $rating );
 	?>
-	<div class="flex items-center gap-0.5 dg-stars">
+	<div class="flex items-center gap-0.5 dg-stars<?php echo $extra_class ? ' ' . esc_attr( $extra_class ) : ''; ?>">
 		<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
 			<?php if ( $s <= $floor ) : ?>
 				<span class="material-symbols-outlined" style="--dg-star-fill:1;">star</span>
@@ -192,26 +193,34 @@ function dg_get_social_links(): array {
 }
 
 /**
- * Render star-rating HTML using Material Symbols.
+ * Render star-rating HTML using Material Symbols with --dg-star-fill variable.
+ * Uses same fill pattern as dg_star_rating() for visual consistency.
  *
  * @param float  $rating       Rating value (e.g. 4.5).
  * @param string $icon_size    CSS font-size for stars (default 16px).
  * @return string
  */
 function dg_mock_stars( float $rating, string $icon_size = '16px' ): string {
-	$full  = (int) floor( $rating );
-	$half  = $rating - $full >= 0.5 ? 1 : 0;
-	$empty = 5 - $full - $half;
+	$rating     = max( 0, min( 5, $rating ) );
+	$fractional = $rating - floor( $rating );
+	$use_half   = ( $fractional >= 0.5 ) ? 1 : 0;
+	$floor      = (int) floor( $rating );
 
 	$html = '';
-	for ( $i = 0; $i < $full; $i++ ) {
-		$html .= '<span class="material-symbols-outlined" style="font-size:' . esc_attr( $icon_size ) . ';color:#d4a017;" aria-hidden="true">star</span>';
-	}
-	for ( $i = 0; $i < $half; $i++ ) {
-		$html .= '<span class="material-symbols-outlined" style="font-size:' . esc_attr( $icon_size ) . ';color:#d4a017;" aria-hidden="true">star_half</span>';
-	}
-	for ( $i = 0; $i < $empty; $i++ ) {
-		$html .= '<span class="material-symbols-outlined" style="font-size:' . esc_attr( $icon_size ) . ';color:#d4a017;opacity:0.3;" aria-hidden="true">star</span>';
+	for ( $s = 1; $s <= 5; $s++ ) {
+		if ( $s <= $floor ) {
+			// Full star — filled
+			$html .= '<span class="material-symbols-outlined" style="--dg-star-fill:1;" aria-hidden="true">star</span>';
+		} elseif ( $s === $floor + 1 && $use_half ) {
+			// Half star — overlay pattern
+			$html .= '<span class="dg-star-half" style="--dg-star-size:' . esc_attr( $icon_size ) . ';">';
+			$html .= '<span class="material-symbols-outlined dg-star-half__fill" style="--dg-star-fill:1;">star</span>';
+			$html .= '<span class="material-symbols-outlined dg-star-half__base" style="--dg-star-fill:0;">star</span>';
+			$html .= '</span>';
+		} else {
+			// Empty star — outline
+			$html .= '<span class="material-symbols-outlined" style="--dg-star-fill:0;" aria-hidden="true">star</span>';
+		}
 	}
 
 	return '<span class="flex items-center gap-0.5" aria-label="' . sprintf( esc_attr__( 'Rating: %s out of 5 stars', 'dragon-glow' ), number_format_i18n( $rating, 1 ) ) . '">' . $html . '</span>';

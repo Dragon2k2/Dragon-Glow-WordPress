@@ -107,4 +107,9 @@
     }
     window.DGUpdateCartCount = updateCartCount;
 
+    // ── Expose as object for external modules ─────────────────
+    window.DGCartFeedback = {
+        updateCartCount: updateCartCount
+    };
+
 })();

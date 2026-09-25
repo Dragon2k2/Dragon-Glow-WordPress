@@ -7,19 +7,14 @@
    1. PRODUCT SUMMARY (title, price, cart, tabs)
    ========================================= */
 
-.woocommerce div.product {
-    max-width: 100%;
-}
-
-.woocommerce div.product div.images {
-    margin-bottom: 2rem;
-}
-
-.woocommerce div.product div.images img {
-    border-radius: 1.5rem;
-}
-
-.woocommerce div.product .product_title {
+/* NOTE: content-single-product.php không dùng markup .images / .product_title /
+   p.price / woocommerce-product-details__short-description mặc định của WC — nó
+   render custom trong #product-info (right column: title, price, form.cart).
+   Sticky bar dưới cùng dùng id riêng #sticky-add-to-bag (đã tách khỏi #product-info
+   để tránh trùng ID — xem product.js và product.css).
+   Scope theo #product-info để tránh rò rỉ style ra toàn trang (form.cart, p.price
+   có thể xuất hiện ở nơi khác nếu không scope). */
+#product-info .product_title {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     font-weight: 600;
@@ -27,7 +22,7 @@
     margin-bottom: 1rem;
 }
 
-.woocommerce div.product p.price {
+#product-info p.price {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
@@ -35,167 +30,616 @@
     margin-bottom: 1.5rem;
 }
 
-.woocommerce div.product p.price del {
+#product-info p.price del {
     color: #827473;
     font-size: 1.25rem;
 }
 
-.woocommerce div.product p.price ins {
+#product-info p.price ins {
     text-decoration: none;
 }
 
-.woocommerce div.product .woocommerce-product-details__short-description {
+#product-info .woocommerce-product-details__short-description {
     font-size: 1.125rem;
     color: #504444;
     line-height: 1.7;
     margin-bottom: 1.5rem;
 }
 
-.woocommerce div.product form.cart {
+#product-info form.cart {
     margin-bottom: 1.5rem;
 }
 
-.woocommerce div.product form.cart .button {
-    background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
-    border-bottom: 2px solid #735c00;
-    color: #734e4e;
-    padding: 1rem 2.5rem;
-    border-radius: 9999px;
-    font-weight: 700;
-    text-transform: none;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
+/* =========================================
+   Button Layout — Add to Cart + Buy Now Side-by-Side
+   Form.cart tự động tạo flexbox row cho 2 nút bên trong
+   ========================================= */
+#product-info form.cart {
+	margin-bottom: 1.5rem;
 }
 
-.woocommerce div.product form.cart .button:hover {
-    box-shadow: 0 0 20px rgba(244, 194, 194, 0.6);
-    transform: translateY(-1px);
+/* Khi form.cart chứa cả .single_add_to_cart_button và .dg-buy-now-btn
+   → tạo horizontal layout */
+#product-info form.cart:has(.dg-buy-now-btn) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: stretch; /* Force equal height for all items */
 }
 
-.woocommerce div.product form.cart .button:active {
-    transform: scale(0.95);
+/* Quantity selector full width */
+#product-info form.cart .quantity {
+	flex: 1 1 100%;
+	margin-bottom: 0.75rem; /* Add spacing before buttons row */
 }
 
-/* Quantity Input */
+/* Buttons row — equal sizing */
+#product-info form.cart .single_add_to_cart_button,
+#product-info form.cart .dg-buy-now-btn {
+	flex: 1 1 0; /* Force equal width distribution */
+	min-width: 0; /* Allow flex shrink */
+	min-height: 56px; /* Ensure equal height */
+	white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Mobile: stack buttons vertically */
+@media (max-width: 640px) {
+	#product-info form.cart .single_add_to_cart_button,
+	#product-info form.cart .dg-buy-now-btn {
+		flex: 1 1 100%;
+		min-height: 52px;
+	}
+}
+
+/* =========================================
+   Add to Cart — Luxury Glassmorphism CTA
+   Đồng bộ với .dg-qty-btn (gradient vàng gold + glass surface)
+   ========================================= */
+/* Root cause (đã xác nhận qua console debug): content-single-product.php không
+   render markup .woocommerce div.product mặc định — .woocommerce chỉ có ở
+   <body>, nút Add to Cart nằm trong #product-info form.cart. Selector cũ
+   ".woocommerce div.product form.cart .single_add_to_cart_button" không match
+   nên mọi rule (kể cả !important) bị bỏ qua hoàn toàn. Scope lại đúng DOM thật
+   bằng #product-info form.cart — không còn cần !important. */
+#product-info form.cart .single_add_to_cart_button {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	overflow: hidden;
+	flex: 1;
+
+	/* Layout */
+	margin-top: 0;
+	padding: 1.125rem 1.5rem;
+	border-radius: 9999px;
+
+	/* Typography */
+	font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-on-primary, #ffffff);
+
+	/* Gold gradient fill */
+	background: linear-gradient(135deg, #c9a96e 0%, #e8d5a3 45%, #c9a96e 75%, #a07840 100%);
+	border: none;
+
+	/* Elevated shadow */
+	box-shadow:
+		0 2px 8px rgba(123, 84, 85, 0.15),
+		0 8px 28px rgba(201, 169, 110, 0.35);
+
+	cursor: pointer;
+	transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Sheen sweep on hover — matches .btn-luxury pattern used elsewhere in theme */
+#product-info form.cart .single_add_to_cart_button::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+	transform: translateX(-100%);
+	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#product-info form.cart .single_add_to_cart_button:hover::before {
+	transform: translateX(100%);
+}
+
+#product-info form.cart .single_add_to_cart_button:hover:not(.disabled) {
+	transform: translateY(-2px);
+	box-shadow:
+		0 4px 14px rgba(123, 84, 85, 0.2),
+		0 12px 36px rgba(201, 169, 110, 0.45);
+}
+
+#product-info form.cart .single_add_to_cart_button:active:not(.disabled) {
+	transform: translateY(0) scale(0.97);
+	box-shadow:
+		0 1px 4px rgba(123, 84, 85, 0.12),
+		0 4px 16px rgba(201, 169, 110, 0.25);
+}
+
+#product-info form.cart .single_add_to_cart_button:focus-visible {
+	outline: 2px solid var(--color-primary, #735c00);
+	outline-offset: 3px;
+}
+
+/* Loading / disabled state (WooCommerce adds .loading / .disabled via AJAX add-to-cart) */
+#product-info form.cart .single_add_to_cart_button.disabled,
+#product-info form.cart .single_add_to_cart_button.loading {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+	pointer-events: none;
+}
+
+/* Success state - "Added!" feedback */
+#product-info form.cart .single_add_to_cart_button.added {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	border-color: #10b981;
+}
+
+#product-info form.cart .single_add_to_cart_button.added::before {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+@media (max-width: 640px) {
+	#product-info form.cart .single_add_to_cart_button {
+		padding: 1rem 1.25rem;
+		font-size: 0.875rem;
+	}
+}
+
+/* =========================================
+   Buy Now — Glassmorphism Outline Luxury CTA
+   Secondary action với glass surface + gold gradient border
+   ========================================= */
+.dg-buy-now-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	overflow: hidden;
+	flex: 1;
+
+	/* Layout */
+	margin-top: 0;
+	padding: 1.125rem 1.5rem;
+	border-radius: 9999px;
+
+	/* Typography */
+	font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+	font-size: 0.9375rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-primary, #735c00);
+
+	/* Glassmorphism background */
+	background: rgba(251, 247, 240, 0.4);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	/* Golden gradient border — double background trick */
+	border: 2px solid transparent;
+	background-image: 
+		linear-gradient(rgba(251, 247, 240, 0.4), rgba(251, 247, 240, 0.4)),
+		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 45%, #c9a96e 75%, #a07840 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+
+	/* Subtle shadow */
+	box-shadow:
+		0 1px 4px rgba(123, 84, 85, 0.08),
+		0 4px 16px rgba(201, 169, 110, 0.15);
+
+	cursor: pointer;
+	transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Icon styling */
+.dg-buy-now-btn .material-symbols-outlined {
+	font-size: 20px;
+	font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 20;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.dg-buy-now-btn .material-symbols-outlined.animate-spin {
+	animation: spin 1s linear infinite;
+}
+
+/* Sheen sweep on hover */
+.dg-buy-now-btn::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.25), transparent);
+	transform: translateX(-100%);
+	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	border-radius: inherit;
+}
+
+.dg-buy-now-btn:hover::before {
+	transform: translateX(100%);
+}
+
+.dg-buy-now-btn:hover:not(:disabled) {
+	background: rgba(255, 245, 220, 0.55);
+	background-image: 
+		linear-gradient(rgba(255, 245, 220, 0.55), rgba(255, 245, 220, 0.55)),
+		linear-gradient(135deg, #c9a96e 0%, #f1ca50 50%, #c9a96e 100%);
+	transform: translateY(-2px);
+	box-shadow:
+		0 2px 8px rgba(123, 84, 85, 0.12),
+		0 8px 32px rgba(201, 169, 110, 0.25);
+}
+
+.dg-buy-now-btn:active:not(:disabled) {
+	transform: translateY(0) scale(0.97);
+	box-shadow:
+		0 1px 3px rgba(123, 84, 85, 0.1),
+		0 3px 12px rgba(201, 169, 110, 0.18);
+}
+
+.dg-buy-now-btn:focus-visible {
+	outline: 2px solid var(--color-primary, #735c00);
+	outline-offset: 3px;
+}
+
+/* Loading / disabled state */
+.dg-buy-now-btn:disabled,
+.dg-buy-now-btn.is-loading {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+}
+
+@media (max-width: 640px) {
+	.dg-buy-now-btn {
+		padding: 1rem 1.25rem;
+		font-size: 0.875rem;
+	}
+}
+
+@media (max-width: 640px) {
+	#product-info form.cart .single_add_to_cart_button {
+		padding: 1rem 2rem;
+		font-size: 0.875rem;
+	}
+	
+	.dg-buy-now-btn {
+		padding: 1rem 2rem;
+		font-size: 0.875rem;
+	}
+	
+	.dg-buy-now-btn .material-symbols-outlined {
+		font-size: 18px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#product-info form.cart .single_add_to_cart_button,
+	#product-info form.cart .single_add_to_cart_button::before,
+	.dg-buy-now-btn,
+	.dg-buy-now-btn::before {
+		transition: none;
+	}
+	#product-info form.cart .single_add_to_cart_button:hover:not(.disabled),
+	#product-info form.cart .single_add_to_cart_button:active:not(.disabled),
+	.dg-buy-now-btn:hover:not(:disabled),
+	.dg-buy-now-btn:active:not(:disabled) {
+		transform: none;
+	}
+}
+
+/* =========================================
+   Image Zoom Modal — Lightbox Overlay
+   ========================================= */
+
+#dg-zoom-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.9);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	cursor: zoom-out;
+}
+
+#dg-zoom-modal img {
+	cursor: default;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+#dg-zoom-modal button {
+	cursor: pointer;
+}
+
+/* Navigation buttons hover effect */
+#dg-zoom-prev:hover,
+#dg-zoom-next:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: scale(1.05);
+}
+
+#dg-zoom-prev:active,
+#dg-zoom-next:active {
+	transform: scale(0.95);
+}
+
+/* Image counter badge */
+#dg-zoom-counter {
+	font-variant-numeric: tabular-nums;
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+	#dg-zoom-modal,
+	#dg-zoom-image,
+	#dg-zoom-prev,
+	#dg-zoom-next {
+		transition: none !important;
+	}
+}
+
+/* =========================================
+   Product Gallery Layout — Prevent Main Image Overlap
+   ========================================= */
+
+/* Gallery container — thumbnails + main image */
+.lg\:sticky .flex.flex-col-reverse.md\:flex-row {
+	position: relative;
+	z-index: 1;
+}
+
+/* Thumbnail column — fixed width on desktop */
+.lg\:sticky .flex.flex-col-reverse.md\:flex-row > div:first-child {
+	flex-shrink: 0;
+	z-index: 2; /* Ensure thumbnails stay above main image */
+}
+
+/* Main image container — prevent overflow into thumbnails */
+.lg\:sticky .flex.flex-col-reverse.md\:flex-row > div:last-child {
+	flex-grow: 1;
+	min-width: 0; /* Prevent flex item from overflowing */
+	z-index: 1; /* Below thumbnails */
+}
+
+/* =========================================
+   Quantity Input — Luxury Glassmorphism Stepper
+   ========================================= */
+
+/* Wrapper container — horizontal layout with buttons flanking input */
+.woocommerce .quantity,
+.woocommerce .dg-quantity-stepper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* +/- Buttons — luxury glassmorphism pills */
+.dg-qty-btn {
+	/* Size */
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	
+	/* Layout */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	
+	/* Glassmorphism background */
+	background: rgba(251, 247, 240, 0.5);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	
+	/* Golden gradient border */
+	border: 1.5px solid transparent;
+	border-radius: 50%;
+	background-image: 
+		linear-gradient(rgba(251, 247, 240, 0.5), rgba(251, 247, 240, 0.5)),
+		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 50%, #c9a96e 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+	
+	/* Shadow */
+	box-shadow:
+		0 1px 3px rgba(123, 84, 85, 0.06),
+		0 3px 12px rgba(201, 169, 110, 0.1);
+	
+	/* Icon color */
+	color: var(--color-primary, #735c00);
+	
+	/* Cursor */
+	cursor: pointer;
+	
+	/* Transition */
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dg-qty-btn .material-symbols-outlined {
+	font-size: 18px;
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+	line-height: 1;
+}
+
+/* Hover state */
+.dg-qty-btn:hover:not(:disabled) {
+	background: rgba(255, 245, 220, 0.65);
+	box-shadow:
+		0 2px 6px rgba(123, 84, 85, 0.1),
+		0 6px 24px rgba(201, 169, 110, 0.2);
+	transform: translateY(-1px) scale(1.05);
+}
+
+/* Active/pressed state */
+.dg-qty-btn:active:not(:disabled) {
+	transform: translateY(0) scale(0.95);
+	box-shadow:
+		0 1px 2px rgba(123, 84, 85, 0.08),
+		0 2px 8px rgba(201, 169, 110, 0.12);
+}
+
+/* Focus state */
+.dg-qty-btn:focus-visible {
+	outline: 2px solid var(--color-primary, #735c00);
+	outline-offset: 2px;
+}
+
+/* Disabled state */
+.dg-qty-btn:disabled {
+	background: rgba(251, 247, 240, 0.3);
+	background-image: 
+		linear-gradient(rgba(251, 247, 240, 0.3), rgba(251, 247, 240, 0.3)),
+		linear-gradient(135deg, #d4c9b0 0%, #e0d5c0 100%);
+	color: #b8a888;
+	cursor: not-allowed;
+	opacity: 0.5;
+	box-shadow: none;
+}
+
+/* Input field — glassmorphism luxury design */
 .woocommerce .quantity .qty {
-    width: 5rem;
-    padding: 0.75rem;
-    border: 1px solid #d4c2c2;
-    border-radius: 0.75rem;
-    text-align: center;
-    font-size: 1rem;
+	/* Size & layout */
+	width: 4.5rem;
+	height: 2.5rem;
+	padding: 0.5rem 0.75rem;
+	text-align: center;
+	flex-shrink: 0;
+	
+	/* Typography */
+	font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: var(--color-on-surface, #1c1b1b);
+	letter-spacing: 0.02em;
+	
+	/* Glassmorphism background */
+	background: rgba(251, 247, 240, 0.55);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	
+	/* Golden gradient border */
+	border: 1.5px solid transparent;
+	border-radius: 0.75rem;
+	background-image: 
+		linear-gradient(rgba(251, 247, 240, 0.55), rgba(251, 247, 240, 0.55)),
+		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 40%, #c9a96e 70%, #a07840 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+	
+	/* Shadow */
+	box-shadow:
+		0 1px 3px rgba(123, 84, 85, 0.06),
+		0 4px 16px rgba(201, 169, 110, 0.12);
+	
+	/* Transition */
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.woocommerce .quantity .qty:focus {
-	border-color: #FFC107;
-	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+/* Hover state */
+.woocommerce .quantity .qty:hover {
+	background: rgba(255, 245, 220, 0.6);
+	box-shadow:
+		0 2px 8px rgba(123, 84, 85, 0.1),
+		0 8px 32px rgba(201, 169, 110, 0.22);
+	transform: translateY(-1px);
+}
+
+/* Focus state — golden glow */
+.woocommerce .quantity .qty:focus,
+.woocommerce .quantity .qty:focus-visible {
+	background: rgba(255, 245, 220, 0.7);
+	border-color: transparent;
+	background-image: 
+		linear-gradient(rgba(255, 245, 220, 0.7), rgba(255, 245, 220, 0.7)),
+		linear-gradient(135deg, #c9a96e 0%, #f1ca50 50%, #c9a96e 100%);
+	box-shadow:
+		0 2px 12px rgba(241, 202, 80, 0.25),
+		0 8px 40px rgba(201, 169, 110, 0.3),
+		0 0 0 3px rgba(241, 202, 80, 0.15);
 	outline: none;
+	transform: translateY(-1px);
 }
 
-/* Tabs */
-.woocommerce div.product .woocommerce-tabs ul.tabs {
-    padding: 0;
-    margin: 0 0 1.5rem 0;
-    border-bottom: 1px solid #d4c2c2;
+/* Disabled state */
+.woocommerce .quantity .qty:disabled {
+	background: rgba(251, 247, 240, 0.3);
+	background-image: 
+		linear-gradient(rgba(251, 247, 240, 0.3), rgba(251, 247, 240, 0.3)),
+		linear-gradient(135deg, #d4c9b0 0%, #e0d5c0 100%);
+	color: #b8a888;
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
 }
 
-.woocommerce div.product .woocommerce-tabs ul.tabs::before {
-    display: none;
+/* Remove spinner arrows on Chrome/Safari/Edge */
+.woocommerce .quantity .qty::-webkit-outer-spin-button,
+.woocommerce .quantity .qty::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+	margin: 0;
 }
 
-.woocommerce div.product .woocommerce-tabs ul.tabs li {
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
+/* Remove spinner arrows on Firefox */
+.woocommerce .quantity .qty[type="number"] {
+	-moz-appearance: textfield;
+	appearance: textfield;
 }
 
-.woocommerce div.product .woocommerce-tabs ul.tabs li::before,
-.woocommerce div.product .woocommerce-tabs ul.tabs li::after {
-    display: none;
+/* ── Responsive adjustments ── */
+@media (max-width: 640px) {
+	.dg-qty-btn {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
+	
+	.dg-qty-btn .material-symbols-outlined {
+		font-size: 16px;
+	}
+	
+	.woocommerce .quantity .qty {
+		width: 4rem;
+		height: 2.25rem;
+		font-size: 0.875rem;
+		padding: 0.5rem 0.625rem;
+	}
 }
 
-.woocommerce div.product .woocommerce-tabs ul.tabs li a {
-    display: block;
-    padding: 1rem 1.5rem;
-    color: #504444;
-    font-weight: 500;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+	.dg-qty-btn,
+	.woocommerce .quantity .qty {
+		transition: none;
+	}
+	.dg-qty-btn:hover:not(:disabled),
+	.dg-qty-btn:active:not(:disabled),
+	.woocommerce .quantity .qty:hover,
+	.woocommerce .quantity .qty:focus,
+	.woocommerce .quantity .qty:focus-visible {
+		transform: none;
+	}
 }
 
-.woocommerce div.product .woocommerce-tabs ul.tabs li.active a {
-    color: #7b5455;
-    border-bottom-color: #7b5455;
-    font-weight: 700;
-}
-
-/* =========================================
-   2. RELATED PRODUCTS
-   ========================================= */
-
-.woocommerce div.product .related {
-    clear: both;
-}
-
-.woocommerce div.product .related h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.75rem;
-    color: #7b5455;
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-/* =========================================
-   3. PRODUCT GALLERY THUMBNAILS
-   ========================================= */
-
-.woocommerce div.product div.images .flex-control-thumbs {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-}
-
-.woocommerce div.product div.images .flex-control-thumbs li {
-    width: 80px;
-    height: 96px;
-    float: none;
-}
-
-.woocommerce div.product div.images .flex-control-thumbs li img {
-    border-radius: 0.75rem;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.woocommerce div.product div.images .flex-control-thumbs li img.flex-active,
-.woocommerce div.product div.images .flex-control-thumbs li img:hover {
-    border-color: #7b5455;
-}
-
-/* =========================================
-   4. VARIATIONS TABLE
-   ========================================= */
-
-.woocommerce div.product table.variations {
-    border: none;
-}
-
-.woocommerce div.product table.variations td {
-    display: block;
-    padding: 0.5rem 0;
-    border: none;
-}
-
-.woocommerce div.product table.variations td.label {
-    font-weight: 500;
-    color: #504444;
-    margin-bottom: 0.25rem;
-}
-
-.woocommerce div.product table.variations select {
-    width: 100%;
-    max-width: 300px;
-}
 

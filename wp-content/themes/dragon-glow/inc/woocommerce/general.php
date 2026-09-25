@@ -65,7 +65,7 @@ add_filter( 'woocommerce_enqueue_styles', 'dg_dequeue_styles' );
  * @return string
  */
 function dg_add_to_cart_text( string $text ): string {
-    return __( 'Add to Bag', 'dragon-glow' );
+    return __( 'Add to Cart', 'dragon-glow' );
 }
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'dg_add_to_cart_text' );
 add_filter( 'woocommerce_product_add_to_cart_text', 'dg_add_to_cart_text' );

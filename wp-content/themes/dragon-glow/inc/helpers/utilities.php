@@ -99,3 +99,16 @@ function dg_get_mock_rating( int $product_id ): float {
 		return 5.0;  // 40%
 	}
 }
+
+/**
+ * Get mock review count for products that have no reviews yet.
+ *
+ * Generates deterministic count (12-89) based on product ID, so the same
+ * product always shows the same mock count. Pairs with dg_get_mock_rating().
+ *
+ * @param int $product_id Product ID.
+ * @return int Mock review count between 12 and 89.
+ */
+function dg_get_mock_review_count( int $product_id ): int {
+	return 12 + ( ( $product_id * 29 + 11 ) % 78 );
+}

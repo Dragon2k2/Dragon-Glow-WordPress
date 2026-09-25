@@ -148,30 +148,71 @@
     };
 
     // ── Quantity +/- Buttons ──────────────────────────────────
-    document.querySelectorAll('.quantity').forEach(function (container) {
+    // Supports both old (.minus/.plus) and new (.dg-qty-minus/.dg-qty-plus) class names.
+    document.querySelectorAll('.quantity, .dg-quantity-stepper').forEach(function (container) {
         var input = container.querySelector('.qty');
-        var minusBtn = container.querySelector('.minus');
-        var plusBtn = container.querySelector('.plus');
+        var minusBtn = container.querySelector('.minus, .dg-qty-minus');
+        var plusBtn = container.querySelector('.plus, .dg-qty-plus');
 
         if (!input || !minusBtn || !plusBtn) return;
 
-        minusBtn.addEventListener('click', function () {
-            var val = parseInt(input.value) || 1;
-            var min = parseInt(input.min) || 1;
-            if (val > min) {
-                input.value = val - 1;
+        var min = parseFloat(input.getAttribute('min')) || 1;
+        var max = parseFloat(input.getAttribute('max')) || Infinity;
+        var step = parseFloat(input.getAttribute('step')) || 1;
+
+        /**
+         * Update button disabled states based on current value
+         */
+        function updateButtonStates() {
+            var currentValue = parseFloat(input.value) || min;
+
+            // Disable minus if at minimum
+            if (currentValue <= min) {
+                minusBtn.disabled = true;
+                minusBtn.setAttribute('aria-disabled', 'true');
+            } else {
+                minusBtn.disabled = false;
+                minusBtn.removeAttribute('aria-disabled');
+            }
+
+            // Disable plus if at maximum
+            if (max !== Infinity && currentValue >= max) {
+                plusBtn.disabled = true;
+                plusBtn.setAttribute('aria-disabled', 'true');
+            } else {
+                plusBtn.disabled = false;
+                plusBtn.removeAttribute('aria-disabled');
+            }
+        }
+
+        minusBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var val = parseFloat(input.value) || min;
+            var newVal = Math.max(min, val - step);
+            if (newVal !== val) {
+                input.value = newVal;
                 input.dispatchEvent(new Event('change', { bubbles: true }));
             }
+            updateButtonStates();
         });
 
-        plusBtn.addEventListener('click', function () {
-            var val = parseInt(input.value) || 0;
-            var max = parseInt(input.max) || 999;
-            if (val < max) {
-                input.value = val + 1;
+        plusBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var val = parseFloat(input.value) || min;
+            var newVal = max !== Infinity ? Math.min(max, val + step) : val + step;
+            if (newVal !== val) {
+                input.value = newVal;
                 input.dispatchEvent(new Event('change', { bubbles: true }));
             }
+            updateButtonStates();
         });
+
+        // Update button states when input value changes manually
+        input.addEventListener('input', updateButtonStates);
+        input.addEventListener('change', updateButtonStates);
+
+        // Initial state
+        updateButtonStates();
     });
 
     // ── Star Rating in Review Form ───────────────────────────
@@ -215,7 +256,7 @@
     }
 
     // ── Sticky Product Info ───────────────────────────────────
-    var productInfo = document.getElementById('product-info');
+    var productInfo = document.getElementById('sticky-add-to-bag');
     if (productInfo) {
         var lastScroll = 0;
 
@@ -230,6 +271,161 @@
 
             lastScroll = scroll;
         }, { passive: true });
+    }
+
+    // ── Add to Cart Button (AJAX) ─────────────────────────────
+    // Intercept form submit and use AJAX instead of page reload
+    var cartForm = document.querySelector('form.cart');
+    var addToCartBtn = document.querySelector('.single_add_to_cart_button');
+    
+    if (cartForm && addToCartBtn) {
+        cartForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Prevent double-submit
+            if (addToCartBtn.classList.contains('loading')) return;
+            
+            // Show loading state
+            addToCartBtn.classList.add('loading');
+            addToCartBtn.disabled = true;
+            var originalText = addToCartBtn.textContent;
+            addToCartBtn.textContent = addToCartBtn.textContent.includes('Add') ? 'Adding...' : 'Đang thêm...';
+            
+            // Get product data from form
+            var productId = addToCartBtn.value || cartForm.querySelector('[name="add-to-cart"]').value;
+            var quantity = cartForm.querySelector('[name="quantity"]') ? cartForm.querySelector('[name="quantity"]').value : 1;
+            var variationId = cartForm.querySelector('[name="variation_id"]') ? cartForm.querySelector('[name="variation_id"]').value : 0;
+            
+            // Build AJAX payload
+            var formData = new FormData();
+            formData.append('action', 'dg_ajax_add_to_cart');
+            formData.append('nonce', window.dgAjax.nonce);
+            formData.append('product_id', productId);
+            formData.append('quantity', quantity);
+            
+            if (variationId) {
+                formData.append('variation_id', variationId);
+                
+                // Collect variation attributes (e.g., attribute_pa_color, attribute_pa_size)
+                var attributes = {};
+                var attrInputs = cartForm.querySelectorAll('[name^="attribute_"]');
+                attrInputs.forEach(function (input) {
+                    attributes[input.name] = input.value;
+                });
+                if (Object.keys(attributes).length > 0) {
+                    formData.append('variation_attributes', JSON.stringify(attributes));
+                }
+            }
+            
+            // AJAX add to cart via theme endpoint
+            fetch(window.dgAjax.url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    // Trigger WooCommerce added_to_cart event
+                    document.body.dispatchEvent(new CustomEvent('added_to_cart', {
+                        detail: { 
+                            productId: productId,
+                            cart_item_key: data.data.cart_item_key
+                        }
+                    }));
+                    
+                    // Update cart count badge
+                    if (window.DGCartFeedback && window.DGCartFeedback.updateCartCount) {
+                        window.DGCartFeedback.updateCartCount();
+                    }
+                    
+                    // Show success state
+                    addToCartBtn.classList.remove('loading');
+                    addToCartBtn.classList.add('added');
+                    addToCartBtn.textContent = data.data.message || (addToCartBtn.textContent.includes('Add') ? 'Added!' : 'Đã thêm!');
+                    
+                    // Show mini cart if exists
+                    var miniCart = document.querySelector('.dg-mini-cart');
+                    if (miniCart) {
+                        miniCart.classList.add('is-open');
+                        setTimeout(function () {
+                            miniCart.classList.remove('is-open');
+                        }, 3000);
+                    }
+                    
+                    // Reset button after 2s
+                    setTimeout(function () {
+                        addToCartBtn.classList.remove('added');
+                        addToCartBtn.disabled = false;
+                        addToCartBtn.textContent = originalText;
+                    }, 2000);
+                } else {
+                    // Error from server
+                    throw new Error(data.data.message || 'Could not add to cart.');
+                }
+            })
+            .catch(function (error) {
+                console.error('Add to cart error:', error);
+                
+                // Restore button state
+                addToCartBtn.classList.remove('loading');
+                addToCartBtn.disabled = false;
+                addToCartBtn.textContent = originalText;
+                
+                // Show error message
+                alert(error.message || 'Unable to add to cart. Please try again.');
+            });
+        });
+    }
+
+    // ── Buy Now Button ────────────────────────────────────────
+    // Add to cart + redirect to checkout immediately
+    var buyNowBtn = document.querySelector('.dg-buy-now-btn');
+    if (buyNowBtn && cartForm && addToCartBtn) {
+        buyNowBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            // Disable Buy Now button and show loading state
+            buyNowBtn.disabled = true;
+            buyNowBtn.classList.add('is-loading');
+            var originalText = buyNowBtn.innerHTML;
+            buyNowBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" aria-hidden="true">progress_activity</span> ' + 
+                                  (buyNowBtn.textContent.replace('Buy Now', 'Processing...').replace('Mua Ngay', 'Đang xử lý...'));
+            
+            // Get form data
+            var formData = new FormData(cartForm);
+            
+            // AJAX add to cart
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    // Redirect to checkout
+                    window.location.href = wc_add_to_cart_params && wc_add_to_cart_params.checkout_url 
+                        ? wc_add_to_cart_params.checkout_url 
+                        : '/checkout/';
+                } else {
+                    throw new Error('Failed to add to cart');
+                }
+            })
+            .catch(function (error) {
+                console.error('Buy Now error:', error);
+                
+                // Restore button state
+                buyNowBtn.disabled = false;
+                buyNowBtn.classList.remove('is-loading');
+                buyNowBtn.innerHTML = originalText;
+                
+                // Show error message
+                alert('Unable to process Buy Now. Please try again.');
+            });
+        });
     }
 
     // ── Review Form Submit ───────────────────────────────────
@@ -268,5 +464,177 @@
             });
         });
     }
+
+    // ── Image Zoom Lightbox with Gallery Navigation ───────────
+    var dgZoomState = {
+        currentIndex: 0,
+        images: []
+    };
+
+    window.dgOpenZoom = function () {
+        var mainImg = document.getElementById('dg-main-image');
+        var modal = document.getElementById('dg-zoom-modal');
+        var zoomImg = document.getElementById('dg-zoom-image');
+        var counter = document.getElementById('dg-zoom-counter');
+        var prevBtn = document.getElementById('dg-zoom-prev');
+        var nextBtn = document.getElementById('dg-zoom-next');
+
+        if (!mainImg || !modal || !zoomImg) return;
+
+        // Collect all images from thumbnails
+        var thumbnails = document.querySelectorAll('.thumbnail-btn');
+        dgZoomState.images = [];
+        dgZoomState.currentIndex = 0;
+
+        for (var i = 0; i < thumbnails.length; i++) {
+            var fullSrc = thumbnails[i].dataset.full;
+            var alt = thumbnails[i].querySelector('img').alt;
+            dgZoomState.images.push({ src: fullSrc, alt: alt });
+
+            // Find current image index
+            if (fullSrc === mainImg.src) {
+                dgZoomState.currentIndex = i;
+            }
+        }
+
+        // If no thumbnails, use main image only
+        if (dgZoomState.images.length === 0) {
+            dgZoomState.images.push({ src: mainImg.src, alt: mainImg.alt });
+            dgZoomState.currentIndex = 0;
+        }
+
+        // Update counter
+        if (counter) {
+            counter.textContent = (dgZoomState.currentIndex + 1) + ' / ' + dgZoomState.images.length;
+        }
+
+        // Show/hide navigation buttons
+        if (dgZoomState.images.length <= 1) {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            if (counter) counter.style.display = 'none';
+        } else {
+            if (prevBtn) prevBtn.style.display = 'flex';
+            if (nextBtn) nextBtn.style.display = 'flex';
+            if (counter) counter.style.display = 'block';
+        }
+
+        // Set zoom image source
+        var currentImage = dgZoomState.images[dgZoomState.currentIndex];
+        zoomImg.src = currentImage.src;
+        zoomImg.alt = currentImage.alt;
+
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        // Animate modal entrance
+        modal.style.opacity = '0';
+        setTimeout(function () {
+            modal.style.transition = 'opacity 0.3s ease-out';
+            modal.style.opacity = '1';
+        }, 10);
+
+        // Animate image entrance
+        zoomImg.style.opacity = '0';
+        zoomImg.style.transform = 'scale(0.9)';
+        setTimeout(function () {
+            zoomImg.style.transition = 'opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            zoomImg.style.opacity = '1';
+            zoomImg.style.transform = 'scale(1)';
+        }, 10);
+
+        // Trap focus in modal
+        modal.focus();
+    };
+
+    window.dgZoomPrev = function () {
+        if (dgZoomState.images.length <= 1) return;
+
+        dgZoomState.currentIndex = (dgZoomState.currentIndex - 1 + dgZoomState.images.length) % dgZoomState.images.length;
+        dgUpdateZoomImage();
+    };
+
+    window.dgZoomNext = function () {
+        if (dgZoomState.images.length <= 1) return;
+
+        dgZoomState.currentIndex = (dgZoomState.currentIndex + 1) % dgZoomState.images.length;
+        dgUpdateZoomImage();
+    };
+
+    function dgUpdateZoomImage() {
+        var zoomImg = document.getElementById('dg-zoom-image');
+        var counter = document.getElementById('dg-zoom-counter');
+
+        if (!zoomImg) return;
+
+        var currentImage = dgZoomState.images[dgZoomState.currentIndex];
+
+        // Animate image change
+        zoomImg.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+        zoomImg.style.opacity = '0';
+        zoomImg.style.transform = 'scale(0.95)';
+
+        setTimeout(function () {
+            zoomImg.src = currentImage.src;
+            zoomImg.alt = currentImage.alt;
+
+            // Update counter
+            if (counter) {
+                counter.textContent = (dgZoomState.currentIndex + 1) + ' / ' + dgZoomState.images.length;
+            }
+
+            // Fade in new image
+            setTimeout(function () {
+                zoomImg.style.transition = 'opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                zoomImg.style.opacity = '1';
+                zoomImg.style.transform = 'scale(1)';
+            }, 50);
+        }, 200);
+    }
+
+    window.dgCloseZoom = function (event) {
+        // If event is passed and not clicking backdrop or close button, ignore
+        if (event && event.target.id !== 'dg-zoom-modal' && !event.target.closest('button')) {
+            return;
+        }
+
+        var modal = document.getElementById('dg-zoom-modal');
+        var zoomImg = document.getElementById('dg-zoom-image');
+
+        if (!modal || !zoomImg) return;
+
+        // Animate modal exit
+        modal.style.transition = 'opacity 0.2s ease-out';
+        modal.style.opacity = '0';
+
+        // Animate image exit
+        zoomImg.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+        zoomImg.style.opacity = '0';
+        zoomImg.style.transform = 'scale(0.95)';
+
+        setTimeout(function () {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }, 200);
+    };
+
+    // Keyboard navigation for zoom modal
+    document.addEventListener('keydown', function (e) {
+        var modal = document.getElementById('dg-zoom-modal');
+        if (!modal || modal.classList.contains('hidden')) return;
+
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            dgCloseZoom();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            dgZoomPrev();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            dgZoomNext();
+        }
+    });
 
 })();

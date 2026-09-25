@@ -207,6 +207,11 @@ input[type="range"]::-moz-range-thumb {
                    dg-star-half__base  : --dg-star-fill:0 (outline).
      Empty star — single glyph, --dg-star-fill:0 inline. */
 .dg-stars-card {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	margin-bottom: 6px;
 	font-size: 20px;
 }
 

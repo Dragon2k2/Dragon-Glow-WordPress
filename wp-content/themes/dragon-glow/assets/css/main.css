@@ -381,8 +381,11 @@ html {
 .dg-stars {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 2px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 0.75rem; /* 12px — gap between stars group and review text */
+    padding-left: 0;
+    margin-left: 0;
 }
 
 .dg-stars .material-symbols-outlined {

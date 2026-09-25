@@ -26,7 +26,12 @@ $main_image_url = $main_image_id
 
 $rating         = (float) $product->get_average_rating();
 $review_count   = (int) $product->get_review_count();
-$is_featured    = $product->is_featured();
+
+// Fallback: nếu chưa có review, dùng mock rating + mock review count đa dạng — đồng bộ với product-card.php
+if ( 0.0 === $rating && 0 === $review_count ) {
+	$rating       = dg_get_mock_rating( $product->get_id() );
+	$review_count = dg_get_mock_review_count( $product->get_id() );
+}
 $is_vegan       = (bool) $product->get_attribute( 'vegan' );
 $is_on_sale     = $product->is_on_sale();
 $short_desc     = $product->get_short_description();
@@ -136,15 +141,40 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 					</span>
 				<?php endif; ?>
 
-				<button type="button"
-						class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all"
-						aria-label="<?php esc_attr_e( 'Zoom image', 'dragon-glow' ); ?>">
-					<span class="material-symbols-outlined text-[20px]">zoom_in</span>
-				</button>
+			<button type="button"
+					class="dg-zoom-btn absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all"
+					aria-label="<?php esc_attr_e( 'Zoom image', 'dragon-glow' ); ?>"
+					onclick="dgOpenZoom()">
+				<span class="material-symbols-outlined text-[20px]">zoom_in</span>
+			</button>
 			</div>
 
 		</div><!-- end flex row -->
 	</div><!-- end sticky -->
+
+	<!-- Zoom Modal Lightbox -->
+	<div id="dg-zoom-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-md" onclick="dgCloseZoom(event)" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Image zoom view', 'dragon-glow' ); ?>">
+		<button type="button" class="absolute top-4 right-4 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgCloseZoom();" aria-label="<?php esc_attr_e( 'Close zoom', 'dragon-glow' ); ?>">
+			<span class="material-symbols-outlined text-[24px]">close</span>
+		</button>
+		
+		<!-- Navigation buttons -->
+		<button type="button" id="dg-zoom-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgZoomPrev();" aria-label="<?php esc_attr_e( 'Previous image', 'dragon-glow' ); ?>">
+			<span class="material-symbols-outlined text-[24px]">chevron_left</span>
+		</button>
+		<button type="button" id="dg-zoom-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgZoomNext();" aria-label="<?php esc_attr_e( 'Next image', 'dragon-glow' ); ?>">
+			<span class="material-symbols-outlined text-[24px]">chevron_right</span>
+		</button>
+		
+		<!-- Image counter -->
+		<div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full bg-white/10 backdrop-blur text-white text-sm font-medium">
+			<span id="dg-zoom-counter">1 / 1</span>
+		</div>
+		
+		<div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4" onclick="event.stopPropagation()">
+			<img id="dg-zoom-image" src="" alt="" class="max-w-full max-h-full object-contain rounded-2xl" />
+		</div>
+	</div>
 
 	<!-- RIGHT: Details -->
 	<div class="space-y-6" id="product-info">
@@ -166,12 +196,7 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 
 		<!-- Rating -->
 		<div class="flex items-center gap-3 dg-stars">
-			<div class="flex items-center gap-0.5">
-				<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
-					<?php $fill = ( $s <= $rating ) ? '1' : '0'; ?>
-					<span class="material-symbols-outlined" style="--dg-star-fill:<?php echo esc_attr( $fill ); ?>">star</span>
-				<?php endfor; ?>
-			</div>
+			<?php echo dg_mock_stars( $rating ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper returns pre-escaped HTML ?>
 			<a href="#product-tabs" class="text-sm text-on-surface-variant hover:text-primary transition-colors">
 				(<?php
 					printf(
@@ -197,19 +222,23 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 		<?php endif; ?>
 
 		<!-- Size selector (attribute-based fallback) -->
-		<?php if ( $size_attribute ) : ?>
+		<?php
+		if ( $size_attribute ) :
+			// Parse sizes — split on | and , delimiters
+			$raw_sizes = preg_split( '/[|,]/', $size_attribute );
+			$sizes     = array_filter( array_map( 'trim', $raw_sizes ) );
+
+			// Only show size selector if there are 2+ distinct sizes
+			if ( count( $sizes ) >= 2 ) :
+		?>
 			<div>
 				<p class="text-label-sm font-label-sm text-on-surface-variant mb-3">
 					<?php esc_html_e( 'Size', 'dragon-glow' ); ?>
 				</p>
 				<div class="flex flex-wrap gap-2">
 					<?php
-					$sizes = array_map( 'trim', explode( ',', $size_attribute ) );
 					$first = true;
 					foreach ( $sizes as $size ) :
-						if ( ! $size ) {
-							continue;
-						}
 					?>
 						<button type="button"
 						        class="dg-size-btn px-4 py-2 rounded-xl border text-sm transition-all <?php echo $first ? 'is-active border-primary text-primary font-bold' : 'border-outline-variant/30 text-on-surface-variant hover:border-primary'; ?>">
@@ -219,7 +248,10 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 					<?php endforeach; ?>
 				</div>
 			</div>
-		<?php endif; ?>
+		<?php
+			endif;
+		endif;
+		?>
 
 		<!-- Add to cart form (handles variations automatically) -->
 		<div class="pt-2">
@@ -294,7 +326,7 @@ if ( $related_ids ) :
 <!-- =====================================================
      Sticky Add-to-Bag Bar (fixed bottom, shown on scroll)
      ===================================================== -->
-<div id="product-info"
+<div id="sticky-add-to-bag"
      class="fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/30 shadow-2xl translate-y-full transition-transform duration-500">
 	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex items-center gap-4">
 		<div class="flex items-center gap-3 flex-1 min-w-0">
@@ -313,7 +345,7 @@ if ( $related_ids ) :
 		<button type="button"
 		        class="btn-outline-gold px-6 py-3 rounded-xl font-label-sm text-label-sm whitespace-nowrap"
 		        onclick="document.querySelector('.single_add_to_cart_button')?.click()">
-			<?php esc_html_e( 'Add to Bag', 'dragon-glow' ); ?>
+			<?php esc_html_e( 'Add to Cart', 'dragon-glow' ); ?>
 		</button>
 	</div>
 </div>

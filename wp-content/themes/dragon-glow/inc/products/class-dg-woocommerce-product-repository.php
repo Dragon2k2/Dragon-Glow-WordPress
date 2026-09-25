@@ -87,8 +87,10 @@ class DG_WooCommerce_Product_Repository {
 		$sizes = array();
 		$size_attr = $wc_product->get_attribute( 'pa_size' );
 		if ( $size_attr ) {
-			$sizes = array_map( 'trim', explode( ',', $size_attr ) );
-			$sizes = array_filter( $sizes );
+			// Parse sizes — support both comma and pipe delimiters
+			$sizes = preg_split( '/[|,]/', $size_attr );
+			$sizes = array_filter( array_map( 'trim', $sizes ) );
+			$sizes = array_values( $sizes ); // Re-index
 		}
 
 		$categories = get_the_terms( $wc_product->get_id(), 'product_cat' );

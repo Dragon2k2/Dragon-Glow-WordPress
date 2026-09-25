@@ -118,7 +118,7 @@ $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '
 			$rating = dg_get_mock_rating( $product_id );
 		}
 		
-		dg_star_rating( (float) $rating, $count );
+		dg_star_rating( (float) $rating, $count, 'dg-stars-card' );
 		?>
 		<h3 class="dg-product-name">
 			<?php echo esc_html($product_name); ?>

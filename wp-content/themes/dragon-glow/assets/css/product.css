@@ -45,7 +45,7 @@
 /* ── Sticky add-to-bag bar ──
    product.js adds .shadow-lg after 600px scroll; transition is on the
    base element so the slide-in animates smoothly. */
-#product-info {
+#sticky-add-to-bag {
 	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
