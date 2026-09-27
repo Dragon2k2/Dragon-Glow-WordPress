@@ -44,8 +44,6 @@ function dg_force_calculate_totals_on_checkout(): void {
 	// Force calculate totals — this triggers woocommerce_before_calculate_totals
 	// hook, which sets non-Buy-Now item prices to 0.
 	$cart->calculate_totals();
-	
-	error_log( '[DG Buy Now DEBUG] Forced calculate_totals() before checkout page render' );
 }
 add_action( 'template_redirect', 'dg_force_calculate_totals_on_checkout', 5 );
 
@@ -540,7 +538,7 @@ add_action( 'woocommerce_after_calculate_totals', 'dg_restore_prices_after_check
  * Force WooCommerce to refresh checkout fragments when Buy Now items exist.
  *
  * WooCommerce caches the review-order HTML fragment — this forces refresh
- * so our template debug logs and price changes are reflected immediately.
+ * so our price changes are reflected immediately.
  *
  * @param array $fragments Checkout fragments to refresh.
  * @return array
@@ -562,35 +560,10 @@ function dg_force_refresh_checkout_fragments( array $fragments ): array {
 	// Force refresh by adding a unique timestamp parameter.
 	// This prevents WC from using cached fragment HTML.
 	$fragments['dg_buy_now_refresh'] = time();
-	error_log( '[DG Buy Now DEBUG] Forced checkout fragment refresh at ' . $fragments['dg_buy_now_refresh'] );
 
 	return $fragments;
 }
 add_filter( 'woocommerce_update_order_review_fragments', 'dg_force_refresh_checkout_fragments', 10, 1 );
-
-/**
- * Verify order items after creation (debug only).
- *
- * @param WC_Order $order  Order object.
- * @param array    $data   Posted checkout data.
- */
-function dg_verify_buy_now_order_items( $order, $data ): void {
-	error_log( sprintf(
-		'[DG Buy Now DEBUG] Order %d created with %d items:',
-		$order->get_id(),
-		count( $order->get_items() )
-	) );
-	
-	foreach ( $order->get_items() as $item_id => $item ) {
-		error_log( sprintf(
-			'[DG Buy Now DEBUG] Order item — item_id=%d, product_id=%d, name=%s',
-			$item_id,
-			$item->get_product_id(),
-			$item->get_name()
-		) );
-	}
-}
-add_action( 'woocommerce_checkout_create_order', 'dg_verify_buy_now_order_items', 30, 2 );
 
 /**
  * Store Buy Now flag in order item meta for identification.
@@ -745,10 +718,7 @@ add_filter( 'woocommerce_cart_item_visible', 'dg_hide_non_buy_now_from_checkout_
  * @return void
  */
 function dg_preserve_regular_items_after_order_created( int $order_id, $posted_data, $order ): void {
-	error_log( '[DG Buy Now DEBUG] Preserve hook fired (checkout_order_processed) — order_id=' . $order_id );
-	
 	if ( ! $order_id || ! WC()->cart ) {
-		error_log( '[DG Buy Now DEBUG] Preserve aborted — order_id or cart missing' );
 		return;
 	}
 
@@ -763,7 +733,6 @@ function dg_preserve_regular_items_after_order_created( int $order_id, $posted_d
 
 	if ( ! $has_buy_now ) {
 		// No Buy Now items — let WC handle cart normally.
-		error_log( '[DG Buy Now DEBUG] No Buy Now items in cart — skip preserve' );
 		return;
 	}
 
@@ -778,8 +747,6 @@ function dg_preserve_regular_items_after_order_created( int $order_id, $posted_d
 	if ( ! empty( $regular_items ) ) {
 		WC()->session->set( 'dg_preserved_cart_items', $regular_items );
 		error_log( '[DG Buy Now] Preserved ' . count( $regular_items ) . ' regular items before cart empty' );
-	} else {
-		error_log( '[DG Buy Now DEBUG] No regular items to preserve' );
 	}
 }
 add_action( 'woocommerce_checkout_order_processed', 'dg_preserve_regular_items_after_order_created', 50, 3 );
@@ -788,21 +755,25 @@ add_action( 'woocommerce_checkout_order_processed', 'dg_preserve_regular_items_a
  * Restore regular items after WooCommerce empties cart.
  *
  * This runs when Thank You page is rendered (woocommerce_before_thankyou action).
+ * Safe to run multiple times (on reload) - only restores if cart is empty.
  *
  * @param int $order_id Order ID.
  * @return void
  */
 function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
-	error_log( '[DG Buy Now DEBUG] Restore hook fired (before_thankyou) — order_id=' . $order_id );
-	
 	if ( ! $order_id || ! WC()->cart || ! WC()->session ) {
-		error_log( '[DG Buy Now DEBUG] Restore aborted — missing order_id/cart/session' );
 		return;
 	}
 
 	$preserved_items = WC()->session->get( 'dg_preserved_cart_items' );
 	if ( empty( $preserved_items ) || ! is_array( $preserved_items ) ) {
-		error_log( '[DG Buy Now DEBUG] No preserved items in session' );
+		return;
+	}
+
+	// CRITICAL: Only restore if cart is actually empty.
+	// This prevents double-restore when Thank You page is reloaded.
+	if ( ! WC()->cart->is_empty() ) {
+		// Cart already has items (from previous restore) — skip.
 		return;
 	}
 
@@ -825,12 +796,33 @@ function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
 		$restored_count++;
 	}
 
-	// Clear preserved items from session.
-	WC()->session->set( 'dg_preserved_cart_items', null );
-
 	if ( $restored_count > 0 ) {
 		error_log( '[DG Buy Now] Restored ' . $restored_count . ' regular items to cart after order completion' );
 	}
+
+	// NOTE: Do NOT clear session here. Keep preserved items until user views cart page.
+	// This allows multiple Thank You page reloads without losing data.
 }
 add_action( 'woocommerce_before_thankyou', 'dg_restore_regular_items_on_thankyou_page', 10, 1 );
+
+/**
+ * Clear preserved cart items session when user views cart page.
+ *
+ * This runs after user navigates to cart page (meaning restore was successful
+ * and user can see their items). Safe cleanup point.
+ *
+ * @return void
+ */
+function dg_clear_preserved_items_on_cart_page(): void {
+	if ( ! is_cart() || ! WC()->session ) {
+		return;
+	}
+
+	$preserved_items = WC()->session->get( 'dg_preserved_cart_items' );
+	if ( ! empty( $preserved_items ) ) {
+		WC()->session->set( 'dg_preserved_cart_items', null );
+		error_log( '[DG Buy Now] Cleared preserved items session on cart page view' );
+	}
+}
+add_action( 'template_redirect', 'dg_clear_preserved_items_on_cart_page', 10 );
 
