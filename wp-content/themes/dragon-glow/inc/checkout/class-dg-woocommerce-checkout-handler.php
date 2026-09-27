@@ -48,6 +48,8 @@ class DG_WooCommerce_Checkout_Handler {
 	 * via dg_wc_find_variation_by_size().  When no size is selected for a variable
 	 * product the user is sent back to the product page.
 	 *
+	 * Buy Now behavior: marks the new item as "Buy Now" so checkout filters can hide other items.
+	 *
 	 * @param WC_Product $product Product object (simple or variable).
 	 * @param int        $quantity
 	 * @param string     $size
@@ -77,18 +79,21 @@ class DG_WooCommerce_Checkout_Handler {
 				);
 			}
 
+			// Mark as Buy Now item — checkout will filter to show ONLY this item.
 			$added = WC()->cart->add_to_cart(
 				$product_id,
 				$quantity,
 				$variation_id,
 				array(),
-				array()
+				array( 'dg_is_buy_now' => true )
 			);
 		} else {
-			$added = WC()->cart->add_to_cart( $product_id, $quantity );
+			// Mark as Buy Now item — checkout will filter to show ONLY this item.
+			$added = WC()->cart->add_to_cart( $product_id, $quantity, 0, array(), array( 'dg_is_buy_now' => true ) );
 		}
 
 		if ( $added ) {
+			error_log( '[DG Buy Now] Added Buy Now product to cart: ID=' . $product_id . ', cart_key=' . $added . ' (other items remain in cart but hidden from checkout)' );
 			return array(
 				'success'  => true,
 				'redirect' => wc_get_checkout_url(),

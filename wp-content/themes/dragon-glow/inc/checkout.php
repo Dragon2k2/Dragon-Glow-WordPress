@@ -11,5 +11,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-require_once DG_DIR . '/inc/checkout/class-dg-thankyou.php';
+require_once DG_DIR . '/inc/checkout/class-dg-checkout-router.php';
 require_once DG_DIR . '/inc/checkout/class-dg-woocommerce-checkout-handler.php';
+require_once DG_DIR . '/inc/checkout/class-dg-thankyou.php';

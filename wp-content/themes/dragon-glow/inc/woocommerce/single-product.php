@@ -63,10 +63,12 @@ function dg_add_buy_now_button(): void {
 	?>
 	<button type="button" 
 	        class="dg-buy-now-btn" 
+	        data-buy-now
 	        data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
+	        data-product-slug="<?php echo esc_attr( $product->get_slug() ); ?>"
 	        aria-label="<?php esc_attr_e( 'Buy now', 'dragon-glow' ); ?>">
-		<span class="material-symbols-outlined" aria-hidden="true">shopping_bag_speed</span>
-		<?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?>
+		<span class="material-symbols-outlined dg-buy-now-icon" aria-hidden="true">shopping_cart_checkout</span>
+		<span class="dg-buy-now-label"><?php esc_html_e( 'Buy Now', 'dragon-glow' ); ?></span>
 	</button>
 	<?php
 }

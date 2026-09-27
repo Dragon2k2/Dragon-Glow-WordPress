@@ -150,7 +150,47 @@ do_action( 'woocommerce_before_thankyou', $order->get_id() );
                     <h3 class="dg-thankyou-items-title"><?php esc_html_e( 'Items', 'dragon-glow' ); ?></h3>
 
                     <?php
-                    foreach ( $order->get_items() as $item_id => $item ) {
+                    $order_items = $order->get_items();
+                    error_log( sprintf(
+                        '[DG Buy Now DEBUG] Thank You page — order #%d has %d items (total)',
+                        $order->get_id(),
+                        count( $order_items )
+                    ) );
+                    
+                    // Check if Buy Now mode was active (defensive check).
+                    $has_buy_now_in_order = false;
+                    foreach ( $order_items as $check_item ) {
+                        if ( $check_item->get_meta( '_dg_is_buy_now', true ) === 'yes' ) {
+                            $has_buy_now_in_order = true;
+                            break;
+                        }
+                    }
+                    
+                    if ( $has_buy_now_in_order ) {
+                        error_log( '[DG Buy Now DEBUG] Thank You page — Buy Now mode active, filtering items' );
+                    }
+                    
+                    foreach ( $order_items as $item_id => $item ) {
+                        // CRITICAL: Skip non-Buy-Now items when Buy Now mode was active.
+                        // This ensures Thank You page shows only Buy Now items, matching checkout review behavior.
+                        if ( $has_buy_now_in_order && $item->get_meta( '_dg_is_buy_now', true ) !== 'yes' ) {
+                            error_log( sprintf(
+                                '[DG Buy Now DEBUG] Thank You SKIPPED non-Buy-Now item — item_id=%d, product_id=%d, name=%s',
+                                $item_id,
+                                $item->get_product_id(),
+                                $item->get_name()
+                            ) );
+                            continue;
+                        }
+                        
+                        error_log( sprintf(
+                            '[DG Buy Now DEBUG] Thank You DISPLAY item — item_id=%d, product_id=%d, name=%s, is_buy_now=%s',
+                            $item_id,
+                            $item->get_product_id(),
+                            $item->get_name(),
+                            $item->get_meta( '_dg_is_buy_now', true ) === 'yes' ? 'YES' : 'NO'
+                        ) );
+                        
                         $product = $item->get_product();
                         if ( ! $product ) {
                             continue;
