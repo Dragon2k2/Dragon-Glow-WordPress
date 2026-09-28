@@ -319,6 +319,116 @@ Xem bảng mapping đầy đủ trong phiên bản cũ của `CLAUDE.md` (dòng 
 - **Bắt buộc accessibility:** có khối `@media (prefers-reduced-motion: reduce)` để tắt animation, và `:focus-visible` cho phần tử tương tác.
 - Comment phân khu theo style sẵn có (dải `═══` cho SECTION lớn).
 
+#### 8a. Design Token System — LUÔN dùng CSS variables, KHÔNG hard-code
+> *"Token-first approach: define once, use everywhere. Hard-code = tech debt."*
+
+**Nguyên tắc cứng:**
+
+1. **🚫 CẤM hard-code giá trị màu/spacing/typography trong CSS component**
+   ```css
+   /* ❌ SAI — Hard-code */
+   .dg-filter-item--active {
+     background: rgba(201, 162, 75, 0.25);
+     color: rgb(115, 92, 0);
+     font-weight: 600;
+   }
+   
+   /* ✅ ĐÚNG — Dùng token */
+   .dg-filter-item--active {
+     background: var(--filter-item-bg-active);
+     color: var(--filter-item-text-active);
+     font-weight: var(--filter-item-font-weight-active);
+   }
+   ```
+
+2. **✅ Token hierarchy: Primitive → Semantic → Component**
+   ```css
+   /* style.css — :root */
+   
+   /* Layer 1: Primitive tokens (base colors) */
+   --color-accent-gold: #C9A24B;
+   --gold-rgb: 201, 162, 75;
+   
+   /* Layer 2: Semantic tokens (purpose-driven) */
+   --filter-item-text-active: var(--color-accent-gold);
+   --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);
+   
+   /* Layer 3: Component tokens (specific states) */
+   --filter-item-count-active: var(--filter-item-text-active);
+   --filter-item-font-weight-active: 600;
+   ```
+
+3. **📋 Token checklist khi tạo component mới:**
+   - [ ] Có bao nhiêu states? (default, hover, active, disabled, focus)
+   - [ ] Mỗi state cần token gì? (bg, text, border, shadow, font-weight, opacity)
+   - [ ] Token này dùng lại được cho component khác không?
+   - [ ] Có child element cần token riêng không? (count badge, icon, label)
+
+4. **🔍 Visual regression workflow:**
+   ```
+   Trước khi commit → so sánh với design/demo:
+   1. Screenshot component ở tất cả states
+   2. Đo giá trị bằng DevTools (Computed styles)
+   3. Đối chiếu: màu hex, opacity %, font-weight, spacing px
+   4. Nếu sai lệch → sửa TOKEN trước, component sau
+   ```
+
+5. **⚠️ Khi nào được phép hard-code:**
+   - **KHÔNG BAO GIỜ** trong production code
+   - Chỉ trong prototype/demo tạm thời (phải có comment `/* TODO: tokenize */`)
+
+6. **🛠️ Quy trình refactor hard-code → token:**
+   ```
+   Step 1: Tìm tất cả hard-code values (grep rgba/rgb/px/#[0-9a-f])
+   Step 2: Group theo concern (filter, button, card, etc.)
+   Step 3: Define tokens ở style.css (với comment mô tả mục đích)
+   Step 4: Replace tất cả occurrences bằng var(--token-name)
+   Step 5: Visual regression test
+   Step 6: Bump DG_VERSION
+   ```
+
+**Ví dụ thực tế (filter active state):**
+
+```css
+/* ===== style.css ===== */
+:root {
+  /* Filter item tokens — active state */
+  --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);           /* 10% gold tint */
+  --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);    /* 15% on hover */
+  --filter-item-text-active: var(--color-accent-gold);           /* Gold text */
+  --filter-item-count-active: var(--color-accent-gold);          /* Count badge color */
+  --filter-item-font-weight-active: 600;                         /* Semi-bold */
+  --filter-item-border: transparent;
+  --filter-item-border-hover: rgba(var(--gold-rgb), 0.2);
+}
+
+/* ===== shop.css ===== */
+.dg-filter-item--active {
+  background: var(--filter-item-bg-active) !important;
+  color: var(--filter-item-text-active) !important;
+  font-weight: var(--filter-item-font-weight-active) !important;
+  border: 1px solid var(--filter-item-border) !important;
+}
+
+.dg-filter-item--active:hover {
+  background: var(--filter-item-bg-active-hover) !important;
+  border-color: var(--filter-item-border-hover) !important;
+}
+
+.dg-filter-item--active .dg-filter-item-count {
+  color: var(--filter-item-count-active);
+  opacity: 1; /* Remove default dimming */
+  font-weight: var(--filter-item-font-weight-active);
+}
+```
+
+**Benefits:**
+- ✅ Single source of truth
+- ✅ Easy to maintain/update
+- ✅ Theme-able (có thể override qua customizer)
+- ✅ Consistent across components
+- ✅ Self-documenting (token names mô tả mục đích)
+
 ### 9. JavaScript & Animation
 > *"Vanilla + Motion, không React, luôn tôn trọng reduced-motion."*
 
@@ -379,6 +489,7 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
+- `2026-09-29`: thêm §8a — Design Token System: quy tắc cứng về token-first approach, cấm hard-code, visual regression workflow, refactor checklist.
 - `2026-08-24`: Refactor toàn bộ để tương thích với `.cursor/skills` ecosystem; thêm skill compatibility matrix; làm rõ project type (classic theme trong full site repo); loại bỏ mâu thuẫn về React/build step.
 - `2026-08-10`: thêm §5g — selector phải khớp DOM thật; visual parity rule.
 - `2026-08-09`: refactor — tách cart helpers, approval handler, legal pages.

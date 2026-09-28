@@ -407,8 +407,10 @@ input[type="range"]::-moz-range-thumb {
 	}
 }
 
-/* Filter dropdown panel (Material style)
-   Anchored under the "Filter by Skin Concern" trigger. */
+/* =========================================
+   FILTER DROPDOWN — GLASSMORPHISM LUXURY
+   ========================================= */
+
 #dg-curated-header {
 	position: relative;
 	z-index: 80;
@@ -419,29 +421,41 @@ input[type="range"]::-moz-range-thumb {
 	z-index: 81;
 }
 
+/* Dropdown container — glassmorphism background */
 .dg-filter-dropdown {
 	position: absolute;
 	top: calc(100% + 12px);
 	right: 0;
-	width: 360px;
+	width: 380px;
 	max-width: calc(100vw - 2 * 20px);
-	background: var(--color-surface, #fbf9f5);
-	border: 1px solid var(--color-outline-variant, #d4c2c2);
-	box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15),
-	            0 8px 24px -8px rgba(123, 84, 85, 0.1);
-	padding: 28px;
-	z-index: 90;
+	background: var(--filter-glass-bg);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--filter-glass-border);
+	border-radius: 16px;
+	box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.12),
+	            0 8px 30px -8px rgba(123, 84, 85, 0.08);
+	padding: 24px;
+	z-index: 70;
 	opacity: 0;
-	transform: translateY(-8px) scale(0.98);
+	transform: translateY(-12px) scale(0.96);
 	pointer-events: none;
-	transition: opacity 0.25s var(--luxury-bezier),
-	            transform 0.25s var(--luxury-bezier);
+	transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+	            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.dg-filter-dropdown:not(.is-open) {
+	display: none;
+}
+
 .dg-filter-dropdown.is-open {
+	display: block;
 	opacity: 1;
 	transform: translateY(0) scale(1);
 	pointer-events: auto;
 }
+
+/* Mobile: fixed bottom sheet */
 @media (max-width: 640px) {
 	.dg-filter-dropdown {
 		position: fixed;
@@ -453,6 +467,7 @@ input[type="range"]::-moz-range-thumb {
 		max-width: 100vw;
 		max-height: 85vh;
 		overflow-y: auto;
+		border-radius: 16px 16px 0 0;
 		padding: 24px;
 		transform: translateY(100%);
 	}
@@ -461,22 +476,349 @@ input[type="range"]::-moz-range-thumb {
 	}
 }
 
-/* Caret / arrow on top of dropdown */
+/* Caret arrow (desktop only) */
 .dg-filter-dropdown::before {
 	content: '';
 	position: absolute;
 	top: -6px;
-	right: 28px;
+	right: 32px;
 	width: 12px;
 	height: 12px;
-	background: var(--color-surface, #fbf9f5);
-	border-top: 1px solid var(--color-outline-variant, #d4c2c2);
-	border-left: 1px solid var(--color-outline-variant, #d4c2c2);
+	background: var(--filter-glass-bg);
+	border-top: 1px solid var(--filter-glass-border);
+	border-left: 1px solid var(--filter-glass-border);
 	transform: rotate(45deg);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
 }
+
 @media (max-width: 640px) {
 	.dg-filter-dropdown::before {
 		display: none;
+	}
+}
+
+/* =========================================
+   GLASS CARD SECTIONS
+   ========================================= */
+
+.dg-filter-content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.dg-filter-glass-card {
+	background: var(--filter-card-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid var(--filter-card-border);
+	border-radius: 12px;
+	padding: 16px;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dg-filter-glass-card:hover {
+	background: var(--filter-card-bg-hover);
+	border-color: var(--filter-card-border-hover);
+	box-shadow: var(--filter-card-shadow-hover);
+}
+
+/* Section headings with icons */
+.dg-filter-glass-heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-primary, #7b5455);
+	margin-bottom: 12px;
+}
+
+.dg-filter-glass-heading .material-symbols-outlined {
+	font-size: 16px;
+	font-variation-settings: 'FILL' 0, 'wght' 400;
+}
+
+/* =========================================
+   CATEGORY LIST ITEMS
+   ========================================= */
+
+.dg-filter-glass-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.dg-filter-glass-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 12px;
+	border-radius: 8px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	background: var(--filter-item-bg);
+	border: 1px solid var(--filter-item-border);
+}
+
+.dg-filter-glass-item:hover {
+	background: var(--filter-item-bg-hover);
+	border-color: var(--filter-item-border-hover);
+	transform: translateX(2px);
+}
+
+.dg-filter-glass-item--active {
+	background: var(--filter-item-bg-active) !important;
+	color: var(--filter-item-text-active) !important;
+	font-weight: var(--filter-item-font-weight-active) !important;
+	border: 1px solid var(--filter-item-border) !important;
+}
+
+.dg-filter-glass-item--active:hover {
+	background: var(--filter-item-bg-active-hover) !important;
+	transform: translateX(2px);
+}
+
+.dg-filter-glass-item-label {
+	flex: 1;
+}
+
+.dg-filter-glass-item-count {
+	font-size: 10px;
+	opacity: 0.7;
+	margin-left: 8px;
+}
+
+.dg-filter-glass-item--active .dg-filter-glass-item-count {
+	color: var(--filter-item-count-active);
+	opacity: 1; /* Remove opacity dimming when active */
+	font-weight: var(--filter-item-font-weight-active); /* Same weight as text */
+}
+
+.dg-filter-glass-item--active .dg-filter-glass-item-count {
+	opacity: 0.7;
+}
+
+/* =========================================
+   CHECKBOX GRID (SKIN CONCERN)
+   ========================================= */
+
+.dg-filter-glass-checkbox-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+.dg-filter-glass-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 6px;
+	transition: background 0.2s ease;
+}
+
+.dg-filter-glass-checkbox:hover {
+	background: var(--filter-checkbox-bg);
+}
+
+.dg-filter-glass-checkbox input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	border: 2px solid var(--color-outline-variant, #d4c2c2);
+	border-radius: 4px;
+	cursor: pointer;
+	accent-color: var(--color-primary, #7b5455);
+	transition: all 0.2s ease;
+}
+
+.dg-filter-glass-checkbox input[type="checkbox"]:checked {
+	background: var(--color-primary, #7b5455);
+	border-color: var(--color-primary, #7b5455);
+}
+
+.dg-filter-glass-checkbox input[type="checkbox"]:focus-visible {
+	outline: 2px solid var(--filter-checkbox-focus);
+	outline-offset: 2px;
+}
+
+.dg-filter-glass-checkbox-label {
+	font-size: 13px;
+	color: var(--color-on-surface-variant, #49454F);
+	transition: color 0.2s ease;
+}
+
+.dg-filter-glass-checkbox:has(input:checked) .dg-filter-glass-checkbox-label {
+	color: var(--color-primary, #7b5455);
+	font-weight: 500;
+}
+
+.dg-filter-glass-empty {
+	grid-column: 1 / -1;
+	font-size: 12px;
+	color: var(--color-on-surface-variant, #49454F);
+	opacity: 0.7;
+	text-align: center;
+	padding: 8px;
+}
+
+/* =========================================
+   PRICE RANGE SLIDER
+   ========================================= */
+
+.dg-filter-glass-price {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.dg-filter-glass-slider {
+	width: 100%;
+	height: 6px;
+	background: var(--filter-slider-track-bg);
+	border-radius: 10px;
+	outline: none;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	transition: background 0.2s ease;
+}
+
+.dg-filter-glass-slider:hover {
+	background: var(--filter-checkbox-checked-bg);
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.dg-filter-glass-slider::-webkit-slider-thumb {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 18px;
+	height: 18px;
+	background: var(--filter-slider-thumb-gradient);
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: var(--filter-slider-thumb-shadow);
+	transition: all 0.2s ease;
+}
+
+.dg-filter-glass-slider::-webkit-slider-thumb:hover {
+	transform: scale(1.15);
+	box-shadow: var(--filter-slider-thumb-shadow-hover);
+}
+
+/* Firefox */
+.dg-filter-glass-slider::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	background: var(--filter-slider-thumb-gradient);
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: var(--filter-slider-thumb-shadow);
+	transition: all 0.2s ease;
+}
+
+.dg-filter-glass-slider::-moz-range-thumb:hover {
+	transform: scale(1.15);
+	box-shadow: var(--filter-slider-thumb-shadow-hover);
+}
+
+.dg-filter-glass-price-labels {
+	display: flex;
+	justify-content: space-between;
+	font-size: 11px;
+	color: var(--color-on-surface-variant, #49454F);
+	font-weight: 500;
+}
+
+/* =========================================
+   ACTION BUTTONS
+   ========================================= */
+
+.dg-filter-glass-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-top: 16px;
+	border-top: 1px solid var(--filter-divider);
+	margin-top: 4px;
+}
+
+.dg-filter-glass-btn {
+	flex: 1;
+	padding: 12px 20px;
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	border: none;
+	outline: none;
+}
+
+.dg-filter-glass-btn:focus-visible {
+	outline: 2px solid var(--filter-checkbox-focus);
+	outline-offset: 2px;
+}
+
+.dg-filter-glass-btn--secondary {
+	background: transparent;
+	color: var(--color-on-surface-variant, #49454F);
+	border: 1px solid var(--filter-clear-border);
+}
+
+.dg-filter-glass-btn--secondary:hover {
+	background: var(--filter-clear-bg-hover);
+	color: var(--color-primary, #7b5455);
+	border-color: var(--filter-clear-border-hover);
+}
+
+.dg-filter-glass-btn--primary {
+	background: var(--filter-btn-bg);
+	color: #ffffff;
+	border: 1px solid var(--filter-btn-border);
+	box-shadow: var(--filter-clear-active-shadow);
+}
+
+.dg-filter-glass-btn--primary:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--filter-clear-active-shadow-hover);
+	filter: brightness(1.08);
+}
+
+.dg-filter-glass-btn--primary:active {
+	transform: translateY(0);
+}
+
+/* =========================================
+   ACCESSIBILITY — REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-filter-dropdown,
+	.dg-filter-glass-card,
+	.dg-filter-glass-item,
+	.dg-filter-glass-checkbox,
+	.dg-filter-glass-slider::-webkit-slider-thumb,
+	.dg-filter-glass-slider::-moz-range-thumb,
+	.dg-filter-glass-btn {
+		transition: none;
+		transform: none !important;
+	}
+	
+	.dg-filter-dropdown.is-open {
+		opacity: 1;
+		pointer-events: auto;
 	}
 }
 

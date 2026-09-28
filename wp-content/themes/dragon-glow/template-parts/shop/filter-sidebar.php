@@ -87,30 +87,26 @@ if ( dg_is_woocommerce_active() ) {
 	}
 }
 ?>
-<div class="dg-filter-content space-y-8" id="dg-filter-sidebar">
+<div class="dg-filter-content" id="dg-filter-sidebar">
 
-	<!-- Categories -->
-	<section>
-		<h3 class="font-label-sm text-label-sm text-primary tracking-[0.2em] uppercase mb-4">
-			<?php esc_html_e( 'Categories', 'dragon-glow' ); ?>
+	<!-- Categories Glass Card -->
+	<section class="dg-filter-glass-card">
+		<h3 class="dg-filter-glass-heading">
+			<span class="material-symbols-outlined">category</span>
+			<?php esc_html_e( 'Category', 'dragon-glow' ); ?>
 		</h3>
-		<ul class="space-y-3">
+		<ul class="dg-filter-glass-list">
 			<?php if ( dg_is_woocommerce_active() && ! empty( $categories ) ) : ?>
 				<?php foreach ( $categories as $category ) : ?>
 					<?php
-					$is_active    = $current_category_id === $category->term_id;
-					$badge_class  = $is_active
-						? 'bg-tertiary-container text-on-tertiary-container'
-						: 'bg-secondary-container text-on-secondary-container';
-					$li_class     = $is_active
-						? 'flex items-center justify-between cursor-pointer text-primary font-semibold'
-						: 'flex items-center justify-between cursor-pointer text-on-surface-variant hover:text-primary filter-transition';
+					$is_active = $current_category_id === $category->term_id;
+					$item_class = $is_active ? 'dg-filter-glass-item dg-filter-glass-item--active' : 'dg-filter-glass-item';
 					?>
-					<li class="<?php echo esc_attr( $li_class ); ?>" data-category-item="<?php echo esc_attr( $category->slug ); ?>" data-category-label="<?php echo esc_attr( $category->name ); ?>">
-						<span class="flex-1"><?php echo esc_html( $category->name ); ?></span>
-						<span class="text-[10px] <?php echo esc_attr( $badge_class ); ?> px-2 py-0.5 rounded-full" data-badge>
-							<?php echo esc_html( $category->count ); ?>
-						</span>
+					<li class="<?php echo esc_attr( $item_class ); ?>" 
+					    data-category-item="<?php echo esc_attr( $category->slug ); ?>" 
+					    data-category-label="<?php echo esc_attr( $category->name ); ?>">
+						<span class="dg-filter-glass-item-label"><?php echo esc_html( $category->name ); ?></span>
+						<span class="dg-filter-glass-item-count"><?php echo esc_html( $category->count ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			<?php else : ?>
@@ -122,141 +118,82 @@ if ( dg_is_woocommerce_active() ) {
 					array( 'name' => __( 'Sun Protection', 'dragon-glow' ),'key' => 'sun-protection', 'count' => 8 ),
 				);
 				foreach ( $fallback_categories as $cat ) :
-					$is_active   = $cat['key'] === 'serums';
-					$li_class    = $is_active
-						? 'flex items-center justify-between cursor-pointer text-primary font-semibold'
-						: 'flex items-center justify-between cursor-pointer text-on-surface-variant hover:text-primary filter-transition';
-					$badge_class = $is_active
-						? 'text-[10px] bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded-full'
-						: 'text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full';
+					$is_active  = $cat['key'] === 'serums';
+					$item_class = $is_active ? 'dg-filter-glass-item dg-filter-glass-item--active' : 'dg-filter-glass-item';
 				?>
-					<li class="<?php echo esc_attr( $li_class ); ?>" data-category-item="<?php echo esc_attr( $cat['key'] ); ?>" data-category-label="<?php echo esc_attr( wp_strip_all_tags( $cat['name'] ) ); ?>">
-						<span><?php echo wp_kses_post( $cat['name'] ); ?></span>
-						<span class="<?php echo esc_attr( $badge_class ); ?>" data-badge><?php echo esc_html( $cat['count'] ); ?></span>
+					<li class="<?php echo esc_attr( $item_class ); ?>" 
+					    data-category-item="<?php echo esc_attr( $cat['key'] ); ?>" 
+					    data-category-label="<?php echo esc_attr( wp_strip_all_tags( $cat['name'] ) ); ?>">
+						<span class="dg-filter-glass-item-label"><?php echo wp_kses_post( $cat['name'] ); ?></span>
+						<span class="dg-filter-glass-item-count"><?php echo esc_html( $cat['count'] ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			<?php endif; ?>
 		</ul>
 	</section>
 
-	<!-- Price Range -->
-	<section>
-		<h3 class="font-label-sm text-label-sm text-primary tracking-[0.2em] uppercase mb-4">
-			<?php esc_html_e( 'Price Range', 'dragon-glow' ); ?>
+	<!-- Skin Concern Glass Card -->
+	<section class="dg-filter-glass-card">
+		<h3 class="dg-filter-glass-heading">
+			<span class="material-symbols-outlined">dermatology</span>
+			<?php esc_html_e( 'Skin Concern', 'dragon-glow' ); ?>
 		</h3>
-		<input type="range"
-			   id="price-range"
-			   min="0"
-			   max="200"
-			   value="<?php echo (int) $selected_max_price; ?>"
-			   step="1"
-			   class="w-full h-1.5 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary" />
-		<div class="flex justify-between mt-3 text-label-sm font-label-sm text-on-surface-variant">
-			<span>$<span id="price-min-label"><?php echo (int) $selected_min_price; ?></span></span>
-			<span>$<span id="price-max-label"><?php echo (int) $selected_max_price; ?></span></span>
-		</div>
-	</section>
-
-	<!-- Skin Type -->
-	<section>
-		<h3 class="font-label-sm text-label-sm text-primary tracking-[0.2em] uppercase mb-4">
-			<?php esc_html_e( 'Skin Type', 'dragon-glow' ); ?>
-		</h3>
-		<div class="grid grid-cols-1 gap-3">
+		<div class="dg-filter-glass-checkbox-grid">
 			<?php if ( ! empty( $skin_types ) ) : ?>
 				<?php foreach ( $skin_types as $term ) : ?>
 					<?php
 					$is_checked = in_array( $term->slug, $selected_skin_types, true );
 					?>
-					<label class="flex items-center gap-3 cursor-pointer group">
+					<label class="dg-filter-glass-checkbox">
 						<input type="checkbox"
 							   name="skin_type[]"
 							   value="<?php echo esc_attr( $term->slug ); ?>"
 							   data-skin="<?php echo esc_attr( $term->slug ); ?>"
 							   data-label="<?php echo esc_attr( $term->name ); ?>"
-							   class="rounded border-outline text-primary focus:ring-primary-container"
 							   <?php checked( $is_checked ); ?> />
-						<span class="text-on-surface-variant group-hover:text-primary transition-colors <?php echo $is_checked ? 'text-primary' : ''; ?>">
-							<?php echo esc_html( $term->name ); ?>
-						</span>
-						<span class="ml-auto text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full">
-							<?php echo esc_html( (string) $term->count ); ?>
-						</span>
+						<span class="dg-filter-glass-checkbox-label"><?php echo esc_html( $term->name ); ?></span>
 					</label>
 				<?php endforeach; ?>
 			<?php else : ?>
-				<p class="text-label-sm text-on-surface-variant">
-					<?php esc_html_e( 'No skin-type data available yet.', 'dragon-glow' ); ?>
+				<p class="dg-filter-glass-empty">
+					<?php esc_html_e( 'No filters available.', 'dragon-glow' ); ?>
 				</p>
 			<?php endif; ?>
 		</div>
 	</section>
 
-	<!-- Ingredients -->
-	<section>
-		<h3 class="font-label-sm text-label-sm text-primary tracking-[0.2em] uppercase mb-4">
-			<?php esc_html_e( 'Ingredients', 'dragon-glow' ); ?>
+	<!-- Price Range Glass Card -->
+	<section class="dg-filter-glass-card">
+		<h3 class="dg-filter-glass-heading">
+			<span class="material-symbols-outlined">payments</span>
+			<?php esc_html_e( 'Price', 'dragon-glow' ); ?>
 		</h3>
-		<div class="flex flex-wrap gap-2">
-			<?php if ( ! empty( $ingredients ) ) : ?>
-				<?php foreach ( $ingredients as $term ) : ?>
-					<?php
-					$is_selected   = in_array( $term->slug, $selected_ingredients, true );
-					$btn_class     = $is_selected
-						? 'px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-label-sm font-label-sm'
-						: 'px-3 py-1 bg-surface-container-high rounded-full text-label-sm font-label-sm hover:bg-primary-container transition-colors';
-					$raw_label     = html_entity_decode( wp_strip_all_tags( (string) $term->name ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-					$display_label = preg_replace( '/\s*[;；]\s*/u', ', ', $raw_label );
-					$display_label = preg_replace( '/\s*,\s*/', ', ', (string) $display_label );
-					$display_label = trim( (string) $display_label );
-					?>
-					<button
-						class="<?php echo esc_attr( $btn_class ); ?>"
-						type="button"
-						data-ingredient="<?php echo esc_attr( $term->slug ); ?>"
-						data-label="<?php echo esc_attr( $display_label ); ?>"
-					>
-						<?php echo esc_html( $display_label ); ?> (<?php echo esc_html( (string) $term->count ); ?>)
-					</button>
-				<?php endforeach; ?>
-			<?php else : ?>
-				<p class="text-label-sm text-on-surface-variant">
-					<?php esc_html_e( 'No ingredient data available yet.', 'dragon-glow' ); ?>
-				</p>
-			<?php endif; ?>
+		<div class="dg-filter-glass-price">
+			<input type="range"
+				   id="price-range"
+				   min="0"
+				   max="200"
+				   value="<?php echo (int) $selected_max_price; ?>"
+				   step="10"
+				   class="dg-filter-glass-slider" />
+			<div class="dg-filter-glass-price-labels">
+				<span>$0</span>
+				<span>$<span id="price-max-label"><?php echo (int) $selected_max_price; ?></span></span>
+			</div>
 		</div>
 	</section>
 
-	<!-- Ratings -->
-	<section>
-		<h3 class="font-label-sm text-label-sm text-primary tracking-[0.2em] uppercase mb-4">
-			<?php esc_html_e( 'Ratings', 'dragon-glow' ); ?>
-		</h3>
-		<div class="space-y-2">
-			<?php for ( $r = 5; $r >= 1; $r-- ) : ?>
-			<label class="flex items-center gap-2 cursor-pointer group">
-				<input type="radio" name="rating" data-rating-filter="<?php echo (int) $r; ?>" class="text-primary focus:ring-primary-container" <?php checked( $selected_rating, $r ); ?> />
-				<div class="flex" style="color: #F1CA50;">
-					<?php for ( $s = 1; $s <= 5; $s++ ) : ?>
-					<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' <?php echo $s <= $r ? 1 : 0; ?>;">star</span>
-					<?php endfor; ?>
-				</div>
-			</label>
-			<?php endfor; ?>
-		</div>
-	</section>
-
-	<!-- Apply / Reset row -->
-	<div class="flex items-center justify-between pt-2 border-t border-outline-variant">
+	<!-- Apply / Reset Actions -->
+	<div class="dg-filter-glass-actions">
 		<button type="button"
 				id="dg-filter-reset"
-				class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest">
+				class="dg-filter-glass-btn dg-filter-glass-btn--secondary">
 			<?php esc_html_e( 'Reset', 'dragon-glow' ); ?>
 		</button>
 		<button type="button"
 				id="dg-filter-apply"
-				class="bg-primary text-on-primary px-6 py-2 font-label-sm text-label-sm uppercase tracking-widest hover:brightness-110 transition-all">
-			<?php esc_html_e( 'Apply', 'dragon-glow' ); ?>
+				class="dg-filter-glass-btn dg-filter-glass-btn--primary">
+			<?php esc_html_e( 'Apply Filters', 'dragon-glow' ); ?>
 		</button>
 	</div>
 

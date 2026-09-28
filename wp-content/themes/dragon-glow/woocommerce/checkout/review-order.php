@@ -22,9 +22,6 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-
-// DEBUG: Confirm this template file is loaded.
-error_log( '[DG Buy Now DEBUG] review-order.php loaded — file=' . __FILE__ );
 ?>
 
 <?php /* ── Cart line items (image + name + qty + price) ────────────── */ ?>
@@ -39,37 +36,6 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 		break;
 	}
 }
-
-// DEBUG: Log what template will render.
-$debug_cart       = WC()->cart;
-$debug_cart_count = $debug_cart->get_cart_contents_count();
-$debug_subtotal   = $debug_cart->get_subtotal();
-$debug_total      = $debug_cart->get_total( 'edit' );
-
-error_log( sprintf(
-	'[DG Buy Now DEBUG] Template render — cart_count=%d, subtotal=%.2f, total=%s, buy_now_mode=%s',
-	$debug_cart_count,
-	$debug_subtotal,
-	$debug_total,
-	$dg_has_buy_now ? 'YES' : 'NO'
-) );
-
-foreach ( $debug_cart->get_cart() as $debug_key => $debug_item ) {
-	$debug_product   = $debug_item['data'];
-	$debug_price     = $debug_product->get_price();
-	$debug_qty       = $debug_item['quantity'];
-	$debug_is_buy_now = ! empty( $debug_item['dg_is_buy_now'] ) ? 'yes' : 'no';
-	$debug_subtotal_item = (float) $debug_price * (int) $debug_qty;
-
-	error_log( sprintf(
-		'[DG Buy Now DEBUG] Template item — product_id=%d, price=%.2f, qty=%d, is_buy_now=%s, subtotal=%.2f',
-		$debug_product->get_id(),
-		$debug_price,
-		$debug_qty,
-		$debug_is_buy_now,
-		$debug_subtotal_item
-	) );
-}
 ?>
 
 <?php foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) :
@@ -80,7 +46,6 @@ foreach ( $debug_cart->get_cart() as $debug_key => $debug_item ) {
 	
 	// CRITICAL: Skip non-Buy-Now items when Buy Now mode is active.
 	if ( $dg_has_buy_now && empty( $cart_item['dg_is_buy_now'] ) ) {
-		error_log( '[DG Buy Now DEBUG] Template SKIPPED regular item — product_id=' . $cart_item['product_id'] );
 		continue;
 	}
 	
@@ -129,23 +94,6 @@ foreach ( $debug_cart->get_cart() as $debug_key => $debug_item ) {
 
 <?php /* ── Totals (Subtotal / Shipping / Tax / Estimated Total) ────── */ ?>
 <div class="dg-review-totals mt-6 pt-4 border-t border-outline-variant/20 space-y-3">
-	<?php
-	// DEBUG: Log actual cart state when rendering totals.
-	if ( WC()->cart ) {
-		$cart_subtotal = WC()->cart->get_subtotal();
-		$cart_total    = WC()->cart->get_total( 'edit' );
-		$cart_count    = WC()->cart->get_cart_contents_count();
-		error_log( '[DG Buy Now DEBUG] Template render — cart_count=' . $cart_count . ', subtotal=' . $cart_subtotal . ', total=' . $cart_total );
-		
-		// Log each cart item with prices.
-		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-			$product = $cart_item['data'];
-			$is_buy_now = ! empty( $cart_item['dg_is_buy_now'] ) ? 'YES' : 'NO';
-			error_log( '[DG Buy Now DEBUG] Template item — product_id=' . $cart_item['product_id'] . ', price=' . $product->get_price() . ', qty=' . $cart_item['quantity'] . ', is_buy_now=' . $is_buy_now . ', cart_key=' . $cart_item_key );
-		}
-	}
-	?>
-
 	<div class="flex justify-between text-on-surface-variant">
 		<span><?php esc_html_e( 'Subtotal', 'dragon-glow' ); ?></span>
 		<span><?php wc_cart_totals_subtotal_html(); ?></span>
@@ -205,12 +153,6 @@ foreach ( $debug_cart->get_cart() as $debug_key => $debug_item ) {
 						$buy_now_total += (float) $product->get_price() * (int) $cart_item['quantity'];
 					}
 				}
-				
-				error_log( sprintf(
-					'[DG Buy Now DEBUG] Template total override — calculated_total=%.2f, wc_cart_total=%s',
-					$buy_now_total,
-					$cart->get_total( 'edit' )
-				) );
 				
 				// Format and display.
 				echo wp_kses_post( wc_price( $buy_now_total ) );

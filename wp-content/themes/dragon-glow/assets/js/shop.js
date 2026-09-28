@@ -160,6 +160,9 @@
                 var cat = this.dataset.categoryItem;
                 document.querySelectorAll('[data-category-item]').forEach(function (el) {
                     var isActive = el.dataset.categoryItem === cat;
+                    // Toggle active class for background styling
+                    el.classList.toggle('dg-filter-glass-item--active', isActive);
+                    // Legacy text styling (can be removed if --active class handles all)
                     el.classList.toggle('text-primary', isActive);
                     el.classList.toggle('font-semibold', isActive);
                     el.classList.toggle('text-on-surface-variant', !isActive);
@@ -241,6 +244,9 @@
         if (activeFilters.category) {
             document.querySelectorAll('[data-category-item]').forEach(function (el) {
                 var isActive = el.dataset.categoryItem === activeFilters.category;
+                // Toggle active class for background styling
+                el.classList.toggle('dg-filter-glass-item--active', isActive);
+                // Legacy text styling
                 el.classList.toggle('text-primary', isActive);
                 el.classList.toggle('font-semibold', isActive);
                 el.classList.toggle('text-on-surface-variant', !isActive);
@@ -318,7 +324,7 @@
             if (key === 'category') {
                 activeFilters.category = null;
                 document.querySelectorAll('[data-category-item]').forEach(function (el) {
-                    el.classList.remove('text-primary', 'font-semibold');
+                    el.classList.remove('dg-filter-glass-item--active', 'text-primary', 'font-semibold');
                     el.classList.add('text-on-surface-variant');
                     var badge = el.querySelector('[data-badge]');
                     if (badge) badge.className = 'text-[10px] bg-secondary-container px-2 py-0.5 rounded-full';
@@ -353,7 +359,7 @@
             activeFilters.ingredients = [];
             activeFilters.minRating = 0;
             document.querySelectorAll('[data-category-item]').forEach(function (el) {
-                el.classList.remove('text-primary', 'font-semibold');
+                el.classList.remove('dg-filter-glass-item--active', 'text-primary', 'font-semibold');
                 el.classList.add('text-on-surface-variant');
                 var badge = el.querySelector('[data-badge]');
                 if (badge) badge.className = 'text-[10px] bg-secondary-container px-2 py-0.5 rounded-full';

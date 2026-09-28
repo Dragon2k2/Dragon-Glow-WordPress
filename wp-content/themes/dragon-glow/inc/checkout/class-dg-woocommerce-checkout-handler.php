@@ -93,7 +93,6 @@ class DG_WooCommerce_Checkout_Handler {
 		}
 
 		if ( $added ) {
-			error_log( '[DG Buy Now] Added Buy Now product to cart: ID=' . $product_id . ', cart_key=' . $added . ' (other items remain in cart but hidden from checkout)' );
 			return array(
 				'success'  => true,
 				'redirect' => wc_get_checkout_url(),

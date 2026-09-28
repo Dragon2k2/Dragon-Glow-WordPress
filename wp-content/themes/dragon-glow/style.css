@@ -23,6 +23,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
 
 /* CSS Custom Properties */
 :root {
+    /* ===== PRIMITIVE TOKENS (Layer 1: Raw values) ===== */
+    /* Brand colors — main identity */
     --color-primary: #735c00;
     --color-primary-rgb: 115, 92, 0;
     --color-on-primary: #ffffff;
@@ -32,14 +34,21 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --color-on-secondary: #ffffff;
     --color-secondary-container: #f0dbd3;
     --color-on-secondary-container: #6f5f59;
---color-tertiary: #735c00;
---color-on-tertiary: #ffffff;
---color-tertiary-container: #f1ca50;
---color-on-tertiary-container: #6b5500;
---color-gold: #d4af37;
---color-gold-dark: #c9952a;
---color-on-gold: #241a00;
---color-checkout-icon: #FFC107;
+    --color-tertiary: #735c00;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #f1ca50;
+    --color-on-tertiary-container: #6b5500;
+    --color-gold: #d4af37;
+    --color-gold-dark: #c9952a;
+    --color-on-gold: #241a00;
+    --color-checkout-icon: #FFC107;
+    
+    /* Gold accent palette — luxury highlights */
+    --gold-500: #C9A24B;              /* Base gold */
+    --gold-600: #E8C56A;              /* Light gold */
+    --gold-rgb: 201, 162, 75;         /* RGB for alpha */
+    
+    /* Surface colors */
     --color-background: #fbf9f5;
     --color-on-background: #1b1c1a;
     --color-surface: #fbf9f5;
@@ -51,6 +60,69 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --color-outline-variant: #d4c2c2;
     --color-error: #ba1a1a;
     --color-on-error: #ffffff;
+    
+    /* ===== SEMANTIC TOKENS (Layer 2: Purpose-based) ===== */
+    /* Accent — luxury/premium emphasis */
+    --color-accent-gold: var(--gold-500);
+    --color-accent-gold-light: var(--gold-600);
+    --color-accent-gold-rgb: var(--gold-rgb);
+    
+    /* ===== COMPONENT TOKENS (Layer 3: Shop Filter) ===== */
+    /* Glassmorphism dropdown */
+    --filter-glass-bg: linear-gradient(135deg, 
+                        rgba(var(--gold-rgb), 0.05) 0%, 
+                        rgba(253, 252, 249, 0.95) 100%);
+    --filter-glass-border: rgba(var(--gold-rgb), 0.2);
+    --filter-glass-border-hover: rgba(var(--gold-rgb), 0.3);
+    
+    /* Filter card */
+    --filter-card-bg: rgba(255, 255, 255, 0.6);
+    --filter-card-bg-hover: rgba(255, 255, 255, 0.75);
+    --filter-card-border: rgba(var(--gold-rgb), 0.2);
+    --filter-card-border-hover: rgba(var(--gold-rgb), 0.3);
+    --filter-card-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.08);
+    
+    /* Filter list items */
+    --filter-item-bg: rgba(255, 255, 255, 0.5);
+    --filter-item-bg-hover: rgba(255, 255, 255, 0.9);
+    --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);           /* Match demo: 10% gold tint */
+    --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);    /* Slightly brighter on hover */
+    --filter-item-border: transparent;
+    --filter-item-border-hover: rgba(var(--gold-rgb), 0.2);
+    --filter-item-text-active: var(--color-accent-gold);
+    --filter-item-count-active: var(--color-accent-gold);          /* Count same color as text when active */
+    --filter-item-font-weight-active: 600;                          /* Bolder weight for active state */
+    
+    /* Checkbox */
+    --filter-checkbox-bg: rgba(var(--gold-rgb), 0.05);
+    --filter-checkbox-border: rgba(var(--gold-rgb), 0.2);
+    --filter-checkbox-checked-bg: rgba(var(--gold-rgb), 0.15);
+    --filter-checkbox-checked-border: rgba(var(--gold-rgb), 0.3);
+    --filter-checkbox-focus: rgba(var(--gold-rgb), 0.5);
+    
+    /* Price range slider */
+    --filter-slider-track-bg: rgba(var(--gold-rgb), 0.15);
+    --filter-slider-thumb-gradient: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --filter-slider-thumb-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.3);
+    --filter-slider-thumb-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.4);
+    
+    /* Apply button */
+    --filter-btn-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --filter-btn-border: rgba(var(--gold-rgb), 0.3);
+    --filter-btn-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.3);
+    --filter-btn-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.4);
+    
+    /* Divider */
+    --filter-divider: rgba(var(--gold-rgb), 0.15);
+    
+    /* Clear filters button */
+    --filter-clear-border: rgba(var(--gold-rgb), 0.2);
+    --filter-clear-bg-hover: rgba(var(--gold-rgb), 0.08);
+    --filter-clear-border-hover: rgba(var(--gold-rgb), 0.3);
+    --filter-clear-active-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --filter-clear-active-border: rgba(var(--gold-rgb), 0.3);
+    --filter-clear-active-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.2);
+    --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
 }
 
 /* Base Reset */

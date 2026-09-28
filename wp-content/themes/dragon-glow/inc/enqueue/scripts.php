@@ -217,12 +217,9 @@ function dg_enqueue_scripts_assets(): void {
         // Shop listing JS — reveal-on-scroll, parallax, filter dropdown (Material),
         // mobile filter sheet, active filter tags, URL-driven filter state.
         // Loaded on template-shop, is_shop(), and product taxonomy pages.
-        if ( is_shop() || is_product_taxonomy() ) {
+        if ( is_shop() || is_product_taxonomy() || is_page_template( 'page-templates/template-shop.php' ) ) {
             wp_enqueue_script( 'dg-shop', DG_URI . '/assets/js/shop.js', array( 'dg-main' ), DG_VERSION, true );
         }
-    }
-    if ( is_page_template( 'page-templates/template-shop.php' ) ) {
-        wp_enqueue_script( 'dg-shop', DG_URI . '/assets/js/shop.js', array( 'dg-main' ), DG_VERSION, true );
     }
     if ( is_page_template( 'page-templates/template-contact.php' ) ) {
         wp_enqueue_script( 'dg-contact', DG_URI . '/assets/js/contact.js', array( 'dg-main' ), DG_VERSION, true );

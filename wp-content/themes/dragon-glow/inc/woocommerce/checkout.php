@@ -448,7 +448,6 @@ function dg_exclude_non_buy_now_from_checkout_totals( $cart ): void {
 		}
 	}
 
-	error_log( '[DG Buy Now] Checkout totals calculation — ' . $buy_now_count . ' Buy Now items kept, ' . $excluded_count . ' items excluded (price=0)' );
 	$processing = false;
 }
 add_action( 'woocommerce_before_calculate_totals', 'dg_exclude_non_buy_now_from_checkout_totals', 5, 1 );
@@ -480,9 +479,6 @@ function dg_log_checkout_totals_after_calculation( $cart ): void {
 	if ( ! $has_buy_now ) {
 		return;
 	}
-
-	// Log final totals.
-	error_log( '[DG Buy Now] Totals after WC calculation — subtotal=' . $cart->get_subtotal() . ', total=' . $cart->get_total( 'edit' ) );
 }
 add_action( 'woocommerce_after_calculate_totals', 'dg_log_checkout_totals_after_calculation', 10, 1 );
 
@@ -526,10 +522,6 @@ function dg_restore_prices_after_checkout_totals( $cart ): void {
 				$restored_count++;
 			}
 		}
-	}
-
-	if ( $restored_count > 0 ) {
-		error_log( '[DG Buy Now] Restored ' . $restored_count . ' item prices for cart navigation' );
 	}
 }
 add_action( 'woocommerce_after_calculate_totals', 'dg_restore_prices_after_checkout_totals', 999, 1 );
@@ -577,10 +569,6 @@ add_filter( 'woocommerce_update_order_review_fragments', 'dg_force_refresh_check
 function dg_store_buy_now_meta_in_order_item( $item, $cart_item_key, $values, $order ) {
 	if ( ! empty( $values['dg_is_buy_now'] ) ) {
 		$item->add_meta_data( '_dg_is_buy_now', 'yes', true );
-		error_log( sprintf(
-			'[DG Buy Now] Marked order item as Buy Now: product_id=%d',
-			$values['product_id']
-		) );
 	}
 	
 	return $item;
@@ -627,22 +615,8 @@ function dg_cleanup_buy_now_order_items( int $order_id, $order ): void {
 		
 		if ( ! $is_buy_now ) {
 			$items_to_remove[] = $item_id;
-			error_log( sprintf(
-				'[DG Buy Now] WILL REMOVE non-Buy-Now item: order=%d, item_id=%d, product_id=%d, name=%s',
-				$order_id,
-				$item_id,
-				$item->get_product_id(),
-				$item->get_name()
-			) );
 		} else {
 			$items_to_keep[] = $item_id;
-			error_log( sprintf(
-				'[DG Buy Now] WILL KEEP Buy Now item: order=%d, item_id=%d, product_id=%d, name=%s',
-				$order_id,
-				$item_id,
-				$item->get_product_id(),
-				$item->get_name()
-			) );
 		}
 	}
 	
@@ -654,14 +628,6 @@ function dg_cleanup_buy_now_order_items( int $order_id, $order ): void {
 		
 		$order->calculate_totals();
 		$order->save();
-		
-		error_log( sprintf(
-			'[DG Buy Now] Order %d cleaned up: removed %d items, remaining %d items, new total=%s (saved to DB)',
-			$order_id,
-			count( $items_to_remove ),
-			count( $order->get_items() ),
-			$order->get_total()
-		) );
 	}
 }
 add_action( 'woocommerce_new_order', 'dg_cleanup_buy_now_order_items', 20, 2 );
@@ -746,10 +712,48 @@ function dg_preserve_regular_items_after_order_created( int $order_id, $posted_d
 
 	if ( ! empty( $regular_items ) ) {
 		WC()->session->set( 'dg_preserved_cart_items', $regular_items );
-		error_log( '[DG Buy Now] Preserved ' . count( $regular_items ) . ' regular items before cart empty' );
 	}
 }
 add_action( 'woocommerce_checkout_order_processed', 'dg_preserve_regular_items_after_order_created', 50, 3 );
+
+/**
+ * Force empty cart after order creation.
+ *
+ * WooCommerce does NOT always empty cart automatically — it depends on
+ * payment gateway and order status. For example:
+ * - COD (Cash on Delivery): order status = 'on-hold', cart NOT emptied
+ * - BACS (Bank Transfer): order status = 'on-hold', cart NOT emptied
+ * - Card payments: order status = 'processing', cart emptied
+ *
+ * This ensures consistent behavior across ALL checkout scenarios:
+ *
+ * 1. Buy Now checkout → cart is emptied, regular items will be restored
+ * 2. Normal checkout → cart is emptied (standard e-commerce behavior)
+ *
+ * The hook `woocommerce_checkout_order_processed` fires AFTER the order is
+ * fully created and saved to database, but BEFORE redirect to Thank You page.
+ * This is the safest point to force empty — early enough that Thank You page
+ * sees the clean state, late enough that preserve logic has already captured
+ * regular items.
+ *
+ * @param int      $order_id    Order ID.
+ * @param array    $posted_data Posted checkout data.
+ * @param WC_Order $order       Order object.
+ * @return void
+ */
+function dg_force_empty_cart_after_order_created( int $order_id, $posted_data, $order ): void {
+	if ( ! $order_id || ! WC()->cart ) {
+		return;
+	}
+
+	// Force empty cart to ensure clean state.
+	// This runs AFTER preserve logic (priority 50) so any regular items
+	// that need to be restored are already safely stored in session.
+	if ( ! WC()->cart->is_empty() ) {
+		WC()->cart->empty_cart();
+	}
+}
+add_action( 'woocommerce_checkout_order_processed', 'dg_force_empty_cart_after_order_created', 55, 3 );
 
 /**
  * Restore regular items from session into the cart.
@@ -821,10 +825,6 @@ function dg_restore_regular_items( int $order_id ): void {
 
 		WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation, $cart_item_data );
 		$restored_count++;
-	}
-
-	if ( $restored_count > 0 ) {
-		error_log( '[DG Buy Now] Restored ' . $restored_count . ' regular items to cart after order completion' );
 	}
 
 	// NOTE: Do NOT clear session here. Keep preserved items until user
@@ -905,7 +905,6 @@ function dg_clear_preserved_items_on_cart_page(): void {
 	$preserved_items = WC()->session->get( 'dg_preserved_cart_items' );
 	if ( ! empty( $preserved_items ) ) {
 		WC()->session->set( 'dg_preserved_cart_items', null );
-		error_log( '[DG Buy Now] Cleared preserved items session on cart page view' );
 	}
 }
 add_action( 'template_redirect', 'dg_clear_preserved_items_on_cart_page', 10 );
