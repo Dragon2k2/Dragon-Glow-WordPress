@@ -752,15 +752,43 @@ function dg_preserve_regular_items_after_order_created( int $order_id, $posted_d
 add_action( 'woocommerce_checkout_order_processed', 'dg_preserve_regular_items_after_order_created', 50, 3 );
 
 /**
- * Restore regular items after WooCommerce empties cart.
+ * Restore regular items from session into the cart.
  *
- * This runs when Thank You page is rendered (woocommerce_before_thankyou action).
- * Safe to run multiple times (on reload) - only restores if cart is empty.
+ * Runs twice on the Thank You endpoint — once early (on the `wp` action)
+ * to make sure the global header renders the correct cart count, and
+ * once later (`woocommerce_before_thankyou`) to cover any other consumer
+ * of that legacy hook. Both entries are guarded by `! is_empty()` so
+ * the second call is a harmless no-op; the early one is what makes the
+ * header badge reflect the preserved items in the very first paint.
  *
- * @param int $order_id Order ID.
+ * Why two hooks?
+ * ──────────────
+ * `template-parts/global/header-nav.php` reads
+ * `WC()->cart->get_cart_contents_count()` *while* `get_header()` is
+ * executing, which happens **before** `woocommerce_before_thankyou`
+ * fires (the template's `wc_get_template()` call dispatches the
+ * action later). Without the early hook, the header always sees the
+ * emptied cart and renders `<span class="hidden">0</span>`. The badge
+ * then corrects itself ~2 s later when
+ * `DGCart.refreshCount()` POSTs back to the server. This file is here
+ * to eliminate that 2 s window.
+ *
+ * Why `wp_head` priority 5 for the early hook?
+ *   • `wp_head` fires *after* `wp` (the legacy guard documented in
+ *     `template-wc-thankyou.php` and in `class-dg-thankyou.php` as the
+ *     same WC issue #63966 timing trap) has fully resolved the request,
+ *     so `is_order_received_page()` is reliable here.
+ *   • Priority 5 beats the data-island printer (priority 6 in
+ *     `inc/enqueue.php`) so the JSON blob already reflects the
+ *     restored count when it is printed to the response.
+ *   • Priority 5 still fires before the enqueue hooks at `wp_head`
+ *     priority 10, before CSS / JS links, before `header.php` paints
+ *     the HTML.
+ *
+ * @param int $order_id WooCommerce order ID (0 when not on Thank You).
  * @return void
  */
-function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
+function dg_restore_regular_items( int $order_id ): void {
 	if ( ! $order_id || ! WC()->cart || ! WC()->session ) {
 		return;
 	}
@@ -771,16 +799,15 @@ function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
 	}
 
 	// CRITICAL: Only restore if cart is actually empty.
-	// This prevents double-restore when Thank You page is reloaded.
+	// This prevents double-restore when Thank You page is reloaded, and
+	// makes the second hook registration below a safe no-op.
 	if ( ! WC()->cart->is_empty() ) {
-		// Cart already has items (from previous restore) — skip.
 		return;
 	}
 
 	// Restore each regular item to cart.
 	$restored_count = 0;
 	foreach ( $preserved_items as $cart_item_key => $cart_item ) {
-		// Re-add item to cart with original data.
 		$product_id   = $cart_item['product_id'];
 		$variation_id = $cart_item['variation_id'] ?? 0;
 		$quantity     = $cart_item['quantity'];
@@ -800,8 +827,65 @@ function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
 		error_log( '[DG Buy Now] Restored ' . $restored_count . ' regular items to cart after order completion' );
 	}
 
-	// NOTE: Do NOT clear session here. Keep preserved items until user views cart page.
-	// This allows multiple Thank You page reloads without losing data.
+	// NOTE: Do NOT clear session here. Keep preserved items until user
+	// views the cart page. This allows multiple Thank You page reloads
+	// without losing data.
+}
+
+/**
+ * Early bridge from the WP head action to the restore function.
+ *
+ * Hooked at `wp_head` priority 5 — chosen deliberately:
+ *
+ *   • WP runs `wp_head` *after* `wp` (the legacy filter guard) has fully
+ *     resolved the request — so `is_order_received_page()` is reliable
+ *     here (the same guard is used in `template-wc-thankyou.php` and in
+ *     WC's own `template_include` filter to avoid the same race).
+ *
+ *   • Priority 5 beats the built-in `dg_print_cart_data_island` (priority
+ *     1 in this file). We want `__DG_CART__` to read the count *after*
+ *     restore runs so the JSON blob already contains the right number
+ *     on the very first byte the browser sees.
+ *
+ *   • Priority 5 still fires before any CSS / JS enqueue hooks at
+ *     `wp_head` priority 10, before `header.php` paints the HTML.
+ *
+ *   • If we hook earlier (`wp` priority 1) `is_order_received_page()`
+ *     returns false — same WC timing trap documented in WC issue
+ *     #63966 and in `class-dg-thankyou.php`.
+ *
+ * @return void
+ */
+function dg_restore_regular_items_on_wp_action(): void {
+	// Only run on the WC order-received endpoint. Bail on every other
+	// page (shop, cart, etc.) — the cart is authoritative there.
+	if ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) {
+		return;
+	}
+
+	$dg_order_id = absint( get_query_var( 'order-received' ) );
+	if ( $dg_order_id <= 0 ) {
+		// No order ID yet — the URL might not match the WC endpoint
+		// structure (some gateways use a different shape). Defer to the
+		// legacy `woocommerce_before_thankyou` hook which receives
+		// `$order_id` as an argument.
+		return;
+	}
+
+	dg_restore_regular_items( $dg_order_id );
+}
+add_action( 'wp_head', 'dg_restore_regular_items_on_wp_action', 5 );
+
+/**
+ * Legacy entry point kept for parity with the original behaviour.
+ *
+ * Keeps a single source of truth by forwarding to the shared
+ * `dg_restore_regular_items()` helper. The cart-emptiness guard inside
+ * the helper makes this a no-op when the early `wp` hook already
+ * populated the cart — so it costs nothing to keep both callbacks.
+ */
+function dg_restore_regular_items_on_thankyou_page( int $order_id ): void {
+	dg_restore_regular_items( $order_id );
 }
 add_action( 'woocommerce_before_thankyou', 'dg_restore_regular_items_on_thankyou_page', 10, 1 );
 

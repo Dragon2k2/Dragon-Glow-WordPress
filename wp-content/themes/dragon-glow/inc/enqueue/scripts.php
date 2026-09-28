@@ -194,6 +194,17 @@ function dg_enqueue_scripts_assets(): void {
                 array( 'dg-main' ),
                 DG_VERSION
             );
+
+            // Sync the header cart-count badge the instant the page lands.
+            // Depends on dg-cart-api (provides window.DGCart.refreshCount)
+            // and dg-main (provides dgAjax localized nonce/url).
+            wp_enqueue_script(
+                'dg-thankyou',
+                DG_URI . '/assets/js/thankyou.js',
+                array( 'dg-main', 'dg-cart-api' ),
+                DG_VERSION,
+                true
+            );
         }
 
 // Loaded whenever WC is active so the account UI scripts ship alongside

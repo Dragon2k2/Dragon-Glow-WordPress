@@ -209,7 +209,7 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 
 		<!-- Price -->
 		<div class="flex items-center gap-3">
-			<span class="font-headline text-headline-md font-bold text-primary">
+			<span class="font-body text-headline-md font-bold text-primary">
 				<?php echo wp_kses_post( $product->get_price_html() ); ?>
 			</span>
 		</div>
