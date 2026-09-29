@@ -37,9 +37,6 @@ if ( dg_is_woocommerce_active() ) {
 }
 
 // Selected values from query string.
-$selected_skin_types = isset( $_GET['skin_type'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	? array_map( 'sanitize_title', (array) wp_unslash( $_GET['skin_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	: array();
 $selected_ingredients = isset( $_GET['ingredient'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	? array_map( 'sanitize_title', (array) wp_unslash( $_GET['ingredient'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	: array();
@@ -48,27 +45,9 @@ $selected_max_price = isset( $_GET['max_price'] ) ? max( 0, (float) $_GET['max_p
 $selected_rating    = isset( $_GET['rating'] ) ? max( 1, min( 5, (int) $_GET['rating'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 // Dynamic WooCommerce taxonomies for filter data.
-$skin_types = array();
 $ingredients = array();
 
 if ( dg_is_woocommerce_active() ) {
-	$skin_taxonomies = array( 'pa_skin_type', 'pa_skin_concern' );
-	foreach ( $skin_taxonomies as $taxonomy ) {
-		if ( ! taxonomy_exists( $taxonomy ) ) {
-			continue;
-		}
-		$terms = get_terms(
-			array(
-				'taxonomy'   => $taxonomy,
-				'hide_empty' => true,
-			)
-		);
-		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-			$skin_types = $terms;
-			break;
-		}
-	}
-
 	$ingredient_taxonomies = array( 'pa_ingredient', 'product_tag' );
 	foreach ( $ingredient_taxonomies as $taxonomy ) {
 		if ( ! taxonomy_exists( $taxonomy ) ) {
@@ -130,36 +109,6 @@ if ( dg_is_woocommerce_active() ) {
 				<?php endforeach; ?>
 			<?php endif; ?>
 		</ul>
-	</section>
-
-	<!-- Skin Concern Glass Card -->
-	<section class="dg-filter-glass-card">
-		<h3 class="dg-filter-glass-heading">
-			<span class="material-symbols-outlined">dermatology</span>
-			<?php esc_html_e( 'Skin Concern', 'dragon-glow' ); ?>
-		</h3>
-		<div class="dg-filter-glass-checkbox-grid">
-			<?php if ( ! empty( $skin_types ) ) : ?>
-				<?php foreach ( $skin_types as $term ) : ?>
-					<?php
-					$is_checked = in_array( $term->slug, $selected_skin_types, true );
-					?>
-					<label class="dg-filter-glass-checkbox">
-						<input type="checkbox"
-							   name="skin_type[]"
-							   value="<?php echo esc_attr( $term->slug ); ?>"
-							   data-skin="<?php echo esc_attr( $term->slug ); ?>"
-							   data-label="<?php echo esc_attr( $term->name ); ?>"
-							   <?php checked( $is_checked ); ?> />
-						<span class="dg-filter-glass-checkbox-label"><?php echo esc_html( $term->name ); ?></span>
-					</label>
-				<?php endforeach; ?>
-			<?php else : ?>
-				<p class="dg-filter-glass-empty">
-					<?php esc_html_e( 'No filters available.', 'dragon-glow' ); ?>
-				</p>
-			<?php endif; ?>
-		</div>
 	</section>
 
 	<!-- Price Range Glass Card -->

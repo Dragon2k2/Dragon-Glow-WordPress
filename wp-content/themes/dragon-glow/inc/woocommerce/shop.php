@@ -145,7 +145,6 @@ remove_action( 'woocommerce_after_shop_loop', 'woocommerce_pagination', 10 );
  * the products server-side.
  *
  * Params (set by the dropdown's Apply handler):
- *   - skin_type[]   → pa_skin_type / pa_skin_concern (whichever exists)
  *   - ingredient[]  → pa_ingredient / product_tag    (whichever exists)
  *   - rating        → _wc_average_rating meta, e.g. 4 = 4 stars & up
  *   - min_price,
@@ -170,19 +169,6 @@ function dg_apply_dropdown_filters_to_shop_query( WP_Query $q ): void {
 	$meta_query = (array) $q->get( 'meta_query' );
 
 	$has_filter = false;
-
-	// Skin type → pa_skin_type (or pa_skin_concern as fallback).
-	if ( ! empty( $_GET['skin_type'] ) ) {
-		$skin_tax = taxonomy_exists( 'pa_skin_type' ) ? 'pa_skin_type' : ( taxonomy_exists( 'pa_skin_concern' ) ? 'pa_skin_concern' : '' );
-		if ( $skin_tax ) {
-			$tax_query[] = array(
-				'taxonomy' => $skin_tax,
-				'field'    => 'slug',
-				'terms'    => array_map( 'sanitize_title', (array) wp_unslash( $_GET['skin_type'] ) ),
-			);
-			$has_filter  = true;
-		}
-	}
 
 	// Ingredient → pa_ingredient (or product_tag as fallback).
 	if ( ! empty( $_GET['ingredient'] ) ) {

@@ -31,4 +31,5 @@ require_once DG_DIR . '/inc/ajax/brevo.php';       // Must load before careers.p
 require_once DG_DIR . '/inc/ajax/careers.php';
 require_once DG_DIR . '/inc/ajax/account.php';
 require_once DG_DIR . '/inc/ajax/wishlist.php';
+require_once DG_DIR . '/inc/ajax/order-modal.php'; // Order detail modal AJAX handler.
 require_once DG_DIR . '/inc/ajax/dev-endpoints.php';

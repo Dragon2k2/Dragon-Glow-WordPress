@@ -213,6 +213,34 @@ function dg_enqueue_scripts_assets(): void {
 		// other WC pages is just one extra (cached) script.
 		if ( dg_is_woocommerce_active() ) {
 			wp_enqueue_script( 'dg-account', DG_URI . '/assets/js/account.js', array( 'dg-main' ), DG_VERSION, true );
+			
+			// Order detail modal — loads on account pages.
+			// CSS enqueued separately for proper loading order.
+			wp_enqueue_style(
+				'dg-order-modal',
+				DG_URI . '/assets/css/order-modal.css',
+				array( 'dg-main' ),
+				DG_VERSION
+			);
+			
+			// Order modal JS — plain script, Motion API loaded dynamically.
+			wp_enqueue_script(
+				'dg-order-modal',
+				DG_URI . '/assets/js/order-modal.js',
+				array( 'dg-main' ),
+				DG_VERSION,
+				true
+			);
+			
+			// Localize order modal config.
+			wp_localize_script(
+				'dg-order-modal',
+				'dgOrderModal',
+				array(
+					'ajax_url' => admin_url( 'admin-ajax.php' ),
+					'nonce'    => wp_create_nonce( 'dg_order_modal' ),
+				)
+			);
 		}
         // Shop listing JS — reveal-on-scroll, parallax, filter dropdown (Material),
         // mobile filter sheet, active filter tags, URL-driven filter state.

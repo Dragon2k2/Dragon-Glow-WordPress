@@ -11,11 +11,10 @@ defined( 'ABSPATH' ) || exit;
 
 $min_price  = isset( $_GET['min_price'] ) ? floatval( $_GET['min_price'] ) : 0;   // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $max_price  = isset( $_GET['max_price'] ) ? floatval( $_GET['max_price'] ) : 0;   // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$skin_type  = isset( $_GET['skin_type'] ) ? (array) $_GET['skin_type'] : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $orderby    = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $ingredient = isset( $_GET['ingredient'] ) ? sanitize_text_field( wp_unslash( $_GET['ingredient'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-$has_filters = $min_price > 0 || $max_price > 0 || ! empty( $skin_type ) || ! empty( $orderby ) || ! empty( $ingredient );
+$has_filters = $min_price > 0 || $max_price > 0 || ! empty( $orderby ) || ! empty( $ingredient );
 
 if ( ! $has_filters ) {
 	// Render an empty container for the JS-driven mock flow
@@ -39,17 +38,6 @@ if ( ! $has_filters ) {
 			   href="<?php echo esc_url( remove_query_arg( array( 'min_price', 'max_price' ) ) ); ?>"
 			   aria-label="<?php esc_attr_e( 'Remove price filter', 'dragon-glow' ); ?>">close</a>
 		</span>
-	<?php endif; ?>
-
-	<?php if ( ! empty( $skin_type ) ) : ?>
-		<?php foreach ( $skin_type as $type ) : ?>
-			<span class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full text-label-sm font-label-sm">
-				<?php echo esc_html( ucfirst( $type ) ); ?>
-				<a class="material-symbols-outlined text-[16px] cursor-pointer hover:rotate-90 transition-transform"
-				   href="<?php echo esc_url( remove_query_arg( 'skin_type' ) ); ?>"
-				   aria-label="<?php esc_attr_e( 'Remove skin type filter', 'dragon-glow' ); ?>">close</a>
-			</span>
-		<?php endforeach; ?>
 	<?php endif; ?>
 
 	<?php if ( ! empty( $ingredient ) ) : ?>

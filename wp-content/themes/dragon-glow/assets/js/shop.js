@@ -126,7 +126,6 @@
         // ── Active filter state ──────────────────────────────
         var activeFilters = {
             category: null,
-            skins: [],
             ingredients: [],
             minRating: 0
         };
@@ -135,7 +134,6 @@
         (function initFiltersFromURL() {
             var params = new URLSearchParams(window.location.search);
             params.forEach(function (value, key) {
-                if (key === 'skin_type[]') activeFilters.skins.push(value);
                 if (key === 'ingredient[]') activeFilters.ingredients.push(value);
                 if (key === 'rating') activeFilters.minRating = parseInt(value, 10) || 0;
                 if (key === 'product_cat') activeFilters.category = value;
@@ -220,26 +218,7 @@
             });
         });
 
-        // Skin type checkbox.
-        document.querySelectorAll('[data-skin]').forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                var skin = this.dataset.skin;
-                var label = this.closest('label').querySelector('span');
-                if (this.checked) {
-                    if (activeFilters.skins.indexOf(skin) === -1) activeFilters.skins.push(skin);
-                    if (label) label.classList.add('text-primary');
-                } else {
-                    activeFilters.skins = activeFilters.skins.filter(function (s) { return s !== skin; });
-                    if (label) label.classList.remove('text-primary');
-                }
-                updateActiveTags();
-            });
-            if (checkbox.checked) {
-                var label = checkbox.closest('label').querySelector('span');
-                if (label) label.classList.add('text-primary');
-            }
-        });
-
+        // Skin type checkbox removed — filter no longer in UI.
         // Sync UI from activeFilters on page load (restored from URL).
         if (activeFilters.category) {
             document.querySelectorAll('[data-category-item]').forEach(function (el) {
@@ -270,11 +249,6 @@
                 var node = document.querySelector('[data-category-item="' + value + '"]');
                 return node ? (node.getAttribute('data-category-label') || value) : value;
             }
-            function getSkinLabel(value) {
-                var node = document.querySelector('[data-skin="' + value + '"]');
-                if (!node) return value;
-                return node.getAttribute('data-label') || value;
-            }
             function getIngredientLabel(value) {
                 var node = document.querySelector('[data-ingredient="' + value + '"]');
                 if (!node) return value;
@@ -283,9 +257,6 @@
             if (activeFilters.category) {
                 tags.push({ label: getCategoryLabel(activeFilters.category), key: 'category', value: activeFilters.category });
             }
-            activeFilters.skins.forEach(function (s) {
-                tags.push({ label: getSkinLabel(s), key: 'skin', value: s });
-            });
             activeFilters.ingredients.forEach(function (i) {
                 tags.push({ label: getIngredientLabel(i), key: 'ingredient', value: i });
             });
@@ -329,14 +300,6 @@
                     var badge = el.querySelector('[data-badge]');
                     if (badge) badge.className = 'text-[10px] bg-secondary-container px-2 py-0.5 rounded-full';
                 });
-            } else if (key === 'skin') {
-                activeFilters.skins = activeFilters.skins.filter(function (s) { return s !== value; });
-                var cb = document.querySelector('[data-skin="' + value + '"]');
-                if (cb) {
-                    cb.checked = false;
-                    var label = cb.closest('label') && cb.closest('label').querySelector('span');
-                    if (label) label.classList.remove('text-primary');
-                }
             } else if (key === 'ingredient') {
                 activeFilters.ingredients = activeFilters.ingredients.filter(function (i) { return i !== value; });
                 var btn = document.querySelector('[data-ingredient="' + value + '"]');
@@ -355,7 +318,6 @@
 
         function clearAllFilters(navigate) {
             activeFilters.category = null;
-            activeFilters.skins = [];
             activeFilters.ingredients = [];
             activeFilters.minRating = 0;
             document.querySelectorAll('[data-category-item]').forEach(function (el) {
@@ -363,11 +325,6 @@
                 el.classList.add('text-on-surface-variant');
                 var badge = el.querySelector('[data-badge]');
                 if (badge) badge.className = 'text-[10px] bg-secondary-container px-2 py-0.5 rounded-full';
-            });
-            document.querySelectorAll('[data-skin]').forEach(function (cb) {
-                cb.checked = false;
-                var label = cb.closest('label') && cb.closest('label').querySelector('span');
-                if (label) label.classList.remove('text-primary');
             });
             document.querySelectorAll('[data-ingredient]').forEach(function (btn) {
                 btn.className = 'px-3 py-1 bg-surface-container-high rounded-full text-label-sm font-label-sm hover:bg-primary-container transition-colors';
@@ -379,7 +336,7 @@
             }
             if (navigate) {
                 var url = new URL(window.location.href);
-                ['skin_type', 'ingredient', 'rating', 'min_price', 'max_price', 'product_cat', 'paged', 'page'].forEach(function (p) {
+                ['ingredient', 'rating', 'min_price', 'max_price', 'product_cat', 'paged', 'page'].forEach(function (p) {
                     url.searchParams.delete(p);
                 });
                 window.location.assign(url.toString());
@@ -392,13 +349,10 @@
         // navigate so the filter survives back/refresh/share.
         function applyFilters() {
             var url = new URL(window.location.href);
-            ['skin_type', 'ingredient', 'rating', 'min_price', 'max_price', 'product_cat', 'paged', 'page'].forEach(function (p) {
+            ['ingredient', 'rating', 'min_price', 'max_price', 'product_cat', 'paged', 'page'].forEach(function (p) {
                 url.searchParams.delete(p);
             });
             if (activeFilters.category) url.searchParams.set('product_cat', activeFilters.category);
-            activeFilters.skins.forEach(function (slug) {
-                url.searchParams.append('skin_type[]', slug);
-            });
             activeFilters.ingredients.forEach(function (slug) {
                 url.searchParams.append('ingredient[]', slug);
             });

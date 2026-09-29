@@ -364,6 +364,11 @@
 						initPaginationLinks(); // Re-bind pagination links in new content.
 						initAddressFormSave(); // Re-bind address save UX after AJAX inject.
 						initUseBillingInstead(); // Re-bind ship-to-billing after AJAX inject.
+						
+						// Re-initialize order modal triggers after AJAX content load.
+						if (window.dgOrderModal && typeof window.dgOrderModal.init === 'function') {
+							window.dgOrderModal.init();
+						}
 					}, 50);
 
 					// Scroll to top of content smoothly.
