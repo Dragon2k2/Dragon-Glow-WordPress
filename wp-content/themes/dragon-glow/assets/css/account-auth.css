@@ -1,0 +1,762 @@
+/* =========================================
+   DRAGON GLOW — MY ACCOUNT: SIGNED-OUT AUTH GATE
+   "Heritage Atelier" design — Cormorant Garamond + antique gold palette.
+   Enqueued ONLY when `is_account_page() && !is_user_logged_in()` (see
+   inc/enqueue/styles.php). All selectors scoped to `.dg-account-auth*` so
+   this file never touches the logged-in dashboard (account.css) or any
+   other page. Tokens consumed here are defined in style.css `:root`
+   under "COMPONENT TOKENS (Layer 3: Auth Portal — Heritage Gold)".
+   ========================================= */
+
+/* =========================================
+   0. CHROME HIDING (Site header/footer for auth portal)
+   ========================================= */
+
+/* Hide site chrome (header-nav, footer-main) when viewing auth portal */
+.dg-hide-site-chrome .header-nav,
+.dg-hide-site-chrome .footer-main {
+	display: none;
+}
+
+/* =========================================
+   0a. VIEWPORT DOUBLE-GOLD PINSTRIPE FRAME
+   Decorative outer frame + corner flourishes fixed to the browser
+   viewport (matches the "Atelier Imperial" reference — a frame around
+   the whole screen, not around the form panel).
+   ========================================= */
+
+.dg-account-auth__viewport-frame {
+	position: fixed;
+	pointer-events: none;
+	z-index: 50;
+}
+
+.dg-account-auth__viewport-frame--outer {
+	inset: 8px;
+	border: 1px solid var(--auth-viewport-frame-outer);
+}
+
+.dg-account-auth__viewport-frame--inner {
+	inset: 14px;
+	border: 1px solid var(--auth-viewport-frame-inner);
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__viewport-frame--outer {
+		inset: 12px;
+	}
+
+	.dg-account-auth__viewport-frame--inner {
+		inset: 20px;
+	}
+}
+
+.dg-account-auth__corner-flourish {
+	position: fixed;
+	pointer-events: none;
+	z-index: 50;
+	font-family: Georgia, serif;
+	font-size: 12px;
+	color: var(--auth-corner-flourish);
+	user-select: none;
+}
+
+.dg-account-auth__corner-flourish--tl {
+	top: 16px;
+	left: 16px;
+}
+
+.dg-account-auth__corner-flourish--tr {
+	top: 16px;
+	right: 16px;
+}
+
+.dg-account-auth__corner-flourish--bl {
+	bottom: 16px;
+	left: 16px;
+}
+
+.dg-account-auth__corner-flourish--br {
+	bottom: 16px;
+	right: 16px;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__corner-flourish--tl {
+		top: 24px;
+		left: 24px;
+	}
+
+	.dg-account-auth__corner-flourish--tr {
+		top: 24px;
+		right: 24px;
+	}
+
+	.dg-account-auth__corner-flourish--bl {
+		bottom: 24px;
+		left: 24px;
+	}
+
+	.dg-account-auth__corner-flourish--br {
+		bottom: 24px;
+		right: 24px;
+	}
+}
+
+/* =========================================
+   1. BRAND HEADER (Atelier Imperial / Dragon Glow / Est. 2026)
+   ========================================= */
+
+.dg-account-auth__brand-header {
+	text-align: center;
+	margin-bottom: clamp(2rem, 4vw, 3rem);
+	position: relative;
+	z-index: 20;
+}
+
+.dg-account-auth__brand-eyebrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.dg-account-auth__brand-line {
+	width: clamp(48px, 10vw, 80px);
+	height: 1px;
+	background: linear-gradient(to right, transparent, rgba(197, 155, 39, 0.6), var(--auth-gold-500));
+}
+
+.dg-account-auth__brand-line:last-child {
+	background: linear-gradient(to left, transparent, rgba(197, 155, 39, 0.6), var(--auth-gold-500));
+}
+
+.dg-account-auth__brand-eyebrow-text {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.25em;
+	text-transform: uppercase;
+	color: var(--auth-gold-800);
+}
+
+.dg-account-auth__brand-eyebrow-text .material-symbols-outlined {
+	font-size: 15px;
+	color: var(--auth-gold-600);
+}
+
+.dg-account-auth__brand-title {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: clamp(36px, 6vw, 44px);
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--auth-ink-900);
+	margin: 0;
+	line-height: 1.1;
+}
+
+.dg-account-auth__brand-subtitle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: clamp(12px, 2vw, 16px);
+}
+
+.dg-account-auth__brand-rule {
+	width: 8px;
+	height: 1px;
+	background: var(--auth-gold-500);
+}
+
+.dg-account-auth__brand-subtitle p {
+	font-family: 'Montserrat', sans-serif;
+	font-size: clamp(10px, 1.5vw, 11px);
+	font-weight: 400;
+	letter-spacing: 0.28em;
+	text-transform: uppercase;
+	color: var(--auth-gold-700);
+	margin: 0;
+}
+
+/* =========================================
+   2. WRAPPER & FRAME
+   ========================================= */
+
+.dg-account--signed-out {
+	padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2.5rem, 5vw, 4rem);
+	background: var(--auth-bg);
+}
+
+.dg-account-auth {
+	max-width: 1240px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+	.dg-account-auth {
+		padding: 0 32px;
+	}
+}
+
+.dg-account-auth__frame {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	background: var(--auth-panel-bg);
+	border: 1px solid var(--auth-panel-border);
+	border-radius: 4px;
+	box-shadow: 0 25px 60px rgba(113, 85, 9, 0.06), 0 2px 8px rgba(113, 85, 9, 0.03);
+	overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+	.dg-account-auth__frame {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+/* Outer inset gold filigree border — double inline border echoing the
+   viewport pinstripe frame, drawn just inside the form panel edges
+   (matches reference: inset-1.5 @ 60% opacity + inset-3 @ 25% opacity). */
+.dg-account-auth__filigree {
+	position: absolute;
+	pointer-events: none;
+	z-index: 30;
+	border: 1px solid var(--auth-gold-300);
+}
+
+.dg-account-auth__filigree--outer {
+	inset: 6px;
+	opacity: 0.6;
+}
+
+.dg-account-auth__filigree--inner {
+	inset: 12px;
+	opacity: 0.25;
+}
+
+/* =========================================
+   3. LEFT — HERITAGE SHOWCASE
+   ========================================= */
+
+.dg-account-auth__showcase {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 20px;
+	padding: clamp(1.5rem, 4vw, 2.5rem);
+	background: var(--auth-showcase-gradient);
+	border-bottom: 1px solid var(--auth-gold-300);
+}
+
+@media (min-width: 1024px) {
+	.dg-account-auth__showcase {
+		border-bottom: 0;
+		border-right: 1px solid var(--auth-gold-300);
+	}
+}
+
+.dg-account-auth__showcase-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(216, 194, 148, 0.5);
+	font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.dg-account-auth__tome-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.dg-account-auth__tome {
+	font-size: 12px;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	font-weight: 600;
+	color: var(--auth-gold-800);
+}
+
+.dg-account-auth__tome-sub {
+	font-style: italic;
+	font-size: 14px;
+	color: var(--auth-gold-900);
+}
+
+.dg-account-auth__dot {
+	color: var(--auth-gold-600);
+	font-size: 12px;
+}
+
+.dg-account-auth__sanctuary-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--auth-gold-900);
+	background: rgba(216, 194, 148, 0.15);
+	border: 1px solid var(--auth-gold-400);
+	border-radius: 9999px;
+	white-space: nowrap;
+}
+
+/* --- Arch showcase --- */
+
+.dg-account-auth__arch-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 8px 0;
+}
+
+.dg-account-auth__crown {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--auth-gold-600);
+	margin-bottom: 8px;
+}
+
+.dg-account-auth__crown .material-symbols-outlined {
+	font-size: 16px;
+}
+
+.dg-account-auth__crown-line {
+	width: 32px;
+	height: 1px;
+	background: rgba(197, 155, 39, 0.5);
+}
+
+.dg-account-auth__arch {
+	position: relative;
+	width: 100%;
+	max-width: 300px;
+	aspect-ratio: 4 / 5;
+	border-radius: 999px 999px 8px 8px;
+	border: 2px solid rgba(197, 155, 39, 0.7);
+	padding: 8px;
+	background: var(--auth-ivory-200);
+	box-shadow: inset 0 2px 12px rgba(113, 85, 9, 0.1), 0 8px 30px rgba(140, 109, 35, 0.1);
+}
+
+.dg-account-auth__arch-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	border-radius: 999px 999px 4px 4px;
+	overflow: hidden;
+	border: 1px solid var(--auth-gold-300);
+}
+
+.dg-account-auth__arch-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: brightness(1.02) contrast(1.01);
+}
+
+.dg-account-auth__arch-inner::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(43, 33, 6, 0.75), transparent 60%);
+	pointer-events: none;
+}
+
+.dg-account-auth__arch-caption {
+	position: absolute;
+	bottom: 16px;
+	inset-inline: 16px;
+	text-align: center;
+	color: var(--auth-ivory-50);
+	z-index: 1;
+}
+
+.dg-account-auth__arch-caption p {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 20px;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	margin: 0;
+	color: #FFF6DF;
+}
+
+.dg-account-auth__arch-caption span {
+	display: block;
+	margin-top: 2px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	color: rgba(232, 193, 111, 0.9);
+}
+
+.dg-account-auth__medallion {
+	position: absolute;
+	top: -14px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--auth-ivory-50);
+	border: 1px solid var(--auth-gold-500);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--auth-gold-700);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.dg-account-auth__medallion .material-symbols-outlined {
+	font-size: 15px;
+}
+
+/* --- Ritual guide footer --- */
+
+.dg-account-auth__ritual {
+	padding-top: 16px;
+	border-top: 1px solid rgba(216, 194, 148, 0.5);
+}
+
+.dg-account-auth__quote {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-style: italic;
+	text-align: center;
+	font-size: 15px;
+	color: #594412;
+	margin: 0 0 12px;
+}
+
+.dg-account-auth__steps {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 8px;
+	text-align: center;
+}
+
+.dg-account-auth__step {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px;
+	border: 1px solid #DECDB0;
+	background: rgba(255, 253, 249, 0.6);
+	border-radius: 2px;
+}
+
+.dg-account-auth__step-label {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	color: var(--auth-gold-700);
+}
+
+.dg-account-auth__step-sub {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	line-height: 1.2;
+	color: #5A4F3D;
+}
+
+/* =========================================
+   4. RIGHT — SIGN IN / REGISTER PANEL
+   ========================================= */
+
+.dg-account-auth__panel-col {
+	padding: clamp(1.5rem, 4vw, 3rem);
+	background: var(--auth-panel-bg);
+	display: flex;
+	flex-direction: column;
+}
+
+.dg-account-auth__head {
+	text-align: center;
+	max-width: 420px;
+	margin: 0 auto 24px;
+}
+
+.dg-account-auth__eyebrow-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.dg-account-auth__eyebrow-line {
+	width: 24px;
+	height: 1px;
+	background: rgba(197, 155, 39, 0.4);
+}
+
+.dg-account-auth__eyebrow {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: var(--auth-eyebrow);
+}
+
+.dg-account-auth__title {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-weight: 400;
+	font-size: clamp(28px, 3.5vw, 36px);
+	letter-spacing: 0.02em;
+	color: var(--auth-heading);
+	margin: 0;
+}
+
+.dg-account-auth__title-rule {
+	display: block;
+	width: 64px;
+	height: 1px;
+	background: rgba(197, 155, 39, 0.6);
+	margin: 8px auto;
+}
+
+.dg-account-auth__sub {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
+	line-height: 1.6;
+	color: var(--auth-body);
+	margin: 0;
+}
+
+/* --- Form --- */
+
+.dg-account-auth__panel-col .dg-account-form {
+	max-width: 420px;
+	margin: 0 auto;
+	width: 100%;
+	gap: 16px;
+}
+
+.dg-account-auth__panel-col .dg-account-field__row-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.dg-account-auth__panel-col .dg-account-field label {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--auth-label);
+}
+
+.dg-account-auth__panel-col .dg-account-field__hint,
+.dg-account-auth__panel-col .dg-account-form__link {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-style: italic;
+	font-size: 13px;
+	color: var(--auth-gold-700);
+}
+
+.dg-account-auth__panel-col .dg-account-form__link:hover {
+	color: var(--auth-gold-900);
+}
+
+.dg-account-auth__panel-col .dg-account-field__wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.dg-account-auth__panel-col .dg-account-field__icon {
+	position: absolute;
+	left: 12px;
+	font-size: 18px;
+	color: var(--auth-icon-muted);
+	pointer-events: none;
+}
+
+.dg-account-auth__panel-col .dg-account-field__input {
+	width: 100%;
+	height: 44px;
+	padding: 0 12px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	background: var(--auth-input-bg);
+	border: 1px solid var(--auth-input-border);
+	border-radius: 0;
+	color: var(--color-on-surface);
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dg-account-auth__panel-col .dg-account-field__input--icon {
+	padding-left: 40px;
+}
+
+.dg-account-auth__panel-col .dg-account-field__input::placeholder {
+	color: var(--auth-input-placeholder);
+	font-style: italic;
+}
+
+.dg-account-auth__panel-col .dg-account-field__input:focus {
+	outline: none;
+	background: var(--auth-input-bg-focus);
+	border-color: var(--auth-input-border-focus);
+	box-shadow: 0 0 0 3px rgba(166, 124, 30, 0.15);
+}
+
+.dg-account-auth__panel-col .dg-account-field__toggle {
+	color: var(--auth-icon-muted);
+}
+
+.dg-account-auth__panel-col .dg-account-field__toggle:hover {
+	color: var(--color-on-surface);
+	background: transparent;
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	color: var(--auth-brown-400);
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"] {
+	border-radius: 0;
+	accent-color: var(--auth-gold-700);
+}
+
+/* --- Heritage seal submit button --- */
+
+.dg-account-auth__submit {
+	position: relative;
+	width: 100%;
+	height: 48px;
+	margin-top: 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: var(--auth-btn-gradient);
+	color: var(--auth-btn-text);
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	border: 1px solid var(--auth-btn-border);
+	border-radius: 0;
+	cursor: pointer;
+	box-shadow: var(--auth-btn-shadow);
+	transition: box-shadow 0.2s ease, filter 0.2s ease, transform 0.15s ease;
+}
+
+.dg-account-auth__submit:hover {
+	box-shadow: var(--auth-btn-shadow-hover);
+	filter: brightness(1.05);
+}
+
+.dg-account-auth__submit:active {
+	transform: scale(0.99);
+}
+
+.dg-account-auth__submit .material-symbols-outlined {
+	font-size: 17px;
+}
+
+.dg-account-auth__submit-frame {
+	position: absolute;
+	inset: 4px;
+	border: 1px solid rgba(255, 231, 168, 0.3);
+	pointer-events: none;
+}
+
+/* --- Divider --- */
+
+.dg-account-auth__divider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	max-width: 420px;
+	margin: 24px auto;
+	width: 100%;
+	padding-top: 20px;
+	border-top: 1px solid var(--auth-divider);
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	color: #7D6638;
+}
+
+.dg-account-auth__divider-star {
+	color: var(--auth-gold-600);
+	font-size: 10px;
+}
+
+.dg-account-auth__register {
+	max-width: 420px;
+	margin: 0 auto;
+	width: 100%;
+}
+
+.dg-account-auth__register .dg-account-form {
+	margin: 0;
+}
+
+.dg-account-auth__text {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	color: var(--auth-body);
+	margin: 0 0 16px;
+	text-align: center;
+}
+
+/* --- Footnote badges --- */
+
+.dg-account-auth__footnote {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid var(--auth-divider);
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: rgba(140, 109, 35, 0.8);
+}
+
+.dg-account-auth__footnote .material-symbols-outlined {
+	font-size: 14px;
+}
+
+/* =========================================
+   5. REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-auth *,
+	.dg-account-auth *::before,
+	.dg-account-auth *::after {
+		transition-duration: 0.001ms !important;
+	}
+}

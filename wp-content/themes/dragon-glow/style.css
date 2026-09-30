@@ -123,6 +123,57 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --filter-clear-active-border: rgba(var(--gold-rgb), 0.3);
     --filter-clear-active-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.2);
     --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
+
+    /* ===== COMPONENT TOKENS (Layer 3: Auth Portal — Heritage Gold) ===== */
+    /* Scoped to .dg-account-auth* (My Account sign-in / register gate) only.
+       Matches the "Atelier Imperial" heritage design reference — does not
+       replace global theme tokens above, so no other page is affected. */
+
+    /* Primitive — heritage palette (ivory parchment + antique gold) */
+    --auth-ivory-50:  #FFFDF9;   /* Lightest panel surface */
+    --auth-ivory-100: #FCFAF6;  /* Page background */
+    --auth-ivory-200: #FAF7F0;  /* Input background */
+    --auth-parchment: #F5EEE0;  /* Showcase gradient mid-tone */
+    --auth-gold-300:  #E8D4A8;  /* Filigree border (light) */
+    --auth-gold-400:  #D9C496;  /* Divider / outline */
+    --auth-gold-500:  #C59B27;  /* Primary heritage gold */
+    --auth-gold-600:  #A67C1E;  /* Icon / hover gold */
+    --auth-gold-700:  #8C6D23;  /* Deep gold text */
+    --auth-gold-800:  #715509;  /* Heading ink (gold-brown) */
+    --auth-gold-900:  #5B4300;  /* Darkest heading / hover */
+    --auth-ink-900:   #251A00;  /* Near-black heading ink */
+    --auth-brown-600: #4A3C23;  /* Label text */
+    --auth-brown-500: #665B47;  /* Body copy */
+    --auth-brown-400: #554731;  /* Checkbox label */
+
+    /* Semantic — purpose-driven auth tokens */
+    --auth-bg: var(--auth-ivory-100);
+    --auth-panel-bg: var(--auth-ivory-50);
+    --auth-panel-border: rgba(217, 196, 150, 0.8);
+    --auth-showcase-gradient: linear-gradient(180deg, #FAF6EF 0%, var(--auth-parchment) 55%, rgba(239, 229, 208, 0.6) 100%);
+    --auth-heading: var(--auth-ink-900);
+    --auth-eyebrow: var(--auth-gold-800);
+    --auth-body: var(--auth-brown-500);
+    --auth-label: var(--auth-brown-600);
+    --auth-divider: var(--auth-gold-400);
+    --auth-input-bg: var(--auth-ivory-200);
+    --auth-input-bg-focus: var(--auth-ivory-50);
+    --auth-input-border: #D9CAAF;
+    --auth-input-border-focus: var(--auth-gold-600);
+    --auth-input-placeholder: #9F917B;
+    --auth-icon-muted: #A8987D;
+
+    /* Component — button / CTA gradient ("wax seal") */
+    --auth-btn-gradient: linear-gradient(135deg, #B58C28 0%, #C99E33 50%, #A37B1B 100%);
+    --auth-btn-border: #856312;
+    --auth-btn-text: #FFFDF6;
+    --auth-btn-shadow: 0 4px 16px rgba(181, 140, 40, 0.28);
+
+    /* Component — viewport double pinstripe frame (outer decorative border) */
+    --auth-viewport-frame-outer: rgba(212, 175, 55, 0.4);
+    --auth-viewport-frame-inner: rgba(197, 155, 39, 0.2);
+    --auth-corner-flourish: rgba(197, 155, 39, 0.6);
+    --auth-btn-shadow-hover: 0 6px 22px rgba(181, 140, 40, 0.4);
 }
 
 /* Base Reset */

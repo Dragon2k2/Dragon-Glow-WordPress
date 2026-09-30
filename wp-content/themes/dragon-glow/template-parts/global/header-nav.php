@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 $cart_count   = dg_get_cart_item_count();
 $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' );
 ?>
-<nav class="glass-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
+<nav class="glass-nav header-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
 <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
         <!-- Logo -->
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>"

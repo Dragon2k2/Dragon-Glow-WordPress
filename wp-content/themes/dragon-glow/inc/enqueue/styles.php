@@ -108,6 +108,25 @@ function dg_enqueue_styles(): void {
 				array( 'dg-woocommerce' ),
 				DG_VERSION
 			);
+
+			// Signed-out auth gate (Sign in / Create account) — Heritage Gold
+			// visual style, scoped to `.dg-account-auth*` only. Loaded only
+			// when the visitor isn't logged in, since logged-in customers
+			// never see this markup.
+			if ( is_account_page() && ! is_user_logged_in() ) {
+				wp_enqueue_style(
+					'dg-cormorant-garamond',
+					'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
+					array(),
+					null
+				);
+				wp_enqueue_style(
+					'dg-account-auth',
+					DG_URI . '/assets/css/account-auth.css',
+					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
+					DG_VERSION
+				);
+			}
 		}
 	}
 

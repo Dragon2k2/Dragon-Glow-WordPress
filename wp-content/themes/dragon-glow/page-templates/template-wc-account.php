@@ -9,6 +9,13 @@
  * swaps this template in for any request on the WC My Account endpoint, so
  * the page-template assignment on the WC account page itself is irrelevant.
  *
+ * Chrome policy: signed-out visitors see the "Heritage Atelier" full-bleed
+ * auth gate (see `dg_render_account_signed_out()`); site nav and footer
+ * columns are hidden via the `dg-hide-site-chrome` body class added by
+ * `dg_auth_portal_body_class()` so the auth screen is distraction-free.
+ * This still calls `get_header()`/`get_footer()` so `wp_head()`/`wp_footer()`
+ * fire normally — without them, enqueued CSS/JS would never reach the page.
+ *
  * @package Dragon_Glow
  */
 

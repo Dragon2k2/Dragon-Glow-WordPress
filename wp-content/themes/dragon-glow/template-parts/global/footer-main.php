@@ -26,7 +26,7 @@ $tos_url     = get_permalink( get_page_by_path( 'terms-of-service' ) ) ?: '#';
 $cookie_url = get_permalink( get_page_by_path( 'cookie-policy' ) ) ?: '#';
 $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
 ?>
-<footer class="bg-gradient-to-br from-[#f4c2c2] via-[#e1e1f5] to-[#e1e1f5] mt-section-gap pt-section-gap flat no-shadows">
+<footer class="footer-main bg-gradient-to-br from-[#f4c2c2] via-[#e1e1f5] to-[#e1e1f5] mt-section-gap pt-section-gap flat no-shadows">
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-wrap justify-between gap-gutter">
 
         <!-- Brand Column -->
