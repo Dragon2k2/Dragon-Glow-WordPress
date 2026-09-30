@@ -345,8 +345,8 @@
 .dg-account-auth__arch {
 	position: relative;
 	width: 100%;
-	max-width: 300px;
-	aspect-ratio: 4 / 5;
+	max-width: 363.2px;
+	height: 500px;
 	border-radius: 999px 999px 8px 8px;
 	border: 2px solid rgba(197, 155, 39, 0.7);
 	padding: 8px;
@@ -484,11 +484,12 @@
 	background: var(--auth-panel-bg);
 	display: flex;
 	flex-direction: column;
+	padding: 5rem;
 }
 
 .dg-account-auth__head {
 	text-align: center;
-	max-width: 420px;
+	max-width: 448px;
 	margin: 0 auto 24px;
 }
 
@@ -537,12 +538,15 @@
 	line-height: 1.6;
 	color: var(--auth-body);
 	margin: 0;
+	max-width: 435px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* --- Form --- */
 
 .dg-account-auth__panel-col .dg-account-form {
-	max-width: 420px;
+	max-width: 448px;
 	margin: 0 auto;
 	width: 100%;
 	gap: 16px;
@@ -692,7 +696,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	max-width: 420px;
+	max-width: 448px;
 	margin: 24px auto;
 	width: 100%;
 	padding-top: 20px;
@@ -710,7 +714,7 @@
 }
 
 .dg-account-auth__register {
-	max-width: 420px;
+	max-width: 448px;
 	margin: 0 auto;
 	width: 100%;
 }
@@ -727,6 +731,121 @@
 	text-align: center;
 }
 
+/* --- Alternative Access (social sign-in) --- */
+
+.dg-account-auth__alt-access {
+	max-width: 448px;
+	margin: 16px auto 0;
+	padding-top: 0;
+	width: 100%;
+}
+
+.dg-account-auth__alt-access-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.dg-account-auth__alt-access-line {
+	display: block;
+	flex: 1 1 auto;
+	min-width: 24px;
+	height: 1px;
+	background: linear-gradient(to right, transparent, rgba(197, 155, 39, 0.6), var(--auth-gold-500));
+}
+
+.dg-account-auth__alt-access-line:last-child {
+	background: linear-gradient(to left, transparent, rgba(197, 155, 39, 0.6), var(--auth-gold-500));
+}
+
+.dg-account-auth__alt-access-text {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	color: #7D6638;
+	white-space: nowrap;
+}
+
+.dg-account-auth__social-buttons {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.dg-account-auth__social-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 44px;
+	padding: 0 16px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	background: var(--auth-ivory-50);
+	border: 1px solid var(--auth-gold-400);
+	border-radius: 0;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dg-account-auth__social-btn:hover:not(:disabled) {
+	background: var(--auth-ivory-200);
+	border-color: var(--auth-gold-500);
+	box-shadow: 0 2px 8px rgba(197, 155, 39, 0.12);
+}
+
+.dg-account-auth__social-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.dg-account-auth__social-icon {
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+}
+
+.dg-account-auth__social-btn--google {
+	color: #1a1a1a;
+}
+
+.dg-account-auth__social-btn--apple {
+	color: #000000;
+}
+
+.dg-account-auth__register-prompt {
+	text-align: center;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 15px;
+	color: #473c27;
+	margin: 0;
+}
+
+.dg-account-auth__register-link {
+	display: inline-block;
+	margin-top: 4px;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--auth-gold-700);
+	text-decoration: none;
+	border-bottom: 1px solid #8c6d23;
+	transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-account-auth__register-link:hover {
+	color: var(--auth-gold-900);
+	border-bottom-color: var(--auth-gold-900);
+}
+
 /* --- Footnote badges --- */
 
 .dg-account-auth__footnote {
@@ -738,15 +857,16 @@
 	margin-top: 24px;
 	padding-top: 16px;
 	border-top: 1px solid var(--auth-divider);
-	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 11px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.14em;
-	color: rgba(140, 109, 35, 0.8);
+	color: #8C8068;
 }
 
 .dg-account-auth__footnote .material-symbols-outlined {
 	font-size: 14px;
+	color: rgba(140, 109, 35, 0.8); /* Keep icon color separate */
 }
 
 /* =========================================
