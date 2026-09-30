@@ -4,12 +4,18 @@
  * Vanilla JavaScript — no React, ES module for Motion integration
  *
  * Features:
- *  - Fetch order details via AJAX
+ *  - Instant modal with prefetch strategies (hover intent + intersection observer)
+ *  - Cache management with TTL and stale-while-revalidate
  *  - Split timeline + details layout
  *  - Motion API animations (fade, slide, stagger)
  *  - Focus trap & keyboard navigation
  *  - Accessibility (ARIA, screen reader announcements)
  *  - Respects prefers-reduced-motion
+ *
+ * Performance Strategy:
+ *  1. Hover intent prefetch (300ms delay) — Netflix/Spotify pattern
+ *  2. Intersection observer prefetch — Google/Facebook pattern
+ *  3. Instant render from cache — no loading state when cached
  *
  * @package Dragon_Glow
  */
@@ -21,6 +27,94 @@
 	let currentModal = null;
 	let focusTrap = null;
 	let lastFocusedElement = null;
+
+	// =========================================
+	// CACHE MANAGEMENT
+	// =========================================
+
+	/**
+	 * In-memory cache for order data.
+	 * Structure: Map<orderId, {data: Object, timestamp: number, fetching: Promise|null}>
+	 */
+	const orderCache = new Map();
+	const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+	const PREFETCH_DELAY = 300; // 300ms hover delay before prefetch
+	let hoverTimeouts = new Map(); // Track hover timers per trigger
+	let intersectionObserver = null;
+
+	/**
+	 * Get cached order data if available and fresh.
+	 * @param {string} orderId - Order ID
+	 * @return {Object|null} Cached data or null
+	 */
+	function getCachedOrder(orderId) {
+		const cached = orderCache.get(orderId);
+		if (!cached) return null;
+
+		const age = Date.now() - cached.timestamp;
+		if (age > CACHE_TTL) {
+			// Expired cache
+			orderCache.delete(orderId);
+			return null;
+		}
+
+		return cached.data;
+	}
+
+	/**
+	 * Set order data in cache.
+	 * @param {string} orderId - Order ID
+	 * @param {Object} data - Order data
+	 */
+	function setCachedOrder(orderId, data) {
+		orderCache.set(orderId, {
+			data: data,
+			timestamp: Date.now(),
+			fetching: null
+		});
+	}
+
+	/**
+	 * Prefetch order data in background.
+	 * Returns existing promise if already fetching.
+	 * @param {string} orderId - Order ID
+	 * @return {Promise<Object>} Order data promise
+	 */
+	function prefetchOrderData(orderId) {
+		// Check if already cached and fresh
+		const cached = getCachedOrder(orderId);
+		if (cached) {
+			return Promise.resolve(cached);
+		}
+
+		// Check if already fetching
+		const cachedEntry = orderCache.get(orderId);
+		if (cachedEntry && cachedEntry.fetching) {
+			return cachedEntry.fetching;
+		}
+
+		// Start new fetch
+		const fetchPromise = fetchOrderData(orderId)
+			.then(function (data) {
+				setCachedOrder(orderId, data);
+				return data;
+			})
+			.catch(function (error) {
+				console.warn('Prefetch failed for order', orderId, error);
+				// Remove from cache on error
+				orderCache.delete(orderId);
+				throw error;
+			});
+
+		// Store promise to avoid duplicate fetches
+		orderCache.set(orderId, {
+			data: null,
+			timestamp: Date.now(),
+			fetching: fetchPromise
+		});
+
+		return fetchPromise;
+	}
 
 	/**
 	 * Initialize modal triggers on page load
@@ -34,13 +128,79 @@
 			if (trigger.dataset.dgModalBound === '1') return;
 			trigger.dataset.dgModalBound = '1';
 
+			const orderUrl = trigger.getAttribute('href');
+			const orderId = extractOrderId(orderUrl);
+
+			if (!orderId) return;
+
+			// Click handler — instant open with cache or fetch
 			trigger.addEventListener('click', function (event) {
 				event.preventDefault();
-				const orderUrl = trigger.getAttribute('href');
-				if (orderUrl) {
-					openModal(orderUrl);
+				openModal(orderUrl);
+			});
+
+			// Hover intent prefetch — 300ms delay
+			trigger.addEventListener('mouseenter', function () {
+				const timeoutId = setTimeout(function () {
+					prefetchOrderData(orderId);
+				}, PREFETCH_DELAY);
+
+				hoverTimeouts.set(trigger, timeoutId);
+			});
+
+			trigger.addEventListener('mouseleave', function () {
+				const timeoutId = hoverTimeouts.get(trigger);
+				if (timeoutId) {
+					clearTimeout(timeoutId);
+					hoverTimeouts.delete(trigger);
 				}
 			});
+		});
+
+		// Setup intersection observer for viewport prefetch
+		setupIntersectionObserver(triggers);
+	}
+
+	/**
+	 * Setup Intersection Observer to prefetch orders in viewport.
+	 * @param {NodeList} triggers - All order view triggers
+	 */
+	function setupIntersectionObserver(triggers) {
+		// Skip if IntersectionObserver not supported
+		if (!('IntersectionObserver' in window)) return;
+
+		// Cleanup existing observer
+		if (intersectionObserver) {
+			intersectionObserver.disconnect();
+		}
+
+		const options = {
+			root: null, // viewport
+			rootMargin: '100px', // Start prefetch 100px before entering viewport
+			threshold: 0.1
+		};
+
+		intersectionObserver = new IntersectionObserver(function (entries) {
+			entries.forEach(function (entry) {
+				if (entry.isIntersecting) {
+					const trigger = entry.target;
+					const orderUrl = trigger.getAttribute('href');
+					const orderId = extractOrderId(orderUrl);
+
+					if (orderId) {
+						// Prefetch in background
+						prefetchOrderData(orderId);
+					}
+
+					// Stop observing after prefetch triggered
+					intersectionObserver.unobserve(trigger);
+				}
+			});
+		}, options);
+
+		// Observe all triggers
+		triggers.forEach(function (trigger) {
+			intersectionObserver.observe(trigger);
 		});
 	}
 
@@ -67,22 +227,45 @@
 		// Add body class to prevent scroll
 		document.body.classList.add('dg-order-modal-open');
 
-		// Show modal with loading state
-		showLoadingState(modal);
+		// Check cache first — INSTANT render if available
+		const cachedData = getCachedOrder(orderId);
+		
+		if (cachedData) {
+			// INSTANT path — render immediately from cache
+			renderOrderContent(modal, cachedData);
+			animateModalIn(modal);
+			setupModalListeners(modal);
 
-		// Fetch order data
-		fetchOrderData(orderId)
-			.then(function (data) {
-				renderOrderContent(modal, data);
-				animateModalIn(modal);
-			})
-			.catch(function (error) {
-				console.error('Failed to fetch order data:', error);
-				renderErrorState(modal, error.message);
-			});
+			// Stale-while-revalidate: fetch fresh data in background
+			prefetchOrderData(orderId)
+				.then(function (freshData) {
+					// Update modal content if still open
+					if (currentModal === modal) {
+						renderOrderContent(modal, freshData);
+					}
+				})
+				.catch(function (error) {
+					// Silent fail — already showing cached data
+					console.warn('Background refresh failed:', error);
+				});
+		} else {
+			// Cache miss — show loading state
+			showLoadingState(modal);
 
-		// Setup event listeners
-		setupModalListeners(modal);
+			// Fetch order data
+			prefetchOrderData(orderId)
+				.then(function (data) {
+					renderOrderContent(modal, data);
+					animateModalIn(modal);
+				})
+				.catch(function (error) {
+					console.error('Failed to fetch order data:', error);
+					renderErrorState(modal, error.message);
+				});
+
+			// Setup event listeners
+			setupModalListeners(modal);
+		}
 	}
 
 	/**
@@ -130,15 +313,15 @@
 	function showLoadingState(modal) {
 		const inner = modal.querySelector('.dg-order-modal__inner');
 		inner.innerHTML = `
-			<div class="dg-order-modal__timeline" style="opacity: 0.6;">
-				<h3 class="dg-order-modal__timeline-title">Loading...</h3>
-				<div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--color-muted-slate);">
-					<span class="material-symbols-outlined" style="font-size: 48px; animation: dg-spin 1s linear infinite;">progress_activity</span>
+			<div class="dg-order-modal__timeline">
+				<div class="dg-order-modal__loading">
+					<span class="material-symbols-outlined dg-order-modal__spinner">progress_activity</span>
+					<p class="dg-order-modal__loading-text">Loading order details...</p>
 				</div>
 			</div>
-			<div class="dg-order-modal__details" style="opacity: 0.6;">
-				<div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--color-muted-slate);">
-					<p>Fetching order details...</p>
+			<div class="dg-order-modal__details">
+				<div class="dg-order-modal__loading">
+					<span class="material-symbols-outlined dg-order-modal__spinner">progress_activity</span>
 				</div>
 			</div>
 		`;
@@ -368,6 +551,11 @@
 	 * @param {HTMLElement} modal - Modal element
 	 */
 	async function animateModalIn(modal) {
+		// Ensure modal is visible first
+		if (!modal.classList.contains('is-open')) {
+			modal.classList.add('is-open');
+		}
+
 		if (prefersReduced) {
 			modal.classList.add('is-visible');
 			setupFocusTrap(modal);
@@ -384,6 +572,9 @@
 
 		const { animate, stagger } = Motion;
 
+		// Mark as visible immediately for CSS transitions
+		modal.classList.add('is-visible');
+
 		// Fade in overlay
 		const overlay = modal.querySelector('.dg-order-modal__overlay');
 		if (overlay) {
@@ -396,7 +587,7 @@
 			animate(
 				content,
 				{ opacity: [0, 1], scale: [0.95, 1], y: [20, 0] },
-				{ duration: 0.3, easing: [0.16, 1, 0.3, 1] }
+				{ duration: 0.4, easing: [0.16, 1, 0.3, 1] }
 			);
 		}
 
@@ -406,7 +597,7 @@
 			animate(
 				timelineItems,
 				{ opacity: [0, 1], x: [-10, 0] },
-				{ duration: 0.4, delay: stagger(0.1, { start: 0.2 }), easing: 'ease-out' }
+				{ duration: 0.4, delay: stagger(0.08, { start: 0.1 }), easing: 'ease-out' }
 			);
 		}
 
@@ -416,17 +607,24 @@
 			animate(
 				productItems,
 				{ opacity: [0, 1], y: [10, 0] },
-				{ duration: 0.4, delay: stagger(0.08, { start: 0.3 }), easing: 'ease-out' }
+				{ duration: 0.4, delay: stagger(0.06, { start: 0.15 }), easing: 'ease-out' }
 			);
 		}
 
-		// Mark as visible
-		modal.classList.add('is-visible');
+		// Fade in info cards
+		const infoCards = modal.querySelectorAll('.dg-order-info-card');
+		if (infoCards.length > 0) {
+			animate(
+				infoCards,
+				{ opacity: [0, 1], y: [10, 0] },
+				{ duration: 0.4, delay: stagger(0.08, { start: 0.2 }), easing: 'ease-out' }
+			);
+		}
 
 		// Setup focus trap after animation
 		setTimeout(function () {
 			setupFocusTrap(modal);
-		}, 300);
+		}, 200);
 	}
 
 	/**
@@ -592,9 +790,22 @@
 		window.dgAccount.onPanelLoad.push(init);
 	}
 
+	// Cleanup on page unload
+	window.addEventListener('beforeunload', function () {
+		if (intersectionObserver) {
+			intersectionObserver.disconnect();
+		}
+		hoverTimeouts.forEach(function (timeoutId) {
+			clearTimeout(timeoutId);
+		});
+		orderCache.clear();
+	});
+
 	// Expose for debugging
 	window.dgOrderModal = window.dgOrderModal || {};
 	window.dgOrderModal.init = init;
 	window.dgOrderModal.openModal = openModal;
+	window.dgOrderModal.cache = orderCache; // Debug only
+	window.dgOrderModal.prefetch = prefetchOrderData; // Debug only
 
 })();

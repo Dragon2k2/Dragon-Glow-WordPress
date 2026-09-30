@@ -50,6 +50,14 @@ function dg_enqueue_styles(): void {
         DG_VERSION
     );
 
+    // Footer CSS (global, loaded on all pages)
+    wp_enqueue_style(
+        'dg-footer',
+        DG_URI . '/assets/css/footer.css',
+        array( 'dg-main' ),
+        DG_VERSION
+    );
+
     // WooCommerce CSS (chỉ load khi có WooCommerce).
     // Shared styles load site-wide; page-scoped styles load conditionally and
     // depend on 'dg-woocommerce' so they always print after the shared file

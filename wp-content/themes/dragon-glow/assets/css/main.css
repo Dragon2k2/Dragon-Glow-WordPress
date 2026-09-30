@@ -666,9 +666,9 @@ table th {
 
 .glass-nav ul li.current-menu-item > a span,
 .glass-nav ul li.current_page_item > a span {
-    border-bottom: 2px solid #C9A84C;
+    border-bottom: 2px solid var(--color-accent-gold);
     padding-bottom: 2px;
-    color: #C9A84C;
+    color: var(--color-accent-gold);
 }
 
 /* =========================================

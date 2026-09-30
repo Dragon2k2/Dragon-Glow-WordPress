@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_blank" name="shell-type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .font-cormorant {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+    .heritage-border-pattern {
+      background-image: linear-gradient(to right, #cfb070 0%, #ecd99a 50%, #cfb070 100%);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#e9e1da",
+            "on-primary-fixed": "#261a00",
+            "primary": "#715509",
+            "surface-container-high": "#efe7e0",
+            "primary-fixed-dim": "#e8c16f",
+            "on-primary-container": "#fff6ec",
+            "secondary": "#775a00",
+            "tertiary-fixed": "#f1e1bd",
+            "tertiary-container": "#7c7153",
+            "on-surface-variant": "#4d4638",
+            "outline-variant": "#d1c5b3",
+            "inverse-primary": "#e8c16f",
+            "on-secondary-container": "#735700",
+            "primary-container": "#8c6d23",
+            "on-secondary-fixed": "#251a00",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#d4c5a2",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#fff8f3",
+            "primary-fixed": "#ffdf9e",
+            "on-secondary": "#ffffff",
+            "background": "#F7F4EE",
+            "secondary-container": "#fece57",
+            "outline": "#7f7666",
+            "on-error": "#ffffff",
+            "on-background": "#1e1b17",
+            "surface-container-highest": "#e9e1da",
+            "on-surface": "#1e1b17",
+            "on-tertiary-container": "#fff7ea",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#f7efe8",
+            "surface-tint": "#775a10",
+            "error": "#ba1a1a",
+            "surface-container-low": "#faf2eb",
+            "inverse-surface": "#33302b",
+            "surface": "#F7F4EE",
+            "secondary-fixed": "#ffdf98",
+            "on-tertiary-fixed-variant": "#50462b",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#5a4300",
+            "surface-container": "#f4ede6",
+            "on-primary-fixed-variant": "#5b4300",
+            "on-primary": "#ffffff",
+            "surface-dim": "#e0d9d2",
+            "on-tertiary-fixed": "#221b05",
+            "tertiary": "#63583c",
+            "secondary-fixed-dim": "#eec14b"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "margin": "2rem",
+            "margin-desktop": "4rem",
+            "space-2xl": "4rem",
+            "gutter-lg": "2rem",
+            "space-3xl": "6rem",
+            "space-md": "1rem",
+            "margin-mobile": "1.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "gutter-sm": "1rem"
+          },
+          fontFamily: {
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Playfair Display"],
+            "label-tag": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "display-hero-mobile": ["Playfair Display"],
+            "label-button": ["Plus Jakarta Sans"],
+            "headline-lg": ["Playfair Display"],
+            "headline-lg-mobile": ["Playfair Display"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Playfair Display"],
+            "display-hero": ["Playfair Display"],
+            "label-eyebrow": ["Plus Jakarta Sans"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#F7F4EE] font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between items-center relative p-3 sm:p-5 selection:bg-[#E8C16F]/30 selection:text-primary">
+<!-- Viewport Outer Double-Gold Pinstripe Frame -->
+<div class="fixed inset-2 sm:inset-3 pointer-events-none border border-[#D4AF37]/40 z-50"></div>
+<div class="fixed inset-3.5 sm:inset-5 pointer-events-none border border-[#C59B27]/20 z-50"></div>
+<!-- Classical Corner Flourishes (Top-Left, Top-Right, Bottom-Left, Bottom-Right) -->
+<div class="fixed top-4 left-4 sm:top-6 sm:left-6 pointer-events-none z-50 text-[#C59B27]/60 text-xs font-serif select-none">✦</div>
+<div class="fixed top-4 right-4 sm:top-6 sm:right-6 pointer-events-none z-50 text-[#C59B27]/60 text-xs font-serif select-none">✦</div>
+<div class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 pointer-events-none z-50 text-[#C59B27]/60 text-xs font-serif select-none">✦</div>
+<div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 pointer-events-none z-50 text-[#C59B27]/60 text-xs font-serif select-none">✦</div>
+<!-- Symmetrical Classical Crest Header -->
+<header class="w-full pt-6 pb-4 sm:pt-8 sm:pb-6 flex flex-col items-center justify-center relative z-20 text-center">
+<div class="flex items-center gap-3 text-[#B3871D]/60 mb-2">
+<div class="w-12 sm:w-20 h-[1px] bg-gradient-to-r from-transparent via-[#C59B27]/60 to-[#C59B27]"></div>
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[15px] text-[#A67C1E]">flare</span>
+<span class="font-cormorant tracking-[0.25em] text-[11px] uppercase text-[#715509] font-semibold">Atelier Imperial</span>
+<span class="material-symbols-outlined text-[15px] text-[#A67C1E]">flare</span>
+</div>
+<div class="w-12 sm:w-20 h-[1px] bg-gradient-to-l from-transparent via-[#C59B27]/60 to-[#C59B27]"></div>
+</div>
+<a class="group inline-flex flex-col items-center justify-center text-primary transition-transform duration-300 hover:scale-[1.005]" data-path="home" href="#">
+<h1 class="font-headline-lg font-cormorant text-[36px] sm:text-[44px] tracking-[0.14em] uppercase text-[#3B2D05] font-semibold flex items-center gap-3">
+        Dragon Glow
+      </h1>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="w-2 h-[1px] bg-[#C59B27]"></span>
+<p class="font-label-eyebrow text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#7A6432]">
+          Est. 2026  •  San Francisco  •  New York
+        </p>
+<span class="w-2 h-[1px] bg-[#C59B27]"></span>
+</div>
+</a>
+</header>
+<!-- Main Showcase Container: Symmetrical Heritage Atelier -->
+<main class="w-full flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 relative z-10 my-auto">
+<div class="flex flex-col w-full max-w-6xl mx-auto items-center justify-center">
+<!-- Master Atelier Dual-Wing Symmetrical Frame -->
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-[#FCFAF7] border border-[#D9C496]/80 shadow-[0_25px_60px_rgba(113,85,9,0.06),0_2px_8px_rgba(113,85,9,0.03)] relative rounded-sm overflow-hidden">
+<!-- Outer Inset Gold Filigree Border -->
+<div class="absolute inset-1.5 border border-[#E8D4A8]/60 pointer-events-none z-30"></div>
+<div class="absolute inset-3 border border-[#E8D4A8]/25 pointer-events-none z-30"></div>
+<!-- LEFT COLUMN: Archway Visual Sanctuary & Ritual Steps -->
+<div class="lg:col-span-6 relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#E3D3B0] bg-gradient-to-b from-[#FAF6EF] via-[#F5EEE0] to-[#EFE5D0]/60">
+<!-- Top Classical Arch Header -->
+<div class="relative z-10 flex items-center justify-between pb-3 border-b border-[#D8C294]/50">
+<div class="flex items-center gap-2">
+<span class="font-cormorant text-xs tracking-widest text-[#715509] uppercase font-semibold">Tome IV</span>
+<span class="text-[#B3871D] text-xs">•</span>
+<span class="font-cormorant italic text-sm text-[#5B4300]">The Golden Alchemy Formulation</span>
+</div>
+<span class="font-label-eyebrow text-[9px] uppercase tracking-[0.2em] px-2.5 py-0.5 border border-[#C59B27]/50 rounded-full bg-[#FFFDF9]/80 text-[#715509]">
+              Ritual Sanctuary
+            </span>
+</div>
+<!-- Central Archway with Gilded Filigree & Image -->
+<div class="my-6 relative flex flex-col items-center">
+<!-- Ornamental Crown Crest above Arch -->
+<div class="flex items-center gap-2 text-[#A67C1E]/80 mb-2">
+<span class="h-[1px] w-8 bg-[#C59B27]/50"></span>
+<span class="material-symbols-outlined text-[16px]">wb_twilight</span>
+<span class="h-[1px] w-8 bg-[#C59B27]/50"></span>
+</div>
+<!-- Arch Frame -->
+<div class="relative w-full max-w-sm aspect-[4/5] rounded-t-full border-2 border-[#C59B27]/70 p-2 bg-[#F7F2E7] shadow-[inset_0_2px_12px_rgba(113,85,9,0.1),0_8px_30px_rgba(140,109,35,0.1)]">
+<div class="w-full h-full rounded-t-full overflow-hidden relative border border-[#E3CD96]">
+<img alt="Dragon Glow luxury elixir bottle" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700 ease-out filter brightness-[1.02] contrast-[1.01]" src="https://lh3.googleusercontent.com/aida/AEtjO1USRIouwXQ_b_dhKbrPrAe8u1-qRGCEgNwFq96kZshIn1UXhq5i6LVsZ7LXnRWE76FcwCEqrPAcFBE5bFeu74qO2PYPhaEv8eTiINDfXV0U7EppSi4vgNI9LhWg5vgqGI9DRadKTZna8pPjEQGm_Qmj5WwVB8W_gQhstQMpvuNeTLn2BJl_bMDYZTxe5GmZz3Awa60mFg4kclazCM1xmzCoDfME04ahjeV4mqk3RUSV7bR6byXOCvRupA"/>
+<!-- Subtle vignette and inner golden shadow -->
+<div class="absolute inset-0 bg-gradient-to-t from-[#2B2106]/75 via-transparent to-transparent pointer-events-none"></div>
+<div class="absolute bottom-4 inset-x-4 text-center text-[#FFFDF9] z-10">
+<p class="font-cormorant text-xl tracking-wider font-medium text-[#FFF6DF]">Dragon Elixir N° 1</p>
+<p class="font-label-eyebrow text-[10px] uppercase tracking-widest text-[#E8C16F]/90 mt-0.5">24K Botanical Golden Serum</p>
+</div>
+</div>
+<!-- Arch Filigree Medallion Pin -->
+<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#FAF5E8] border border-[#C59B27] flex items-center justify-center text-[#8C6D23] shadow-sm z-20">
+<span class="material-symbols-outlined text-[15px]">verified</span>
+</div>
+</div>
+</div>
+<!-- Bottom: Classical Roman Numeral Ritual Guide -->
+<div class="relative z-10 pt-4 border-t border-[#D8C294]/50">
+<p class="font-cormorant text-center italic text-[#594412] text-sm mb-3">
+              “Awaken the sovereign radiance dormant within each morning dawn.”
+            </p>
+<div class="grid grid-cols-3 gap-2 text-center">
+<div class="p-2 border border-[#DECDB0] bg-[#FFFDF9]/60 rounded-sm">
+<span class="font-cormorant text-xs font-bold text-[#8C6D23] tracking-widest block">I. PURIFY</span>
+<span class="font-body-sm text-[11px] text-[#5A4F3D] leading-tight block mt-0.5">Nectar Emulsion</span>
+</div>
+<div class="p-2 border border-[#DECDB0] bg-[#FFFDF9]/60 rounded-sm">
+<span class="font-cormorant text-xs font-bold text-[#8C6D23] tracking-widest block">II. INFUSE</span>
+<span class="font-body-sm text-[11px] text-[#5A4F3D] leading-tight block mt-0.5">Golden Drops</span>
+</div>
+<div class="p-2 border border-[#DECDB0] bg-[#FFFDF9]/60 rounded-sm">
+<span class="font-cormorant text-xs font-bold text-[#8C6D23] tracking-widest block">III. SEAL</span>
+<span class="font-body-sm text-[11px] text-[#5A4F3D] leading-tight block mt-0.5">Silk Veil Balm</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Classical Prestige Atelier Sign-In & Registry -->
+<div class="lg:col-span-6 relative p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-[#FFFDF9]">
+<!-- Card Classical Eyebrow & Title -->
+<div class="text-center max-w-md mx-auto mb-6">
+<div class="inline-flex items-center gap-2 text-[#9A7418] mb-1">
+<span class="h-[1px] w-6 bg-[#C59B27]/40"></span>
+<span class="font-cormorant text-[12px] tracking-[0.24em] uppercase font-semibold text-[#82620A]">Registry of Members</span>
+<span class="h-[1px] w-6 bg-[#C59B27]/40"></span>
+</div>
+<h2 class="font-headline-lg font-cormorant text-[32px] sm:text-[36px] text-[#251A00] font-normal tracking-wide">
+              Enter the Sanctuary
+            </h2>
+<div class="w-16 h-[1px] bg-[#C59B27]/60 mx-auto my-2"></div>
+<p class="font-body-sm text-[#665B47] text-[13px] leading-relaxed">
+              Present your apothecary credentials to receive curated formulations, private releases, and ancestral botanical privileges.
+            </p>
+</div>
+<!-- Classical Symmetrical Form -->
+<form class="flex flex-col gap-4 max-w-md mx-auto w-full" id="loginForm" onsubmit="event.preventDefault(); simulateSignIn();">
+<!-- Email Input Field -->
+<div class="flex flex-col gap-1 text-left">
+<div class="flex items-center justify-between">
+<label class="font-cormorant text-[14px] uppercase tracking-wider text-[#4A3C23] font-semibold" for="email">
+                  Client ID or Email
+                </label>
+<span class="font-cormorant italic text-[13px] text-[#8C6D23]">Dragon Codex</span>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-[#A8987D] text-[18px] pointer-events-none">fingerprint</span>
+<input class="w-full h-11 pl-10 pr-3 border border-[#D9CAAF] bg-[#FAF7F0] text-on-surface font-body-sm text-body-sm placeholder:text-[#9F917B] placeholder:italic transition-all duration-200 outline-none focus:bg-[#FFFDF9] focus:border-[#A67C1E] focus:ring-1 focus:ring-[#A67C1E]/50 rounded-none" id="email" name="email" placeholder="patron@maison-dragonglow.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Input Field -->
+<div class="flex flex-col gap-1 text-left">
+<div class="flex items-center justify-between">
+<label class="font-cormorant text-[14px] uppercase tracking-wider text-[#4A3C23] font-semibold" for="password">
+                  Security Passphrase
+                </label>
+<a class="font-cormorant italic text-[13px] text-[#8C6D23] hover:text-[#5B4300] hover:underline transition-colors" href="#">
+                  Lost credentials?
+                </a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-[#A8987D] text-[18px] pointer-events-none">key</span>
+<input class="w-full h-11 pl-10 pr-10 border border-[#D9CAAF] bg-[#FAF7F0] text-on-surface font-body-sm text-body-sm placeholder:text-[#9F917B] placeholder:italic transition-all duration-200 outline-none focus:bg-[#FFFDF9] focus:border-[#A67C1E] focus:ring-1 focus:ring-[#A67C1E]/50 rounded-none" id="password" name="password" placeholder="Enter your confidential cipher" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 text-[#A8987D] hover:text-on-surface p-1 transition-colors focus:outline-none" id="togglePassword" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined text-[18px]" id="pwdIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me & Atelier Guarantee -->
+<div class="flex items-center justify-between py-1">
+<label class="flex items-center gap-2 cursor-pointer select-none group">
+<input class="peer sr-only" id="remember" name="remember" type="checkbox"/>
+<div class="w-4 h-4 border border-[#BFA779] bg-[#FAF7F0] peer-checked:bg-[#8C6D23] flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[13px] text-white opacity-0 peer-checked:opacity-100 font-bold">check</span>
+</div>
+<span class="font-cormorant text-[14px] text-[#554731] group-hover:text-black transition-colors">
+                  Preserve session token on this terminal
+                </span>
+</label>
+</div>
+<!-- Heritage Seal Button: Enter the Sanctuary -->
+<div class="pt-2">
+<button class="relative w-full h-12 bg-gradient-to-r from-[#B58C28] via-[#C99E33] to-[#A37B1B] text-[#FFFDF6] font-cormorant text-[16px] uppercase tracking-[0.2em] font-semibold flex items-center justify-center gap-2 border border-[#856312] shadow-[0_4px_16px_rgba(181,140,40,0.28)] hover:shadow-[0_6px_22px_rgba(181,140,40,0.4)] hover:brightness-105 active:scale-[0.99] transition-all duration-200" id="submitBtn" type="submit">
+<!-- Inner gold line border on button -->
+<span class="absolute inset-1 border border-[#FFE7A8]/30 pointer-events-none"></span>
+<span class="material-symbols-outlined text-[17px] text-[#FFF4D0]">workspace_premium</span>
+<span id="btnText">Enter the Sanctuary</span>
+<span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+</button>
+</div>
+</form>
+<!-- Symmetrical Gilded Divider -->
+<div class="relative flex items-center justify-center my-6 max-w-md mx-auto w-full">
+<div class="w-full h-[1px] bg-[#E3D3B0]"></div>
+<div class="absolute px-3 bg-[#FFFDF9] flex items-center gap-1.5 text-[#A67C1E]">
+<span class="text-[10px]">✦</span>
+<span class="font-cormorant text-[12px] uppercase tracking-widest text-[#7D6638]">Alternative Access</span>
+<span class="text-[10px]">✦</span>
+</div>
+</div>
+<!-- Social Authentication Buttons: Refined Classical Ivory Style -->
+<div class="grid grid-cols-2 gap-3 max-w-md mx-auto w-full">
+<button class="h-10 px-3 border border-[#DACBB0] bg-[#FAF8F3] hover:bg-[#F2ECE0] transition-colors flex items-center justify-center gap-2 text-on-surface font-body-sm text-[12px] text-[#423725]" onclick="simulateSocial('Google')" type="button">
+<svg class="w-3.5 h-3.5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span class="font-cormorant font-semibold tracking-wider uppercase text-[12px]">Google</span>
+</button>
+<button class="h-10 px-3 border border-[#DACBB0] bg-[#FAF8F3] hover:bg-[#F2ECE0] transition-colors flex items-center justify-center gap-2 text-on-surface font-body-sm text-[12px] text-[#423725]" onclick="simulateSocial('Apple')" type="button">
+<svg class="w-3.5 h-3.5 fill-current text-on-surface" viewbox="0 0 24 24">
+<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.75 1.04-1.8 0.93-2.84-.9.04-2 .6-2.64 1.34-.56.64-1.05 1.7-0.92 2.71 1 .08 2.02-.48 2.63-1.21z"></path>
+</svg>
+<span class="font-cormorant font-semibold tracking-wider uppercase text-[12px]">Apple ID</span>
+</button>
+</div>
+<!-- Bottom Heritage Invitation -->
+<div class="mt-6 pt-3 text-center border-t border-[#EFE5D0] max-w-md mx-auto w-full">
+<p class="font-cormorant text-[15px] text-[#473C27]">
+              Not yet inscribed in our ledger?
+              <a class="text-[#8C6D23] font-semibold hover:text-[#523C02] underline underline-offset-4 ml-1" href="#">
+                Request Atelier Initiation
+              </a>
+</p>
+<div class="flex items-center justify-center gap-2 mt-2 text-[10px] text-[#8C8068] font-label-eyebrow uppercase tracking-widest">
+<span>Pure Botanical Distillation</span>
+<span>•</span>
+<span>Certified Cruelty-Free</span>
+</div>
+</div>
+<!-- Interactive Toast Alert -->
+<div class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-[#2D240E] text-[#FFFDF8] font-cormorant text-sm border border-[#C59B27] shadow-xl flex items-center gap-2 transition-all z-30" id="authAlert">
+<span class="material-symbols-outlined text-[#E8C16F] text-[18px]">verified</span>
+<span id="alertMsg">Signed in successfully</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Classical Heritage Footer -->
+<footer class="w-full py-5 text-center font-cormorant text-[13px] tracking-widest text-[#7A6A4E] uppercase relative z-20 flex flex-col items-center gap-1">
+<div class="flex items-center gap-3 text-xs">
+<span>Heritage Atelier San Francisco</span>
+<span>•</span>
+<span>Fifth Avenue New York</span>
+<span>•</span>
+<span>Parisian Archive</span>
+</div>
+<div class="text-[11px] text-[#9E8E72] mt-0.5 tracking-wider">
+      © 2026 Dragon Glow Cosmetics Inc. All rights reserved.
+    </div>
+</footer>
+<script>
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('password');
+      const pwdIcon = document.getElementById('pwdIcon');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        pwdIcon.innerText = 'visibility_off';
+      } else {
+        pwdInput.type = 'password';
+        pwdIcon.innerText = 'visibility';
+      }
+    }
+
+    function showAlert(msg) {
+      const alertBox = document.getElementById('authAlert');
+      const alertMsg = document.getElementById('alertMsg');
+      alertMsg.innerText = msg;
+      alertBox.classList.remove('hidden');
+      setTimeout(() => {
+        alertBox.classList.add('hidden');
+      }, 3400);
+    }
+
+    function simulateSignIn() {
+      const email = document.getElementById('email').value;
+      const btnText = document.getElementById('btnText');
+      btnText.innerText = 'Consulting Archive...';
+      setTimeout(() => {
+        btnText.innerText = 'Enter the Sanctuary';
+        showAlert('Sanctuary Access Granted to ' + (email.split('@')[0] || 'Patron'));
+      }, 700);
+    }
+
+    function simulateSocial(provider) {
+      showAlert('Authenticating with ' + provider + ' credentials...');
+    }
+  </script>
+</body></html>

@@ -49,7 +49,7 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
                     if ( '#' !== $social['url'] ) :
                     ?>
                     <a href="<?php echo esc_url( $social['url'] ); ?>"
-                       class="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center hover:bg-white transition-all text-primary"
+                       class="dg-footer-social-link"
                        rel="noopener noreferrer"
                        target="_blank"
                        aria-label="<?php echo esc_attr( $social['label'] ); ?>">
@@ -66,10 +66,10 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         <div class="w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Customer Care', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
-                <li><a href="<?php echo esc_url( $shipping_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Shipping & Returns', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $faq_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'FAQ', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $gift_cards_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Gift Cards', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $help_center_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Help Center', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $shipping_url ); ?>" class="dg-footer-link" <?php echo is_page_template( 'page-templates/template-shipping-returns.php' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Shipping & Returns', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $faq_url ); ?>" class="dg-footer-link" <?php echo is_page( 'faq' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'FAQ', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $gift_cards_url ); ?>" class="dg-footer-link" <?php echo is_page( 'gift-cards' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Gift Cards', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $help_center_url ); ?>" class="dg-footer-link" <?php echo is_page( 'help-center' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Help Center', 'dragon-glow' ); ?></a></li>
             </ul>
         </div>
 
@@ -77,10 +77,10 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         <div class="w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Company', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
-                <li><a href="<?php echo esc_url( $about_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'About Us', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $ingredients_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Our Ingredients', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $sustainability_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Sustainability', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $careers_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Careers', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $about_url ); ?>" class="dg-footer-link" <?php echo is_page( 'our-story' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'About Us', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $ingredients_url ); ?>" class="dg-footer-link" <?php echo is_page( 'our-ingredients' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Our Ingredients', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $sustainability_url ); ?>" class="dg-footer-link" <?php echo is_page( 'sustainability' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Sustainability', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $careers_url ); ?>" class="dg-footer-link" <?php echo is_page( 'careers' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Careers', 'dragon-glow' ); ?></a></li>
             </ul>
         </div>
 
@@ -88,10 +88,10 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         <div class="w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Legal', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
-                <li><a href="<?php echo esc_url( $privacy_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Privacy Policy', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $tos_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Terms of Service', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $cookie_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Cookie Policy', 'dragon-glow' ); ?></a></li>
-                <li><a href="<?php echo esc_url( $access_url ); ?>" class="hover:text-primary transition-all"><?php esc_html_e( 'Accessibility', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $privacy_url ); ?>" class="dg-footer-link" <?php echo is_page( 'privacy-policy' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Privacy Policy', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $tos_url ); ?>" class="dg-footer-link" <?php echo is_page( 'terms-of-service' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Terms of Service', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $cookie_url ); ?>" class="dg-footer-link" <?php echo is_page( 'cookie-policy' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Cookie Policy', 'dragon-glow' ); ?></a></li>
+                <li><a href="<?php echo esc_url( $access_url ); ?>" class="dg-footer-link" <?php echo is_page( 'accessibility' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Accessibility', 'dragon-glow' ); ?></a></li>
             </ul>
         </div>
     </div>

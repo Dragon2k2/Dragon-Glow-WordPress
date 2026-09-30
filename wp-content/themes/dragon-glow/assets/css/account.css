@@ -2748,3 +2748,15 @@ html.dg-account-confirm-open {
 	white-space: nowrap;
 	border-width: 0;
 }
+
+/* =========================================
+   18. HIDE EMAIL VERIFICATION NOTICE
+   ========================================= */
+
+/* Hide WooCommerce email verification notice on account dashboard.
+   WC automatically adds this notice when a user logs in without confirming
+   their email. We hide it because it's intrusive and not critical for UX.
+   Target: .woocommerce-info containing link with wc_send_verification param. */
+.dg-account-panel .woocommerce-info:has(a[href*="wc_send_verification"]) {
+	display: none !important;
+}

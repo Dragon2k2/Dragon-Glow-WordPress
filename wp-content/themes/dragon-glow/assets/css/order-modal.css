@@ -573,6 +573,29 @@ body.dg-order-modal-open {
    17. LOADING SPINNER ANIMATION
    ========================================= */
 
+.dg-order-modal__loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+	padding: 2rem;
+	color: var(--color-muted-slate, #8E8E8E);
+}
+
+.dg-order-modal__spinner {
+	font-size: 48px;
+	animation: dg-spin 1s linear infinite;
+	color: var(--color-accent-gold, #C9A24B);
+	margin-bottom: 1rem;
+}
+
+.dg-order-modal__loading-text {
+	font-size: 0.95rem;
+	font-weight: 500;
+	margin: 0;
+}
+
 @keyframes dg-spin {
 	from {
 		transform: rotate(0deg);
@@ -583,12 +606,25 @@ body.dg-order-modal-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.dg-order-modal__spinner {
+		animation: dg-pulse 2s ease-in-out infinite;
+	}
+
 	@keyframes dg-spin {
 		from {
 			transform: rotate(0deg);
 		}
 		to {
 			transform: rotate(0deg);
+		}
+	}
+
+	@keyframes dg-pulse {
+		0%, 100% {
+			opacity: 0.6;
+		}
+		50% {
+			opacity: 1;
 		}
 	}
 }

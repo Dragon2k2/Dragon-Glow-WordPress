@@ -1,0 +1,71 @@
+/* =========================================
+   DRAGON GLOW — FOOTER STYLES
+   Global footer with link active/hover states
+   ========================================= */
+
+/* =========================================
+   FOOTER LINK STATES
+   Matching header navigation patterns
+   ========================================= */
+
+/* Footer links — base state */
+.dg-footer-link {
+	color: var(--color-on-secondary-container);
+	transition: color 0.3s ease, opacity 0.3s ease;
+	position: relative;
+}
+
+/* Footer links — hover state (match header hover) */
+.dg-footer-link:hover {
+	color: var(--color-primary);
+}
+
+/* Footer links — active state (current page, match header active gold) */
+.dg-footer-link.is-active,
+.dg-footer-link[aria-current="page"] {
+	color: var(--color-accent-gold);
+	font-weight: 400;
+}
+
+/* Social icons — match existing pattern, ensure consistent hover */
+.dg-footer-social-link {
+	width: 2.5rem; /* 40px */
+	height: 2.5rem;
+	border-radius: 9999px;
+	background: rgba(255, 255, 255, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-primary);
+	transition: all 0.3s ease;
+}
+
+.dg-footer-social-link:hover {
+	background: rgba(255, 255, 255, 1);
+	transform: translateY(-2px);
+}
+
+/* =========================================
+   ACCESSIBILITY — REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-footer-link,
+	.dg-footer-social-link {
+		transition: none;
+	}
+	
+	.dg-footer-social-link:hover {
+		transform: none;
+	}
+}
+
+/* =========================================
+   FOCUS STATES
+   ========================================= */
+
+.dg-footer-link:focus-visible,
+.dg-footer-social-link:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 4px;
+}

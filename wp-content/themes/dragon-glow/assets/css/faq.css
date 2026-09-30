@@ -13,8 +13,6 @@
 .dg-faq {
 	/* ── Semantic aliases → global tokens ── */
 	--faq-surface: var(--color-surface, #fbf9f5);
-	--faq-surface-low: var(--color-surface-container, #efeeea);   /* --color-surface-container-low không có trong :root */
-	--faq-surface-container: var(--color-surface-container-high, #eae8e4);
 	--faq-ink: var(--color-on-surface, #1b1c1a);
 	--faq-muted: var(--color-on-surface-variant, #504444);
 	--faq-line: var(--color-outline-variant, #d4c2c2);
@@ -23,10 +21,14 @@
 
 	/* ── Alpha / opacity variants (derive từ --color-tertiary-container / --color-surface) ── */
 	--faq-line-soft: rgba(212, 194, 194, 0.5);   /* --color-outline-variant @50% */
-	--faq-gold-soft: rgba(241, 202, 80, 0.4);    /* --color-tertiary-container @40% */
-	--faq-gold-glow: rgba(241, 202, 80, 0.15);   /* --color-tertiary-container @15% */
 	--faq-gold-bright: #d4af37;                  /* brand gold accent, không có trong :root */
 	--faq-glass: rgba(251, 249, 245, 0.8);       /* --color-surface @80% */
+
+	/* ── Card border-accent tokens (component layer, per §8a) ── */
+	--faq-card-border-left-hover: rgba(var(--gold-rgb), 0.4);   /* --color-accent-gold @40% */
+	--faq-card-bg-open: linear-gradient(90deg, rgba(var(--gold-rgb), 0.06) 0%, var(--faq-surface) 40%);
+	--faq-card-shadow-open: 0 4px 20px rgba(var(--gold-rgb), 0.1);
+	--faq-q-color-open: var(--color-primary, #735c00);
 
 	color: var(--faq-ink);
 	background: var(--faq-surface);
@@ -293,13 +295,17 @@
 	display: none;
 }
 
-/* ── Card (glass-panel + ghost-border) ─── */
+/* ── Card (gold left-border accent) ──────
+   Style: border-left 3px trong suốt → gold khi active.
+   Left-border pattern dễ scan theo chiều đứng, phù hợp
+   danh sách FAQ dài. ── */
 .dg-faq-card {
 	position: relative;
 	border-radius: var(--faq-radius);
 	padding: clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2rem);
-	background: var(--faq-surface-low);
-	border: 1px solid var(--faq-line-soft);
+	background: var(--faq-surface);
+	border: 1px solid var(--faq-line);
+	border-left: 3px solid transparent;
 	transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 	overflow: hidden;
 }
@@ -307,29 +313,22 @@
 /* Hover (chỉ thiết bị có con trỏ) */
 @media (hover: hover) {
 	.dg-faq-card--ghost:hover {
-		background: var(--faq-surface-container);
-	}
-	.dg-faq-card--ghost:hover .dg-faq-q {
-		color: var(--faq-gold);
-	}
-	.dg-faq-card--ghost:hover .dg-faq-icon {
-		color: var(--faq-gold);
+		border-left-color: var(--faq-card-border-left-hover);
 	}
 }
 
-/* Active: glass-panel + gold aura */
+/* Active: gold left-border + tinted gradient wash */
 .dg-faq-card.is-open {
-	background: var(--faq-glass);
-	border-color: var(--faq-gold-soft);
-	box-shadow: 0 4px 30px var(--faq-gold-glow);
-	-webkit-backdrop-filter: blur(20px);
-	backdrop-filter: blur(20px);
+	border-left-color: var(--color-accent-gold);
+	background: var(--faq-card-bg-open);
+	box-shadow: var(--faq-card-shadow-open);
 }
 .dg-faq-card.is-open .dg-faq-q {
-	color: var(--faq-ink);
+	color: var(--faq-q-color-open);
+	font-weight: 600;
 }
 .dg-faq-card.is-open .dg-faq-icon {
-	color: var(--faq-gold);
+	color: var(--color-accent-gold);
 	transform: rotate(180deg);
 }
 
