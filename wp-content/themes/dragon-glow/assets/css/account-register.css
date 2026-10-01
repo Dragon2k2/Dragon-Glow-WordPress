@@ -1,0 +1,1181 @@
+/* =========================================
+   DRAGON GLOW — MY ACCOUNT: REGISTER PAGE
+   "Luminous Radiance" design — Playfair Display + Plus Jakarta Sans.
+   Port of stitch_dragon_glow_auth_portal/đăng-ký reference (100% match).
+   Enqueued ONLY when viewing /my-account/register/ endpoint.
+   All selectors scoped to `.dg-account-auth--register*` so this file
+   never touches sign-in page or dashboard. Tokens consumed here are
+   defined in style.css `:root` under "COMPONENT TOKENS (Layer 3: Register Page)".
+   ========================================= */
+
+/* =========================================
+   0. PAGE LAYOUT & CONTAINER
+   ========================================= */
+
+.dg-account--register {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	padding: 12px 20px;
+	background: var(--register-bg);
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	color: var(--register-text-primary);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 640px) {
+	.dg-account--register {
+		padding: 20px;
+	}
+}
+
+/* Selection highlight */
+.dg-account--register ::selection {
+	background: rgba(232, 193, 111, 0.3);
+	color: var(--register-gold-primary);
+}
+
+/* =========================================
+   1. VIEWPORT FRAME & CORNER FLOURISHES
+   (Reuse from account-auth.css structure)
+   ========================================= */
+
+.dg-account-auth--register .dg-account-auth__viewport-frame--outer {
+	inset: 8px;
+	border: 1px solid var(--register-frame-outer);
+}
+
+.dg-account-auth--register .dg-account-auth__viewport-frame--inner {
+	inset: 14px;
+	border: 1px solid var(--register-frame-inner);
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth--register .dg-account-auth__viewport-frame--outer {
+		inset: 12px;
+	}
+
+	.dg-account-auth--register .dg-account-auth__viewport-frame--inner {
+		inset: 20px;
+	}
+}
+
+.dg-account-auth--register .dg-account-auth__corner-flourish {
+	color: var(--register-flourish);
+}
+
+/* =========================================
+   2. SYMMETRICAL CLASSICAL CREST HEADER
+   ========================================= */
+
+.dg-account-auth__crest-header {
+	width: 100%;
+	padding: 24px 0 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	position: relative;
+	z-index: 20;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__crest-header {
+		padding: 32px 0 24px;
+	}
+}
+
+/* Ornamental lines + badge */
+.dg-account-auth__crest-ornaments {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 8px;
+	color: var(--register-gold-primary);
+}
+
+.dg-account-auth__crest-line {
+	display: block;
+	width: 48px;
+	height: 1px;
+	background: linear-gradient(to right, transparent, var(--register-border-secondary), var(--register-gold-primary));
+}
+
+.dg-account-auth__crest-line:last-child {
+	background: linear-gradient(to left, transparent, var(--register-border-secondary), var(--register-gold-primary));
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__crest-line {
+		width: 80px;
+	}
+}
+
+.dg-account-auth__crest-badge {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.dg-account-auth__crest-badge .material-symbols-outlined {
+	font-size: 15px;
+	color: #A67C1E;
+}
+
+.dg-account-auth__crest-text {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.25em;
+	color: var(--register-gold-primary);
+}
+
+/* Brand link */
+.dg-account-auth__brand-link {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+	transition: transform 0.3s ease;
+}
+
+.dg-account-auth__brand-link:hover {
+	transform: scale(1.005);
+}
+
+.dg-account-auth__brand-title {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 36px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: #3B2D05;
+	margin: 0;
+	line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__brand-title {
+		font-size: 44px;
+	}
+}
+
+.dg-account-auth__brand-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.dg-account-auth__brand-rule {
+	width: 8px;
+	height: 1px;
+	background: var(--register-border-secondary);
+}
+
+.dg-account-auth__brand-tagline {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.28em;
+	color: #7A6432;
+	margin: 0;
+	line-height: 1;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__brand-tagline {
+		font-size: 11px;
+	}
+}
+
+/* =========================================
+   3. MAIN PANEL CONTAINER
+   ========================================= */
+
+.dg-account-auth__panel--register {
+	width: 100%;
+	max-width: 1240px;
+	margin: 0 auto;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	padding: 8px 0;
+	position: relative;
+	z-index: 10;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__panel--register {
+		padding: 16px 0;
+	}
+}
+
+.dg-account-auth__panel-inner {
+	width: 100%;
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-radius: 16px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+	border: 1px solid var(--register-border-primary);
+	position: relative;
+	overflow: hidden;
+	transition: all 0.5s ease;
+}
+
+/* Ambient golden glow wash */
+.dg-account-auth__glow {
+	position: absolute;
+	pointer-events: none;
+	z-index: 0;
+	width: 384px;
+	height: 384px;
+	border-radius: 50%;
+	filter: blur(96px);
+}
+
+.dg-account-auth__glow--tl {
+	top: -128px;
+	left: -128px;
+	background: var(--register-glow-tl);
+}
+
+.dg-account-auth__glow--br {
+	bottom: -128px;
+	right: -128px;
+	background: var(--register-glow-br);
+}
+
+/* Toast notification */
+.dg-account-auth__toast {
+	position: fixed;
+	top: 32px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 24px;
+	background: var(--register-surface-container-lowest);
+	border: 1px solid var(--register-border-primary);
+	border-radius: 9999px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--register-text-primary);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dg-account-auth__toast[hidden] {
+	opacity: 0;
+	transform: translateX(-50%) translateY(-10px);
+	pointer-events: none;
+}
+
+.dg-account-auth__toast .material-symbols-outlined {
+	font-size: 18px;
+	color: var(--register-gold-primary);
+}
+
+/* Inner filigree ornamental frame */
+.dg-account-auth__panel-grid {
+	margin: 12px;
+	padding: 16px;
+	border-radius: 12px;
+	border: 1px solid var(--register-border-secondary);
+	background: rgba(252, 250, 246, 0.9);
+	position: relative;
+	z-index: 1;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__panel-grid {
+		margin: 16px;
+		padding: 24px;
+	}
+}
+
+@media (min-width: 768px) {
+	.dg-account-auth__panel-grid {
+		margin: 20px;
+		padding: 32px;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 32px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.dg-account-auth__panel-grid {
+		grid-template-columns: 5fr 7fr;
+		gap: 40px;
+	}
+}
+
+/* =========================================
+   4. LEFT COLUMN — HERITAGE RITUAL SHOWCASE
+   ========================================= */
+
+.dg-account-auth__showcase-col {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	position: relative;
+}
+
+@media (max-width: 1023px) {
+	.dg-account-auth__showcase-col {
+		margin-bottom: 32px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.dg-account-auth__showcase-col {
+		padding-right: 32px;
+	}
+}
+
+/* Central separator line (desktop only) */
+.dg-account-auth__col-separator {
+	display: none;
+}
+
+@media (min-width: 1024px) {
+	.dg-account-auth__col-separator {
+		display: block;
+		position: absolute;
+		right: -20px;
+		top: 16px;
+		bottom: 16px;
+		width: 1px;
+		background: linear-gradient(to bottom, transparent, var(--register-border-secondary), transparent);
+	}
+}
+
+/* Showcase header */
+.dg-account-auth__showcase-header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.dg-account-auth__showcase-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.dg-account-auth__eyebrow {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: var(--register-text-eyebrow);
+}
+
+.dg-account-auth__sanctuary-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 9999px;
+	background: var(--register-surface-container);
+	border: 1px solid var(--register-border-primary);
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--register-gold-primary);
+}
+
+.dg-account-auth__pulse-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--register-border-secondary);
+	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.dg-account-auth__showcase-title {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 24px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: #332505;
+	margin: 0;
+	line-height: 1.3;
+}
+
+.dg-account-auth__title-rule {
+	display: block;
+	width: 64px;
+	height: 1px;
+	background: linear-gradient(to right, var(--register-border-secondary), transparent);
+}
+
+/* =========================================
+   4a. ARCHED ROMAN SILHOUETTE SHOWCASE
+   ========================================= */
+
+.dg-account-auth__arched-frame {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* Crown motif above arch */
+.dg-account-auth__crown-motif {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	color: rgba(197, 155, 39, 0.8);
+	font-size: 12px;
+}
+
+.dg-account-auth__crown-motif .material-symbols-outlined {
+	font-size: 18px;
+}
+
+/* Roman arched picture frame */
+.dg-account-auth__arch-border {
+	position: relative;
+	width: 100%;
+	max-width: 290px;
+	aspect-ratio: 4 / 5;
+	border-radius: 50% 50% 16px 16px;
+	padding: 6px;
+	background: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transition: transform 0.5s ease;
+}
+
+.dg-account-auth__arched-frame:hover .dg-account-auth__arch-border {
+	transform: scale(1.015);
+}
+
+.dg-account-auth__arch-inner {
+	width: 100%;
+	height: 100%;
+	border-radius: 50% 50% 12px 12px;
+	overflow: hidden;
+	position: relative;
+	background: var(--register-surface-container);
+}
+
+.dg-account-auth__arch-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	transition: transform 0.7s ease;
+}
+
+.dg-account-auth__arched-frame:hover .dg-account-auth__arch-img {
+	transform: scale(1.05);
+}
+
+.dg-account-auth__arch-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(31, 28, 24, 0.6) 0%, transparent 50%);
+	pointer-events: none;
+}
+
+.dg-account-auth__arch-label {
+	position: absolute;
+	bottom: 12px;
+	left: 12px;
+	right: 12px;
+	text-align: center;
+	color: #FFF7EC;
+	z-index: 1;
+}
+
+.dg-account-auth__arch-eyebrow {
+	display: block;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 9px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.22em;
+	color: #FFE8A3;
+	margin-bottom: 2px;
+}
+
+.dg-account-auth__arch-name {
+	display: block;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	color: #FFF7EC;
+}
+
+/* Product caption */
+.dg-account-auth__arch-caption {
+	margin-top: 12px;
+	text-align: center;
+	max-width: 360px;
+}
+
+.dg-account-auth__arch-spec {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #735700;
+	margin: 0 0 6px;
+}
+
+.dg-account-auth__arch-quote {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	font-style: italic;
+	line-height: 1.6;
+	color: var(--register-text-secondary);
+	margin: 0;
+	padding: 0 8px;
+}
+
+/* =========================================
+   4b. INITIATION PRIVILEGES — 3 GILDED CARDS
+   ========================================= */
+
+.dg-account-auth__privileges {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.dg-account-auth__privilege-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 10px;
+	border-radius: 8px;
+	background: var(--register-card-bg);
+	border: 1px solid var(--register-card-border);
+	transition: background 0.2s ease;
+}
+
+.dg-account-auth__privilege-card:hover {
+	background: var(--register-card-hover-bg);
+}
+
+.dg-account-auth__privilege-num {
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: var(--register-badge-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--register-gold-primary);
+}
+
+.dg-account-auth__privilege-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.dg-account-auth__privilege-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.dg-account-auth__privilege-title {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #3B2D05;
+	margin: 0;
+	flex: 1;
+}
+
+.dg-account-auth__privilege-badge {
+	flex-shrink: 0;
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: var(--register-badge-bg);
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--register-gold-primary);
+}
+
+.dg-account-auth__privilege-text {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12px;
+	line-height: 1.5;
+	color: var(--register-text-secondary);
+	margin: 0;
+}
+
+.dg-account-auth__privilege-code {
+	font-family: 'Monaco', 'Courier New', monospace;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--register-gold-primary);
+}
+
+/* =========================================
+   5. RIGHT COLUMN — INITIATION FORM
+   ========================================= */
+
+.dg-account-auth__form-col {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+/* Form header */
+.dg-account-auth__form-header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.dg-account-auth__form-eyebrow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.22em;
+	color: var(--register-text-eyebrow);
+}
+
+.dg-account-auth__form-title {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 28px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	color: var(--register-text-heading);
+	margin: 0;
+	line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+	.dg-account-auth__form-title {
+		font-size: 32px;
+	}
+}
+
+.dg-account-auth__form-subtitle {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--register-text-secondary);
+	margin: 0;
+	max-width: 560px;
+}
+
+/* =========================================
+   5a. REGISTRATION FORM
+   ========================================= */
+
+.dg-register-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* Row (2 fields side-by-side on desktop) */
+.dg-register-form__row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+@media (min-width: 640px) {
+	.dg-register-form__row {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+/* Field */
+.dg-register-form__field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.dg-register-form__label {
+	display: block;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #5B4300;
+}
+
+.dg-register-form__required {
+	color: var(--register-gold-primary);
+}
+
+/* Input wrap */
+.dg-register-form__input-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.dg-register-form__input {
+	width: 100%;
+	height: 44px;
+	padding: 0 14px 0 48px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	color: var(--register-text-primary);
+	background: var(--register-input-bg);
+	border: 1px solid var(--register-input-border);
+	border-radius: 8px;
+	outline: none;
+	transition: all 0.2s ease;
+}
+
+.dg-register-form__input::placeholder {
+	color: var(--register-outline);
+	opacity: 0.6;
+}
+
+.dg-register-form__input:focus {
+	background: var(--register-input-bg-focus);
+	border-color: var(--register-input-border-focus);
+	box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.2);
+}
+
+/* Icon (left) */
+.dg-register-form__icon {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 18px;
+	color: rgba(115, 85, 9, 0.4);
+	pointer-events: none;
+}
+
+/* Toggle button (password visibility) */
+.dg-register-form__toggle {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 4px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: rgba(115, 85, 9, 0.6);
+	transition: color 0.2s ease;
+}
+
+.dg-register-form__toggle:hover {
+	color: var(--register-gold-primary);
+}
+
+.dg-register-form__toggle .material-symbols-outlined {
+	font-size: 19px;
+}
+
+/* Select (dropdown) */
+.dg-register-form__input-wrap--select {
+	position: relative;
+}
+
+.dg-register-form__input--select {
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	padding-right: 48px;
+	cursor: pointer;
+}
+
+.dg-register-form__input-wrap--select .dg-register-form__icon {
+	right: 12px;
+	left: auto;
+	pointer-events: none;
+	color: rgba(115, 85, 9, 0.6);
+	font-size: 19px;
+}
+
+/* =========================================
+   5b. PASSWORD STRENGTH INDICATOR
+   ========================================= */
+
+.dg-register-form__strength {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 4px;
+}
+
+.dg-register-form__strength-bars {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	max-width: 280px;
+}
+
+.dg-register-form__strength-bar {
+	height: 4px;
+	flex: 1;
+	border-radius: 9999px;
+	background: var(--register-strength-bg);
+	transition: all 0.3s ease;
+}
+
+.dg-register-form__strength-text {
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	font-style: italic;
+	color: var(--register-text-secondary);
+	white-space: nowrap;
+}
+
+/* Strength levels (set by JS) */
+.dg-register-form__strength-bar[data-strength="weak"] {
+	background: var(--register-strength-weak);
+}
+
+.dg-register-form__strength-bar[data-strength="fair"] {
+	background: var(--register-strength-fair);
+}
+
+.dg-register-form__strength-bar[data-strength="good"] {
+	background: var(--register-strength-good);
+}
+
+.dg-register-form__strength-bar[data-strength="strong"] {
+	background: var(--register-strength-strong);
+}
+
+/* =========================================
+   5c. CHECKBOXES
+   ========================================= */
+
+.dg-register-form__checkboxes {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.dg-register-form__checkbox {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	cursor: pointer;
+}
+
+.dg-register-form__checkbox input[type="checkbox"] {
+	margin-top: 4px;
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	border-radius: 4px;
+	border: 1.5px solid var(--register-gold-container);
+	cursor: pointer;
+	accent-color: var(--register-gold-primary);
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:focus {
+	outline: 2px solid var(--register-input-border-focus);
+	outline-offset: 2px;
+}
+
+.dg-register-form__checkbox-text {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12.5px;
+	line-height: 1.5;
+	color: var(--register-text-secondary);
+}
+
+.dg-register-form__checkbox-text a {
+	color: var(--register-gold-primary);
+	text-decoration: underline;
+	font-weight: 500;
+	transition: color 0.2s ease;
+}
+
+.dg-register-form__checkbox-text a:hover {
+	color: var(--register-gold-variant);
+}
+
+/* =========================================
+   5d. PRIMARY SUBMISSION CTA
+   ========================================= */
+
+.dg-register-form__submit {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 14px 24px;
+	margin-top: 8px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--register-btn-text);
+	background: var(--register-btn-gradient);
+	border: 1px solid var(--register-btn-border);
+	border-radius: 9999px;
+	box-shadow: var(--register-btn-shadow);
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.dg-register-form__submit:hover {
+	transform: scale(1.01);
+	box-shadow: var(--register-btn-shadow-hover);
+}
+
+.dg-register-form__submit:active {
+	transform: scale(0.99);
+}
+
+.dg-register-form__submit .material-symbols-outlined {
+	font-size: 19px;
+}
+
+/* =========================================
+   5e. ALTERNATIVE ACCESSION DIVIDER
+   ========================================= */
+
+.dg-register-form__divider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 4px 0;
+}
+
+.dg-register-form__divider-line {
+	flex: 1;
+	height: 1px;
+	background: var(--register-border-secondary);
+}
+
+.dg-register-form__divider-text {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 16px;
+	background: rgba(252, 250, 246, 0.9);
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.24em;
+	color: #7A6432;
+	white-space: nowrap;
+}
+
+/* =========================================
+   5f. SOCIAL ACCESS BUTTONS
+   ========================================= */
+
+.dg-register-form__social {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+}
+
+.dg-register-form__social-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 40px;
+	padding: 0 16px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--register-text-primary);
+	background: var(--register-surface-container-lowest);
+	border: 1px solid var(--register-input-border);
+	border-radius: 9999px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.dg-register-form__social-btn:hover:not(:disabled) {
+	background: rgba(232, 217, 181, 0.2);
+	border-color: var(--register-border-secondary);
+	box-shadow: 0 2px 8px rgba(197, 155, 39, 0.12);
+}
+
+.dg-register-form__social-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.dg-register-form__social-icon {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+/* =========================================
+   5g. EXISTING MEMBER SIGN-IN PROMPT
+   ========================================= */
+
+.dg-register-form__signin-prompt {
+	text-align: center;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
+	color: var(--register-text-secondary);
+	margin: 4px 0 0;
+	padding-top: 4px;
+}
+
+.dg-register-form__signin-link {
+	margin-left: 4px;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	color: var(--register-gold-primary);
+	text-decoration: underline;
+	transition: color 0.2s ease;
+}
+
+.dg-register-form__signin-link:hover {
+	color: var(--register-gold-variant);
+}
+
+/* =========================================
+   6. APOTHECARY AUTHENTICATION MICRO-BADGE
+   ========================================= */
+
+.dg-account-auth__footnote {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 16px 24px;
+	margin-top: 16px;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: rgba(140, 109, 35, 0.8);
+}
+
+.dg-account-auth__footnote-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.dg-account-auth__footnote-item .material-symbols-outlined {
+	font-size: 14px;
+}
+
+.dg-account-auth__footnote-dot {
+	color: rgba(140, 109, 35, 0.6);
+	font-size: 10px;
+}
+
+/* =========================================
+   7. CLASSICAL HERITAGE FOOTER
+   ========================================= */
+
+.dg-account-auth__heritage-footer {
+	width: 100%;
+	padding: 20px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	text-align: center;
+	font-family: 'Cormorant Garamond', Georgia, serif;
+	position: relative;
+	z-index: 20;
+}
+
+.dg-account-auth__heritage-locations {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	font-size: 13px;
+	letter-spacing: 0.1em;
+	color: #7A6A4E;
+}
+
+.dg-account-auth__heritage-dot {
+	color: #7A6A4E;
+	font-size: 10px;
+}
+
+.dg-account-auth__heritage-copyright {
+	font-size: 11px;
+	letter-spacing: 0.08em;
+	color: #9E8E72;
+	margin-top: 2px;
+}
+
+/* =========================================
+   8. ACCESSIBILITY & REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Focus visible */
+.dg-register-form__input:focus-visible,
+.dg-register-form__submit:focus-visible,
+.dg-register-form__social-btn:focus-visible {
+	outline: 2px solid var(--register-input-border-focus);
+	outline-offset: 2px;
+}

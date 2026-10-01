@@ -198,6 +198,82 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
 
     /* Component — sanctuary badge ("Ritual Sanctuary" pill, showcase panel) */
     --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8); /* #FFFDF9 @ 80% alpha */
+
+    /* ===== COMPONENT TOKENS (Layer 3: Register Page — Luminous Radiance) ===== */
+    /* Port of stitch_dragon_glow_auth_portal/đăng-ký reference colors.
+       Matches Material Design 3 "Luminous Radiance" scheme from DESIGN.md. */
+    
+    /* Surface & background (ivory parchment tones) */
+    --register-bg: #F7F4EE;                    /* background */
+    --register-surface: #FFF8F3;               /* surface-bright */
+    --register-surface-container: #F4EDE6;     /* surface-container */
+    --register-surface-container-low: #FAF2EB; /* surface-container-low */
+    --register-surface-container-lowest: #FFFFFF; /* surface-container-lowest */
+    
+    /* Text colors */
+    --register-text-primary: #1E1B17;          /* on-surface */
+    --register-text-secondary: #4D4638;        /* on-surface-variant */
+    --register-text-heading: #2A1E02;          /* Darker for headings */
+    --register-text-eyebrow: #715509;          /* primary */
+    
+    /* Primary gold (antique gold palette) */
+    --register-gold-primary: #715509;          /* primary */
+    --register-gold-container: #8C6D23;        /* primary-container */
+    --register-gold-fixed: #FFDF9E;            /* primary-fixed */
+    --register-gold-fixed-dim: #E8C16F;        /* primary-fixed-dim */
+    --register-gold-variant: #5B4300;          /* on-primary-fixed-variant */
+    
+    /* Secondary gold (warmer tones) */
+    --register-gold-secondary: #775A00;        /* secondary */
+    --register-gold-secondary-container: #FECE57; /* secondary-container */
+    --register-gold-secondary-fixed: #FFDF98;  /* secondary-fixed */
+    --register-gold-secondary-fixed-dim: #EEC14B; /* secondary-fixed-dim */
+    
+    /* Tertiary (neutral warm tones) */
+    --register-tertiary: #63583C;              /* tertiary */
+    --register-tertiary-container: #7C7153;    /* tertiary-container */
+    --register-tertiary-fixed: #F1E1BD;        /* tertiary-fixed */
+    
+    /* Outline & borders */
+    --register-outline: #7F7666;               /* outline */
+    --register-outline-variant: #D1C5B3;       /* outline-variant */
+    
+    /* Specific component colors */
+    --register-border-primary: rgba(212, 175, 55, 0.35);  /* #D4AF37 @ 35% */
+    --register-border-secondary: rgba(197, 155, 39, 0.6); /* #C59B27 @ 60% */
+    --register-input-border: rgba(201, 162, 75, 0.35);    /* Gold @ 35% */
+    --register-input-border-focus: #A67C1E;               /* Darker gold */
+    --register-input-bg: rgba(255, 255, 255, 0.9);
+    --register-input-bg-focus: rgba(255, 255, 255, 1);
+    
+    /* Button gradient (wax seal golden gradient) */
+    --register-btn-gradient: linear-gradient(135deg, #DBB13B 0%, #C59B27 50%, #B3871D 100%);
+    --register-btn-border: rgba(255, 225, 130, 0.5);      /* #FFE182 @ 50% */
+    --register-btn-text: #1F1C18;
+    --register-btn-shadow: 0 8px 20px rgba(197, 155, 39, 0.3);
+    --register-btn-shadow-hover: 0 12px 28px rgba(197, 155, 39, 0.4);
+    
+    /* Password strength indicator */
+    --register-strength-bg: rgba(127, 118, 102, 0.4);     /* outline @ 40% */
+    --register-strength-weak: #BA1A1A;                     /* error */
+    --register-strength-fair: #C59B27;                     /* gold */
+    --register-strength-good: #A07817;                     /* darker gold */
+    --register-strength-strong: #3B7A38;                   /* green */
+    
+    /* Privilege cards */
+    --register-card-bg: rgba(250, 242, 235, 0.7);         /* surface-container-low @ 70% */
+    --register-card-border: rgba(212, 175, 55, 0.25);     /* Gold border */
+    --register-card-hover-bg: #F4EDE6;                     /* surface-container */
+    --register-badge-bg: rgba(232, 193, 111, 0.4);        /* primary-fixed-dim @ 40% */
+    
+    /* Ambient glow effects */
+    --register-glow-tl: radial-gradient(circle at top left, rgba(255, 223, 158, 0.25) 0%, rgba(254, 206, 87, 0.1) 40%, transparent 70%);
+    --register-glow-br: radial-gradient(circle at bottom right, rgba(255, 223, 158, 0.2) 0%, rgba(241, 225, 189, 0.1) 40%, transparent 70%);
+    
+    /* Corner flourish & frame */
+    --register-frame-outer: rgba(212, 175, 55, 0.4);      /* #D4AF37 @ 40% */
+    --register-frame-inner: rgba(197, 155, 39, 0.2);      /* #C59B27 @ 20% */
+    --register-flourish: rgba(197, 155, 39, 0.6);         /* #C59B27 @ 60% */
     --auth-sanctuary-badge-text: var(--auth-gold-800);
     --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
 

@@ -207,12 +207,24 @@ function dg_enqueue_scripts_assets(): void {
             );
         }
 
-// Loaded whenever WC is active so the account UI scripts ship alongside
+		// Loaded whenever WC is active so the account UI scripts ship alongside
 		// the page regardless of which endpoint URL was used. Selectors in
 		// account.js only bind to `.dg-account*` elements, so the cost on
 		// other WC pages is just one extra (cached) script.
 		if ( dg_is_woocommerce_active() ) {
 			wp_enqueue_script( 'dg-account', DG_URI . '/assets/js/account.js', array( 'dg-main' ), DG_VERSION, true );
+			
+			// Register endpoint — password strength + form interactions
+			global $wp_query;
+			if ( is_account_page() && isset( $wp_query->query_vars['register'] ) ) {
+				wp_enqueue_script(
+					'dg-account-register',
+					DG_URI . '/assets/js/account-register.js',
+					array( 'dg-main' ),
+					DG_VERSION,
+					true
+				);
+			}
 			
 			// Order detail modal — loads on account pages.
 			// CSS enqueued separately for proper loading order.

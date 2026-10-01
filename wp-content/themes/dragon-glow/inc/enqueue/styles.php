@@ -127,6 +127,26 @@ function dg_enqueue_styles(): void {
 					DG_VERSION
 				);
 			}
+
+			// Register endpoint (/my-account/register/) — Luminous Radiance palette
+			// Port of stitch_dragon_glow_auth_portal/đăng-ký design reference.
+			global $wp_query;
+			if ( is_account_page() && isset( $wp_query->query_vars['register'] ) ) {
+				// Plus Jakarta Sans (body) & Playfair Display (headings) already loaded globally
+				// Cormorant Garamond for heritage flourishes
+				wp_enqueue_style(
+					'dg-cormorant-garamond',
+					'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
+					array(),
+					null
+				);
+				wp_enqueue_style(
+					'dg-account-register',
+					DG_URI . '/assets/css/account-register.css',
+					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
+					DG_VERSION
+				);
+			}
 		}
 	}
 
