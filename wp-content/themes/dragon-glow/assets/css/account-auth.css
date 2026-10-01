@@ -12,9 +12,12 @@
    0. CHROME HIDING (Site header/footer for auth portal)
    ========================================= */
 
-/* Hide site chrome (header-nav, footer-main) when viewing auth portal */
+/* Hide site chrome (header-nav, footer-main, decorative blobs) when
+   viewing auth portal — Heritage Atelier design owns its own background,
+   the global ethereal-blob decoration from header.php must not bleed in. */
 .dg-hide-site-chrome .header-nav,
-.dg-hide-site-chrome .footer-main {
+.dg-hide-site-chrome .footer-main,
+.dg-hide-site-chrome .ethereal-blob {
 	display: none;
 }
 
@@ -155,7 +158,7 @@
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: var(--auth-ink-900);
+	color: var(--auth-brand-title-text);
 	margin: 0;
 	line-height: 1.1;
 }
@@ -297,19 +300,19 @@
 
 .dg-account-auth__dot {
 	color: var(--auth-gold-600);
-	font-size: 12px;
+	font-size: 20px;
 }
 
 .dg-account-auth__sanctuary-badge {
 	display: inline-flex;
 	align-items: center;
-	padding: 4px 12px;
-	font-size: 11px;
-	font-weight: 600;
+	padding: 2px 10px;
+	font-family: var(--auth-sanctuary-badge-font);
+	font-size: 9px;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: var(--auth-gold-900);
-	background: rgba(216, 194, 148, 0.15);
+	color: var(--auth-sanctuary-badge-text);
+	background: var(--auth-sanctuary-badge-bg);
 	border: 1px solid var(--auth-gold-400);
 	border-radius: 9999px;
 	white-space: nowrap;
@@ -414,7 +417,7 @@
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
-	background: var(--auth-ivory-50);
+	background: var(--auth-medallion-bg);
 	border: 1px solid var(--auth-gold-500);
 	display: inline-flex;
 	align-items: center;
@@ -469,7 +472,7 @@
 }
 
 .dg-account-auth__step-sub {
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 11px;
 	line-height: 1.2;
 	color: #5A4F3D;
@@ -633,14 +636,75 @@
 }
 
 .dg-account-auth__panel-col .dg-account-checkbox {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 14px;
 	color: var(--auth-brown-400);
+	cursor: pointer;
+	user-select: none;
 }
 
+/* Custom checkbox — native input hidden but kept accessible (focus/keyboard). */
 .dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"] {
+	position: relative;
+	flex-shrink: 0;
+	width: var(--auth-checkbox-size);
+	height: var(--auth-checkbox-size);
+	margin: 0;
+	appearance: none;
+	background: var(--auth-checkbox-bg);
+	border: 1px solid var(--auth-checkbox-border);
 	border-radius: 0;
-	accent-color: var(--auth-gold-700);
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]::after {
+	content: "";
+	position: absolute;
+	left: 6px;
+	top: 3px;
+	width: 5px;
+	height: 9px;
+	border: solid var(--auth-checkbox-checkmark);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg) scale(0);
+	transform-origin: center;
+	opacity: 0;
+	transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:hover {
+	background: var(--auth-checkbox-bg-hover);
+	border-color: var(--auth-checkbox-border-hover);
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked {
+	background: var(--auth-checkbox-bg-checked);
+	border-color: var(--auth-checkbox-border-checked);
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked:hover {
+	background: var(--auth-checkbox-bg-checked-hover);
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked::after {
+	opacity: 1;
+	transform: rotate(45deg) scale(1);
+}
+
+.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:focus-visible {
+	outline: none;
+	box-shadow: var(--auth-checkbox-shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"],
+	.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]::after {
+		transition: none;
+	}
 }
 
 /* --- Heritage seal submit button --- */
@@ -864,9 +928,73 @@
 	color: #8C8068;
 }
 
+.dg-account-auth__footnote-item {
+	display: inline-flex;
+	gap: 4px;
+}
+
 .dg-account-auth__footnote .material-symbols-outlined {
 	font-size: 14px;
+	line-height: 1;
 	color: rgba(140, 109, 35, 0.8); /* Keep icon color separate */
+}
+
+/* --- Heritage Footer (Classical locations + copyright) --- */
+
+.dg-account-auth__heritage-footer {
+	width: 100%;
+	padding: 20px 0;
+	margin-bottom: clamp(2rem, 4vw, 3rem);
+	text-align: center;
+	font-family: 'Cormorant Garamond', serif;
+	text-transform: uppercase;
+	position: relative;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+}
+
+.dg-account-auth__heritage-locations {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	justify-content: center;
+	font-size: 13px;
+	letter-spacing: 0.14em;
+	color: var(--auth-gold-800);
+	font-weight: 500;
+}
+
+.dg-account-auth__heritage-dot {
+	color: var(--auth-gold-800);
+	font-size: 13px;
+}
+
+.dg-account-auth__heritage-copyright {
+	font-size: 11px;
+	color: var(--auth-gold-700);
+	letter-spacing: 0.1em;
+	margin-top: 2px;
+	font-weight: 500;
+}
+
+/* Responsive footer — stack on small screens */
+@media (max-width: 640px) {
+	.dg-account-auth__heritage-locations {
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.dg-account-auth__heritage-dot {
+		display: none;
+	}
+
+	.dg-account-auth__heritage-footer {
+		padding: 16px 0;
+	}
 }
 
 /* =========================================

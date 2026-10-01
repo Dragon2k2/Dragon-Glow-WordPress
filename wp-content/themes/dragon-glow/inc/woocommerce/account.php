@@ -1393,15 +1393,15 @@ function dg_render_account_signed_out(): void {
 						</p>
 						<div class="dg-account-auth__steps">
 							<div class="dg-account-auth__step">
-								<span class="dg-account-auth__step-label"><?php esc_html_e( 'I. Purify', 'dragon-glow' ); ?></span>
+								<span class="dg-account-auth__step-label"><?php esc_html_e( 'I. PURIFY', 'dragon-glow' ); ?></span>
 								<span class="dg-account-auth__step-sub"><?php esc_html_e( 'Nectar Emulsion', 'dragon-glow' ); ?></span>
 							</div>
 							<div class="dg-account-auth__step">
-								<span class="dg-account-auth__step-label"><?php esc_html_e( 'II. Infuse', 'dragon-glow' ); ?></span>
+								<span class="dg-account-auth__step-label"><?php esc_html_e( 'II. INFUSE', 'dragon-glow' ); ?></span>
 								<span class="dg-account-auth__step-sub"><?php esc_html_e( 'Golden Drops', 'dragon-glow' ); ?></span>
 							</div>
 							<div class="dg-account-auth__step">
-								<span class="dg-account-auth__step-label"><?php esc_html_e( 'III. Seal', 'dragon-glow' ); ?></span>
+								<span class="dg-account-auth__step-label"><?php esc_html_e( 'III. SEAL', 'dragon-glow' ); ?></span>
 								<span class="dg-account-auth__step-sub"><?php esc_html_e( 'Silk Veil Balm', 'dragon-glow' ); ?></span>
 							</div>
 						</div>
@@ -1617,19 +1617,40 @@ function dg_render_account_signed_out(): void {
 						</section>
 					<?php endif; ?>
 
-				<div class="dg-account-auth__footnote">
+			<div class="dg-account-auth__footnote">
+				<span class="dg-account-auth__footnote-item">
 					<span class="material-symbols-outlined" aria-hidden="true">eco</span>
 					<span><?php esc_html_e( 'Pure Botanical Distillation', 'dragon-glow' ); ?></span>
-					<span class="dg-account-auth__dot" aria-hidden="true">&bull;</span>
+				</span>
+				<span class="dg-account-auth__dot" aria-hidden="true">&bull;</span>
+				<span class="dg-account-auth__footnote-item">
 					<span class="material-symbols-outlined" aria-hidden="true">verified</span>
 					<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
-				</div>
+				</span>
+			</div>
 
 				</div>
 
 			</div>
 		</div>
 	</main>
+
+	<!-- Classical Heritage Footer -->
+	<footer class="dg-account-auth__heritage-footer">
+		<div class="dg-account-auth__heritage-locations">
+			<span><?php esc_html_e( 'Heritage Atelier San Francisco', 'dragon-glow' ); ?></span>
+			<span class="dg-account-auth__heritage-dot" aria-hidden="true">&bull;</span>
+			<span><?php esc_html_e( 'Fifth Avenue New York', 'dragon-glow' ); ?></span>
+			<span class="dg-account-auth__heritage-dot" aria-hidden="true">&bull;</span>
+			<span><?php esc_html_e( 'Parisian Archive', 'dragon-glow' ); ?></span>
+		</div>
+		<div class="dg-account-auth__heritage-copyright">
+			<?php
+			/* translators: %d: Current year */
+			printf( esc_html__( '© %d Dragon Glow Cosmetics Inc. All rights reserved.', 'dragon-glow' ), (int) gmdate( 'Y' ) );
+			?>
+		</div>
+	</footer>
 	<?php
 }
 

@@ -137,6 +137,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-gold-300:  #E8D4A8;  /* Filigree border (light) */
     --auth-gold-400:  #D9C496;  /* Divider / outline */
     --auth-gold-500:  #C59B27;  /* Primary heritage gold */
+    --auth-gold-550:  #C99E33;  /* Brand title gold (btn-gradient mid-stop) */
     --auth-gold-600:  #A67C1E;  /* Icon / hover gold */
     --auth-gold-700:  #8C6D23;  /* Deep gold text */
     --auth-gold-800:  #715509;  /* Heading ink (gold-brown) */
@@ -145,6 +146,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-brown-600: #4A3C23;  /* Label text */
     --auth-brown-500: #665B47;  /* Body copy */
     --auth-brown-400: #554731;  /* Checkbox label */
+    --auth-ivory-150: #FAF5E8;  /* Medallion surface (between ivory-50 and ivory-200) */
 
     /* Semantic — purpose-driven auth tokens */
     --auth-bg: var(--auth-ivory-100);
@@ -174,6 +176,33 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-viewport-frame-inner: rgba(197, 155, 39, 0.2);
     --auth-corner-flourish: rgba(197, 155, 39, 0.6);
     --auth-btn-shadow-hover: 0 6px 22px rgba(181, 140, 40, 0.4);
+
+    /* Component — checkbox (custom styled for "Remember me") */
+    --auth-checkbox-size: 18px;
+    --auth-checkbox-bg: var(--auth-ivory-50);
+    --auth-checkbox-bg-hover: rgba(232, 212, 168, 0.15);
+    --auth-checkbox-bg-checked: rgba(166, 124, 30, 0.12);
+    --auth-checkbox-bg-checked-hover: rgba(166, 124, 30, 0.18);
+    --auth-checkbox-border: var(--auth-gold-400);
+    --auth-checkbox-border-hover: var(--auth-gold-600);
+    --auth-checkbox-border-checked: var(--auth-gold-700);
+    --auth-checkbox-checkmark: var(--auth-gold-700);
+    --auth-checkbox-shadow-focus: 0 0 0 3px rgba(166, 124, 30, 0.15);
+
+    /* Component — heritage footer (locations + copyright) */
+    --auth-footer-location-text: #7A6A4E;     /* Heritage brown-gold for locations */
+    --auth-footer-copyright-text: #9E8E72;    /* Lighter muted brown for copyright */
+
+    /* Component — medallion badge (verified icon above auth form heading) */
+    --auth-medallion-bg: var(--auth-ivory-150);
+
+    /* Component — sanctuary badge ("Ritual Sanctuary" pill, showcase panel) */
+    --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8); /* #FFFDF9 @ 80% alpha */
+    --auth-sanctuary-badge-text: var(--auth-gold-800);
+    --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
+
+    /* Component — brand title ("Dragon Glow" heading, showcase panel) */
+    --auth-brand-title-text: var(--auth-gold-550);
 }
 
 /* Base Reset */
