@@ -17,105 +17,174 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
 */
 
 /* =========================================
-   DRAGON GLOW — BASE RESET & VARIABLES
-   Design System: Luminous Ethereal
+   DRAGON GLOW — DESIGN TOKEN SYSTEM
+   Architecture: Primitive → Semantic → Component
+   Reference: TOKEN-AUDIT-REPORT.md
    ========================================= */
 
-/* CSS Custom Properties */
 :root {
-    /* ===== PRIMITIVE TOKENS (Layer 1: Raw values) ===== */
-    /* Brand colors — main identity */
-    --color-primary: #735c00;
-    --color-primary-rgb: 115, 92, 0;
-    --color-on-primary: #ffffff;
-    --color-primary-container: #f4c2c2;
-    --color-on-primary-container: #734e4e;
-    --color-secondary: #5c5d6e;
-    --color-on-secondary: #ffffff;
+    /* =====================================================
+       LAYER 1: PRIMITIVE TOKENS (Raw Values)
+       Single source of truth for all color values.
+       Never use these directly in components — use semantic/component tokens.
+       ===================================================== */
+    
+    /* ----- Brand Primary (Deep Brown-Gold) ----- */
+    --primary-900: #241a00;      /* Darkest — text on gold backgrounds */
+    --primary-800: #554300;      /* Dark — headings, strong emphasis */
+    --primary-700: #735c00;      /* Base primary — main brand color */
+    --primary-600: #8c7500;      /* Medium */
+    --primary-500: #a68e00;      /* Light */
+    --primary-rgb: 115, 92, 0;   /* RGB of primary-700 for alpha channels */
+    
+    /* ----- Gold Accent (Luxury Highlight) ----- */
+    --gold-100: #fff8e7;         /* Lightest — subtle tint backgrounds */
+    --gold-200: #ffe182;         /* Light — borders, dividers */
+    --gold-300: #e8d4a8;         /* Pale — soft highlights */
+    --gold-400: #d4af37;         /* Medium-light — borders, icons */
+    --gold-500: #c9a24b;         /* Base gold — primary accent (canonical) */
+    --gold-600: #a67c1e;         /* Medium-dark — hover states, emphasis */
+    --gold-700: #8c6d23;         /* Dark — strong contrast */
+    --gold-800: #715509;         /* Darker — headings, deep emphasis */
+    --gold-900: #5b4300;         /* Darkest — maximum contrast */
+    --gold-rgb: 201, 162, 75;    /* RGB of gold-500 for alpha channels */
+    
+    /* ----- Secondary (Mauve-Slate) ----- */
+    --secondary-700: #5c5d6e;    /* Base secondary */
+    --secondary-600: #6f5f59;    /* Container text */
+    
+    /* ----- Neutral (Surface & Background) ----- */
+    --neutral-0: #ffffff;        /* Pure white */
+    --neutral-50: #fbf9f5;       /* Lightest — page background */
+    --neutral-100: #f7f4ee;      /* Very light — card backgrounds */
+    --neutral-200: #efeeea;      /* Light — container backgrounds */
+    --neutral-300: #eae8e4;      /* Medium-light — borders */
+    --neutral-400: #d4c2c2;      /* Medium — dividers */
+    --neutral-500: #827473;      /* Medium-dark — borders */
+    --neutral-600: #504444;      /* Dark — secondary text */
+    --neutral-700: #1b1c1a;      /* Darker — body text */
+    --neutral-800: #1e1b17;      /* Darkest — headings */
+    
+    /* ----- Functional Colors ----- */
+    --error-500: #ba1a1a;        /* Error state */
+    --success-500: #3b7a38;      /* Success state */
+    --warning-500: #ffc107;      /* Warning state (e.g., checkout icon) */
+    
+    /* ----- Auth Portal Heritage Colors (Parchment Tones) ----- */
+    /* Scoped primitive colors for classical heritage design */
+    --heritage-ivory-0: #fffdf9;     /* Lightest ivory — panel surface */
+    --heritage-ivory-50: #fcfaf6;    /* Very light — page background */
+    --heritage-ivory-100: #faf7f0;   /* Light — input backgrounds */
+    --heritage-ivory-150: #faf5e8;   /* Between 100-200 — medallion */
+    --heritage-ivory-200: #f5eee0;   /* Medium — showcase gradient */
+    --heritage-brown-300: #9f917b;   /* Input placeholder */
+    --heritage-brown-400: #554731;   /* Checkbox label */
+    --heritage-brown-500: #665b47;   /* Body copy */
+    --heritage-brown-600: #4a3c23;   /* Labels */
+    --heritage-brown-700: #251a00;   /* Near-black headings */
+    
+    /* =====================================================
+       LAYER 2: SEMANTIC TOKENS (Purpose-Driven)
+       Map primitive tokens to semantic meanings.
+       Use these in component tokens.
+       ===================================================== */
+    
+    /* ----- Brand Identity ----- */
+    --color-primary: var(--primary-700);
+    --color-primary-dark: var(--primary-800);
+    --color-primary-light: var(--primary-600);
+    --color-on-primary: var(--neutral-0);
+    --color-on-primary-container: var(--primary-800);
+    
+    /* ----- Accent & Emphasis ----- */
+    --color-accent: var(--gold-500);
+    --color-accent-light: var(--gold-400);
+    --color-accent-dark: var(--gold-700);
+    --color-on-accent: var(--primary-900);
+    
+    /* ----- Surface & Background ----- */
+    --color-background: var(--neutral-50);
+    --color-surface: var(--neutral-50);
+    --color-surface-container: var(--neutral-200);
+    --color-surface-container-high: var(--neutral-300);
+    --color-on-background: var(--neutral-700);
+    --color-on-surface: var(--neutral-700);
+    --color-on-surface-variant: var(--neutral-600);
+    
+    /* ----- Borders & Dividers ----- */
+    --color-outline: var(--neutral-500);
+    --color-outline-variant: var(--neutral-400);
+    --color-divider: var(--neutral-300);
+    
+    /* ----- Functional States ----- */
+    --color-error: var(--error-500);
+    --color-on-error: var(--neutral-0);
+    --color-success: var(--success-500);
+    --color-warning: var(--warning-500);
+    
+    /* ----- Secondary Brand ----- */
+    --color-secondary: var(--secondary-700);
+    --color-on-secondary: var(--neutral-0);
     --color-secondary-container: #f0dbd3;
-    --color-on-secondary-container: #6f5f59;
-    --color-tertiary: #735c00;
-    --color-on-tertiary: #ffffff;
+    --color-on-secondary-container: var(--secondary-600);
+    
+    /* ----- Legacy Aliases (for backward compatibility) ----- */
+    /* These map old token names to new canonical values */
+    --color-primary-container: #f4c2c2;  /* Pale pink container */
+    --color-tertiary: var(--primary-700); /* Same as primary */
+    --color-on-tertiary: var(--neutral-0);
     --color-tertiary-container: #f1ca50;
-    --color-on-tertiary-container: #6b5500;
-    --color-gold: #d4af37;
-    --color-gold-dark: #c9952a;
-    --color-on-gold: #241a00;
-    --color-checkout-icon: #FFC107;
+    --color-on-tertiary-container: var(--gold-800);
+    --color-checkout-icon: var(--warning-500);
     
-    /* Gold accent palette — luxury highlights */
-    --gold-500: #C9A24B;              /* Base gold */
-    --gold-600: #E8C56A;              /* Light gold */
-    --gold-rgb: 201, 162, 75;         /* RGB for alpha */
+    /* =====================================================
+       LAYER 3: COMPONENT TOKENS (Context-Specific)
+       Scoped to specific UI components.
+       Always reference semantic tokens, never primitives.
+       ===================================================== */
     
-    /* Surface colors */
-    --color-background: #fbf9f5;
-    --color-on-background: #1b1c1a;
-    --color-surface: #fbf9f5;
-    --color-surface-container: #efeeea;
-    --color-surface-container-high: #eae8e4;
-    --color-on-surface: #1b1c1a;
-    --color-on-surface-variant: #504444;
-    --color-outline: #827473;
-    --color-outline-variant: #d4c2c2;
-    --color-error: #ba1a1a;
-    --color-on-error: #ffffff;
-    
-    /* ===== SEMANTIC TOKENS (Layer 2: Purpose-based) ===== */
-    /* Accent — luxury/premium emphasis */
-    --color-accent-gold: var(--gold-500);
-    --color-accent-gold-light: var(--gold-600);
-    --color-accent-gold-rgb: var(--gold-rgb);
-    
-    /* ===== COMPONENT TOKENS (Layer 3: Shop Filter) ===== */
-    /* Glassmorphism dropdown */
+    /* ========== Shop Filter Component ========== */
+    /* Glassmorphism dropdown with gold accents */
     --filter-glass-bg: linear-gradient(135deg, 
                         rgba(var(--gold-rgb), 0.05) 0%, 
                         rgba(253, 252, 249, 0.95) 100%);
     --filter-glass-border: rgba(var(--gold-rgb), 0.2);
     --filter-glass-border-hover: rgba(var(--gold-rgb), 0.3);
     
-    /* Filter card */
     --filter-card-bg: rgba(255, 255, 255, 0.6);
     --filter-card-bg-hover: rgba(255, 255, 255, 0.75);
     --filter-card-border: rgba(var(--gold-rgb), 0.2);
     --filter-card-border-hover: rgba(var(--gold-rgb), 0.3);
     --filter-card-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.08);
     
-    /* Filter list items */
     --filter-item-bg: rgba(255, 255, 255, 0.5);
     --filter-item-bg-hover: rgba(255, 255, 255, 0.9);
-    --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);           /* Match demo: 10% gold tint */
-    --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);    /* Slightly brighter on hover */
+    --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);
+    --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);
     --filter-item-border: transparent;
     --filter-item-border-hover: rgba(var(--gold-rgb), 0.2);
-    --filter-item-text-active: var(--color-accent-gold);
-    --filter-item-count-active: var(--color-accent-gold);          /* Count same color as text when active */
-    --filter-item-font-weight-active: 600;                          /* Bolder weight for active state */
+    --filter-item-text-active: var(--color-accent);
+    --filter-item-count-active: var(--color-accent);
+    --filter-item-font-weight-active: 600;
     
-    /* Checkbox */
     --filter-checkbox-bg: rgba(var(--gold-rgb), 0.05);
     --filter-checkbox-border: rgba(var(--gold-rgb), 0.2);
     --filter-checkbox-checked-bg: rgba(var(--gold-rgb), 0.15);
     --filter-checkbox-checked-border: rgba(var(--gold-rgb), 0.3);
     --filter-checkbox-focus: rgba(var(--gold-rgb), 0.5);
     
-    /* Price range slider */
     --filter-slider-track-bg: rgba(var(--gold-rgb), 0.15);
     --filter-slider-thumb-gradient: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
     --filter-slider-thumb-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.3);
     --filter-slider-thumb-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.4);
     
-    /* Apply button */
     --filter-btn-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
     --filter-btn-border: rgba(var(--gold-rgb), 0.3);
     --filter-btn-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.3);
     --filter-btn-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.4);
     
-    /* Divider */
     --filter-divider: rgba(var(--gold-rgb), 0.15);
     
-    /* Clear filters button */
     --filter-clear-border: rgba(var(--gold-rgb), 0.2);
     --filter-clear-bg-hover: rgba(var(--gold-rgb), 0.08);
     --filter-clear-border-hover: rgba(var(--gold-rgb), 0.3);
@@ -123,165 +192,132 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --filter-clear-active-border: rgba(var(--gold-rgb), 0.3);
     --filter-clear-active-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.2);
     --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
-
-    /* ===== COMPONENT TOKENS (Layer 3: Auth Portal — Heritage Gold) ===== */
-    /* Scoped to .dg-account-auth* (My Account sign-in / register gate) only.
-       Matches the "Atelier Imperial" heritage design reference — does not
-       replace global theme tokens above, so no other page is affected. */
-
-    /* Primitive — heritage palette (ivory parchment + antique gold) */
-    --auth-ivory-50:  #FFFDF9;   /* Lightest panel surface */
-    --auth-ivory-100: #FCFAF6;  /* Page background */
-    --auth-ivory-200: #FAF7F0;  /* Input background */
-    --auth-parchment: #F5EEE0;  /* Showcase gradient mid-tone */
-    --auth-gold-300:  #E8D4A8;  /* Filigree border (light) */
-    --auth-gold-400:  #D9C496;  /* Divider / outline */
-    --auth-gold-500:  #C59B27;  /* Primary heritage gold */
-    --auth-gold-550:  #C99E33;  /* Brand title gold (btn-gradient mid-stop) */
-    --auth-gold-600:  #A67C1E;  /* Icon / hover gold */
-    --auth-gold-700:  #8C6D23;  /* Deep gold text */
-    --auth-gold-800:  #715509;  /* Heading ink (gold-brown) */
-    --auth-gold-900:  #5B4300;  /* Darkest heading / hover */
-    --auth-ink-900:   #251A00;  /* Near-black heading ink */
-    --auth-brown-600: #4A3C23;  /* Label text */
-    --auth-brown-500: #665B47;  /* Body copy */
-    --auth-brown-400: #554731;  /* Checkbox label */
-    --auth-ivory-150: #FAF5E8;  /* Medallion surface (between ivory-50 and ivory-200) */
-
-    /* Semantic — purpose-driven auth tokens */
-    --auth-bg: var(--auth-ivory-100);
-    --auth-panel-bg: var(--auth-ivory-50);
+    
+    /* ========== Auth Portal Component (Sign In Page) ========== */
+    /* Classical heritage design with parchment tones */
+    --auth-bg: var(--heritage-ivory-50);
+    --auth-panel-bg: var(--heritage-ivory-0);
     --auth-panel-border: rgba(217, 196, 150, 0.8);
-    --auth-showcase-gradient: linear-gradient(180deg, #FAF6EF 0%, var(--auth-parchment) 55%, rgba(239, 229, 208, 0.6) 100%);
-    --auth-heading: var(--auth-ink-900);
-    --auth-eyebrow: var(--auth-gold-800);
-    --auth-body: var(--auth-brown-500);
-    --auth-label: var(--auth-brown-600);
-    --auth-divider: var(--auth-gold-400);
-    --auth-input-bg: var(--auth-ivory-200);
-    --auth-input-bg-focus: var(--auth-ivory-50);
-    --auth-input-border: #D9CAAF;
-    --auth-input-border-focus: var(--auth-gold-600);
-    --auth-input-placeholder: #9F917B;
-    --auth-icon-muted: #A8987D;
-
-    /* Component — button / CTA gradient ("wax seal") */
-    --auth-btn-gradient: linear-gradient(135deg, #B58C28 0%, #C99E33 50%, #A37B1B 100%);
+    --auth-showcase-gradient: linear-gradient(180deg, 
+                              #faf6ef 0%, 
+                              var(--heritage-ivory-200) 55%, 
+                              rgba(239, 229, 208, 0.6) 100%);
+    
+    --auth-heading: var(--heritage-brown-700);
+    --auth-eyebrow: var(--gold-800);
+    --auth-body: var(--heritage-brown-500);
+    --auth-label: var(--heritage-brown-600);
+    --auth-divider: var(--gold-400);
+    
+    --auth-input-bg: var(--heritage-ivory-100);
+    --auth-input-bg-focus: var(--heritage-ivory-0);
+    --auth-input-border: #d9caaf;
+    --auth-input-border-focus: var(--gold-600);
+    --auth-input-placeholder: var(--heritage-brown-300);
+    --auth-icon-muted: #a8987d;
+    
+    --auth-btn-gradient: linear-gradient(135deg, #b58c28 0%, var(--gold-600) 50%, #a37b1b 100%);
     --auth-btn-border: #856312;
-    --auth-btn-text: #FFFDF6;
+    --auth-btn-text: #fffdf6;
     --auth-btn-shadow: 0 4px 16px rgba(181, 140, 40, 0.28);
-
-    /* Component — viewport double pinstripe frame (outer decorative border) */
+    --auth-btn-shadow-hover: 0 6px 22px rgba(181, 140, 40, 0.4);
+    
     --auth-viewport-frame-outer: rgba(212, 175, 55, 0.4);
     --auth-viewport-frame-inner: rgba(197, 155, 39, 0.2);
     --auth-corner-flourish: rgba(197, 155, 39, 0.6);
-    --auth-btn-shadow-hover: 0 6px 22px rgba(181, 140, 40, 0.4);
-
-    /* Component — checkbox (custom styled for "Remember me") */
+    
     --auth-checkbox-size: 18px;
-    --auth-checkbox-bg: var(--auth-ivory-50);
+    --auth-checkbox-bg: var(--heritage-ivory-0);
     --auth-checkbox-bg-hover: rgba(232, 212, 168, 0.15);
     --auth-checkbox-bg-checked: rgba(166, 124, 30, 0.12);
     --auth-checkbox-bg-checked-hover: rgba(166, 124, 30, 0.18);
-    --auth-checkbox-border: var(--auth-gold-400);
-    --auth-checkbox-border-hover: var(--auth-gold-600);
-    --auth-checkbox-border-checked: var(--auth-gold-700);
-    --auth-checkbox-checkmark: var(--auth-gold-700);
+    --auth-checkbox-border: var(--gold-400);
+    --auth-checkbox-border-hover: var(--gold-600);
+    --auth-checkbox-border-checked: var(--gold-700);
+    --auth-checkbox-checkmark: var(--gold-700);
     --auth-checkbox-shadow-focus: 0 0 0 3px rgba(166, 124, 30, 0.15);
-
-    /* Component — heritage footer (locations + copyright) */
-    --auth-footer-location-text: #7A6A4E;     /* Heritage brown-gold for locations */
-    --auth-footer-copyright-text: #9E8E72;    /* Lighter muted brown for copyright */
-
-    /* Component — medallion badge (verified icon above auth form heading) */
-    --auth-medallion-bg: var(--auth-ivory-150);
-
-    /* Component — sanctuary badge ("Ritual Sanctuary" pill, showcase panel) */
-    --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8); /* #FFFDF9 @ 80% alpha */
-
-    /* ===== COMPONENT TOKENS (Layer 3: Register Page — Luminous Radiance) ===== */
-    /* Port of stitch_dragon_glow_auth_portal/đăng-ký reference colors.
-       Matches Material Design 3 "Luminous Radiance" scheme from DESIGN.md. */
     
-    /* Surface & background (ivory parchment tones) */
-    --register-bg: #F7F4EE;                    /* background */
-    --register-surface: #FFF8F3;               /* surface-bright */
-    --register-surface-container: #F4EDE6;     /* surface-container */
-    --register-surface-container-low: #FAF2EB; /* surface-container-low */
-    --register-surface-container-lowest: #FFFFFF; /* surface-container-lowest */
+    --auth-footer-location-text: #7a6a4e;
+    --auth-footer-copyright-text: #9e8e72;
+    --auth-medallion-bg: var(--heritage-ivory-150);
+    --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8);
+    --auth-sanctuary-badge-text: var(--gold-800);
+    --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --auth-brand-title-text: var(--gold-600);
     
-    /* Text colors */
-    --register-text-primary: #1E1B17;          /* on-surface */
-    --register-text-secondary: #4D4638;        /* on-surface-variant */
-    --register-text-heading: #2A1E02;          /* Darker for headings */
-    --register-text-eyebrow: #715509;          /* primary */
+    /* ========== Register Page Component ========== */
+    /* Luminous Radiance scheme — brighter, more inviting than auth portal */
+    --register-bg: var(--neutral-100);
+    --register-surface: #fff8f3;
+    --register-surface-container: #f4ede6;
+    --register-surface-container-low: #faf2eb;
+    --register-surface-container-lowest: var(--neutral-0);
     
-    /* Primary gold (antique gold palette) */
-    --register-gold-primary: #715509;          /* primary */
-    --register-gold-container: #8C6D23;        /* primary-container */
-    --register-gold-fixed: #FFDF9E;            /* primary-fixed */
-    --register-gold-fixed-dim: #E8C16F;        /* primary-fixed-dim */
-    --register-gold-variant: #5B4300;          /* on-primary-fixed-variant */
+    --register-text-primary: var(--neutral-800);
+    --register-text-secondary: #4d4638;
+    --register-text-heading: #2a1e02;
+    --register-text-eyebrow: var(--gold-800);
     
-    /* Secondary gold (warmer tones) */
-    --register-gold-secondary: #775A00;        /* secondary */
-    --register-gold-secondary-container: #FECE57; /* secondary-container */
-    --register-gold-secondary-fixed: #FFDF98;  /* secondary-fixed */
-    --register-gold-secondary-fixed-dim: #EEC14B; /* secondary-fixed-dim */
+    --register-gold-primary: var(--gold-800);
+    --register-gold-container: var(--gold-700);
+    --register-gold-fixed: #ffdf9e;
+    --register-gold-fixed-dim: #e8c16f;
+    --register-gold-variant: var(--gold-900);
     
-    /* Tertiary (neutral warm tones) */
-    --register-tertiary: #63583C;              /* tertiary */
-    --register-tertiary-container: #7C7153;    /* tertiary-container */
-    --register-tertiary-fixed: #F1E1BD;        /* tertiary-fixed */
+    --register-gold-secondary: #775a00;
+    --register-gold-secondary-container: #fece57;
+    --register-gold-secondary-fixed: #ffdf98;
+    --register-gold-secondary-fixed-dim: #eec14b;
     
-    /* Outline & borders */
-    --register-outline: #7F7666;               /* outline */
-    --register-outline-variant: #D1C5B3;       /* outline-variant */
+    --register-tertiary: #63583c;
+    --register-tertiary-container: #7c7153;
+    --register-tertiary-fixed: #f1e1bd;
     
-    /* Specific component colors */
-    --register-border-primary: rgba(212, 175, 55, 0.35);  /* #D4AF37 @ 35% */
-    --register-border-secondary: rgba(197, 155, 39, 0.6); /* #C59B27 @ 60% */
-    --register-input-border: rgba(201, 162, 75, 0.35);    /* Gold @ 35% */
-    --register-input-border-focus: #A67C1E;               /* Darker gold */
+    --register-outline: #7f7666;
+    --register-outline-variant: #d1c5b3;
+    
+    --register-border-primary: rgba(212, 175, 55, 0.35);
+    --register-border-secondary: rgba(197, 155, 39, 0.6);
+    --register-input-border: rgba(var(--gold-rgb), 0.35);
+    --register-input-border-focus: var(--gold-600);
     --register-input-bg: rgba(255, 255, 255, 0.9);
     --register-input-bg-focus: rgba(255, 255, 255, 1);
     
-    /* Button gradient (wax seal golden gradient) */
-    --register-btn-gradient: linear-gradient(135deg, #DBB13B 0%, #C59B27 50%, #B3871D 100%);
-    --register-btn-border: rgba(255, 225, 130, 0.5);      /* #FFE182 @ 50% */
-    --register-btn-text: #1F1C18;
+    --register-btn-gradient: linear-gradient(135deg, #dbb13b 0%, var(--gold-600) 50%, #b3871d 100%);
+    --register-btn-border: rgba(255, 225, 130, 0.5);
+    --register-btn-text: #1f1c18;
     --register-btn-shadow: 0 8px 20px rgba(197, 155, 39, 0.3);
     --register-btn-shadow-hover: 0 12px 28px rgba(197, 155, 39, 0.4);
     
-    /* Password strength indicator */
-    --register-strength-bg: rgba(127, 118, 102, 0.4);     /* outline @ 40% */
-    --register-strength-weak: #BA1A1A;                     /* error */
-    --register-strength-fair: #C59B27;                     /* gold */
-    --register-strength-good: #A07817;                     /* darker gold */
-    --register-strength-strong: #3B7A38;                   /* green */
+    --register-strength-bg: rgba(127, 118, 102, 0.4);
+    --register-strength-weak: var(--error-500);
+    --register-strength-fair: var(--gold-600);
+    --register-strength-good: var(--gold-700);
+    --register-strength-strong: var(--success-500);
     
-    /* Privilege cards */
-    --register-card-bg: rgba(250, 242, 235, 0.7);         /* surface-container-low @ 70% */
-    --register-card-border: rgba(212, 175, 55, 0.25);     /* Gold border */
-    --register-card-hover-bg: #F4EDE6;                     /* surface-container */
-    --register-badge-bg: rgba(232, 193, 111, 0.4);        /* primary-fixed-dim @ 40% */
+    --register-card-bg: rgba(250, 242, 235, 0.7);
+    --register-card-border: rgba(212, 175, 55, 0.25);
+    --register-card-hover-bg: #f4ede6;
+    --register-badge-bg: rgba(232, 193, 111, 0.4);
     
-    /* Ambient glow effects */
-    --register-glow-tl: radial-gradient(circle at top left, rgba(255, 223, 158, 0.25) 0%, rgba(254, 206, 87, 0.1) 40%, transparent 70%);
-    --register-glow-br: radial-gradient(circle at bottom right, rgba(255, 223, 158, 0.2) 0%, rgba(241, 225, 189, 0.1) 40%, transparent 70%);
+    --register-glow-tl: radial-gradient(circle at top left, 
+                        rgba(255, 223, 158, 0.25) 0%, 
+                        rgba(254, 206, 87, 0.1) 40%, 
+                        transparent 70%);
+    --register-glow-br: radial-gradient(circle at bottom right, 
+                        rgba(255, 223, 158, 0.2) 0%, 
+                        rgba(241, 225, 189, 0.1) 40%, 
+                        transparent 70%);
     
-    /* Corner flourish & frame */
-    --register-frame-outer: rgba(212, 175, 55, 0.4);      /* #D4AF37 @ 40% */
-    --register-frame-inner: rgba(197, 155, 39, 0.2);      /* #C59B27 @ 20% */
-    --register-flourish: rgba(197, 155, 39, 0.6);         /* #C59B27 @ 60% */
-    --auth-sanctuary-badge-text: var(--auth-gold-800);
-    --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
-
-    /* Component — brand title ("Dragon Glow" heading, showcase panel) */
-    --auth-brand-title-text: var(--auth-gold-550);
+    --register-frame-outer: rgba(212, 175, 55, 0.4);
+    --register-frame-inner: rgba(197, 155, 39, 0.2);
+    --register-flourish: rgba(197, 155, 39, 0.6);
 }
 
-/* Base Reset */
+/* =========================================
+   BASE RESET & GLOBAL STYLES
+   ========================================= */
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -346,7 +382,10 @@ input, textarea, select {
     font-size: inherit;
 }
 
-/* Utility Classes */
+/* =========================================
+   UTILITY CLASSES
+   ========================================= */
+
 .container {
     max-width: 1280px;
     margin: 0 auto;
@@ -372,12 +411,14 @@ input, textarea, select {
     word-wrap: normal !important;
 }
 
-/* Focus styles */
+/* =========================================
+   FOCUS & INTERACTION STATES
+   ========================================= */
+
 :focus-visible {
     outline: 2px solid var(--color-primary);
 }
 
-/* Override browser default focus for checkboxes & radios */
 input[type="checkbox"]:focus,
 input[type="checkbox"]:focus-visible,
 input[type="radio"]:focus,
@@ -387,7 +428,6 @@ input[type="radio"]:focus-visible {
     outline-offset: 2px;
 }
 
-/* Selection */
 ::selection {
     background-color: var(--color-primary-container);
     color: var(--color-on-primary-container);
