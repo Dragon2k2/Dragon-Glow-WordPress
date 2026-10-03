@@ -22,7 +22,7 @@ function dg_enqueue_scripts_assets(): void {
 	// Tailwind CSS CDN (load in head for immediate parsing)
     wp_enqueue_script(
         'tailwindcss',
-        'https://cdn.tailwindcss.com?plugins=forms',
+        'https://cdn.tailwindcss.com',
         array(),
         null,
         false

@@ -152,26 +152,21 @@
 
 .dg-account-auth__brand-title {
 	font-family: 'Playfair Display', Georgia, serif;
-	font-size: 36px;
+	font-size: 44px;
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: #3B2D05;
+	color: var(--auth-brand-title-text);
 	margin: 0;
 	line-height: 1.2;
 }
 
-@media (min-width: 640px) {
-	.dg-account-auth__brand-title {
-		font-size: 44px;
-	}
-}
 
 .dg-account-auth__brand-meta {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	margin-top: 2px;
+	margin-top: 16px;
 }
 
 .dg-account-auth__brand-rule {
@@ -182,7 +177,7 @@
 
 .dg-account-auth__brand-tagline {
 	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.28em;
@@ -191,11 +186,6 @@
 	line-height: 1;
 }
 
-@media (min-width: 640px) {
-	.dg-account-auth__brand-tagline {
-		font-size: 11px;
-	}
-}
 
 /* =========================================
    3. MAIN PANEL CONTAINER
@@ -211,6 +201,14 @@
 	padding: 8px 0;
 	position: relative;
 	z-index: 10;
+	background: none;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 @media (min-width: 640px) {
@@ -375,10 +373,11 @@
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	gap: 8px;
 }
 
 .dg-account-auth__eyebrow {
+	position: relative;
+	top: 3px;
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 11px;
 	font-weight: 700;
@@ -390,20 +389,21 @@
 .dg-account-auth__sanctuary-badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	padding: 4px 12px;
+	gap: 5px;
+	padding: 3px 10px;
 	border-radius: 9999px;
 	background: var(--register-surface-container);
 	border: 1px solid var(--register-border-primary);
 	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 12px;
-	font-weight: 500;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
 	color: var(--register-gold-primary);
 }
 
 .dg-account-auth__pulse-dot {
-	width: 6px;
-	height: 6px;
+	width: 5px;
+	height: 5px;
 	border-radius: 50%;
 	background: var(--register-border-secondary);
 	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -456,7 +456,7 @@
 }
 
 .dg-account-auth__crown-motif .material-symbols-outlined {
-	font-size: 18px;
+	font-size: 25px;
 }
 
 /* Roman arched picture frame */
@@ -467,8 +467,8 @@
 	aspect-ratio: 4 / 5;
 	border-radius: 50% 50% 16px 16px;
 	padding: 6px;
-	background: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background: var(--register-arch-border-gradient);
+	box-shadow: var(--register-arch-border-shadow);
 	transition: transform 0.5s ease;
 }
 
@@ -479,7 +479,7 @@
 .dg-account-auth__arch-inner {
 	width: 100%;
 	height: 100%;
-	border-radius: 50% 50% 12px 12px;
+	border-radius: 50% 50% 1px 1px;
 	overflow: hidden;
 	position: relative;
 	background: var(--register-surface-container);
@@ -500,7 +500,7 @@
 .dg-account-auth__arch-overlay {
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(to top, rgba(31, 28, 24, 0.6) 0%, transparent 50%);
+	background: var(--register-arch-overlay-gradient);
 	pointer-events: none;
 }
 
@@ -510,7 +510,7 @@
 	left: 12px;
 	right: 12px;
 	text-align: center;
-	color: #FFF7EC;
+	color: var(--register-arch-label-name);
 	z-index: 1;
 }
 
@@ -521,7 +521,7 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.22em;
-	color: #FFE8A3;
+	color: var(--register-arch-label-eyebrow);
 	margin-bottom: 2px;
 }
 
@@ -531,30 +531,32 @@
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.1em;
-	color: #FFF7EC;
+	color: var(--register-arch-label-name);
 }
 
-/* Product caption */
-.dg-account-auth__arch-caption {
+/* Spec label & poetic epigram (below arch frame) */
+.dg-account-auth__arch-spec {
 	margin-top: 12px;
 	text-align: center;
-	max-width: 360px;
+	max-width: 320px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
-.dg-account-auth__arch-spec {
+.dg-account-auth__arch-spec-label {
 	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	color: #735700;
-	margin: 0 0 6px;
+	color: var(--register-spec-label-text);
+	margin: 0;
 }
 
-.dg-account-auth__arch-quote {
+.dg-account-auth__arch-epigram {
 	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 14px;
 	font-style: italic;
+	font-size: 14px;
 	line-height: 1.6;
 	color: var(--register-text-secondary);
 	margin: 0;
@@ -583,7 +585,7 @@
 }
 
 .dg-account-auth__privilege-card:hover {
-	background: var(--register-card-hover-bg);
+	background: var(--register-surface-container);
 }
 
 .dg-account-auth__privilege-num {
@@ -759,15 +761,22 @@
 .dg-register-form__input {
 	width: 100%;
 	height: 44px;
-	padding: 0 14px 0 48px;
+	padding: 0 48px 0 14px;
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 14px;
 	color: var(--register-text-primary);
 	background: var(--register-input-bg);
-	border: 1px solid var(--register-input-border);
 	border-radius: 8px;
 	outline: none;
 	transition: all 0.2s ease;
+}
+
+/* Higher specificity than Tailwind Forms plugin reset
+   ( [type="text"], [type="email"], [type="password"]... ),
+   which is injected after theme stylesheets and wins on source order
+   when specificity ties. Scoping through the wrapper breaks the tie. */
+.dg-register-form__input-wrap .dg-register-form__input {
+	border: 1px solid var(--register-input-border);
 }
 
 .dg-register-form__input::placeholder {
@@ -775,20 +784,20 @@
 	opacity: 0.6;
 }
 
-.dg-register-form__input:focus {
+.dg-register-form__input-wrap .dg-register-form__input:focus {
 	background: var(--register-input-bg-focus);
 	border-color: var(--register-input-border-focus);
 	box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.2);
 }
 
-/* Icon (left) */
+/* Icon (right) */
 .dg-register-form__icon {
 	position: absolute;
-	left: 12px;
+	right: 12px;
 	top: 50%;
 	transform: translateY(-50%);
 	font-size: 18px;
-	color: rgba(115, 85, 9, 0.4);
+	color: rgba(115, 85, 9, 0.8);
 	pointer-events: none;
 }
 
@@ -802,7 +811,7 @@
 	background: none;
 	border: none;
 	cursor: pointer;
-	color: rgba(115, 85, 9, 0.6);
+	color: rgba(115, 85, 9, 0.8);
 	transition: color 0.2s ease;
 }
 
@@ -828,8 +837,6 @@
 }
 
 .dg-register-form__input-wrap--select .dg-register-form__icon {
-	right: 12px;
-	left: auto;
 	pointer-events: none;
 	color: rgba(115, 85, 9, 0.6);
 	font-size: 19px;
@@ -901,25 +908,74 @@
 
 .dg-register-form__checkbox {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 10px;
 	cursor: pointer;
 }
 
+/* Custom checkbox — matches sign-in page `.dg-account-checkbox` styling
+   (native input hidden but kept accessible for focus/keyboard), reusing
+   the same `--auth-checkbox-*` tokens so colors stay identical across
+   both auth pages. */
 .dg-register-form__checkbox input[type="checkbox"] {
-	margin-top: 4px;
-	width: 16px;
-	height: 16px;
+	position: relative;
 	flex-shrink: 0;
-	border-radius: 4px;
-	border: 1.5px solid var(--register-gold-container);
+	width: var(--auth-checkbox-size);
+	height: var(--auth-checkbox-size);
+	margin: 0;
+	appearance: none;
+	-webkit-appearance: none;
+	background: var(--auth-checkbox-bg);
+	border: 1px solid var(--auth-checkbox-border);
+	border-radius: 0;
 	cursor: pointer;
-	accent-color: var(--register-gold-primary);
+	transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.dg-register-form__checkbox input[type="checkbox"]:focus {
-	outline: 2px solid var(--register-input-border-focus);
-	outline-offset: 2px;
+.dg-register-form__checkbox input[type="checkbox"]::after {
+	content: "";
+	position: absolute;
+	left: 6px;
+	top: 3px;
+	width: 5px;
+	height: 9px;
+	border: solid var(--auth-checkbox-checkmark);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg) scale(0);
+	transform-origin: center;
+	opacity: 0;
+	transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:hover {
+	background: var(--auth-checkbox-bg-hover);
+	border-color: var(--auth-checkbox-border-hover);
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:checked {
+	background: var(--auth-checkbox-bg-checked);
+	border-color: var(--auth-checkbox-border-checked);
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:checked:hover {
+	background: var(--auth-checkbox-bg-checked-hover);
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:checked::after {
+	opacity: 1;
+	transform: rotate(45deg) scale(1);
+}
+
+.dg-register-form__checkbox input[type="checkbox"]:focus-visible {
+	outline: none;
+	box-shadow: var(--auth-checkbox-shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-register-form__checkbox input[type="checkbox"],
+	.dg-register-form__checkbox input[type="checkbox"]::after {
+		transition: none;
+	}
 }
 
 .dg-register-form__checkbox-text {
@@ -927,6 +983,7 @@
 	font-size: 12.5px;
 	line-height: 1.5;
 	color: var(--register-text-secondary);
+	white-space: nowrap;
 }
 
 .dg-register-form__checkbox-text a {
@@ -937,6 +994,21 @@
 }
 
 .dg-register-form__checkbox-text a:hover {
+	color: var(--register-gold-variant);
+}
+
+/* WooCommerce core privacy policy notice — injected via the
+   `woocommerce_register_form` hook (wc_registration_privacy_policy_text()),
+   not theme markup. Style the core `.woocommerce-privacy-policy-link`
+   class so it matches the gold link treatment used elsewhere in this form. */
+.woocommerce-privacy-policy-link {
+	color: var(--register-gold-primary);
+	text-decoration: underline;
+	font-weight: 500;
+	transition: color 0.2s ease;
+}
+
+.woocommerce-privacy-policy-link:hover {
 	color: var(--register-gold-variant);
 }
 
@@ -1083,39 +1155,6 @@
 
 .dg-register-form__signin-link:hover {
 	color: var(--register-gold-variant);
-}
-
-/* =========================================
-   6. APOTHECARY AUTHENTICATION MICRO-BADGE
-   ========================================= */
-
-.dg-account-auth__footnote {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-wrap: wrap;
-	gap: 16px 24px;
-	margin-top: 16px;
-	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	color: rgba(140, 109, 35, 0.8);
-}
-
-.dg-account-auth__footnote-item {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.dg-account-auth__footnote-item .material-symbols-outlined {
-	font-size: 14px;
-}
-
-.dg-account-auth__footnote-dot {
-	color: rgba(140, 109, 35, 0.6);
-	font-size: 10px;
 }
 
 /* =========================================

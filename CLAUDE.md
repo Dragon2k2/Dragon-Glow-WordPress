@@ -429,6 +429,44 @@ Xem bảng mapping đầy đủ trong phiên bản cũ của `CLAUDE.md` (dòng 
 - ✅ Consistent across components
 - ✅ Self-documenting (token names mô tả mục đích)
 
+#### 8b. KHÔNG dùng Tailwind Forms plugin — tự viết reset trong CSS theme
+> *"Theo chuẩn thực tế: bỏ `plugins=forms` là lựa chọn đúng của coder lâu năm."*
+
+**Nguyên tắc cứng (áp dụng cho code mới từ nay):**
+
+- 🚫 **CẤM** thêm `?plugins=forms` (hoặc bất kỳ Tailwind CDN plugin nào) vào URL `cdn.tailwindcss.com` ở `inc/enqueue/scripts.php`. Theme hiện tại nạp Tailwind **không kèm** `plugins=forms`.
+- 🚫 **CẤM** style input/select/textarea mới bằng Tailwind utility class trực tiếp trên markup (`border-0 border-b ... focus:ring-0`) rồi dựa vào reset mặc định của `@tailwindcss/forms`. Luôn viết CSS riêng theo BEM (`dg-{page}__input`) trong file CSS trang tương ứng.
+- ✅ Khi cần reset native style của input/select (`appearance: none`, border, background...), **tự viết trong CSS theme** — đây là cách phần lớn theme đã làm (`account.css`, `shop.css`, `cart.css`, `account-register.css`, v.v. đều tự có `appearance: none` riêng, không phụ thuộc Tailwind Forms).
+
+  ```css
+  /* ✅ ĐÚNG — tự viết reset trong CSS trang, không phụ thuộc Tailwind Forms */
+  .dg-contact-form__select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--token-border);
+      background-color: var(--token-surface);
+  }
+
+  .dg-contact-form__select:focus {
+      border-color: var(--token-border-focus);
+  }
+  ```
+
+**Lý do bỏ `plugins=forms` là lựa chọn đúng:**
+
+- Tailwind nạp qua `<script>` CDN (`inc/enqueue/scripts.php`), tự inject `<style>` vào `<head>` **tại runtime**, nên luôn nằm **sau** mọi CSS theme đã enqueue → source order luôn thắng khi specificity hoà (`[type="text"]` = 0,1,0, bằng 1 class `.dg-*__input` = 0,1,0). Giữ plugin này nghĩa là chấp nhận rủi ro đè `border`/`background` của **mọi** input mới trong theme, trừ khi coder nhớ tăng specificity qua wrapper mỗi lần — dễ quên, khó maintain lâu dài.
+- Giải pháp bền hơn là loại bỏ nguồn gây xung đột (gỡ `plugins=forms`) thay vì xử lý triệu chứng (tăng specificity từng input). Coder lâu năm ưu tiên **xoá root cause** hơn là thêm quy tắc phòng ngự lặp lại ở mọi nơi.
+- Theme đã tự viết `appearance: none` và reset input riêng ở hầu hết CSS trang — chứng tỏ theme **không thực sự cần** Tailwind Forms để hoạt động đúng.
+- `template-contact.php` hiện tại vẫn dùng Tailwind utility class trực tiếp và phụ thuộc reset của `@tailwindcss/forms` — đây là **sơ xuất cũ, giữ nguyên hiện trạng, không sửa**. Quy tắc này chỉ áp dụng cho input/select/textarea **mới** tạo từ nay về sau.
+
+**Cách phát hiện nếu nghi ngờ input mới bị ảnh hưởng (debug nhanh bằng console):**
+
+```js
+const el = document.querySelector('.dg-contact-form__input');
+const cs = getComputedStyle(el);
+console.log('border-color computed:', cs.borderColor); // nếu không khớp token CSS theme → kiểm tra lại nguồn gây đè
+```
+
 ### 9. JavaScript & Animation
 > *"Vanilla + Motion, không React, luôn tôn trọng reduced-motion."*
 
@@ -489,6 +527,7 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
+- `2026-10-02`: thêm §8b — Tailwind Forms plugin override: nguyên nhân specificity tie + source order khi Tailwind nạp qua `<script>`, cách debug bằng console, cách khắc phục bằng tăng specificity qua wrapper class (không dùng `!important`).
 - `2026-09-29`: thêm §8a — Design Token System: quy tắc cứng về token-first approach, cấm hard-code, visual regression workflow, refactor checklist.
 - `2026-08-24`: Refactor toàn bộ để tương thích với `.cursor/skills` ecosystem; thêm skill compatibility matrix; làm rõ project type (classic theme trong full site repo); loại bỏ mâu thuẫn về React/build step.
 - `2026-08-10`: thêm §5g — selector phải khớp DOM thật; visual parity rule.

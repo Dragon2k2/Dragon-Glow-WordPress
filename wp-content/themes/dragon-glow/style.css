@@ -260,6 +260,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --register-gold-primary: var(--gold-800);
     --register-gold-container: var(--gold-700);
+    --register-spec-label-text: #735700;
     --register-gold-fixed: #ffdf9e;
     --register-gold-fixed-dim: #e8c16f;
     --register-gold-variant: var(--gold-900);
@@ -278,7 +279,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --register-border-primary: rgba(212, 175, 55, 0.35);
     --register-border-secondary: rgba(197, 155, 39, 0.6);
-    --register-input-border: rgba(var(--gold-rgb), 0.35);
+    --register-input-border: rgb(197 155 39 / 0.35);
     --register-input-border-focus: var(--gold-600);
     --register-input-bg: rgba(255, 255, 255, 0.9);
     --register-input-bg-focus: rgba(255, 255, 255, 1);
@@ -297,7 +298,13 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --register-card-bg: rgba(250, 242, 235, 0.7);
     --register-card-border: rgba(212, 175, 55, 0.25);
-    --register-card-hover-bg: #f4ede6;
+
+    /* Arched showcase frame — hover zoom effect */
+    --register-arch-border-gradient: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);
+    --register-arch-border-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.1);
+    --register-arch-overlay-gradient: linear-gradient(to top, rgba(31, 28, 24, 0.6) 0%, transparent 50%);
+    --register-arch-label-eyebrow: #FFE8A3;
+    --register-arch-label-name: #FFF7EC;
     --register-badge-bg: rgba(232, 193, 111, 0.4);
     
     --register-glow-tl: radial-gradient(circle at top left, 

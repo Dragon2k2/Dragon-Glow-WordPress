@@ -2177,13 +2177,13 @@ function dg_render_account_register_page(): void {
 									</div>
 								</div>
 
-								<!-- Product caption -->
-								<div class="dg-account-auth__arch-caption">
-									<p class="dg-account-auth__arch-spec">
+								<!-- Spec label & poetic epigram -->
+								<div class="dg-account-auth__arch-spec">
+									<p class="dg-account-auth__arch-spec-label">
 										<?php esc_html_e( 'Dragon Elixir Nº 1 — 24K Botanical Golden Serum', 'dragon-glow' ); ?>
 									</p>
-									<p class="dg-account-auth__arch-quote">
-										<?php esc_html_e( '"Inscribe your name into our ledger of eternal radiance."', 'dragon-glow' ); ?>
+									<p class="dg-account-auth__arch-epigram">
+										&ldquo;<?php esc_html_e( 'Inscribe your name into our ledger of eternal radiance.', 'dragon-glow' ); ?>&rdquo;
 									</p>
 								</div>
 							</div>
@@ -2448,24 +2448,6 @@ function dg_render_account_register_page(): void {
 
 						</div>
 
-					</div>
-
-					<!-- Apothecary authentication micro-badge -->
-					<div class="dg-account-auth__footnote">
-						<span class="dg-account-auth__footnote-item">
-							<span class="material-symbols-outlined">eco</span>
-							<span><?php esc_html_e( 'Pure Botanical Distillation', 'dragon-glow' ); ?></span>
-						</span>
-						<span class="dg-account-auth__footnote-dot">&bull;</span>
-						<span class="dg-account-auth__footnote-item">
-							<span class="material-symbols-outlined">lock</span>
-							<span><?php esc_html_e( '256-Bit Encrypted Ledger', 'dragon-glow' ); ?></span>
-						</span>
-						<span class="dg-account-auth__footnote-dot">&bull;</span>
-						<span class="dg-account-auth__footnote-item">
-							<span class="material-symbols-outlined">cruelty_free</span>
-							<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
-						</span>
 					</div>
 
 				</div>
