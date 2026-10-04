@@ -77,6 +77,76 @@ function dg_account_endpoint_url( string $endpoint ): string {
 }
 
 /**
+ * Resolve the "return to previous page" target for the auth flow (login,
+ * register, social login).
+ *
+ * Enterprise pattern: an "intended URL" carried through `redirect_to` as a
+ * single request param, validated against open-redirect via
+ * `wp_validate_redirect()` (same guard WP core uses for `wp-login.php`).
+ * Falls back to the My Account dashboard when no valid target is present —
+ * never trust `$_REQUEST['redirect_to']` blindly, it's attacker-controlled.
+ *
+ * @return string Absolute, same-site URL. Defaults to My Account root.
+ */
+function dg_account_safe_redirect_target(): string {
+	$fallback = dg_account_endpoint_url( '' );
+
+	if ( ! isset( $_REQUEST['redirect_to'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- redirect target only, no state change; validated via wp_validate_redirect() below.
+		return $fallback;
+	}
+
+	$target = wp_unslash( $_REQUEST['redirect_to'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended -- sanitized by wp_validate_redirect() below.
+
+	if ( ! is_string( $target ) || '' === $target ) {
+		return $fallback;
+	}
+
+	// Don't bounce the user back onto the auth gate itself (e.g. stale
+	// redirect_to from a previous failed login attempt) — would create a
+	// confusing "still on login page after sign in" loop. Only block the
+	// auth gate root and register endpoint; allow signed-in endpoints like
+	// orders/downloads/edit-account (user may have been on /orders/ when
+	// session expired, so redirect back there after re-auth is correct UX).
+	$account_base = untrailingslashit( dg_account_endpoint_url( '' ) );
+	$register_url = untrailingslashit( dg_account_endpoint_url( 'register' ) );
+	$target_clean = untrailingslashit( $target );
+
+	if ( $target_clean === $account_base || $target_clean === $register_url ) {
+		return $fallback;
+	}
+
+	return wp_validate_redirect( $target, $fallback );
+}
+
+/**
+ * Build an auth gate URL (login or register) carrying `redirect_to` so the
+ * user lands back on the page they came from after a successful sign-in —
+ * same enterprise "intended URL" pattern used by `dg_account_safe_redirect_target()`.
+ *
+ * Used by nav/header links and anywhere else that sends a signed-out user
+ * to the My Account auth gate from an arbitrary page.
+ *
+ * @param string $endpoint    '' for login, 'register' for sign-up.
+ * @param string $current_url Current page URL to return to. Defaults to the
+ *                             current request URL.
+ * @return string
+ */
+function dg_auth_gate_url_with_return( string $endpoint = '', string $current_url = '' ): string {
+	if ( '' === $current_url ) {
+		$current_url = home_url( add_query_arg( null, null ) );
+	}
+
+	$base = dg_account_endpoint_url( $endpoint );
+
+	// Don't add redirect_to if we're already pointing back at the auth gate.
+	if ( '' === $current_url || untrailingslashit( $current_url ) === untrailingslashit( dg_account_endpoint_url( '' ) ) ) {
+		return $base;
+	}
+
+	return add_query_arg( 'redirect_to', rawurlencode( $current_url ), $base );
+}
+
+/**
  * Build rewrite-slug → endpoint-key map from WooCommerce query vars.
  *
  * @return array<string, string>
@@ -318,3 +388,21 @@ function dg_auth_portal_body_class( array $classes ): array {
 	return $classes;
 }
 add_filter( 'body_class', 'dg_auth_portal_body_class' );
+
+/**
+ * Redirect to the page the user was on before signing in, instead of always
+ * landing on the My Account dashboard.
+ *
+ * `woocommerce_login_redirect` is WC's own extension point for this exact
+ * purpose — fired by `WC_Form_Handler::process_login()` right after a
+ * successful `wp_signon()`. We ignore WC's passed-in `$redirect` (always the
+ * My Account URL) and resolve the real target from `redirect_to`.
+ *
+ * @param string  $redirect Default redirect URL (My Account page).
+ * @param WP_User $user     Newly signed-in user.
+ * @return string
+ */
+function dg_login_redirect_to_previous_page( string $redirect, $user ): string {
+	return dg_account_safe_redirect_target();
+}
+add_filter( 'woocommerce_login_redirect', 'dg_login_redirect_to_previous_page', 10, 2 );

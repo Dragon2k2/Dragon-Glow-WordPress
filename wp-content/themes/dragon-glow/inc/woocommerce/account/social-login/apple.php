@@ -32,15 +32,27 @@ const DG_APPLE_KEYS_ENDPOINT  = 'https://appleid.apple.com/auth/keys';
 /**
  * Redirect the browser to Apple's Sign in with Apple consent screen.
  *
+ * @param string $redirect_to Where to send the user after a successful sign-in
+ *                             (the page they were on before clicking "Apple").
+ *                             Already validated by dg_account_safe_redirect_target().
  * @return void (redirects then exits).
  */
-function dg_apple_login_start(): void {
+function dg_apple_login_start( string $redirect_to = '' ): void {
 	if ( ! dg_social_login_apple_enabled() ) {
 		dg_social_login_fail( __( 'Apple sign-in is not available right now. Please use your email and password.', 'dragon-glow' ) );
 	}
 
 	$state = wp_generate_password( 32, false );
-	set_transient( 'dg_social_state_' . $state, 'apple', 10 * MINUTE_IN_SECONDS );
+	// Carries redirect_to through the round trip since Apple's consent
+	// screen doesn't preserve our query string.
+	set_transient(
+		'dg_social_state_' . $state,
+		array(
+			'provider'    => 'apple',
+			'redirect_to' => $redirect_to,
+		),
+		10 * MINUTE_IN_SECONDS
+	);
 
 	$url = add_query_arg(
 		array(
@@ -70,11 +82,12 @@ function dg_apple_login_callback( string $code, string $state ): void {
 		dg_social_login_fail( __( 'Apple sign-in is not available right now.', 'dragon-glow' ) );
 	}
 
-	$stored_provider = get_transient( 'dg_social_state_' . $state );
+	$payload = get_transient( 'dg_social_state_' . $state );
 	delete_transient( 'dg_social_state_' . $state );
-	if ( 'apple' !== $stored_provider ) {
+	if ( ! is_array( $payload ) || 'apple' !== ( $payload['provider'] ?? '' ) ) {
 		dg_social_login_fail( __( 'Your Apple sign-in request expired or was invalid. Please try again.', 'dragon-glow' ) );
 	}
+	$redirect_to = (string) ( $payload['redirect_to'] ?? '' );
 
 	$client_secret = dg_apple_generate_client_secret();
 	if ( is_wp_error( $client_secret ) ) {
@@ -137,7 +150,7 @@ function dg_apple_login_callback( string $code, string $state ): void {
 		dg_social_login_fail( $user_id->get_error_message() );
 	}
 
-	dg_social_login_authenticate_and_redirect( $user_id );
+	dg_social_login_authenticate_and_redirect( $user_id, $redirect_to );
 }
 
 /**

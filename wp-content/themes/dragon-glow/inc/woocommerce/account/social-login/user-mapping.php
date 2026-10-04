@@ -110,12 +110,19 @@ function dg_social_login_generate_username( string $email ): string {
 }
 
 /**
- * Log a WP user in (sets auth cookie) and redirect to My Account.
+ * Log a WP user in (sets auth cookie) and redirect to the page they were on
+ * before starting the social sign-in flow (enterprise "intended URL"
+ * pattern — same behavior as the regular login/register forms).
  *
- * @param int $user_id WP user ID.
+ * @param int    $user_id     WP user ID.
+ * @param string $redirect_to Raw redirect target carried through the OAuth
+ *                             state transient (see dg_google_login_start() /
+ *                             dg_apple_login_start()). Re-validated here via
+ *                             dg_account_safe_redirect_target() — never trust
+ *                             a value that round-tripped through a 3rd party.
  * @return void (redirects then exits).
  */
-function dg_social_login_authenticate_and_redirect( int $user_id ): void {
+function dg_social_login_authenticate_and_redirect( int $user_id, string $redirect_to = '' ): void {
 	wp_clear_auth_cookie();
 	wp_set_current_user( $user_id );
 	wp_set_auth_cookie( $user_id, true );
@@ -125,7 +132,10 @@ function dg_social_login_authenticate_and_redirect( int $user_id ): void {
 		do_action( 'wp_login', $user->user_login, $user );
 	}
 
-	wp_safe_redirect( dg_account_endpoint_url( '' ) );
+	$fallback = dg_account_endpoint_url( '' );
+	$target   = ( '' !== $redirect_to ) ? wp_validate_redirect( $redirect_to, $fallback ) : $fallback;
+
+	wp_safe_redirect( $target );
 	exit;
 }
 

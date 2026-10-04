@@ -21,6 +21,11 @@ defined( 'ABSPATH' ) || exit;
  */
 function dg_render_account_register_page(): void {
 	$showcase_image = get_theme_file_uri( 'assets/images/account-auth/register.jpg' );
+	// "Intended URL" the user was on before hitting the register page —
+	// mirrors dg_render_account_signed_out() in login.php. Echoed back as a
+	// hidden field so it survives the POST round-trip (incl. re-renders
+	// after a validation error).
+	$redirect_to = dg_account_safe_redirect_target();
 	?>
 	<!-- Viewport outer double-gold pinstripe frame -->
 	<div class="dg-account-auth__viewport-frame dg-account-auth__viewport-frame--outer" aria-hidden="true"></div>
@@ -382,6 +387,7 @@ function dg_render_account_register_page(): void {
 								<?php do_action( 'woocommerce_register_form' ); ?>
 
 								<input type="hidden" name="woocommerce-register-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-register' ) ); ?>" />
+								<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
 								<!-- Primary submission CTA -->
 								<button type="submit" name="register" class="dg-register-form__submit">

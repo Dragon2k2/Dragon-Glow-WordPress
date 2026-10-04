@@ -106,8 +106,10 @@ function dg_process_registration(): void {
 	// Trigger WooCommerce registration action.
 	do_action( 'woocommerce_created_customer', $customer_id, array(), '' );
 
-	// Redirect to My Account dashboard.
-	wp_safe_redirect( dg_account_endpoint_url( '' ) );
+	// Redirect to the page the user was on before registering (enterprise
+	// "intended URL" pattern — same helper used for login + social login),
+	// falling back to the My Account dashboard.
+	wp_safe_redirect( dg_account_safe_redirect_target() );
 	exit;
 }
 add_action( 'template_redirect', 'dg_process_registration', 5 );

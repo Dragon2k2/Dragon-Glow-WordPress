@@ -26,6 +26,12 @@ function dg_render_account_signed_out(): void {
 	$register_enabled = ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) );
 	$lost_pwd_url     = (string) wp_lostpassword_url();
 	$showcase_image   = get_theme_file_uri( 'assets/images/account-auth/sign-in.jpg' );
+	// "Intended URL" the user was on before hitting the auth gate — carried
+	// via redirect_to query arg (dg_auth_gate_url_with_return()) and echoed
+	// back as a hidden field so it survives the POST round-trip (including
+	// re-renders after a validation error). Validated again server-side by
+	// dg_account_safe_redirect_target() / WC's own redirect_to handling.
+	$redirect_to = dg_account_safe_redirect_target();
 	?>
 	<!-- Viewport outer double-gold pinstripe frame -->
 	<div class="dg-account-auth__viewport-frame dg-account-auth__viewport-frame--outer" aria-hidden="true"></div>
@@ -203,6 +209,7 @@ function dg_render_account_signed_out(): void {
 						<?php do_action( 'woocommerce_login_form' ); ?>
 
 						<input type="hidden" name="woocommerce-login-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-login' ) ); ?>" />
+						<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
 						<button type="submit" name="login" value="<?php esc_attr_e( 'Sign in', 'dragon-glow' ); ?>" class="dg-login__submit">
 							<span class="dg-login__submit-frame" aria-hidden="true"></span>
@@ -335,6 +342,7 @@ function dg_render_account_signed_out(): void {
 								<?php do_action( 'woocommerce_register_form' ); ?>
 
 								<input type="hidden" name="woocommerce-register-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-register' ) ); ?>" />
+								<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
 								<button type="submit" name="register" value="<?php esc_attr_e( 'Create account', 'dragon-glow' ); ?>" class="dg-login__submit">
 									<span class="dg-login__submit-frame" aria-hidden="true"></span>

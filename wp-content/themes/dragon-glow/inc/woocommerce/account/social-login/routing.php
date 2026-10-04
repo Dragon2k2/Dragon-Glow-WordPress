@@ -40,12 +40,17 @@ function dg_social_login_route_start(): void {
 
 	$provider = sanitize_key( wp_unslash( $_GET['dg_social_login'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- see above.
 
+	// Carry the "page the user was on before signing in" through the OAuth
+	// round trip — validated the same way as the regular login/register
+	// flow (dg_account_safe_redirect_target() reads $_REQUEST['redirect_to']).
+	$redirect_to = dg_account_safe_redirect_target();
+
 	switch ( $provider ) {
 		case 'google':
-			dg_google_login_start();
+			dg_google_login_start( $redirect_to );
 			break;
 		case 'apple':
-			dg_apple_login_start();
+			dg_apple_login_start( $redirect_to );
 			break;
 	}
 }
@@ -83,10 +88,13 @@ function dg_social_login_route_callback(): void {
 		dg_social_login_fail( __( 'Your sign-in request was incomplete. Please try again.', 'dragon-glow' ) );
 	}
 
-	// Peek at the stored provider WITHOUT deleting it — each provider's
-	// own callback() re-reads + deletes the transient to keep the single-use
-	// guarantee localized to one place per provider.
-	$provider = get_transient( 'dg_social_state_' . $state );
+	// Peek at the stored payload WITHOUT deleting it — each provider's own
+	// callback() re-reads + deletes the transient to keep the single-use
+	// guarantee localized to one place per provider. Payload shape is
+	// array{ provider: string, redirect_to: string } — see dg_google_login_start()
+	// / dg_apple_login_start().
+	$payload  = get_transient( 'dg_social_state_' . $state );
+	$provider = is_array( $payload ) && isset( $payload['provider'] ) ? $payload['provider'] : '';
 
 	switch ( $provider ) {
 		case 'google':

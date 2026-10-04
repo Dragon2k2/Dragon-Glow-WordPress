@@ -57,6 +57,91 @@ body.dg-hide-site-chrome .footer-main {
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
+/* =========================================
+   3a. HEADER AUTH GROUP — Log in / Sign up (signed-out state)
+   Shown in header-nav.php only when !is_user_logged_in();
+   replaces the account/wishlist/cart icon group.
+   Style: badge login + shimmer signup (chosen demo V10).
+   ========================================= */
+
+.dg-auth-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.dg-auth-group__login,
+.dg-auth-group__signup {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    transition: background-color 0.25s ease;
+}
+
+.dg-auth-group__login {
+    padding: 7px 16px;
+    border-radius: 999px;
+    color: var(--color-primary);
+    background: rgba(var(--primary-rgb), 0.08);
+}
+
+.dg-auth-group__login:hover {
+    background: rgba(var(--primary-rgb), 0.14);
+}
+
+.dg-auth-group__signup {
+    position: relative;
+    overflow: hidden;
+    padding: 9px 22px;
+    border-radius: 999px;
+    color: var(--color-on-primary);
+    background: var(--primary-800);
+}
+
+.dg-auth-group__signup:hover {
+    /* Override global `a:hover { color: var(--color-on-primary-container) }` (style.css)
+       — same specificity (0,1,0), but this rule prints after style.css in the
+       cascade (main.css depends on dg-style), so no !important needed. */
+    color: var(--color-on-primary);
+    /* Lighten effect — mirrors .dg-auth-group__login:hover (brighter on hover),
+       blending primary-800 with white instead of stepping to the darker primary-900. */
+    background: color-mix(in srgb, var(--primary-800) 85%, white 15%);
+}
+
+.dg-auth-group__signup span {
+    position: relative;
+    z-index: 1;
+}
+
+.dg-auth-group__signup::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    animation: dg-auth-shimmer 2.8s ease-in-out infinite;
+}
+
+@keyframes dg-auth-shimmer {
+    0% { left: -60%; }
+    100% { left: 130%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-auth-group__signup::after {
+        animation: none;
+    }
+}
+
 .glass-card {
     background: rgba(255, 255, 255, 0.40);
     backdrop-filter: blur(20px);

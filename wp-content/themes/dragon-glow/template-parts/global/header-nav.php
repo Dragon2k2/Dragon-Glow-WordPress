@@ -60,8 +60,8 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
         </div>
 
         <!-- Icons: Search, Wishlist, Cart, Account -->
+        <?php if ( is_user_logged_in() ) : ?>
         <div class="flex items-center gap-3">
-
 
             <!-- Account
                  Use dg_account_endpoint_url('') instead of raw get_permalink()
@@ -95,6 +95,24 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
                 <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
+        <?php else : ?>
+        <!-- Auth: Log in / Sign up (signed-out state) + Mobile menu toggle -->
+        <div class="flex items-center gap-3">
+            <div class="dg-auth-group">
+                <a href="<?php echo esc_url( dg_is_woocommerce_active() ? dg_auth_gate_url_with_return( '' ) : wp_login_url( home_url( add_query_arg( null, null ) ) ) ); ?>" class="dg-auth-group__login">
+                    <?php esc_html_e( 'Log in', 'dragon-glow' ); ?>
+                </a>
+                <a href="<?php echo esc_url( dg_is_woocommerce_active() ? dg_auth_gate_url_with_return( 'register' ) : wp_registration_url() ); ?>" class="dg-auth-group__signup">
+                    <span><?php esc_html_e( 'Sign up', 'dragon-glow' ); ?></span>
+                </a>
+            </div>
+
+            <!-- Mobile menu toggle -->
+            <button class="md:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+        <?php endif; ?>
     </div>
 
     <!-- Mobile Nav Drawer -->

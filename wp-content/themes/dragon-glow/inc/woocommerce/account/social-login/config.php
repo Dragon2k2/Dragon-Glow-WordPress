@@ -64,12 +64,22 @@ function dg_social_login_redirect_uri(): string {
  * Rendered as a plain `<a>` (not a JS fetch) — the browser must perform a
  * top-level navigation to Google/Apple's consent screen.
  *
+ * Carries the current `redirect_to` (the "page the user was on before
+ * signing in") as a query arg so `dg_social_login_route_start()` can pass
+ * it through to the provider's `_start()` function, which stashes it in the
+ * same CSRF `state` transient used for the provider — the OAuth round trip
+ * through Google/Apple doesn't preserve our query string otherwise.
+ *
  * @param string $provider Provider slug ('google' or 'apple').
  * @return string
  */
 function dg_social_login_start_url( string $provider ): string {
-	return add_query_arg(
-		array( 'dg_social_login' => $provider ),
-		dg_account_endpoint_url( '' )
-	);
+	$args = array( 'dg_social_login' => $provider );
+
+	$redirect_to = dg_account_safe_redirect_target();
+	if ( dg_account_endpoint_url( '' ) !== $redirect_to ) {
+		$args['redirect_to'] = $redirect_to;
+	}
+
+	return add_query_arg( $args, dg_account_endpoint_url( '' ) );
 }

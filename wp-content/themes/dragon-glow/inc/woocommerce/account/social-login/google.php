@@ -23,17 +23,29 @@ const DG_GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 /**
  * Redirect the browser to Google's OAuth consent screen.
  *
+ * @param string $redirect_to Where to send the user after a successful sign-in
+ *                             (the page they were on before clicking "Google").
+ *                             Already validated by dg_account_safe_redirect_target().
  * @return void (redirects then exits).
  */
-function dg_google_login_start(): void {
+function dg_google_login_start( string $redirect_to = '' ): void {
 	if ( ! dg_social_login_google_enabled() ) {
 		dg_social_login_fail( __( 'Google sign-in is not available right now. Please use your email and password.', 'dragon-glow' ) );
 	}
 
 	$state = wp_generate_password( 32, false );
 	// Short-lived transient (10 min) keyed by state — CSRF protection + lets
-	// the callback confirm this exact browser initiated the request.
-	set_transient( 'dg_social_state_' . $state, 'google', 10 * MINUTE_IN_SECONDS );
+	// the callback confirm this exact browser initiated the request. Also
+	// carries redirect_to through the round trip since Google's consent
+	// screen doesn't preserve our query string.
+	set_transient(
+		'dg_social_state_' . $state,
+		array(
+			'provider'    => 'google',
+			'redirect_to' => $redirect_to,
+		),
+		10 * MINUTE_IN_SECONDS
+	);
 
 	$url = add_query_arg(
 		array(
@@ -63,11 +75,12 @@ function dg_google_login_callback( string $code, string $state ): void {
 		dg_social_login_fail( __( 'Google sign-in is not available right now.', 'dragon-glow' ) );
 	}
 
-	$stored_provider = get_transient( 'dg_social_state_' . $state );
+	$payload = get_transient( 'dg_social_state_' . $state );
 	delete_transient( 'dg_social_state_' . $state );
-	if ( 'google' !== $stored_provider ) {
+	if ( ! is_array( $payload ) || 'google' !== ( $payload['provider'] ?? '' ) ) {
 		dg_social_login_fail( __( 'Your Google sign-in request expired or was invalid. Please try again.', 'dragon-glow' ) );
 	}
+	$redirect_to = (string) ( $payload['redirect_to'] ?? '' );
 
 	$response = wp_remote_post(
 		DG_GOOGLE_TOKEN_ENDPOINT,
@@ -113,7 +126,7 @@ function dg_google_login_callback( string $code, string $state ): void {
 		dg_social_login_fail( $user_id->get_error_message() );
 	}
 
-	dg_social_login_authenticate_and_redirect( $user_id );
+	dg_social_login_authenticate_and_redirect( $user_id, $redirect_to );
 }
 
 /**
