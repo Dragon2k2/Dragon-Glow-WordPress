@@ -792,7 +792,16 @@
 .dg-register-form__input-wrap .dg-register-form__input:focus {
 	background: var(--register-input-bg-focus);
 	border-color: var(--register-input-border-focus);
-	box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.2);
+	box-shadow: var(--register-input-shadow-focus);
+}
+
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-register-form__input:-webkit-autofill,
+.dg-register-form__input:-webkit-autofill:hover,
+.dg-register-form__input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--register-text-primary);
+	caret-color: var(--register-text-primary);
+	transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 /* Icon (right) */
@@ -828,23 +837,136 @@
 	font-size: 19px;
 }
 
-/* Select (dropdown) */
-.dg-register-form__input-wrap--select {
+/* =========================================
+   5a-bis. CUSTOM DROPDOWN — "Gilded Card" panel skin
+   Native <select> is kept in DOM (hidden) so the form still submits
+   `skin_aspiration` correctly if JS fails to load. Visible UI is a
+   button trigger + <ul role="listbox"> panel, toggled via account-register.js.
+   ========================================= */
+.dg-dropdown {
 	position: relative;
 }
 
-.dg-register-form__input--select {
-	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	padding-right: 48px;
-	cursor: pointer;
+/* Native select stays functional for form submission, but visually hidden. */
+.dg-dropdown__native-select {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
 }
 
-.dg-register-form__input-wrap--select .dg-register-form__icon {
-	pointer-events: none;
-	color: rgba(115, 85, 9, 0.6);
+.dg-dropdown__trigger {
+	width: 100%;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 0 14px 0 14px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	text-align: left;
+	color: var(--register-text-primary);
+	background: var(--register-input-bg);
+	border: 1px solid var(--register-input-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.dg-dropdown__trigger:hover {
+	border-color: var(--register-input-border-focus);
+}
+
+.dg-dropdown.is-open .dg-dropdown__trigger {
+	background: var(--register-input-bg-focus);
+	border-color: var(--register-input-border-focus);
+	box-shadow: var(--register-input-shadow-focus);
+}
+
+.dg-dropdown__value {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dg-dropdown__chevron {
+	flex-shrink: 0;
 	font-size: 19px;
+	color: rgba(115, 85, 9, 0.6);
+	transition: transform 0.2s ease;
+}
+
+.dg-dropdown.is-open .dg-dropdown__chevron {
+	transform: rotate(180deg);
+}
+
+/* Panel — "Gilded Card": soft rounded corners, warm gold shadow */
+.dg-dropdown__panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 0;
+	right: 0;
+	z-index: 20;
+	margin: 0;
+	padding: 8px;
+	list-style: none;
+	max-height: 260px;
+	overflow-y: auto;
+	background: var(--register-dropdown-panel-bg);
+	border: 1px solid var(--register-dropdown-panel-border);
+	border-radius: 14px;
+	box-shadow: var(--register-dropdown-panel-shadow);
+}
+
+.dg-dropdown__panel[hidden] {
+	display: none;
+}
+
+.dg-dropdown__option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 11px 12px;
+	border-radius: 9px;
+	font-size: 13.5px;
+	line-height: 1.4;
+	color: var(--register-dropdown-option-text);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dg-dropdown__option:hover,
+.dg-dropdown__option.is-active {
+	background: var(--register-dropdown-option-bg-hover);
+}
+
+.dg-dropdown__option.is-selected {
+	background: var(--register-dropdown-option-bg-selected);
+	color: var(--register-dropdown-option-text-selected);
+	font-weight: 600;
+}
+
+.dg-dropdown__check {
+	font-size: 17px;
+	color: var(--register-dropdown-check-color);
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.dg-dropdown__option.is-selected .dg-dropdown__check {
+	opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-dropdown__trigger,
+	.dg-dropdown__chevron,
+	.dg-dropdown__option,
+	.dg-dropdown__check {
+		transition: none;
+	}
 }
 
 /* =========================================
@@ -1217,10 +1339,3 @@
 	}
 }
 
-/* Focus visible */
-.dg-register-form__input:focus-visible,
-.dg-register-form__submit:focus-visible,
-.dg-register-form__social-btn:focus-visible {
-	outline: 2px solid var(--register-input-border-focus);
-	outline-offset: 2px;
-}

@@ -294,6 +294,15 @@
 	transform: translateY(-1px);
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-payment-description input:-webkit-autofill,
+.dg-payment-description input:-webkit-autofill:hover,
+.dg-payment-description input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--color-on-surface);
+	caret-color: var(--color-on-surface);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-payment-description input::placeholder {
 	color: var(--color-on-surface-variant);
 	opacity: 0.6;

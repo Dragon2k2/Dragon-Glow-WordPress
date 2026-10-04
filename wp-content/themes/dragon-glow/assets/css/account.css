@@ -908,6 +908,15 @@
 	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-account-field__input:-webkit-autofill,
+.dg-account-field__input:-webkit-autofill:hover,
+.dg-account-field__input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--color-on-surface);
+	caret-color: var(--color-on-surface);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-account-field__wrap {
 	position: relative;
 }

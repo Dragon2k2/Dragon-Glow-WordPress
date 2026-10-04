@@ -755,6 +755,14 @@
 	border-color: rgba(115, 92, 0, 0.4);
 }
 
+.dg-rm-input:-webkit-autofill,
+.dg-rm-input:-webkit-autofill:hover,
+.dg-rm-input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--sr-on-surface);
+	caret-color: var(--sr-on-surface);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-rm-input:focus {
 	outline: none;
 	background: #ffffff;

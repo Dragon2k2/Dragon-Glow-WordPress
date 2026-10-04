@@ -545,6 +545,18 @@
 	box-shadow: 0 1px 0 0 var(--gift-pink);
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-gift-input-field:-webkit-autofill,
+.dg-gift-input-field:-webkit-autofill:hover,
+.dg-gift-input-field:-webkit-autofill:focus,
+.dg-gift-input-field--textarea:-webkit-autofill,
+.dg-gift-input-field--textarea:-webkit-autofill:hover,
+.dg-gift-input-field--textarea:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--gift-ink);
+	caret-color: var(--gift-ink);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 /* Error state */
 .dg-gift-input--has-error .dg-gift-input-field {
 	border-color: var(--color-error, #ba1a1a);

@@ -213,6 +213,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-input-bg-focus: var(--heritage-ivory-0);
     --auth-input-border: #d9caaf;
     --auth-input-border-focus: var(--gold-600);
+    --auth-input-shadow-focus: 0 0 0 3px rgba(166, 124, 30, 0.15);
     --auth-input-placeholder: var(--heritage-brown-300);
     --auth-icon-muted: #a8987d;
     
@@ -282,7 +283,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-input-border: rgb(197 155 39 / 0.35);
     --register-input-border-focus: var(--gold-600);
     --register-input-bg: rgba(255, 255, 255, 0.9);
-    --register-input-bg-focus: rgba(255, 255, 255, 1);
+    --register-input-bg-focus: var(--heritage-ivory-0);
+    --register-input-shadow-focus: var(--auth-input-shadow-focus);
     
     --register-btn-gradient: linear-gradient(135deg, #dbb13b 0%, var(--gold-600) 50%, #b3871d 100%);
     --register-btn-border: rgba(255, 225, 130, 0.5);
@@ -298,6 +300,16 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --register-card-bg: rgba(250, 242, 235, 0.7);
     --register-card-border: rgba(212, 175, 55, 0.25);
+
+    /* Custom dropdown — "Gilded Card" panel skin (Primary Skin Aspiration select) */
+    --register-dropdown-panel-bg: var(--heritage-ivory-0);
+    --register-dropdown-panel-border: rgba(212, 175, 55, 0.3);
+    --register-dropdown-panel-shadow: 0 12px 32px rgba(166, 124, 30, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+    --register-dropdown-option-text: var(--register-text-heading);
+    --register-dropdown-option-bg-hover: rgba(201, 162, 75, 0.1);
+    --register-dropdown-option-bg-selected: rgba(201, 162, 75, 0.16);
+    --register-dropdown-option-text-selected: var(--register-gold-primary);
+    --register-dropdown-check-color: var(--gold-600);
 
     /* Arched showcase frame — hover zoom effect */
     --register-arch-border-gradient: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);
@@ -433,6 +445,24 @@ input[type="radio"]:focus-visible {
     outline: none;
     box-shadow: none;
     outline-offset: 2px;
+}
+
+/* =========================================
+   BROWSER AUTOFILL OVERRIDE (GLOBAL FALLBACK)
+   Chrome/Edge/Safari paint a yellow background on
+   autofilled/suggested inputs. Neutralize it using the
+   long-transition-delay trick so native theme colors show
+   instead. Scoped per-component overrides (using each
+   component's own tokens) live next to that input's base
+   rule in its page CSS file; this is only the generic
+   fallback for inputs without a dedicated component class.
+   ========================================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-on-surface);
+    caret-color: var(--color-on-surface);
+    transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 ::selection {

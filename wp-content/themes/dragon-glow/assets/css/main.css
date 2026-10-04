@@ -163,6 +163,15 @@ body.dg-hide-site-chrome .footer-main {
     box-shadow: none;
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.input-ethereal:-webkit-autofill,
+.input-ethereal:-webkit-autofill:hover,
+.input-ethereal:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-on-background);
+    caret-color: var(--color-on-background);
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 /* =========================================
    8. BUTTONS
    ========================================= */

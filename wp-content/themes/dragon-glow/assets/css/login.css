@@ -331,13 +331,13 @@
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	font-weight: 600;
-	color: var(--auth-gold-800);
+	color: var(--auth-sanctuary-badge-text);
 }
 
 .dg-login__tome-sub {
 	font-style: italic;
 	font-size: 14px;
-	color: var(--auth-gold-900);
+	color: var(--auth-sanctuary-badge-text);
 }
 
 .dg-login__dot {
@@ -539,7 +539,7 @@
 	background: var(--auth-panel-bg);
 	display: flex;
 	flex-direction: column;
-	padding: 5rem;
+	padding: 4rem;
 }
 
 .dg-login__head {
@@ -677,7 +677,16 @@
 	outline: none;
 	background: var(--auth-input-bg-focus);
 	border-color: var(--auth-input-border-focus);
-	box-shadow: 0 0 0 3px rgba(166, 124, 30, 0.15);
+	box-shadow: var(--auth-input-shadow-focus);
+}
+
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-login__panel-col .dg-account-field__input:-webkit-autofill,
+.dg-login__panel-col .dg-account-field__input:-webkit-autofill:hover,
+.dg-login__panel-col .dg-account-field__input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--color-on-surface);
+	caret-color: var(--color-on-surface);
+	transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 .dg-login__panel-col .dg-account-field__toggle {
@@ -783,10 +792,11 @@
 	border-radius: 9999px;
 	cursor: pointer;
 	box-shadow: var(--auth-btn-shadow);
-	transition: box-shadow 0.2s ease, filter 0.2s ease, transform 0.15s ease;
+	transition: all 0.3s ease;
 }
 
 .dg-login__submit:hover {
+	transform: scale(1.01);
 	box-shadow: var(--auth-btn-shadow-hover);
 	filter: brightness(1.05);
 }
@@ -855,7 +865,7 @@
 .dg-login__alt-access {
 	max-width: 448px;
 	margin: 16px auto 0;
-	padding-top: 0;
+	padding-top: 16px;
 	width: 100%;
 }
 
@@ -949,7 +959,6 @@
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 14px;
 	color: var(--register-text-secondary);
-	margin: 0;
 }
 
 .dg-login__register-link {

@@ -120,6 +120,13 @@
 .dg-faq-search-input:focus {
 	outline: none;
 }
+.dg-faq-search-input:-webkit-autofill,
+.dg-faq-search-input:-webkit-autofill:hover,
+.dg-faq-search-input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--faq-ink);
+	caret-color: var(--faq-ink);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
 .dg-faq-search-input::-webkit-search-cancel-button {
 	-webkit-appearance: none;
 	appearance: none;

@@ -1156,6 +1156,15 @@
 	background: var(--a-surface-low);
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-apply-input:-webkit-autofill,
+.dg-apply-input:-webkit-autofill:hover,
+.dg-apply-input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--a-ink);
+	caret-color: var(--a-ink);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-apply-input:focus-visible {
 	outline: 2px solid var(--a-tertiary);
 	outline-offset: 2px;

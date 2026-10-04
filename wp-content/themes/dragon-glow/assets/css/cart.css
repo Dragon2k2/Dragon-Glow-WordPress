@@ -367,6 +367,15 @@
     border-bottom-color: #735c00;
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-promo-input:-webkit-autofill,
+.dg-promo-input:-webkit-autofill:hover,
+.dg-promo-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #1c1b1b;
+    caret-color: #1c1b1b;
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-promo-input::placeholder {
     opacity: 0.4;
 }

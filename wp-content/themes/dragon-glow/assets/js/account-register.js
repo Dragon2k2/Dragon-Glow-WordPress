@@ -17,6 +17,7 @@
 		initPasswordStrength();
 		initPasswordToggle();
 		initFormSubmission();
+		initCustomDropdown();
 	}
 
 	/**
@@ -166,6 +167,135 @@
 				}, 3400);
 			}
 		}
+	}
+
+	/**
+	 * Custom dropdown ("Primary Skin Aspiration") — button trigger + listbox panel.
+	 *
+	 * The native <select> stays in the DOM (visually hidden) so the form still
+	 * submits `skin_aspiration` correctly if this script fails to load. This
+	 * function only drives the visible UI and keeps both in sync.
+	 */
+	function initCustomDropdown() {
+		const dropdown = document.querySelector('[data-dg-dropdown]');
+		if (!dropdown) return;
+
+		const select = dropdown.querySelector('.dg-dropdown__native-select');
+		const trigger = dropdown.querySelector('.dg-dropdown__trigger');
+		const valueEl = dropdown.querySelector('.dg-dropdown__value');
+		const panel = dropdown.querySelector('.dg-dropdown__panel');
+		const options = Array.from(dropdown.querySelectorAll('.dg-dropdown__option'));
+
+		if (!select || !trigger || !valueEl || !panel || !options.length) return;
+
+		let activeIndex = options.findIndex(function (opt) {
+			return opt.classList.contains('is-selected');
+		});
+		if (activeIndex < 0) activeIndex = 0;
+
+		function openPanel() {
+			panel.removeAttribute('hidden');
+			dropdown.classList.add('is-open');
+			trigger.setAttribute('aria-expanded', 'true');
+			focusOption(activeIndex);
+		}
+
+		function closePanel() {
+			panel.setAttribute('hidden', '');
+			dropdown.classList.remove('is-open');
+			trigger.setAttribute('aria-expanded', 'false');
+		}
+
+		function isOpen() {
+			return dropdown.classList.contains('is-open');
+		}
+
+		function focusOption(index) {
+			options.forEach(function (opt, i) {
+				opt.classList.toggle('is-active', i === index);
+			});
+			const target = options[index];
+			if (target && typeof target.scrollIntoView === 'function') {
+				target.scrollIntoView({ block: 'nearest' });
+			}
+		}
+
+		function selectOption(index) {
+			const option = options[index];
+			if (!option) return;
+
+			options.forEach(function (opt) {
+				opt.classList.remove('is-selected');
+				opt.setAttribute('aria-selected', 'false');
+			});
+			option.classList.add('is-selected');
+			option.setAttribute('aria-selected', 'true');
+
+			valueEl.textContent = option.querySelector('span').textContent;
+			select.value = option.getAttribute('data-value');
+			activeIndex = index;
+		}
+
+		trigger.addEventListener('click', function (e) {
+			e.stopPropagation();
+			if (isOpen()) {
+				closePanel();
+			} else {
+				openPanel();
+			}
+		});
+
+		options.forEach(function (option, index) {
+			option.addEventListener('click', function () {
+				selectOption(index);
+				closePanel();
+				trigger.focus();
+			});
+			option.addEventListener('mouseenter', function () {
+				activeIndex = index;
+				focusOption(index);
+			});
+		});
+
+		trigger.addEventListener('keydown', function (e) {
+			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+				e.preventDefault();
+				if (!isOpen()) {
+					openPanel();
+					return;
+				}
+				const delta = e.key === 'ArrowDown' ? 1 : -1;
+				activeIndex = (activeIndex + delta + options.length) % options.length;
+				focusOption(activeIndex);
+			} else if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				if (isOpen()) {
+					selectOption(activeIndex);
+					closePanel();
+				} else {
+					openPanel();
+				}
+			} else if (e.key === 'Escape') {
+				if (isOpen()) {
+					e.preventDefault();
+					closePanel();
+				}
+			} else if (e.key === 'Home' && isOpen()) {
+				e.preventDefault();
+				activeIndex = 0;
+				focusOption(activeIndex);
+			} else if (e.key === 'End' && isOpen()) {
+				e.preventDefault();
+				activeIndex = options.length - 1;
+				focusOption(activeIndex);
+			}
+		});
+
+		document.addEventListener('click', function (e) {
+			if (isOpen() && !dropdown.contains(e.target)) {
+				closePanel();
+			}
+		});
 	}
 
 	/**

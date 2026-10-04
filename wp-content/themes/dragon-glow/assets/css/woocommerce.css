@@ -215,6 +215,18 @@
 	outline: none;
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.woocommerce form .form-row input.input-text:-webkit-autofill,
+.woocommerce form .form-row input.input-text:-webkit-autofill:hover,
+.woocommerce form .form-row input.input-text:-webkit-autofill:focus,
+.woocommerce .coupon input.input-text:-webkit-autofill,
+.woocommerce .coupon input.input-text:-webkit-autofill:hover,
+.woocommerce .coupon input.input-text:-webkit-autofill:focus {
+	-webkit-text-fill-color: #1b1c1a;
+	caret-color: #1b1c1a;
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .woocommerce form .form-row label {
     color: #504444;
     font-weight: 500;

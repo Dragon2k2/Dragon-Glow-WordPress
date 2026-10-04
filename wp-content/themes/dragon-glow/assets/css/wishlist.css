@@ -1525,6 +1525,15 @@
 	background: #fff;
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.dg-wishlist-modal__input:-webkit-autofill,
+.dg-wishlist-modal__input:-webkit-autofill:hover,
+.dg-wishlist-modal__input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--wl-ink);
+	caret-color: var(--wl-ink);
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 .dg-wishlist-modal__submit {
 	justify-self: stretch;
 }

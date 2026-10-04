@@ -208,6 +208,30 @@
 	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
 }
 
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.woocommerce-checkout .form-row input.input-text:-webkit-autofill,
+.woocommerce-checkout .form-row input.input-text:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input.input-text:-webkit-autofill:focus,
+.woocommerce-checkout .form-row input[type="email"]:-webkit-autofill,
+.woocommerce-checkout .form-row input[type="email"]:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input[type="email"]:-webkit-autofill:focus,
+.woocommerce-checkout .form-row input[type="tel"]:-webkit-autofill,
+.woocommerce-checkout .form-row input[type="tel"]:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input[type="tel"]:-webkit-autofill:focus,
+.woocommerce-checkout .form-row input[type="text"]:-webkit-autofill,
+.woocommerce-checkout .form-row input[type="text"]:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input[type="text"]:-webkit-autofill:focus,
+.woocommerce-checkout .form-row input[type="number"]:-webkit-autofill,
+.woocommerce-checkout .form-row input[type="number"]:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input[type="number"]:-webkit-autofill:focus,
+.woocommerce-checkout .form-row input[type="password"]:-webkit-autofill,
+.woocommerce-checkout .form-row input[type="password"]:-webkit-autofill:hover,
+.woocommerce-checkout .form-row input[type="password"]:-webkit-autofill:focus {
+	-webkit-text-fill-color: #1c1b1b;
+	caret-color: #1c1b1b;
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
 /* ── Select2 dropdown styling (Country/Region, State) ── */
 .woocommerce-checkout .form-row .select2-container .select2-selection--single {
     border: 1px solid #d0c5af !important;
