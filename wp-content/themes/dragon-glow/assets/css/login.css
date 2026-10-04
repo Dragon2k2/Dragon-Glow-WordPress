@@ -1,11 +1,15 @@
 /* =========================================
-   DRAGON GLOW — MY ACCOUNT: SIGNED-OUT AUTH GATE
+   DRAGON GLOW — MY ACCOUNT: LOGIN (SIGNED-OUT AUTH GATE)
    "Heritage Atelier" design — Cormorant Garamond + antique gold palette.
    Enqueued ONLY when `is_account_page() && !is_user_logged_in()` (see
-   inc/enqueue/styles.php). All selectors scoped to `.dg-account-auth*` so
-   this file never touches the logged-in dashboard (account.css) or any
-   other page. Tokens consumed here are defined in style.css `:root`
-   under "COMPONENT TOKENS (Layer 3: Auth Portal — Heritage Gold)".
+   inc/enqueue/styles.php). Selectors scoped to `.dg-login__*` for markup
+   unique to this gate; the shared chrome (`.dg-account-auth`, viewport
+   pinstripe frame, corner flourishes, brand link/title/rule, heritage
+   footer) stays under `.dg-account-auth__*` because register.php
+   reuses the exact same elements. This file never touches the logged-in
+   dashboard (account.css) or any other page. Tokens consumed here are
+   defined in style.css `:root` under
+   "COMPONENT TOKENS (Layer 3: Auth Portal — Heritage Gold)".
    ========================================= */
 
 /* =========================================
@@ -110,7 +114,7 @@
    1. BRAND HEADER (Atelier Imperial / Dragon Glow / Est. 2026)
    ========================================= */
 
-.dg-account-auth__brand-header {
+.dg-login__brand-header {
 	width: 100%;
 	padding: 24px 0 16px;
 	display: flex;
@@ -122,12 +126,12 @@
 }
 
 @media (min-width: 640px) {
-	.dg-account-auth__brand-header {
+	.dg-login__brand-header {
 		padding: 4px 0 39px;
 	}
 }
 
-.dg-account-auth__brand-eyebrow {
+.dg-login__brand-eyebrow {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -135,24 +139,24 @@
 	color: var(--register-gold-primary);
 }
 
-.dg-account-auth__brand-line {
+.dg-login__brand-line {
 	display: block;
 	width: 48px;
 	height: 1px;
 	background: linear-gradient(to right, transparent, var(--register-border-secondary), var(--register-gold-primary));
 }
 
-.dg-account-auth__brand-line:last-child {
+.dg-login__brand-line:last-child {
 	background: linear-gradient(to left, transparent, var(--register-border-secondary), var(--register-gold-primary));
 }
 
 @media (min-width: 640px) {
-	.dg-account-auth__brand-line {
+	.dg-login__brand-line {
 		width: 80px;
 	}
 }
 
-.dg-account-auth__brand-eyebrow-text {
+.dg-login__brand-eyebrow-text {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -165,7 +169,7 @@
 	color: var(--register-gold-primary);
 }
 
-.dg-account-auth__brand-eyebrow-text .material-symbols-outlined {
+.dg-login__brand-eyebrow-text .material-symbols-outlined {
 	font-size: 15px;
 	color: #A67C1E;
 }
@@ -200,7 +204,7 @@
 	background-position: 0% 0;
 }
 
-.dg-account-auth__brand-subtitle {
+.dg-login__brand-subtitle {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -213,7 +217,7 @@
 	background: var(--register-border-secondary);
 }
 
-.dg-account-auth__brand-subtitle p {
+.dg-login__brand-subtitle p {
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 11px;
 	font-weight: 700;
@@ -246,7 +250,7 @@
 	}
 }
 
-.dg-account-auth__frame {
+.dg-login__frame {
 	position: relative;
 	display: grid;
 	grid-template-columns: 1fr;
@@ -258,7 +262,7 @@
 }
 
 @media (min-width: 1024px) {
-	.dg-account-auth__frame {
+	.dg-login__frame {
 		grid-template-columns: 1fr 1fr;
 	}
 }
@@ -266,19 +270,19 @@
 /* Outer inset gold filigree border — double inline border echoing the
    viewport pinstripe frame, drawn just inside the form panel edges
    (matches reference: inset-1.5 @ 60% opacity + inset-3 @ 25% opacity). */
-.dg-account-auth__filigree {
+.dg-login__filigree {
 	position: absolute;
 	pointer-events: none;
 	z-index: 30;
 	border: 1px solid var(--auth-gold-300);
 }
 
-.dg-account-auth__filigree--outer {
+.dg-login__filigree--outer {
 	inset: 6px;
 	opacity: 0.6;
 }
 
-.dg-account-auth__filigree--inner {
+.dg-login__filigree--inner {
 	inset: 12px;
 	opacity: 0.25;
 }
@@ -287,7 +291,7 @@
    3. LEFT — HERITAGE SHOWCASE
    ========================================= */
 
-.dg-account-auth__showcase {
+.dg-login__showcase {
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -299,13 +303,13 @@
 }
 
 @media (min-width: 1024px) {
-	.dg-account-auth__showcase {
+	.dg-login__showcase {
 		border-bottom: 0;
 		border-right: 1px solid var(--auth-gold-300);
 	}
 }
 
-.dg-account-auth__showcase-top {
+.dg-login__showcase-top {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -315,14 +319,14 @@
 	font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
-.dg-account-auth__tome-row {
+.dg-login__tome-row {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
 }
 
-.dg-account-auth__tome {
+.dg-login__tome {
 	font-size: 12px;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
@@ -330,13 +334,13 @@
 	color: var(--auth-gold-800);
 }
 
-.dg-account-auth__tome-sub {
+.dg-login__tome-sub {
 	font-style: italic;
 	font-size: 14px;
 	color: var(--auth-gold-900);
 }
 
-.dg-account-auth__dot {
+.dg-login__dot {
 	color: var(--auth-gold-600);
 	font-size: 20px;
 }
@@ -358,14 +362,14 @@
 
 /* --- Arch showcase --- */
 
-.dg-account-auth__arch-wrap {
+.dg-login__arch-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	margin: 8px 0;
 }
 
-.dg-account-auth__crown {
+.dg-login__crown {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -373,17 +377,17 @@
 	margin-bottom: 8px;
 }
 
-.dg-account-auth__crown .material-symbols-outlined {
+.dg-login__crown .material-symbols-outlined {
 	font-size: 16px;
 }
 
-.dg-account-auth__crown-line {
+.dg-login__crown-line {
 	width: 32px;
 	height: 1px;
 	background: rgba(197, 155, 39, 0.5);
 }
 
-.dg-account-auth__arch {
+.dg-login__arch {
 	position: relative;
 	width: 100%;
 	max-width: 363.2px;
@@ -396,11 +400,11 @@
 	transition: transform 0.5s ease;
 }
 
-.dg-account-auth__arch-wrap:hover .dg-account-auth__arch {
+.dg-login__arch-wrap:hover .dg-login__arch {
 	transform: scale(1.015);
 }
 
-.dg-account-auth__arch-inner {
+.dg-login__arch-inner {
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -409,7 +413,7 @@
 	border: 1px solid var(--auth-gold-300);
 }
 
-.dg-account-auth__arch-img {
+.dg-login__arch-img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
@@ -417,11 +421,11 @@
 	transition: transform 0.7s ease;
 }
 
-.dg-account-auth__arch-wrap:hover .dg-account-auth__arch-img {
+.dg-login__arch-wrap:hover .dg-login__arch-img {
 	transform: scale(1.05);
 }
 
-.dg-account-auth__arch-inner::after {
+.dg-login__arch-inner::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -429,7 +433,7 @@
 	pointer-events: none;
 }
 
-.dg-account-auth__arch-caption {
+.dg-login__arch-caption {
 	position: absolute;
 	bottom: 16px;
 	inset-inline: 16px;
@@ -438,7 +442,7 @@
 	z-index: 1;
 }
 
-.dg-account-auth__arch-caption p {
+.dg-login__arch-caption p {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 20px;
 	font-weight: 500;
@@ -447,7 +451,7 @@
 	color: #FFF6DF;
 }
 
-.dg-account-auth__arch-caption span {
+.dg-login__arch-caption span {
 	display: block;
 	margin-top: 2px;
 	font-family: 'Montserrat', sans-serif;
@@ -457,7 +461,7 @@
 	color: rgba(232, 193, 111, 0.9);
 }
 
-.dg-account-auth__medallion {
+.dg-login__medallion {
 	position: absolute;
 	top: -14px;
 	left: 50%;
@@ -474,18 +478,18 @@
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.dg-account-auth__medallion .material-symbols-outlined {
+.dg-login__medallion .material-symbols-outlined {
 	font-size: 15px;
 }
 
 /* --- Ritual guide footer --- */
 
-.dg-account-auth__ritual {
+.dg-login__ritual {
 	padding-top: 16px;
 	border-top: 1px solid rgba(216, 194, 148, 0.5);
 }
 
-.dg-account-auth__quote {
+.dg-login__quote {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-style: italic;
 	text-align: center;
@@ -494,14 +498,14 @@
 	margin: 0 0 12px;
 }
 
-.dg-account-auth__steps {
+.dg-login__steps {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
 	text-align: center;
 }
 
-.dg-account-auth__step {
+.dg-login__step {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -511,7 +515,7 @@
 	border-radius: 2px;
 }
 
-.dg-account-auth__step-label {
+.dg-login__step-label {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 12px;
 	font-weight: 700;
@@ -519,7 +523,7 @@
 	color: var(--auth-gold-700);
 }
 
-.dg-account-auth__step-sub {
+.dg-login__step-sub {
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 11px;
 	line-height: 1.2;
@@ -530,7 +534,7 @@
    4. RIGHT — SIGN IN / REGISTER PANEL
    ========================================= */
 
-.dg-account-auth__panel-col {
+.dg-login__panel-col {
 	padding: clamp(1.5rem, 4vw, 3rem);
 	background: var(--auth-panel-bg);
 	display: flex;
@@ -538,25 +542,26 @@
 	padding: 5rem;
 }
 
-.dg-account-auth__head {
+.dg-login__head {
 	text-align: center;
 	max-width: 448px;
 	margin: 0 auto 24px;
 }
 
-.dg-account-auth__eyebrow-row {
+.dg-login__eyebrow-row {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 	margin-bottom: 4px;
 }
 
-.dg-account-auth__eyebrow-line {
+.dg-login__eyebrow-line {
 	width: 24px;
 	height: 1px;
 	background: rgba(197, 155, 39, 0.4);
 }
 
+/* .dg-account-auth__eyebrow stays shared — also used by register.php */
 .dg-account-auth__eyebrow {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 12px;
@@ -566,7 +571,7 @@
 	color: var(--auth-eyebrow);
 }
 
-.dg-account-auth__title {
+.dg-login__title {
 	font-family: 'Playfair Display', Georgia, serif;
 	font-weight: 400;
 	font-size: clamp(28px, 3.5vw, 36px);
@@ -575,6 +580,7 @@
 	margin: 0;
 }
 
+/* .dg-account-auth__title-rule stays shared — also used by register.php */
 .dg-account-auth__title-rule {
 	display: block;
 	width: 64px;
@@ -583,7 +589,7 @@
 	margin: 8px auto;
 }
 
-.dg-account-auth__sub {
+.dg-login__sub {
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 13px;
 	line-height: 1.6;
@@ -596,21 +602,21 @@
 
 /* --- Form --- */
 
-.dg-account-auth__panel-col .dg-account-form {
+.dg-login__panel-col .dg-account-form {
 	max-width: 448px;
 	margin: 0 auto;
 	width: 100%;
 	gap: 16px;
 }
 
-.dg-account-auth__panel-col .dg-account-field__row-label {
+.dg-login__panel-col .dg-account-field__row-label {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
 }
 
-.dg-account-auth__panel-col .dg-account-field label {
+.dg-login__panel-col .dg-account-field label {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 14px;
 	font-weight: 600;
@@ -619,25 +625,25 @@
 	color: var(--auth-label);
 }
 
-.dg-account-auth__panel-col .dg-account-field__hint,
-.dg-account-auth__panel-col .dg-account-form__link {
+.dg-login__panel-col .dg-account-field__hint,
+.dg-login__panel-col .dg-account-form__link {
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-style: italic;
 	font-size: 13px;
 	color: var(--auth-gold-700);
 }
 
-.dg-account-auth__panel-col .dg-account-form__link:hover {
+.dg-login__panel-col .dg-account-form__link:hover {
 	color: var(--auth-gold-900);
 }
 
-.dg-account-auth__panel-col .dg-account-field__wrap {
+.dg-login__panel-col .dg-account-field__wrap {
 	position: relative;
 	display: flex;
 	align-items: center;
 }
 
-.dg-account-auth__panel-col .dg-account-field__icon {
+.dg-login__panel-col .dg-account-field__icon {
 	position: absolute;
 	left: 12px;
 	font-size: 18px;
@@ -645,7 +651,7 @@
 	pointer-events: none;
 }
 
-.dg-account-auth__panel-col .dg-account-field__input {
+.dg-login__panel-col .dg-account-field__input {
 	width: 100%;
 	height: 44px;
 	padding: 0 12px;
@@ -653,37 +659,37 @@
 	font-size: 14px;
 	background: var(--auth-input-bg);
 	border: 1px solid var(--auth-input-border);
-	border-radius: 0;
+	border-radius: 8px;
 	color: var(--color-on-surface);
 	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.dg-account-auth__panel-col .dg-account-field__input--icon {
+.dg-login__panel-col .dg-account-field__input--icon {
 	padding-left: 40px;
 }
 
-.dg-account-auth__panel-col .dg-account-field__input::placeholder {
+.dg-login__panel-col .dg-account-field__input::placeholder {
 	color: var(--auth-input-placeholder);
 	font-style: italic;
 }
 
-.dg-account-auth__panel-col .dg-account-field__input:focus {
+.dg-login__panel-col .dg-account-field__input:focus {
 	outline: none;
 	background: var(--auth-input-bg-focus);
 	border-color: var(--auth-input-border-focus);
 	box-shadow: 0 0 0 3px rgba(166, 124, 30, 0.15);
 }
 
-.dg-account-auth__panel-col .dg-account-field__toggle {
+.dg-login__panel-col .dg-account-field__toggle {
 	color: var(--auth-icon-muted);
 }
 
-.dg-account-auth__panel-col .dg-account-field__toggle:hover {
+.dg-login__panel-col .dg-account-field__toggle:hover {
 	color: var(--color-on-surface);
 	background: transparent;
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox {
+.dg-login__panel-col .dg-account-checkbox {
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
@@ -695,7 +701,7 @@
 }
 
 /* Custom checkbox — native input hidden but kept accessible (focus/keyboard). */
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"] {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"] {
 	position: relative;
 	flex-shrink: 0;
 	width: var(--auth-checkbox-size);
@@ -709,7 +715,7 @@
 	transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]::after {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]::after {
 	content: "";
 	position: absolute;
 	left: 6px;
@@ -724,40 +730,40 @@
 	transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:hover {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]:hover {
 	background: var(--auth-checkbox-bg-hover);
 	border-color: var(--auth-checkbox-border-hover);
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]:checked {
 	background: var(--auth-checkbox-bg-checked);
 	border-color: var(--auth-checkbox-border-checked);
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked:hover {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]:checked:hover {
 	background: var(--auth-checkbox-bg-checked-hover);
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:checked::after {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]:checked::after {
 	opacity: 1;
 	transform: rotate(45deg) scale(1);
 }
 
-.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]:focus-visible {
+.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]:focus-visible {
 	outline: none;
 	box-shadow: var(--auth-checkbox-shadow-focus);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"],
-	.dg-account-auth__panel-col .dg-account-checkbox input[type="checkbox"]::after {
+	.dg-login__panel-col .dg-account-checkbox input[type="checkbox"],
+	.dg-login__panel-col .dg-account-checkbox input[type="checkbox"]::after {
 		transition: none;
 	}
 }
 
 /* --- Heritage seal submit button --- */
 
-.dg-account-auth__submit {
+.dg-login__submit {
 	position: relative;
 	width: 100%;
 	height: 48px;
@@ -774,35 +780,36 @@
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
 	border: 1px solid var(--auth-btn-border);
-	border-radius: 0;
+	border-radius: 9999px;
 	cursor: pointer;
 	box-shadow: var(--auth-btn-shadow);
 	transition: box-shadow 0.2s ease, filter 0.2s ease, transform 0.15s ease;
 }
 
-.dg-account-auth__submit:hover {
+.dg-login__submit:hover {
 	box-shadow: var(--auth-btn-shadow-hover);
 	filter: brightness(1.05);
 }
 
-.dg-account-auth__submit:active {
+.dg-login__submit:active {
 	transform: scale(0.99);
 }
 
-.dg-account-auth__submit .material-symbols-outlined {
+.dg-login__submit .material-symbols-outlined {
 	font-size: 17px;
 }
 
-.dg-account-auth__submit-frame {
+.dg-login__submit-frame {
 	position: absolute;
 	inset: 4px;
 	border: 1px solid rgba(255, 231, 168, 0.3);
 	pointer-events: none;
+	border-radius: 9999px;
 }
 
 /* --- Divider --- */
 
-.dg-account-auth__divider {
+.dg-login__divider {
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -820,22 +827,22 @@
 	color: #7D6638;
 }
 
-.dg-account-auth__divider-star {
+.dg-login__divider-star {
 	color: var(--auth-gold-600);
 	font-size: 10px;
 }
 
-.dg-account-auth__register {
+.dg-login__register {
 	max-width: 448px;
 	margin: 0 auto;
 	width: 100%;
 }
 
-.dg-account-auth__register .dg-account-form {
+.dg-login__register .dg-account-form {
 	margin: 0;
 }
 
-.dg-account-auth__text {
+.dg-login__text {
 	font-family: 'Montserrat', sans-serif;
 	font-size: 13px;
 	color: var(--auth-body);
@@ -845,21 +852,21 @@
 
 /* --- Alternative Access (social sign-in) --- */
 
-.dg-account-auth__alt-access {
+.dg-login__alt-access {
 	max-width: 448px;
 	margin: 16px auto 0;
 	padding-top: 0;
 	width: 100%;
 }
 
-.dg-account-auth__alt-access-header {
+.dg-login__alt-access-header {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 	margin-bottom: 16px;
 }
 
-.dg-account-auth__alt-access-line {
+.dg-login__alt-access-line {
 	display: block;
 	flex: 1 1 auto;
 	min-width: 24px;
@@ -867,11 +874,11 @@
 	background: var(--register-border-secondary);
 }
 
-.dg-account-auth__alt-access-line:last-child {
+.dg-login__alt-access-line:last-child {
 	background: var(--register-border-secondary);
 }
 
-.dg-account-auth__alt-access-text {
+.dg-login__alt-access-text {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -884,19 +891,19 @@
 	white-space: nowrap;
 }
 
-.dg-account-auth__social-buttons {
+.dg-login__social-buttons {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 12px;
 	margin-bottom: 16px;
 }
 
-/* Visual parity with .dg-register-form__social-btn (account-register.css) —
+/* Visual parity with .dg-register-form__social-btn (register.css) —
    pill shape + Plus Jakarta Sans, matching the "Alternative Accession"
    buttons on the full registration page. Reuses the same --register-*
    tokens (defined once in style.css :root) rather than redefining
    equivalent values under --auth-* — see CLAUDE.md §8a token-first rule. */
-.dg-account-auth__social-btn {
+.dg-login__social-btn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -911,53 +918,53 @@
 	border: 1px solid var(--register-input-border);
 	border-radius: 9999px;
 	cursor: pointer;
-	text-decoration: none; /* <a> fallback when the provider is configured — see signed-out.php */
+	text-decoration: none; /* <a> fallback when the provider is configured — see login.php */
 	transition: all 0.2s ease;
 }
 
-.dg-account-auth__social-btn:focus-visible {
+.dg-login__social-btn:focus-visible {
 	outline: 2px solid var(--register-input-border-focus);
 	outline-offset: 2px;
 }
 
-.dg-account-auth__social-btn:hover:not(:disabled) {
+.dg-login__social-btn:hover:not(:disabled) {
 	background: rgba(232, 217, 181, 0.2);
 	border-color: var(--register-border-secondary);
 	box-shadow: 0 2px 8px rgba(197, 155, 39, 0.12);
 }
 
-.dg-account-auth__social-btn:disabled {
+.dg-login__social-btn:disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-.dg-account-auth__social-icon {
+.dg-login__social-icon {
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
 }
 
-.dg-account-auth__register-prompt {
+.dg-login__register-prompt {
 	text-align: center;
-	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 15px;
-	color: #473c27;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	color: var(--register-text-secondary);
 	margin: 0;
 }
 
-.dg-account-auth__register-link {
+.dg-login__register-link {
 	display: inline-block;
 	margin-top: 4px;
 	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-weight: 600;
+	font-weight: 700;
 	letter-spacing: 0.04em;
-	color: var(--auth-gold-700);
+	color: var(--register-gold-primary);
 	text-decoration: none;
 	border-bottom: 1px solid #8c6d23;
 	transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.dg-account-auth__register-link:hover {
+.dg-login__register-link:hover {
 	color: var(--auth-gold-900);
 	border-bottom-color: var(--auth-gold-900);
 }
@@ -1021,19 +1028,19 @@
 }
 
 /* --- Trust footnote (below register form, inside panel-col) --- */
-.dg-account-auth__footnote {
+.dg-login__footnote {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	flex-wrap: nowrap;
 	gap: 10px;
-	margin-top: 24px;
+	margin-top: 28px;
 	padding-top: 20px;
 	border-top: 1px solid rgba(216, 194, 148, 0.5);
 }
 
-.dg-account-auth__footnote-item {
+.dg-login__footnote-item {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -1046,12 +1053,12 @@
 	white-space: nowrap;
 }
 
-.dg-account-auth__footnote-item .material-symbols-outlined {
+.dg-login__footnote-item .material-symbols-outlined {
 	font-size: 15px;
 	color: #7A6432;
 }
 
-.dg-account-auth__footnote .dg-account-auth__dot {
+.dg-login__footnote .dg-login__dot {
 	color: #7A6432;
 }
 

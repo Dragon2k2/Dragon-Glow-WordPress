@@ -41,7 +41,7 @@
 
 /* =========================================
    1. VIEWPORT FRAME & CORNER FLOURISHES
-   (Reuse from account-auth.css structure)
+   (Reuse from login.css structure)
    ========================================= */
 
 .dg-account-auth--register .dg-account-auth__viewport-frame--outer {
@@ -1114,7 +1114,7 @@
 	border: 1px solid var(--register-input-border);
 	border-radius: 9999px;
 	cursor: pointer;
-	text-decoration: none; /* <a> fallback when the provider is configured — see register-page.php */
+	text-decoration: none; /* <a> fallback when the provider is configured — see register.php */
 	transition: all 0.2s ease;
 }
 

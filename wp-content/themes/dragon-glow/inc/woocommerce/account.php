@@ -19,8 +19,8 @@
  *   - addresses.php          `/my-account/edit-address/` list + edit views,
  *                            "use billing instead" handler.
  *   - edit-account.php       `/my-account/edit-account/` panel.
- *   - signed-out.php         "Heritage Atelier" auth gate (signed-out users).
- *   - register-page.php      Full `/my-account/register/` page.
+ *   - login.php              "Heritage Atelier" auth gate (signed-out users).
+ *   - register.php           Full `/my-account/register/` page.
  *   - social-login.php       Google / Apple Sign-In (OAuth) — loader for
  *                            inc/woocommerce/account/social-login/*.
  *
@@ -45,6 +45,6 @@ require_once DG_DIR . '/inc/woocommerce/account/dashboard.php';
 require_once DG_DIR . '/inc/woocommerce/account/orders.php';
 require_once DG_DIR . '/inc/woocommerce/account/addresses.php';
 require_once DG_DIR . '/inc/woocommerce/account/edit-account.php';
-require_once DG_DIR . '/inc/woocommerce/account/signed-out.php';
-require_once DG_DIR . '/inc/woocommerce/account/register-page.php';
+require_once DG_DIR . '/inc/woocommerce/account/login.php';
+require_once DG_DIR . '/inc/woocommerce/account/register.php';
 require_once DG_DIR . '/inc/woocommerce/account/social-login.php';

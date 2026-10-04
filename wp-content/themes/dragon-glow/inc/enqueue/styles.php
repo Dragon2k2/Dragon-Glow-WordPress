@@ -110,9 +110,9 @@ function dg_enqueue_styles(): void {
 			);
 
 			// Signed-out auth gate (Sign in / Create account) — Heritage Gold
-			// visual style, scoped to `.dg-account-auth*` only. Loaded only
-			// when the visitor isn't logged in, since logged-in customers
-			// never see this markup.
+			// visual style, scoped to `.dg-account-auth*` / `.dg-login*` only.
+			// Loaded only when the visitor isn't logged in, since logged-in
+			// customers never see this markup.
 			if ( is_account_page() && ! is_user_logged_in() ) {
 				wp_enqueue_style(
 					'dg-cormorant-garamond',
@@ -121,8 +121,8 @@ function dg_enqueue_styles(): void {
 					null
 				);
 				wp_enqueue_style(
-					'dg-account-auth',
-					DG_URI . '/assets/css/account-auth.css',
+					'dg-login',
+					DG_URI . '/assets/css/login.css',
 					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
 					DG_VERSION
 				);
@@ -141,8 +141,8 @@ function dg_enqueue_styles(): void {
 					null
 				);
 				wp_enqueue_style(
-					'dg-account-register',
-					DG_URI . '/assets/css/account-register.css',
+					'dg-register',
+					DG_URI . '/assets/css/register.css',
 					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
 					DG_VERSION
 				);

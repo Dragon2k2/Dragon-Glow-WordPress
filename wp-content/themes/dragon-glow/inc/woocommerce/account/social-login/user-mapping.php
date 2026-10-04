@@ -134,7 +134,7 @@ function dg_social_login_authenticate_and_redirect( int $user_id ): void {
  *
  * Uses WC's own notice session store (`wc_add_notice`) so the message
  * renders through the existing `wc_print_notices()` call already present
- * in signed-out.php — no new UI needed.
+ * in login.php — no new UI needed.
  *
  * @param string $message Human-readable error message (already translated).
  * @return void (redirects then exits).

@@ -18,7 +18,7 @@
  *   - routing.php       `template_redirect` routes: start flow + shared
  *                       callback dispatch.
  *
- * Buttons stay disabled in signed-out.php until the matching provider's
+ * Buttons stay disabled in login.php until the matching provider's
  * wp-config.php constants are fully defined — see
  * dg_social_login_google_enabled() / dg_social_login_apple_enabled().
  *
