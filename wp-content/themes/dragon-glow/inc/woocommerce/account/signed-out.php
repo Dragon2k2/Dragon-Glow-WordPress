@@ -50,13 +50,15 @@ function dg_render_account_signed_out(): void {
 					</div>
 					<div class="dg-account-auth__brand-line"></div>
 				</div>
-				<h1 class="dg-account-auth__brand-title">
-					<?php esc_html_e( 'Dragon Glow', 'dragon-glow' ); ?>
-				</h1>
-				<div class="dg-account-auth__brand-subtitle">
-					<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
-					<p><?php esc_html_e( 'Est. 2026  •  San Francisco  •  New York', 'dragon-glow' ); ?></p>
-					<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
+				<div class="dg-account-auth__brand-link">
+					<h1 class="dg-account-auth__brand-title">
+						<?php esc_html_e( 'Dragon Glow', 'dragon-glow' ); ?>
+					</h1>
+					<div class="dg-account-auth__brand-subtitle">
+						<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
+						<p><?php esc_html_e( 'Est. 2026  •  San Francisco  •  New York', 'dragon-glow' ); ?></p>
+						<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
+					</div>
 				</div>
 			</header>
 

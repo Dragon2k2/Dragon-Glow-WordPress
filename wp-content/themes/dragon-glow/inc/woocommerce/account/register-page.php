@@ -46,7 +46,7 @@ function dg_render_account_register_page(): void {
 					</div>
 					<span class="dg-account-auth__crest-line" aria-hidden="true"></span>
 				</div>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="dg-account-auth__brand-link">
+				<div class="dg-account-auth__brand-link">
 					<h1 class="dg-account-auth__brand-title"><?php esc_html_e( 'Dragon Glow', 'dragon-glow' ); ?></h1>
 					<div class="dg-account-auth__brand-meta">
 						<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
@@ -55,7 +55,7 @@ function dg_render_account_register_page(): void {
 						</p>
 						<span class="dg-account-auth__brand-rule" aria-hidden="true"></span>
 					</div>
-				</a>
+				</div>
 			</header>
 
 			<div class="dg-account-auth__panel dg-account-auth__panel--register">

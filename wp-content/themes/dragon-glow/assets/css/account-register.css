@@ -136,18 +136,11 @@
 	color: var(--register-gold-primary);
 }
 
-/* Brand link */
+/* Brand link — wraps title + meta (no longer an <a>) */
 .dg-account-auth__brand-link {
 	display: inline-flex;
 	flex-direction: column;
 	align-items: center;
-	text-decoration: none;
-	color: inherit;
-	transition: transform 0.3s ease;
-}
-
-.dg-account-auth__brand-link:hover {
-	transform: scale(1.005);
 }
 
 .dg-account-auth__brand-title {
@@ -159,6 +152,18 @@
 	color: var(--auth-brand-title-text);
 	margin: 0;
 	line-height: 1.2;
+	/* Shimmer sweep hover — gold gradient text, swept via background-position. */
+	background: linear-gradient(90deg, var(--auth-brand-title-text) 0%, var(--auth-brand-title-text) 40%, #fff6da 50%, var(--auth-brand-title-text) 60%, var(--auth-brand-title-text) 100%);
+	background-size: 250% 100%;
+	background-position: 100% 0;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	transition: background-position 0.6s ease;
+}
+
+.dg-account-auth__brand-link:hover .dg-account-auth__brand-title {
+	background-position: 0% 0;
 }
 
 
