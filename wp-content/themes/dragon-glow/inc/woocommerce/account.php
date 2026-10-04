@@ -21,6 +21,8 @@
  *   - edit-account.php       `/my-account/edit-account/` panel.
  *   - signed-out.php         "Heritage Atelier" auth gate (signed-out users).
  *   - register-page.php      Full `/my-account/register/` page.
+ *   - social-login.php       Google / Apple Sign-In (OAuth) — loader for
+ *                            inc/woocommerce/account/social-login/*.
  *
  * Guards:
  *  - When WC is inactive, shows a friendly fallback (login form + register CTA).
@@ -45,3 +47,4 @@ require_once DG_DIR . '/inc/woocommerce/account/addresses.php';
 require_once DG_DIR . '/inc/woocommerce/account/edit-account.php';
 require_once DG_DIR . '/inc/woocommerce/account/signed-out.php';
 require_once DG_DIR . '/inc/woocommerce/account/register-page.php';
+require_once DG_DIR . '/inc/woocommerce/account/social-login.php';

@@ -1114,6 +1114,7 @@
 	border: 1px solid var(--register-input-border);
 	border-radius: 9999px;
 	cursor: pointer;
+	text-decoration: none; /* <a> fallback when the provider is configured — see register-page.php */
 	transition: all 0.2s ease;
 }
 

@@ -891,46 +891,50 @@
 	margin-bottom: 16px;
 }
 
+/* Visual parity with .dg-register-form__social-btn (account-register.css) —
+   pill shape + Plus Jakarta Sans, matching the "Alternative Accession"
+   buttons on the full registration page. Reuses the same --register-*
+   tokens (defined once in style.css :root) rather than redefining
+   equivalent values under --auth-* — see CLAUDE.md §8a token-first rule. */
 .dg-account-auth__social-btn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	height: 44px;
+	height: 40px;
 	padding: 0 16px;
-	font-family: 'Montserrat', sans-serif;
-	font-size: 14px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
 	font-weight: 500;
-	background: var(--auth-ivory-50);
-	border: 1px solid var(--auth-gold-400);
-	border-radius: 0;
+	color: var(--register-text-primary);
+	background: var(--register-surface-container-lowest);
+	border: 1px solid var(--register-input-border);
+	border-radius: 9999px;
 	cursor: pointer;
-	transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	text-decoration: none; /* <a> fallback when the provider is configured — see signed-out.php */
+	transition: all 0.2s ease;
+}
+
+.dg-account-auth__social-btn:focus-visible {
+	outline: 2px solid var(--register-input-border-focus);
+	outline-offset: 2px;
 }
 
 .dg-account-auth__social-btn:hover:not(:disabled) {
-	background: var(--auth-ivory-200);
-	border-color: var(--auth-gold-500);
+	background: rgba(232, 217, 181, 0.2);
+	border-color: var(--register-border-secondary);
 	box-shadow: 0 2px 8px rgba(197, 155, 39, 0.12);
 }
 
 .dg-account-auth__social-btn:disabled {
-	opacity: 0.5;
+	opacity: 0.6;
 	cursor: not-allowed;
 }
 
 .dg-account-auth__social-icon {
-	width: 18px;
-	height: 18px;
+	width: 16px;
+	height: 16px;
 	flex-shrink: 0;
-}
-
-.dg-account-auth__social-btn--google {
-	color: #1a1a1a;
-}
-
-.dg-account-auth__social-btn--apple {
-	color: #000000;
 }
 
 .dg-account-auth__register-prompt {
