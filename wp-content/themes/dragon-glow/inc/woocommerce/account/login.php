@@ -268,7 +268,17 @@ function dg_render_account_signed_out(): void {
 
 					<p class="dg-login__register-prompt">
 						<?php esc_html_e( 'Not yet inscribed in our ledger?', 'dragon-glow' ); ?>
-						<a href="<?php echo esc_url( dg_account_endpoint_url( 'register' ) ); ?>" class="dg-login__register-link">
+						<?php
+						// Preserve redirect_to when switching from login → register (same
+						// "intended URL" pattern — if user came from /shop/ to login, and
+						// clicks "Request Atelier Initiation", they should land back on /shop/
+						// after registering, not on the dashboard).
+						$register_url = dg_account_endpoint_url( 'register' );
+						if ( '' !== $redirect_to && $redirect_to !== dg_account_endpoint_url( '' ) ) {
+							$register_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $register_url );
+						}
+						?>
+						<a href="<?php echo esc_url( $register_url ); ?>" class="dg-login__register-link">
 							<?php esc_html_e( 'Request Atelier Initiation', 'dragon-glow' ); ?>
 						</a>
 					</p>

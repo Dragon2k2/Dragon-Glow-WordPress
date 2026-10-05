@@ -1,11 +1,9 @@
 <?php
 /**
- * Dragon Glow — My Account: Registration Form Handler
+ * Dragon Glow — My Account: Registration Hooks
  *
- * Processes the custom registration form submitted from `/my-account/register/`
- * (and the inline register form on the signed-out auth gate). Validates
- * input, creates the WooCommerce customer account, and saves additional
- * customer meta (skin aspiration, newsletter opt-in).
+ * Extends WooCommerce registration with custom meta fields (skin aspiration,
+ * newsletter opt-in) and "return to previous page" redirect pattern.
  *
  * @package Dragon_Glow
  */
@@ -13,103 +11,50 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Handle registration form submission.
+ * Save custom registration fields after WooCommerce creates the user account.
  *
- * Processes the custom registration form from /my-account/register/ endpoint.
- * Validates input, creates WooCommerce customer account, and saves additional
- * customer meta (skin aspiration, newsletter opt-in).
+ * Fired by `WC_Form_Handler::process_registration()` right after successful
+ * user creation. Saves Dragon Glow custom fields (skin aspiration, newsletter
+ * opt-in) that are not part of WooCommerce core registration.
  *
+ * @param int   $customer_id New customer user ID.
+ * @param array $new_customer_data Customer data from WC (unused).
+ * @param string $password_generated Whether WC generated password (unused).
  * @return void
  */
-function dg_process_registration(): void {
-	// Only process on register endpoint POST with nonce.
-	if ( ! isset( $_POST['register'], $_POST['woocommerce-register-nonce'] ) ) {
+function dg_save_registration_custom_fields( int $customer_id, array $new_customer_data, string $password_generated ): void {
+	// Nonce already verified by WooCommerce core handler.
+	if ( ! isset( $_POST['register'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by WC core.
 		return;
 	}
 
-	global $wp_query;
-	if ( ! is_account_page() || ! isset( $wp_query->query_vars['register'] ) ) {
-		return;
-	}
-
-	// Verify nonce.
-	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-register-nonce'] ) ), 'woocommerce-register' ) ) {
-		wc_add_notice( __( 'Security verification failed. Please try again.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	// Validate required fields.
-	$email      = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
-	$password   = isset( $_POST['password'] ) ? wp_unslash( $_POST['password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$first_name = isset( $_POST['billing_first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) : '';
-	$last_name  = isset( $_POST['billing_last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_last_name'] ) ) : '';
-
-	if ( empty( $email ) ) {
-		wc_add_notice( __( 'Please provide a valid email address.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	if ( empty( $password ) ) {
-		wc_add_notice( __( 'Please enter a password.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	if ( strlen( $password ) < 8 ) {
-		wc_add_notice( __( 'Password must be at least 8 characters long.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	if ( empty( $first_name ) || empty( $last_name ) ) {
-		wc_add_notice( __( 'Please provide both first and last name.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	// Check terms acceptance (required).
-	if ( ! isset( $_POST['terms'] ) ) {
-		wc_add_notice( __( 'You must accept the Terms of Service to register.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	// Check if email already exists.
-	if ( email_exists( $email ) ) {
-		wc_add_notice( __( 'An account with this email address already exists.', 'dragon-glow' ), 'error' );
-		return;
-	}
-
-	// Create customer account.
-	$customer_id = wc_create_new_customer( $email, '', $password );
-
-	if ( is_wp_error( $customer_id ) ) {
-		wc_add_notice( $customer_id->get_error_message(), 'error' );
-		return;
-	}
-
-	// Update customer meta with name.
-	update_user_meta( $customer_id, 'first_name', $first_name );
-	update_user_meta( $customer_id, 'last_name', $last_name );
-	update_user_meta( $customer_id, 'billing_first_name', $first_name );
-	update_user_meta( $customer_id, 'billing_last_name', $last_name );
-
-	// Save optional fields.
+	// Save skin aspiration (optional).
 	if ( isset( $_POST['skin_aspiration'] ) ) {
 		$aspiration = sanitize_text_field( wp_unslash( $_POST['skin_aspiration'] ) );
 		update_user_meta( $customer_id, 'dg_skin_aspiration', $aspiration );
 	}
 
+	// Save newsletter opt-in (optional).
 	if ( isset( $_POST['newsletter'] ) ) {
 		update_user_meta( $customer_id, 'dg_newsletter_opt_in', '1' );
 	}
-
-	// Log the user in.
-	wc_set_customer_auth_cookie( $customer_id );
-
-	// Trigger WooCommerce registration action.
-	do_action( 'woocommerce_created_customer', $customer_id, array(), '' );
-
-	// Redirect to the page the user was on before registering (enterprise
-	// "intended URL" pattern — same helper used for login + social login),
-	// falling back to the My Account dashboard.
-	wp_safe_redirect( dg_account_safe_redirect_target() );
-	exit;
 }
-add_action( 'template_redirect', 'dg_process_registration', 5 );
+add_action( 'woocommerce_created_customer', 'dg_save_registration_custom_fields', 10, 3 );
+/**
+ * Redirect to the page the user was on before registering, instead of always
+ * landing on the My Account dashboard.
+ *
+ * `woocommerce_registration_redirect` is WC's own extension point for this
+ * exact purpose — fired by `WC_Form_Handler::process_registration()` right
+ * after a successful user creation. We ignore WC's passed-in `$redirect`
+ * (always the My Account URL) and resolve the real target from `redirect_to`.
+ *
+ * Mirrors `dg_login_redirect_to_previous_page()` in routing.php.
+ *
+ * @param string $redirect Default redirect URL (My Account page).
+ * @return string
+ */
+function dg_registration_redirect_to_previous_page( string $redirect ): string {
+	return dg_account_safe_redirect_target();
+}
+add_filter( 'woocommerce_registration_redirect', 'dg_registration_redirect_to_previous_page', 10, 1 );

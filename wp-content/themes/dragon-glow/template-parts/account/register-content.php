@@ -63,6 +63,22 @@ if ( ! $registration_enabled ) {
 					
 					<?php wp_nonce_field( 'woocommerce-register', 'woocommerce-register-nonce' ); ?>
 
+					<?php
+					// Persist redirect_to through form submission (enterprise "intended
+					// URL" pattern — same mechanism used by wp-login.php). Without this
+					// hidden input, POST strips the query string and the user lands on
+					// the My Account dashboard instead of returning to the page they
+					// came from (e.g. /shop/ -> Sign Up -> submit -> back to /shop/).
+					if ( isset( $_REQUEST['redirect_to'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- redirect target only, validated via wp_validate_redirect() in dg_account_safe_redirect_target().
+						$redirect_to = wp_unslash( $_REQUEST['redirect_to'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by esc_url() below.
+						if ( is_string( $redirect_to ) && '' !== $redirect_to ) {
+							?>
+							<input type="hidden" name="redirect_to" value="<?php echo esc_url( $redirect_to ); ?>" />
+							<?php
+						}
+					}
+					?>
+
 					<!-- Name Row -->
 					<div class="dg-register__row">
 						<div class="dg-register__field">
@@ -221,7 +237,20 @@ if ( ! $registration_enabled ) {
 					<!-- Sign In Link -->
 					<p class="dg-register__signin-prompt">
 						<?php esc_html_e( 'Already inscribed?', 'dragon-glow' ); ?>
-						<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-register__signin-link">
+						<?php
+						// Preserve redirect_to when switching between register → sign in (same
+						// "intended URL" pattern — if user came from /shop/ to /register/, and
+						// clicks "Already inscribed? Sign In", they should land back on /shop/
+						// after signing in, not on the dashboard).
+						$signin_url = dg_account_endpoint_url( '' );
+						if ( isset( $_REQUEST['redirect_to'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- redirect target only, validated server-side.
+							$redirect_to = wp_unslash( $_REQUEST['redirect_to'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by add_query_arg() below.
+							if ( is_string( $redirect_to ) && '' !== $redirect_to ) {
+								$signin_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $signin_url );
+							}
+						}
+						?>
+						<a href="<?php echo esc_url( $signin_url ); ?>" class="dg-register__signin-link">
 							<?php esc_html_e( 'Sign In', 'dragon-glow' ); ?>
 						</a>
 					</p>
