@@ -17,7 +17,6 @@
 		initPasswordStrength();
 		initPasswordToggle();
 		initFormSubmission();
-		initCustomDropdown();
 	}
 
 	/**
@@ -41,12 +40,17 @@
 	/**
 	 * Update password strength bars and text.
 	 *
-	 * Strength levels (matching reference exactly):
-	 * - Unsealed: no input (0 length)
-	 * - Frail: < 6 characters (1 bar, red)
-	 * - Tempered: 6-8 characters (2 bars, gold)
-	 * - Formidable: 9-11 characters (3 bars, darker gold)
-	 * - Imperial Sovereign: 12+ characters (4 bars, green)
+	 * Enterprise-grade validation (OWASP/NIST aligned):
+	 * - Weak: < 12 chars or missing required character types
+	 * - Fair: 8-11 chars with all required types
+	 * - Good: 12-15 chars with all required types (minimum acceptable)
+	 * - Strong: 16+ chars with all required types
+	 *
+	 * Required character types:
+	 * - Lowercase letter (a-z)
+	 * - Uppercase letter (A-Z)
+	 * - Digit (0-9)
+	 * - Special character (!@#$%^&*()_+-=[]{}|;:,.<>?)
 	 *
 	 * @param {string} value Password value.
 	 * @param {NodeList} bars Strength bar elements.
@@ -61,31 +65,44 @@
 		const len = value.length;
 
 		if (len === 0) {
-			text.textContent = text.getAttribute('data-text-unsealed') || 'Cipher Strength: Unsealed';
+			text.textContent = text.getAttribute('data-text-unsealed') || 'Password Strength: Weak';
 			text.style.color = '';
+			updateRequirements(value);
+			updateSubmitButton(0);
 			return;
 		}
+
+		// Character type checks
+		const hasLower = /[a-z]/.test(value);
+		const hasUpper = /[A-Z]/.test(value);
+		const hasDigit = /[0-9]/.test(value);
+		const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(value);
+		const hasAllTypes = hasLower && hasUpper && hasDigit && hasSpecial;
 
 		let level = 0;
 		let label = '';
 		let color = '';
 
-		if (len < 6) {
+		// Strength algorithm: length + character diversity
+		if (len < 8) {
 			level = 1;
-			label = 'Cipher Strength: Frail';
-			color = '#BA1A1A';
-		} else if (len < 9) {
+			label = 'Password Strength: Weak';
+			color = '#D32F2F'; // Red
+		} else if (len < 12 || !hasAllTypes) {
+			// 8-11 chars OR missing required types = Fair (not acceptable for registration)
 			level = 2;
-			label = 'Cipher Strength: Tempered';
-			color = '#715509';
-		} else if (len < 12) {
+			label = 'Password Strength: Fair';
+			color = '#F57C00'; // Orange
+		} else if (len < 16) {
+			// 12-15 chars + all types = Good (minimum acceptable)
 			level = 3;
-			label = 'Cipher Strength: Formidable';
-			color = '#715509';
+			label = 'Password Strength: Good';
+			color = '#1976D2'; // Blue
 		} else {
+			// 16+ chars + all types = Strong (recommended)
 			level = 4;
-			label = 'Cipher Strength: Imperial Sovereign';
-			color = '#2E632B';
+			label = 'Password Strength: Strong';
+			color = '#388E3C'; // Green
 		}
 
 		// Update bars
@@ -107,6 +124,64 @@
 		// Update text
 		text.textContent = label;
 		text.style.color = color;
+
+		// Update requirements checklist
+		updateRequirements(value);
+
+		// Update submit button state
+		updateSubmitButton(level);
+	}
+
+	/**
+	 * Update password requirements checklist visual state.
+	 *
+	 * @param {string} value Password value.
+	 */
+	function updateRequirements(value) {
+		const requirements = document.querySelectorAll('[data-requirement]');
+		if (!requirements.length) return;
+
+		const checks = {
+			length: value.length >= 12,
+			lowercase: /[a-z]/.test(value),
+			uppercase: /[A-Z]/.test(value),
+			digit: /[0-9]/.test(value),
+			special: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(value)
+		};
+
+		requirements.forEach(function (req) {
+			const type = req.getAttribute('data-requirement');
+			const icon = req.querySelector('.dg-requirement__icon');
+			if (checks[type]) {
+				req.classList.add('is-met');
+				if (icon) icon.textContent = 'check_circle';
+			} else {
+				req.classList.remove('is-met');
+				if (icon) icon.textContent = 'radio_button_unchecked';
+			}
+		});
+	}
+
+	/**
+	 * Enable/disable submit button based on password strength.
+	 * Only Good (level 3) or Strong (level 4) are acceptable.
+	 *
+	 * @param {number} level Strength level (0-4).
+	 */
+	function updateSubmitButton(level) {
+		const submitButton = document.querySelector('.dg-register-form__submit');
+		if (!submitButton) return;
+
+		// Minimum acceptable: level 3 (Good)
+		if (level >= 3) {
+			submitButton.removeAttribute('disabled');
+			submitButton.style.opacity = '';
+			submitButton.style.cursor = '';
+		} else {
+			submitButton.setAttribute('disabled', 'disabled');
+			submitButton.style.opacity = '0.5';
+			submitButton.style.cursor = 'not-allowed';
+		}
 	}
 
 	/**
@@ -137,15 +212,48 @@
 	}
 
 	/**
-	 * Form submission handling (show toast notification on success).
+	 * Form submission handling (client-side validation + toast notification).
 	 */
 	function initFormSubmission() {
 		const form = document.querySelector('.dg-register-form');
 		if (!form) return;
 
-		// WooCommerce handles actual submission — this is just for UX enhancement.
-		// If registration succeeds, WC redirects to My Account dashboard.
-		// We show toast only for simulated/demo purposes here (not triggered in real flow).
+		// Client-side validation before submission
+		form.addEventListener('submit', function (e) {
+			const passwordInput = document.querySelector('[data-dg-password-strength]');
+			if (!passwordInput) return;
+
+			const password = passwordInput.value;
+
+			// Validate password strength (must be Good or Strong)
+			const len = password.length;
+			const hasLower = /[a-z]/.test(password);
+			const hasUpper = /[A-Z]/.test(password);
+			const hasDigit = /[0-9]/.test(password);
+			const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
+			const hasAllTypes = hasLower && hasUpper && hasDigit && hasSpecial;
+
+			// Minimum: 12+ chars with all required types
+			if (len < 12 || !hasAllTypes) {
+				e.preventDefault();
+
+				// Show error message
+				const errorMsg = document.querySelector('.dg-register-form__password-error');
+				if (errorMsg) {
+					errorMsg.removeAttribute('hidden');
+					errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+					// Auto-hide after 5 seconds
+					setTimeout(function () {
+						errorMsg.setAttribute('hidden', '');
+					}, 5000);
+				}
+
+				// Focus password field
+				passwordInput.focus();
+				return;
+			}
+		});
 
 		// Check for success message from WooCommerce
 		const notices = document.querySelectorAll('.woocommerce-message, .woocommerce-info');
@@ -167,135 +275,6 @@
 				}, 3400);
 			}
 		}
-	}
-
-	/**
-	 * Custom dropdown ("Primary Skin Aspiration") — button trigger + listbox panel.
-	 *
-	 * The native <select> stays in the DOM (visually hidden) so the form still
-	 * submits `skin_aspiration` correctly if this script fails to load. This
-	 * function only drives the visible UI and keeps both in sync.
-	 */
-	function initCustomDropdown() {
-		const dropdown = document.querySelector('[data-dg-dropdown]');
-		if (!dropdown) return;
-
-		const select = dropdown.querySelector('.dg-dropdown__native-select');
-		const trigger = dropdown.querySelector('.dg-dropdown__trigger');
-		const valueEl = dropdown.querySelector('.dg-dropdown__value');
-		const panel = dropdown.querySelector('.dg-dropdown__panel');
-		const options = Array.from(dropdown.querySelectorAll('.dg-dropdown__option'));
-
-		if (!select || !trigger || !valueEl || !panel || !options.length) return;
-
-		let activeIndex = options.findIndex(function (opt) {
-			return opt.classList.contains('is-selected');
-		});
-		if (activeIndex < 0) activeIndex = 0;
-
-		function openPanel() {
-			panel.removeAttribute('hidden');
-			dropdown.classList.add('is-open');
-			trigger.setAttribute('aria-expanded', 'true');
-			focusOption(activeIndex);
-		}
-
-		function closePanel() {
-			panel.setAttribute('hidden', '');
-			dropdown.classList.remove('is-open');
-			trigger.setAttribute('aria-expanded', 'false');
-		}
-
-		function isOpen() {
-			return dropdown.classList.contains('is-open');
-		}
-
-		function focusOption(index) {
-			options.forEach(function (opt, i) {
-				opt.classList.toggle('is-active', i === index);
-			});
-			const target = options[index];
-			if (target && typeof target.scrollIntoView === 'function') {
-				target.scrollIntoView({ block: 'nearest' });
-			}
-		}
-
-		function selectOption(index) {
-			const option = options[index];
-			if (!option) return;
-
-			options.forEach(function (opt) {
-				opt.classList.remove('is-selected');
-				opt.setAttribute('aria-selected', 'false');
-			});
-			option.classList.add('is-selected');
-			option.setAttribute('aria-selected', 'true');
-
-			valueEl.textContent = option.querySelector('span').textContent;
-			select.value = option.getAttribute('data-value');
-			activeIndex = index;
-		}
-
-		trigger.addEventListener('click', function (e) {
-			e.stopPropagation();
-			if (isOpen()) {
-				closePanel();
-			} else {
-				openPanel();
-			}
-		});
-
-		options.forEach(function (option, index) {
-			option.addEventListener('click', function () {
-				selectOption(index);
-				closePanel();
-				trigger.focus();
-			});
-			option.addEventListener('mouseenter', function () {
-				activeIndex = index;
-				focusOption(index);
-			});
-		});
-
-		trigger.addEventListener('keydown', function (e) {
-			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-				e.preventDefault();
-				if (!isOpen()) {
-					openPanel();
-					return;
-				}
-				const delta = e.key === 'ArrowDown' ? 1 : -1;
-				activeIndex = (activeIndex + delta + options.length) % options.length;
-				focusOption(activeIndex);
-			} else if (e.key === 'Enter' || e.key === ' ') {
-				e.preventDefault();
-				if (isOpen()) {
-					selectOption(activeIndex);
-					closePanel();
-				} else {
-					openPanel();
-				}
-			} else if (e.key === 'Escape') {
-				if (isOpen()) {
-					e.preventDefault();
-					closePanel();
-				}
-			} else if (e.key === 'Home' && isOpen()) {
-				e.preventDefault();
-				activeIndex = 0;
-				focusOption(activeIndex);
-			} else if (e.key === 'End' && isOpen()) {
-				e.preventDefault();
-				activeIndex = options.length - 1;
-				focusOption(activeIndex);
-			}
-		});
-
-		document.addEventListener('click', function (e) {
-			if (isOpen() && !dropdown.contains(e.target)) {
-				closePanel();
-			}
-		});
 	}
 
 	/**

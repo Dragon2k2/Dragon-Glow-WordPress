@@ -292,24 +292,15 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-btn-shadow: 0 8px 20px rgba(197, 155, 39, 0.3);
     --register-btn-shadow-hover: 0 12px 28px rgba(197, 155, 39, 0.4);
     
+    /* Password strength indicator — industry standard (Google/Microsoft/Apple) */
     --register-strength-bg: rgba(127, 118, 102, 0.4);
-    --register-strength-weak: var(--error-500);
-    --register-strength-fair: var(--gold-600);
-    --register-strength-good: var(--gold-700);
-    --register-strength-strong: var(--success-500);
+    --register-strength-weak: #D32F2F;      /* Material Red 700 — < 8 chars */
+    --register-strength-fair: #F57C00;      /* Material Orange 700 — 8-11 chars */
+    --register-strength-good: #1976D2;      /* Material Blue 700 — 12-15 chars */
+    --register-strength-strong: #388E3C;    /* Material Green 700 — 16+ chars */
     
     --register-card-bg: rgba(250, 242, 235, 0.7);
     --register-card-border: rgba(212, 175, 55, 0.25);
-
-    /* Custom dropdown — "Gilded Card" panel skin (Primary Skin Aspiration select) */
-    --register-dropdown-panel-bg: var(--heritage-ivory-0);
-    --register-dropdown-panel-border: rgba(212, 175, 55, 0.3);
-    --register-dropdown-panel-shadow: 0 12px 32px rgba(166, 124, 30, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
-    --register-dropdown-option-text: var(--register-text-heading);
-    --register-dropdown-option-bg-hover: rgba(201, 162, 75, 0.1);
-    --register-dropdown-option-bg-selected: rgba(201, 162, 75, 0.16);
-    --register-dropdown-option-text-selected: var(--register-gold-primary);
-    --register-dropdown-check-color: var(--gold-600);
 
     /* Arched showcase frame — hover zoom effect */
     --register-arch-border-gradient: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);

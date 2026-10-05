@@ -46,13 +46,13 @@ function dg_render_account_signed_out(): void {
 	<main class="dg-account dg-account--signed-out" id="main-content">
 		<div class="dg-account-auth">
 
-			<!-- Brand header (Atelier Imperial / Dragon Glow / Est. 2026) -->
+			<!-- Brand header (Imperial Collection / Dragon Glow / Est. 2026) -->
 			<header class="dg-login__brand-header" data-sr>
 				<div class="dg-login__brand-eyebrow">
 					<div class="dg-login__brand-line"></div>
 					<div class="dg-login__brand-eyebrow-text">
 						<span class="material-symbols-outlined" aria-hidden="true">flare</span>
-						<span><?php esc_html_e( 'Atelier Imperial', 'dragon-glow' ); ?></span>
+						<span><?php esc_html_e( 'Imperial Collection', 'dragon-glow' ); ?></span>
 						<span class="material-symbols-outlined" aria-hidden="true">flare</span>
 					</div>
 					<div class="dg-login__brand-line"></div>
@@ -79,11 +79,11 @@ function dg_render_account_signed_out(): void {
 				<div class="dg-login__showcase" data-sr>
 					<div class="dg-login__showcase-top">
 						<div class="dg-login__tome-row">
-							<span class="dg-login__tome"><?php esc_html_e( 'Tome IV', 'dragon-glow' ); ?></span>
-							<span class="dg-login__dot" aria-hidden="true">&bull;</span>
-							<span class="dg-login__tome-sub"><?php esc_html_e( 'The Golden Alchemy Formulation', 'dragon-glow' ); ?></span>
-						</div>
-						<span class="dg-account-auth__sanctuary-badge"><?php esc_html_e( 'Ritual Sanctuary', 'dragon-glow' ); ?></span>
+						<span class="dg-login__tome"><?php esc_html_e( 'IV', 'dragon-glow' ); ?></span>
+						<span class="dg-login__dot" aria-hidden="true">&bull;</span>
+						<span class="dg-login__tome-sub"><?php esc_html_e( 'Luxury Skincare Collection', 'dragon-glow' ); ?></span>
+					</div>
+						<span class="dg-account-auth__sanctuary-badge"><?php esc_html_e( 'Member Access', 'dragon-glow' ); ?></span>
 					</div>
 
 					<div class="dg-login__arch-wrap">
@@ -133,18 +133,18 @@ function dg_render_account_signed_out(): void {
 				<!-- RIGHT: Sign in / Register -->
 				<div class="dg-login__panel-col" data-sr>
 
-					<header class="dg-login__head">
-						<div class="dg-login__eyebrow-row">
-							<span class="dg-login__eyebrow-line" aria-hidden="true"></span>
-							<span class="dg-account-auth__eyebrow"><?php esc_html_e( 'Registry of Members', 'dragon-glow' ); ?></span>
-							<span class="dg-login__eyebrow-line" aria-hidden="true"></span>
-						</div>
-						<h1 class="dg-login__title"><?php esc_html_e( 'Enter the Sanctuary', 'dragon-glow' ); ?></h1>
-						<span class="dg-account-auth__title-rule" aria-hidden="true"></span>
-						<p class="dg-login__sub">
-							<?php esc_html_e( 'Present your apothecary credentials to receive curated formulations, private releases, and ancestral botanical privileges.', 'dragon-glow' ); ?>
-						</p>
-					</header>
+				<header class="dg-login__head">
+					<div class="dg-login__eyebrow-row">
+						<span class="dg-login__eyebrow-line" aria-hidden="true"></span>
+						<span class="dg-account-auth__eyebrow"><?php esc_html_e( 'Welcome Back', 'dragon-glow' ); ?></span>
+						<span class="dg-login__eyebrow-line" aria-hidden="true"></span>
+					</div>
+					<h1 class="dg-login__title"><?php esc_html_e( 'Sign In to Your Account', 'dragon-glow' ); ?></h1>
+					<span class="dg-account-auth__title-rule" aria-hidden="true"></span>
+				<p class="dg-login__sub">
+					<?php esc_html_e( 'Access your orders, saved items, and exclusive member benefits. Track shipments, manage your wishlist, and enjoy personalized recommendations.', 'dragon-glow' ); ?>
+				</p>
+				</header>
 
 					<?php wc_print_notices(); ?>
 
@@ -199,24 +199,23 @@ function dg_render_account_signed_out(): void {
 							</div>
 						</div>
 
-						<div class="dg-account-field__row">
-							<label class="dg-account-checkbox">
-								<input type="checkbox" name="rememberme" value="forever" />
-								<span><?php esc_html_e( 'Preserve session token on this terminal', 'dragon-glow' ); ?></span>
-							</label>
-						</div>
+					<div class="dg-account-field__row">
+						<label class="dg-account-checkbox">
+							<input type="checkbox" name="rememberme" value="forever" />
+							<span><?php esc_html_e( 'Keep me signed in', 'dragon-glow' ); ?></span>
+						</label>
+					</div>
 
 						<?php do_action( 'woocommerce_login_form' ); ?>
 
 						<input type="hidden" name="woocommerce-login-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-login' ) ); ?>" />
 						<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
-						<button type="submit" name="login" value="<?php esc_attr_e( 'Sign in', 'dragon-glow' ); ?>" class="dg-login__submit">
-							<span class="dg-login__submit-frame" aria-hidden="true"></span>
-							<span class="material-symbols-outlined">workspace_premium</span>
-							<span><?php esc_html_e( 'Enter the Sanctuary', 'dragon-glow' ); ?></span>
-							<span class="material-symbols-outlined">arrow_right_alt</span>
-						</button>
+					<button type="submit" name="login" value="<?php esc_attr_e( 'Sign in', 'dragon-glow' ); ?>" class="dg-login__submit">
+						<span class="dg-login__submit-frame" aria-hidden="true"></span>
+						<span class="material-symbols-outlined">lock_open</span>
+						<span><?php esc_html_e( 'Sign In', 'dragon-glow' ); ?></span>
+					</button>
 
 					<?php do_action( 'woocommerce_login_form_end' ); ?>
 				</form>
@@ -266,30 +265,30 @@ function dg_render_account_signed_out(): void {
 						<?php echo $apple_enabled ? '</a>' : '</button>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static closing tag string, no user input. ?>
 					</div>
 
-					<p class="dg-login__register-prompt">
-						<?php esc_html_e( 'Not yet inscribed in our ledger?', 'dragon-glow' ); ?>
-						<?php
-						// Preserve redirect_to when switching from login → register (same
-						// "intended URL" pattern — if user came from /shop/ to login, and
-						// clicks "Request Atelier Initiation", they should land back on /shop/
-						// after registering, not on the dashboard).
-						$register_url = dg_account_endpoint_url( 'register' );
-						if ( '' !== $redirect_to && $redirect_to !== dg_account_endpoint_url( '' ) ) {
-							$register_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $register_url );
-						}
-						?>
-						<a href="<?php echo esc_url( $register_url ); ?>" class="dg-login__register-link">
-							<?php esc_html_e( 'Request Atelier Initiation', 'dragon-glow' ); ?>
-						</a>
-					</p>
+				<p class="dg-login__register-prompt">
+					<?php esc_html_e( "Don't have an account?", 'dragon-glow' ); ?>
+					<?php
+					// Preserve redirect_to when switching from login → register (same
+					// "intended URL" pattern — if user came from /shop/ to login, and
+					// clicks "Create Account", they should land back on /shop/
+					// after registering, not on the dashboard).
+					$register_url = dg_account_endpoint_url( 'register' );
+					if ( '' !== $redirect_to && $redirect_to !== dg_account_endpoint_url( '' ) ) {
+						$register_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $register_url );
+					}
+					?>
+					<a href="<?php echo esc_url( $register_url ); ?>" class="dg-login__register-link">
+						<?php esc_html_e( 'Create Account', 'dragon-glow' ); ?>
+					</a>
+				</p>
 				</div>
 
 				<?php if ( $register_enabled ) : ?>
-						<div class="dg-login__divider">
-							<span class="dg-login__divider-star">&#10022;</span>
-							<span><?php esc_html_e( 'Not Yet Inscribed?', 'dragon-glow' ); ?></span>
-							<span class="dg-login__divider-star">&#10022;</span>
-						</div>
+					<div class="dg-login__divider">
+						<span class="dg-login__divider-star">&#10022;</span>
+						<span><?php esc_html_e( 'New Customer?', 'dragon-glow' ); ?></span>
+						<span class="dg-login__divider-star">&#10022;</span>
+					</div>
 
 						<section class="dg-login__register" id="dg-account-register">
 							<p class="dg-login__text">
@@ -327,8 +326,8 @@ function dg_render_account_signed_out(): void {
 											?>" />
 								</div>
 
-								<div class="dg-account-field">
-									<label for="dg-reg-password"><?php esc_html_e( 'Choose Security Cipher (Password)', 'dragon-glow' ); ?></label>
+							<div class="dg-account-field">
+								<label for="dg-reg-password"><?php esc_html_e( 'Password', 'dragon-glow' ); ?></label>
 									<div class="dg-account-field__wrap">
 										<input
 											type="password"
@@ -354,11 +353,11 @@ function dg_render_account_signed_out(): void {
 								<input type="hidden" name="woocommerce-register-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-register' ) ); ?>" />
 								<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
-								<button type="submit" name="register" value="<?php esc_attr_e( 'Create account', 'dragon-glow' ); ?>" class="dg-login__submit">
-									<span class="dg-login__submit-frame" aria-hidden="true"></span>
-									<span class="material-symbols-outlined">verified_user</span>
-									<span><?php esc_html_e( 'Inscribe in Atelier Ledger', 'dragon-glow' ); ?></span>
-								</button>
+							<button type="submit" name="register" value="<?php esc_attr_e( 'Create account', 'dragon-glow' ); ?>" class="dg-login__submit">
+								<span class="dg-login__submit-frame" aria-hidden="true"></span>
+								<span class="material-symbols-outlined">verified_user</span>
+								<span><?php esc_html_e( 'Create Account', 'dragon-glow' ); ?></span>
+							</button>
 
 								<?php do_action( 'woocommerce_register_form_end' ); ?>
 							</form>
@@ -366,10 +365,10 @@ function dg_render_account_signed_out(): void {
 					<?php endif; ?>
 
 			<div class="dg-login__footnote">
-				<span class="dg-login__footnote-item">
-					<span class="material-symbols-outlined" aria-hidden="true">eco</span>
-					<span><?php esc_html_e( 'Pure Botanical Distillation', 'dragon-glow' ); ?></span>
-				</span>
+			<span class="dg-login__footnote-item">
+				<span class="material-symbols-outlined" aria-hidden="true">eco</span>
+				<span><?php esc_html_e( 'Natural Ingredients', 'dragon-glow' ); ?></span>
+			</span>
 				<span class="dg-login__dot" aria-hidden="true">&bull;</span>
 				<span class="dg-login__footnote-item">
 					<span class="material-symbols-outlined" aria-hidden="true">verified</span>

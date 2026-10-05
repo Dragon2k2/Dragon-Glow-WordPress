@@ -46,7 +46,7 @@ function dg_render_account_register_page(): void {
 					<span class="dg-account-auth__crest-line" aria-hidden="true"></span>
 					<div class="dg-account-auth__crest-badge">
 						<span class="material-symbols-outlined" aria-hidden="true">flare</span>
-						<span class="dg-account-auth__crest-text"><?php esc_html_e( 'Atelier Imperial', 'dragon-glow' ); ?></span>
+						<span class="dg-account-auth__crest-text"><?php esc_html_e( 'Imperial Collection ', 'dragon-glow' ); ?></span>
 						<span class="material-symbols-outlined" aria-hidden="true">flare</span>
 					</div>
 					<span class="dg-account-auth__crest-line" aria-hidden="true"></span>
@@ -74,7 +74,7 @@ function dg_render_account_register_page(): void {
 					<div class="dg-account-auth__toast" id="dg-register-toast" hidden>
 						<span class="material-symbols-outlined">verified</span>
 						<span class="dg-account-auth__toast-msg" id="dg-register-toast-msg">
-							<?php esc_html_e( 'Registry updated successfully.', 'dragon-glow' ); ?>
+							<?php esc_html_e( 'Account created successfully.', 'dragon-glow' ); ?>
 						</span>
 					</div>
 
@@ -89,15 +89,15 @@ function dg_render_account_register_page(): void {
 							<!-- Column header -->
 							<div class="dg-account-auth__showcase-header">
 								<div class="dg-account-auth__showcase-meta">
-									<span class="dg-account-auth__eyebrow"><?php esc_html_e( 'Tome IV • Initiation', 'dragon-glow' ); ?></span>
+									<span class="dg-account-auth__eyebrow"><?php esc_html_e( 'IV • Registration', 'dragon-glow' ); ?></span>
 									<span class="dg-account-auth__sanctuary-badge">
 										<span class="dg-account-auth__pulse-dot" aria-hidden="true"></span>
-										<?php esc_html_e( 'Sanctuary Registry', 'dragon-glow' ); ?>
+										<?php esc_html_e( 'Member Benefits', 'dragon-glow' ); ?>
 									</span>
 								</div>
-								<h2 class="dg-account-auth__showcase-title">
-									<?php esc_html_e( 'The Golden Alchemy Ritual', 'dragon-glow' ); ?>
-								</h2>
+							<h2 class="dg-account-auth__showcase-title">
+								<?php esc_html_e( 'Welcome to Dragon Glow', 'dragon-glow' ); ?>
+							</h2>
 								<span class="dg-account-auth__title-rule" aria-hidden="true"></span>
 							</div>
 
@@ -119,9 +119,9 @@ function dg_render_account_register_page(): void {
 											class="dg-account-auth__arch-img" />
 										<div class="dg-account-auth__arch-overlay" aria-hidden="true"></div>
 										<div class="dg-account-auth__arch-label">
-											<span class="dg-account-auth__arch-eyebrow">
-												<?php esc_html_e( 'Vintage Distillation', 'dragon-glow' ); ?>
-											</span>
+									<span class="dg-account-auth__arch-eyebrow">
+										<?php esc_html_e( 'Signature Collection', 'dragon-glow' ); ?>
+									</span>
 											<span class="dg-account-auth__arch-name">
 												<?php esc_html_e( 'Dragon Elixir Nº 1', 'dragon-glow' ); ?>
 											</span>
@@ -134,9 +134,9 @@ function dg_render_account_register_page(): void {
 									<p class="dg-account-auth__arch-spec-label">
 										<?php esc_html_e( 'Dragon Elixir Nº 1 — 24K Botanical Golden Serum', 'dragon-glow' ); ?>
 									</p>
-									<p class="dg-account-auth__arch-epigram">
-										&ldquo;<?php esc_html_e( 'Inscribe your name into our ledger of eternal radiance.', 'dragon-glow' ); ?>&rdquo;
-									</p>
+								<p class="dg-account-auth__arch-epigram">
+									&ldquo;<?php esc_html_e( 'Join our exclusive community of beauty enthusiasts.', 'dragon-glow' ); ?>&rdquo;
+								</p>
 								</div>
 							</div>
 
@@ -145,36 +145,36 @@ function dg_render_account_register_page(): void {
 								<div class="dg-account-auth__privilege-card">
 									<div class="dg-account-auth__privilege-num">I</div>
 									<div class="dg-account-auth__privilege-content">
-										<div class="dg-account-auth__privilege-header">
-											<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Maiden Gift', 'dragon-glow' ); ?></h4>
-											<span class="dg-account-auth__privilege-badge">15% Off</span>
-										</div>
-										<p class="dg-account-auth__privilege-text">
-											<?php esc_html_e( 'Code', 'dragon-glow' ); ?>
-											<span class="dg-account-auth__privilege-code">RADIANT15</span>
-											<?php esc_html_e( 'applied automatically upon initiation.', 'dragon-glow' ); ?>
-										</p>
+									<div class="dg-account-auth__privilege-header">
+										<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Welcome Gift', 'dragon-glow' ); ?></h4>
+										<span class="dg-account-auth__privilege-badge">15% Off</span>
+									</div>
+									<p class="dg-account-auth__privilege-text">
+										<?php esc_html_e( 'Code', 'dragon-glow' ); ?>
+										<span class="dg-account-auth__privilege-code">RADIANT15</span>
+										<?php esc_html_e( 'applied automatically at checkout.', 'dragon-glow' ); ?>
+									</p>
 									</div>
 								</div>
 
 								<div class="dg-account-auth__privilege-card">
 									<div class="dg-account-auth__privilege-num">II</div>
-									<div class="dg-account-auth__privilege-content">
-										<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Archive Access', 'dragon-glow' ); ?></h4>
-										<p class="dg-account-auth__privilege-text">
-											<?php esc_html_e( 'Early seasonal allocations & private reserve formulation drafts.', 'dragon-glow' ); ?>
-										</p>
-									</div>
+								<div class="dg-account-auth__privilege-content">
+									<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Exclusive Access', 'dragon-glow' ); ?></h4>
+									<p class="dg-account-auth__privilege-text">
+										<?php esc_html_e( 'Early access to new launches and limited edition collections.', 'dragon-glow' ); ?>
+									</p>
+								</div>
 								</div>
 
 								<div class="dg-account-auth__privilege-card">
 									<div class="dg-account-auth__privilege-num">III</div>
-									<div class="dg-account-auth__privilege-content">
-										<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Bespoke Ritual', 'dragon-glow' ); ?></h4>
-										<p class="dg-account-auth__privilege-text">
-											<?php esc_html_e( 'Complimentary dermal diagnostic and customized botanical guide.', 'dragon-glow' ); ?>
-										</p>
-									</div>
+								<div class="dg-account-auth__privilege-content">
+									<h4 class="dg-account-auth__privilege-title"><?php esc_html_e( 'Personalized Consultation', 'dragon-glow' ); ?></h4>
+									<p class="dg-account-auth__privilege-text">
+										<?php esc_html_e( 'Complimentary skin analysis and personalized skincare routine.', 'dragon-glow' ); ?>
+									</p>
+								</div>
 								</div>
 							</div>
 
@@ -187,15 +187,15 @@ function dg_render_account_register_page(): void {
 							<div class="dg-account-auth__form-header">
 								<div class="dg-account-auth__form-eyebrow">
 									<span aria-hidden="true">&#10023;</span>
-									<span><?php esc_html_e( 'Registry of New Patrons', 'dragon-glow' ); ?></span>
+									<span><?php esc_html_e( 'New Member Registration', 'dragon-glow' ); ?></span>
 									<span aria-hidden="true">&#10023;</span>
 								</div>
-								<h2 class="dg-account-auth__form-title">
-									<?php esc_html_e( 'Initiate Your Atelier Sanctuary', 'dragon-glow' ); ?>
-								</h2>
-								<p class="dg-account-auth__form-subtitle">
-									<?php esc_html_e( 'Enroll into our apothecary ledger to unlock bespoke botanical elixirs, seasonal private allocations, and royal member privileges.', 'dragon-glow' ); ?>
-								</p>
+							<h2 class="dg-account-auth__form-title">
+								<?php esc_html_e( 'Create Your Account', 'dragon-glow' ); ?>
+							</h2>
+						<p class="dg-account-auth__form-subtitle">
+							<?php esc_html_e( 'Join Dragon Glow to access exclusive products, member-only offers, and personalized skincare recommendations.', 'dragon-glow' ); ?>
+						</p>
 							</div>
 
 							<?php wc_print_notices(); ?>
@@ -209,7 +209,7 @@ function dg_render_account_register_page(): void {
 								<div class="dg-register-form__row">
 									<div class="dg-register-form__field">
 										<label for="dg-reg-first-name" class="dg-register-form__label">
-											<?php esc_html_e( 'Patron First Name', 'dragon-glow' ); ?>
+											<?php esc_html_e( 'First Name', 'dragon-glow' ); ?>
 											<span class="dg-register-form__required">*</span>
 										</label>
 										<div class="dg-register-form__input-wrap">
@@ -227,7 +227,7 @@ function dg_render_account_register_page(): void {
 
 									<div class="dg-register-form__field">
 										<label for="dg-reg-last-name" class="dg-register-form__label">
-											<?php esc_html_e( 'Patron Last Name', 'dragon-glow' ); ?>
+											<?php esc_html_e( 'Last Name', 'dragon-glow' ); ?>
 											<span class="dg-register-form__required">*</span>
 										</label>
 										<div class="dg-register-form__input-wrap">
@@ -265,11 +265,11 @@ function dg_render_account_register_page(): void {
 								</div>
 
 								<!-- Password cipher & strength indicator -->
-								<div class="dg-register-form__field">
-									<label for="dg-reg-password" class="dg-register-form__label">
-										<?php esc_html_e( 'Choose Security Cipher (Password)', 'dragon-glow' ); ?>
-										<span class="dg-register-form__required">*</span>
-									</label>
+							<div class="dg-register-form__field">
+								<label for="dg-reg-password" class="dg-register-form__label">
+									<?php esc_html_e( 'Password', 'dragon-glow' ); ?>
+									<span class="dg-register-form__required">*</span>
+								</label>
 									<div class="dg-register-form__input-wrap">
 										<input
 											type="password"
@@ -277,7 +277,7 @@ function dg_render_account_register_page(): void {
 											name="password"
 											id="dg-reg-password"
 											autocomplete="new-password"
-											placeholder="<?php esc_attr_e( 'Minimum 8 golden characters', 'dragon-glow' ); ?>"
+											placeholder="<?php esc_attr_e( 'Minimum 12 characters with mixed types', 'dragon-glow' ); ?>"
 											required
 											data-dg-password-strength />
 										<button
@@ -297,103 +297,88 @@ function dg_render_account_register_page(): void {
 											<div class="dg-register-form__strength-bar" data-strength-bar="3"></div>
 											<div class="dg-register-form__strength-bar" data-strength-bar="4"></div>
 										</div>
-										<span class="dg-register-form__strength-text" data-strength-text>
-											<?php esc_html_e( 'Cipher Strength: Unsealed', 'dragon-glow' ); ?>
-										</span>
+									<span class="dg-register-form__strength-text" data-strength-text>
+										<?php esc_html_e( 'Password Strength: Weak', 'dragon-glow' ); ?>
+									</span>
 									</div>
-								</div>
 
-								<!-- Primary skin aspiration -->
-								<div class="dg-register-form__field">
-									<label for="dg-reg-aspiration" class="dg-register-form__label">
-										<?php esc_html_e( 'Primary Skin Aspiration', 'dragon-glow' ); ?>
-									</label>
-									<?php
-									$dg_aspiration_options = array(
-										'radiance'  => __( 'Solar Luminous Radiance & Vitality', 'dragon-glow' ),
-										'cellular'  => __( 'Cellular Age Defying & Longevity', 'dragon-glow' ),
-										'barrier'   => __( 'Barrier Deep Restoration & Calming', 'dragon-glow' ),
-										'hydration' => __( 'Sacred Hydration & Botanical Dew', 'dragon-glow' ),
-									);
-									$dg_aspiration_default = 'radiance';
-									?>
-									<div class="dg-dropdown" data-dg-dropdown>
-										<select
-											class="dg-register-form__input dg-dropdown__native-select"
-											name="skin_aspiration"
-											id="dg-reg-aspiration"
-											tabindex="-1"
-											aria-hidden="true">
-											<?php foreach ( $dg_aspiration_options as $dg_value => $dg_label ) : ?>
-												<option value="<?php echo esc_attr( $dg_value ); ?>" <?php selected( $dg_aspiration_default, $dg_value ); ?>>
-													<?php echo esc_html( $dg_label ); ?>
-												</option>
-											<?php endforeach; ?>
-										</select>
-										<button
-											type="button"
-											class="dg-dropdown__trigger"
-											id="dg-reg-aspiration-trigger"
-											aria-haspopup="listbox"
-											aria-expanded="false"
-											aria-controls="dg-reg-aspiration-panel">
-											<span class="dg-dropdown__value"><?php echo esc_html( $dg_aspiration_options[ $dg_aspiration_default ] ); ?></span>
-											<span class="material-symbols-outlined dg-dropdown__chevron" aria-hidden="true">expand_more</span>
-										</button>
-										<ul
-											class="dg-dropdown__panel"
-											id="dg-reg-aspiration-panel"
-											role="listbox"
-											tabindex="-1"
-											aria-labelledby="dg-reg-aspiration-trigger"
-											hidden>
-											<?php foreach ( $dg_aspiration_options as $dg_value => $dg_label ) : ?>
-												<li
-													class="dg-dropdown__option<?php echo ( $dg_value === $dg_aspiration_default ) ? ' is-selected' : ''; ?>"
-													role="option"
-													data-value="<?php echo esc_attr( $dg_value ); ?>"
-													aria-selected="<?php echo ( $dg_value === $dg_aspiration_default ) ? 'true' : 'false'; ?>">
-													<span><?php echo esc_html( $dg_label ); ?></span>
-													<span class="material-symbols-outlined dg-dropdown__check" aria-hidden="true">check</span>
-												</li>
-											<?php endforeach; ?>
-										</ul>
+									<!-- Password requirements checklist -->
+									<div class="dg-register-form__requirements">
+										<div class="dg-register-form__requirement" data-requirement="length">
+											<span class="material-symbols-outlined dg-requirement__icon">radio_button_unchecked</span>
+											<span class="dg-requirement__text"><?php esc_html_e( 'At least 12 characters', 'dragon-glow' ); ?></span>
+										</div>
+										<div class="dg-register-form__requirement" data-requirement="lowercase">
+											<span class="material-symbols-outlined dg-requirement__icon">radio_button_unchecked</span>
+											<span class="dg-requirement__text"><?php esc_html_e( 'Lowercase letter (a-z)', 'dragon-glow' ); ?></span>
+										</div>
+										<div class="dg-register-form__requirement" data-requirement="uppercase">
+											<span class="material-symbols-outlined dg-requirement__icon">radio_button_unchecked</span>
+											<span class="dg-requirement__text"><?php esc_html_e( 'Uppercase letter (A-Z)', 'dragon-glow' ); ?></span>
+										</div>
+										<div class="dg-register-form__requirement" data-requirement="digit">
+											<span class="material-symbols-outlined dg-requirement__icon">radio_button_unchecked</span>
+											<span class="dg-requirement__text"><?php esc_html_e( 'Number (0-9)', 'dragon-glow' ); ?></span>
+										</div>
+										<div class="dg-register-form__requirement" data-requirement="special">
+											<span class="material-symbols-outlined dg-requirement__icon">radio_button_unchecked</span>
+											<span class="dg-requirement__text"><?php esc_html_e( 'Special character (!@#$%...)', 'dragon-glow' ); ?></span>
+										</div>
 									</div>
-								</div>
+
+									<!-- Error message (shown on invalid submission) -->
+									<div class="dg-register-form__password-error" hidden>
+										<span class="material-symbols-outlined">error</span>
+										<span><?php esc_html_e( 'Password must be at least Good strength (12+ characters with lowercase, uppercase, number, and special character).', 'dragon-glow' ); ?></span>
+									</div>
+									</div>
 
 								<!-- Checkboxes -->
 								<div class="dg-register-form__checkboxes">
-									<label class="dg-register-form__checkbox">
-										<input type="checkbox" name="newsletter" value="1" checked />
-										<span class="dg-register-form__checkbox-text">
-											<?php esc_html_e( 'Inscribe me to receive confidential seasonal dispatches, golden hour previews, and private apothecary invitations.', 'dragon-glow' ); ?>
-										</span>
-									</label>
+								<label class="dg-register-form__checkbox">
+									<input type="checkbox" name="newsletter" value="1" checked />
+									<span class="dg-register-form__checkbox-text">
+										<?php esc_html_e( 'Subscribe to receive exclusive offers, new product launches, and beauty tips.', 'dragon-glow' ); ?>
+									</span>
+								</label>
 
-									<label class="dg-register-form__checkbox">
-										<input type="checkbox" name="terms" value="1" required />
-										<span class="dg-register-form__checkbox-text">
-											<?php
-											/* translators: %s: Terms link */
-											printf(
-												__( 'I accept the <a href="%s" target="_blank" rel="noopener">Sacred Atelier Covenant</a> (Terms of Sanctuary & Privacy Codex).', 'dragon-glow' ),
-												esc_url( get_permalink( wc_get_page_id( 'terms' ) ) )
-											);
-											?>
-										</span>
-									</label>
+								<label class="dg-register-form__checkbox">
+									<input type="checkbox" name="terms" value="1" required />
+									<span class="dg-register-form__checkbox-text">
+										<?php
+										/* translators: 1: Terms of Service link, 2: Privacy Policy link */
+										printf(
+											__( 'I accept the %1$s and %2$s', 'dragon-glow' ),
+											'<a href="' . esc_url( home_url( '/terms-of-service/' ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Terms of Service', 'dragon-glow' ) . '</a>',
+											'<a href="' . esc_url( home_url( '/privacy-policy/' ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Privacy Policy', 'dragon-glow' ) . '</a>'
+										);
+										?>
+										<span class="dg-register-form__required">*</span>
+									</span>
+								</label>
 								</div>
 
-								<?php do_action( 'woocommerce_register_form' ); ?>
+								<?php
+								/**
+								 * Hook: woocommerce_register_form
+								 *
+								 * WooCommerce uses this hook to inject the privacy policy notice.
+								 * We remove it to keep the form clean and focused on essential fields only.
+								 *
+								 * @see wc_registration_privacy_policy_text() in WC core
+								 */
+								remove_action( 'woocommerce_register_form', 'wc_registration_privacy_policy_text', 20 );
+								do_action( 'woocommerce_register_form' );
+								?>
 
 								<input type="hidden" name="woocommerce-register-nonce" value="<?php echo esc_attr( wp_create_nonce( 'woocommerce-register' ) ); ?>" />
 								<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 
-								<!-- Primary submission CTA -->
-								<button type="submit" name="register" class="dg-register-form__submit">
-									<span class="material-symbols-outlined">verified_user</span>
-									<span><?php esc_html_e( '✦ Inscribe in Atelier Ledger & Unlock 15% ✦', 'dragon-glow' ); ?></span>
-								</button>
+							<!-- Primary submission CTA -->
+							<button type="submit" name="register" class="dg-register-form__submit">
+								<span class="material-symbols-outlined">verified_user</span>
+								<span><?php esc_html_e( 'Create Account & Unlock 15%', 'dragon-glow' ); ?></span>
+							</button>
 
 								<?php do_action( 'woocommerce_register_form_end' ); ?>
 
@@ -444,13 +429,13 @@ function dg_render_account_register_page(): void {
 								<?php echo $dg_register_apple_enabled ? '</a>' : '</button>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static closing tag string, no user input. ?>
 							</div>
 
-							<!-- Existing member sign-in prompt -->
-							<p class="dg-register-form__signin-prompt">
-								<?php esc_html_e( 'Already inscribed in our ledger?', 'dragon-glow' ); ?>
-								<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-register-form__signin-link">
-									<?php esc_html_e( 'Enter the Sanctuary (Sign In)', 'dragon-glow' ); ?>
-								</a>
-							</p>
+						<!-- Existing member sign-in prompt -->
+						<p class="dg-register-form__signin-prompt">
+							<?php esc_html_e( 'Already have an account?', 'dragon-glow' ); ?>
+							<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-register-form__signin-link">
+								<?php esc_html_e( 'Sign In', 'dragon-glow' ); ?>
+							</a>
+						</p>
 
 						</div>
 

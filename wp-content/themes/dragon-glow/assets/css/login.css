@@ -781,7 +781,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	background: var(--auth-btn-gradient);
+	background: var(--register-btn-gradient) ;
 	color: var(--auth-btn-text);
 	font-family: 'Cormorant Garamond', Georgia, serif;
 	font-size: 16px;
@@ -865,7 +865,6 @@
 .dg-login__alt-access {
 	max-width: 448px;
 	margin: 16px auto 0;
-	padding-top: 16px;
 	width: 100%;
 }
 
@@ -957,11 +956,12 @@
 .dg-login__register-prompt {
 	text-align: center;
 	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 14px;
+	font-size: 15px;
 	color: var(--register-text-secondary);
 }
 
 .dg-login__register-link {
+	font-size: 17px;
 	display: inline-block;
 	margin-top: 4px;
 	font-family: 'Cormorant Garamond', Georgia, serif;
@@ -1044,8 +1044,8 @@
 	justify-content: center;
 	flex-wrap: nowrap;
 	gap: 10px;
-	margin-top: 28px;
-	padding-top: 20px;
+	margin-top: 19px;
+	padding-top: 29px;
 	border-top: 1px solid rgba(216, 194, 148, 0.5);
 }
 
