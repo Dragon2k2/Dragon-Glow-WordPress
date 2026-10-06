@@ -186,7 +186,7 @@
 .dg-account-hero__sub {
 	font-size: 15px;
 	line-height: 1.55;
-	color: rgba(255, 255, 255, 0.85);
+	color: var(--account-avatar-border);
 	margin: 0 0 18px;
 	max-width: 56ch;
 }
@@ -197,7 +197,7 @@
 	gap: 16px;
 	margin: 0;
 	padding: 18px 0 0;
-	border-top: 1px solid rgba(255, 255, 255, 0.20);
+	border-top: 1px solid var(--account-hero-glow-bottom);
 	max-width: 520px;
 }
 
@@ -500,7 +500,7 @@
 
 .dg-account-stat:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 12px 28px rgba(123, 84, 85, 0.08);
+	box-shadow: var(--account-card-shadow);
 }
 
 .dg-account-stat__icon {
@@ -518,7 +518,7 @@
 }
 
 .dg-account-stat__icon[data-tone="primary"] {
-	background: rgba(115, 92, 0, 0.10);
+	background: var(--account-address-divider);
 	color: var(--color-primary);
 }
 
@@ -529,7 +529,7 @@
 
 .dg-account-stat__icon[data-tone="gold"] {
 	background: rgba(212, 175, 55, 0.18);
-	color: #735c00;
+	color: var(--gold-dark);
 }
 
 .dg-account-stat__body {
@@ -694,7 +694,7 @@
 
 .dg-account-order:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 8px 18px rgba(123, 84, 85, 0.06);
+	box-shadow: var(--account-card-shadow-hover);
 }
 
 .dg-account-order__id {
@@ -792,7 +792,7 @@
 }
 
 .dg-account-status--shipped {
-	background: rgba(115, 92, 0, 0.10);
+	background: var(--account-address-divider);
 	color: var(--color-primary);
 }
 
@@ -1015,7 +1015,7 @@
 	padding: 12px 14px;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 15px;
-	background: rgba(255, 255, 255, 0.85);
+	background: var(--account-avatar-border);
 	border: 1px solid var(--color-outline-variant);
 	border-radius: 14px;
 	color: var(--color-on-surface);
@@ -1032,7 +1032,7 @@
 	outline: none;
 	border-color: var(--color-primary);
 	background: rgba(255, 255, 255, 0.95);
-	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+	box-shadow: 0 0 0 4px var(--wl-input-focus-ring);
 }
 
 /* Browser autofill override — keep theme colors instead of yellow autofill tint */
@@ -1068,7 +1068,7 @@
 
 .dg-account-field__toggle:hover {
 	color: var(--color-primary);
-	background: rgba(115, 92, 0, 0.06);
+	background: var(--wl-chip-bg);
 }
 
 .dg-account-field__toggle .material-symbols-outlined {
@@ -1141,22 +1141,22 @@
 .dg-btn--primary {
 	background: linear-gradient(135deg, var(--color-primary), #554300);
 	color: var(--color-on-primary);
-	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+	box-shadow: var(--account-btn-primary-shadow);
 }
 
 .dg-btn--primary:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+	box-shadow: var(--account-btn-primary-shadow-hover);
 }
 
 .dg-btn--ghost {
 	background: transparent;
 	color: var(--color-primary);
-	border-color: rgba(115, 92, 0, 0.30);
+	border-color: var(--account-btn-secondary-border);
 }
 
 .dg-btn--ghost:hover {
-	background: rgba(115, 92, 0, 0.06);
+	background: var(--wl-chip-bg);
 	border-color: var(--color-primary);
 }
 
@@ -1236,12 +1236,12 @@
 .dg-account-panel .woocommerce-orders-table tbody tr:hover {
 	background: rgba(255, 255, 255, 0.65) !important;
 	transform: translateX(2px) !important;
-	box-shadow: 0 4px 16px rgba(115, 92, 0, 0.08) !important;
+	box-shadow: var(--account-table-shadow) !important;
 }
 
 .dg-account-panel .woocommerce-orders-table tbody td {
 	padding: 18px !important;
-	border-bottom: 1px solid rgba(115, 92, 0, 0.06) !important;
+	border-bottom: 1px solid var(--wl-chip-bg) !important;
 	color: var(--color-on-surface) !important;
 	vertical-align: middle !important;
 }
@@ -1380,7 +1380,7 @@
 .dg-account-panel .woocommerce-orders-table .woocommerce-button:hover,
 .dg-account-panel .woocommerce-pagination .woocommerce-button:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 6px 18px rgba(115, 92, 0, 0.28);
+	box-shadow: var(--account-badge-shadow);
 }
 
 /* Pagination layout */
@@ -1408,7 +1408,7 @@
 	min-width: 36px;
 	height: 36px;
 	padding: 0 12px;
-	background: rgba(115, 92, 0, 0.08);
+	background: var(--account-subscription-bg-hover);
 	color: var(--color-primary);
 	text-decoration: none;
 	border-radius: 8px;
@@ -1422,7 +1422,7 @@
 }
 
 .dg-account-panel .woocommerce-pagination .page-numbers:hover {
-	background: rgba(115, 92, 0, 0.16);
+	background: var(--account-payment-border);
 	transform: translateY(-1px);
 }
 
@@ -1478,7 +1478,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 14px 20px;
-		border-bottom: 1px solid rgba(115, 92, 0, 0.06);
+		border-bottom: 1px solid var(--wl-chip-bg);
 		text-align: right;
 	}
 
@@ -1574,14 +1574,26 @@
 	content: "";
 	position: absolute;
 	inset: 0;
+<<<<<<< HEAD
 	background: var(--address-card-glow-tl), var(--address-card-glow-br);
+=======
+	background:
+		radial-gradient(420px 220px at 0% 0%, var(--wl-chip-bg), transparent 60%),
+		radial-gradient(380px 200px at 100% 100%, var(--account-bg-gradient-br), transparent 60%);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 	pointer-events: none;
 }
 
 .dg-account-address:hover {
+<<<<<<< HEAD
 	transform: translateY(-3px);
 	box-shadow: var(--address-card-shadow-hover);
 	border-color: var(--address-card-border-hover);
+=======
+	transform: translateY(-2px);
+	box-shadow: var(--account-downloads-shadow);
+	border-color: var(--wl-hero-border);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 /* --- Card head (icon + title + default badge) --- */
@@ -1603,6 +1615,7 @@
 	width: var(--address-card-icon-size);
 	height: var(--address-card-icon-size);
 	flex-shrink: 0;
+<<<<<<< HEAD
 	border-radius: var(--address-card-icon-radius);
 	background: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
 	color: var(--color-primary);
@@ -1612,6 +1625,12 @@
 
 .dg-account-address:hover .dg-account-address__icon {
 	transform: scale(1.04);
+=======
+	border-radius: 16px;
+	background: var(--account-downloads-badge-bg);
+	color: var(--color-primary);
+	box-shadow: inset 0 0 0 1px var(--account-address-divider);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__icon .material-symbols-outlined {
@@ -1620,8 +1639,13 @@
 
 /* Address type accent — billing = warm gold, shipping = cool rose */
 .dg-account-address[data-address-type="billing"] .dg-account-address__icon {
+<<<<<<< HEAD
 	background: var(--address-card-icon-bg-billing);
 	color: var(--address-card-icon-color-billing);
+=======
+	background: var(--account-downloads-badge-bg-hover);
+	color: var(--gold-dark);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address[data-address-type="shipping"] .dg-account-address__icon {
@@ -1677,6 +1701,14 @@
 	flex-direction: column;
 	gap: 8px;
 	margin: 0;
+<<<<<<< HEAD
+=======
+	padding: 14px 16px;
+	background: rgba(255, 255, 255, 0.45);
+	border: 1px solid var(--account-subscription-bg-hover);
+	border-radius: 14px;
+	word-break: break-word;
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__meta-row {
@@ -1821,8 +1853,13 @@
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	gap: 10px;
+<<<<<<< HEAD
 	padding-top: 18px;
 	border-top: 1px solid rgba(var(--gold-rgb), 0.16);
+=======
+	padding-top: 16px;
+	border-top: 1px solid var(--account-address-divider);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action {
@@ -1836,8 +1873,13 @@
 	font-weight: 600;
 	letter-spacing: 0.02em;
 	color: var(--color-primary);
+<<<<<<< HEAD
 	background: var(--address-card-action-bg);
 	border: 1px solid var(--address-card-action-border);
+=======
+	background: rgba(255, 255, 255, 0.55);
+	border: 1px solid var(--wl-hero-border);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 	border-radius: 999px;
 	text-decoration: none;
 	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -1848,23 +1890,38 @@
 }
 
 .dg-account-address__action:hover {
+<<<<<<< HEAD
 	background: var(--address-card-action-bg-hover);
 	border-color: var(--color-primary);
 	transform: translateY(-1px);
 	box-shadow: 0 6px 14px rgba(var(--gold-dark-rgb), 0.10);
+=======
+	background: var(--account-subscription-bg-hover);
+	border-color: var(--color-primary);
+	transform: translateY(-1px);
+	box-shadow: var(--account-address-btn-shadow);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action--primary {
 	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
 	border-color: transparent;
+<<<<<<< HEAD
 	box-shadow: var(--address-card-action-primary-shadow);
+=======
+	box-shadow: var(--account-address-btn-shadow-focus);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action--primary:hover {
 	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
+<<<<<<< HEAD
 	box-shadow: var(--address-card-action-primary-shadow-hover);
+=======
+	box-shadow: var(--account-btn-primary-shadow-hover);
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 /* "Use billing instead" — inline POST form (keeps action-bar layout) */
@@ -1934,7 +1991,7 @@ html.dg-account-confirm-open {
 	background:
 		linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(255, 248, 230, 0.88)),
 		rgba(255, 255, 255, 0.75);
-	border: 1px solid rgba(115, 92, 0, 0.16);
+	border: 1px solid var(--account-payment-border);
 	border-radius: 22px;
 	box-shadow:
 		0 1px 0 rgba(255, 255, 255, 0.75) inset,
@@ -1962,7 +2019,7 @@ html.dg-account-confirm-open {
 	height: 56px;
 	margin: 0 auto 14px;
 	border-radius: 18px;
-	background: linear-gradient(135deg, rgba(115, 92, 0, 0.14), rgba(212, 175, 55, 0.22));
+	background: var(--account-payment-bg-gradient);
 	color: var(--color-primary);
 }
 
@@ -2023,11 +2080,11 @@ html.dg-account-confirm-open {
 .dg-account-confirm__btn--ghost {
 	color: var(--color-primary);
 	background: rgba(255, 255, 255, 0.65);
-	border: 1px solid rgba(115, 92, 0, 0.22);
+	border: 1px solid var(--account-subscription-border);
 }
 
 .dg-account-confirm__btn--ghost:hover {
-	background: rgba(115, 92, 0, 0.08);
+	background: var(--account-subscription-bg-hover);
 	border-color: var(--color-primary);
 	transform: translateY(-1px);
 }
@@ -2036,12 +2093,12 @@ html.dg-account-confirm-open {
 	color: var(--color-on-primary);
 	background: linear-gradient(135deg, var(--color-primary), #554300);
 	border: 0;
-	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.22);
+	box-shadow: var(--account-subscription-shadow);
 }
 
 .dg-account-confirm__btn--primary:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.30);
+	box-shadow: var(--account-subscription-shadow-hover);
 }
 
 .dg-account-confirm__btn:focus-visible {
@@ -2073,6 +2130,42 @@ html.dg-account-confirm-open {
 	}
 }
 
+<<<<<<< HEAD
+=======
+/* --- Empty card (one address set, the other missing) --- */
+
+.dg-account-address--empty {
+	text-align: center;
+	align-items: center;
+	gap: 14px;
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.40), var(--account-hero-glow-bottom)),
+		repeating-linear-gradient(135deg, transparent 0 14px, var(--account-rewards-empty-bg) 14px 15px);
+	border-style: dashed;
+	border-color: var(--wl-empty-border);
+}
+
+.dg-account-address--empty .dg-account-address__icon {
+	background: rgba(255, 255, 255, 0.65);
+	color: var(--color-primary);
+	border: 1px dashed var(--account-btn-secondary-border);
+	box-shadow: none;
+}
+
+.dg-account-address--empty .dg-account-address__title {
+	font-size: 18px;
+}
+
+.dg-account-address__text {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	line-height: 1.55;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+	max-width: 38ch;
+}
+
+>>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 /* --- Hint footer --- */
 
 .dg-account-addresses__hint {
@@ -2085,8 +2178,8 @@ html.dg-account-confirm-open {
 	font-size: 13px;
 	line-height: 1.5;
 	color: var(--color-on-surface-variant);
-	background: rgba(115, 92, 0, 0.04);
-	border: 1px dashed rgba(115, 92, 0, 0.18);
+	background: var(--account-rewards-empty-bg);
+	border: 1px dashed var(--account-nav-border-active);
 	border-radius: 12px;
 }
 
@@ -2112,7 +2205,7 @@ html.dg-account-confirm-open {
 	flex-direction: column;
 	gap: 16px;
 	padding-bottom: 18px;
-	border-bottom: 1px solid rgba(115, 92, 0, 0.10);
+	border-bottom: 1px solid var(--account-address-divider);
 }
 
 .dg-account-address-edit__back {
@@ -2151,7 +2244,7 @@ html.dg-account-confirm-open {
 	height: 52px;
 	flex-shrink: 0;
 	border-radius: 16px;
-	background: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+	background: var(--account-downloads-badge-bg-hover);
 	color: var(--color-primary);
 }
 
@@ -2241,7 +2334,7 @@ html.dg-account-confirm-open {
 	padding: 12px 14px;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 14px;
-	background: rgba(255, 255, 255, 0.85);
+	background: var(--account-avatar-border);
 	border: 1px solid var(--color-outline-variant);
 	border-radius: 12px;
 	color: var(--color-on-surface);
@@ -2269,7 +2362,7 @@ html.dg-account-confirm-open {
 	outline: none;
 	border-color: var(--color-primary);
 	background: rgba(255, 255, 255, 0.95);
-	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+	box-shadow: 0 0 0 4px var(--wl-input-focus-ring);
 }
 
 /* ── Select2 (country/state dropdowns) — override WC & browser defaults ── */
@@ -2282,7 +2375,7 @@ html.dg-account-confirm-open {
 	font-size: 14px;
 	line-height: 1.4;
 	color: var(--color-on-surface);
-	background: rgba(255, 255, 255, 0.85);
+	background: var(--account-avatar-border);
 	border: 1px solid var(--color-outline-variant);
 	border-radius: 12px;
 	box-shadow: none;
@@ -2294,7 +2387,7 @@ html.dg-account-confirm-open {
 	outline: none;
 	border-color: var(--color-primary);
 	background: rgba(255, 255, 255, 0.95);
-	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+	box-shadow: 0 0 0 4px var(--wl-input-focus-ring);
 }
 
 .dg-account-address-edit .select2-container .select2-selection__rendered {
@@ -2321,7 +2414,7 @@ html.dg-account-confirm-open {
 	background: rgba(255, 255, 255, 0.97);
 	border: 1px solid var(--color-outline-variant);
 	border-radius: 12px;
-	box-shadow: 0 12px 32px rgba(115, 92, 0, 0.12);
+	box-shadow: var(--account-review-shadow);
 	overflow: hidden;
 }
 
@@ -2338,7 +2431,7 @@ html.dg-account-confirm-open {
 .dg-account-address-edit .select2-container--default .select2-search--dropdown .select2-search__field:focus {
 	outline: none;
 	border-color: var(--color-primary);
-	box-shadow: 0 0 0 3px rgba(115, 92, 0, 0.10);
+	box-shadow: 0 0 0 3px var(--account-address-divider);
 }
 
 .dg-account-address-edit .select2-results__option {
@@ -2349,12 +2442,12 @@ html.dg-account-confirm-open {
 }
 
 .dg-account-address-edit .select2-container--default .select2-results__option--highlighted[aria-selected] {
-	background: rgba(115, 92, 0, 0.10);
+	background: var(--account-address-divider);
 	color: var(--color-on-surface);
 }
 
 .dg-account-address-edit .select2-container--default .select2-results__option[aria-selected=true] {
-	background: rgba(115, 92, 0, 0.15);
+	background: var(--account-review-input-bg-focus);
 	color: var(--color-on-surface);
 	font-weight: 600;
 }
@@ -2391,11 +2484,11 @@ html.dg-account-confirm-open {
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 252, 245, 0.55)),
 		rgba(255, 255, 255, 0.35);
-	border: 1px solid rgba(115, 92, 0, 0.16);
+	border: 1px solid var(--account-payment-border);
 	border-radius: 16px;
 	box-shadow:
 		0 1px 0 rgba(255, 255, 255, 0.65) inset,
-		0 8px 24px rgba(115, 92, 0, 0.06);
+		var(--account-loyalty-shadow);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
 }
@@ -2441,7 +2534,7 @@ html.dg-account-confirm-open {
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 248, 230, 0.62)),
 		rgba(212, 175, 55, 0.08);
-	border-color: rgba(115, 92, 0, 0.18);
+	border-color: var(--account-nav-border-active);
 	border-left-color: var(--color-primary);
 	color: #3d3200;
 }
@@ -2450,7 +2543,7 @@ html.dg-account-confirm-open {
 .dg-account-panel--addresses .dg-account-notices .woocommerce-message::before {
 	content: 'check_circle';
 	color: var(--color-primary);
-	background: rgba(115, 92, 0, 0.10);
+	background: var(--account-address-divider);
 }
 
 /* Error */
@@ -2476,9 +2569,9 @@ html.dg-account-confirm-open {
 .dg-account-panel--addresses .dg-account-notices .woocommerce-info {
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 252, 245, 0.50)),
-		rgba(115, 92, 0, 0.04);
-	border-color: rgba(115, 92, 0, 0.14);
-	border-left-color: rgba(115, 92, 0, 0.45);
+		var(--account-rewards-empty-bg);
+	border-color: var(--account-loyalty-tier-border);
+	border-left-color: var(--account-loyalty-tier-border-current);
 	color: var(--color-on-surface);
 }
 
@@ -2486,7 +2579,7 @@ html.dg-account-confirm-open {
 .dg-account-panel--addresses .dg-account-notices .woocommerce-info::before {
 	content: 'info';
 	color: var(--color-primary);
-	background: rgba(115, 92, 0, 0.08);
+	background: var(--account-subscription-bg-hover);
 }
 
 /* Nested lists inside error notices */
@@ -2504,7 +2597,7 @@ html.dg-account-confirm-open {
 }
 
 .dg-account-address-edit .woocommerce-EditAddressForm .form-row.woocommerce-validated input.input-text {
-	border-color: rgba(115, 92, 0, 0.45);
+	border-color: var(--account-loyalty-tier-border-current);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2545,7 +2638,7 @@ html.dg-account-confirm-open {
 	gap: 10px;
 	margin-top: 8px;
 	padding-top: 18px;
-	border-top: 1px solid rgba(115, 92, 0, 0.10);
+	border-top: 1px solid var(--account-address-divider);
 }
 
 .dg-account-address-edit .woocommerce-EditAddressForm .button,
@@ -2566,13 +2659,13 @@ html.dg-account-confirm-open {
 	cursor: pointer;
 	text-decoration: none;
 	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-	box-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+	box-shadow: var(--account-btn-primary-shadow);
 }
 
 .dg-account-address-edit .woocommerce-EditAddressForm .button:hover,
 .dg-account-address-edit__save:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+	box-shadow: var(--account-btn-primary-shadow-hover);
 }
 
 .dg-account-address-edit__save:disabled,
@@ -2580,7 +2673,7 @@ html.dg-account-confirm-open {
 	opacity: 0.72;
 	cursor: wait;
 	transform: none;
-	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.16);
+	box-shadow: var(--account-referral-link-shadow);
 	pointer-events: none;
 }
 
@@ -2677,7 +2770,7 @@ html.dg-account-confirm-open {
 .dg-account-panel .woocommerce-form textarea {
 	width: 100%;
 	padding: 12px 14px;
-	background: rgba(255, 255, 255, 0.85);
+	background: var(--account-avatar-border);
 	border: 1px solid var(--color-outline-variant);
 	border-radius: 12px;
 	color: var(--color-on-surface);
@@ -2718,7 +2811,7 @@ html.dg-account-confirm-open {
 .dg-account-panel .woocommerce-form input:focus {
 	outline: none;
 	border-color: var(--color-primary);
-	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+	box-shadow: 0 0 0 4px var(--wl-input-focus-ring);
 }
 
 .dg-account-panel .woocommerce-EditAccountForm button,
@@ -2736,7 +2829,7 @@ html.dg-account-confirm-open {
 .dg-account-panel .woocommerce-EditAccountForm button:hover,
 .dg-account-panel .woocommerce-form button.button:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+	box-shadow: var(--account-btn-primary-shadow-hover);
 }
 
 /* =========================================
@@ -2829,9 +2922,9 @@ html.dg-account-confirm-open {
 .dg-skeleton {
 	background: linear-gradient(
 		90deg,
-		rgba(115, 92, 0, 0.06) 0%,
-		rgba(115, 92, 0, 0.12) 50%,
-		rgba(115, 92, 0, 0.06) 100%
+		var(--wl-chip-bg) 0%,
+		var(--wl-input-focus-ring) 50%,
+		var(--wl-chip-bg) 100%
 	);
 	background-size: 200% 100%;
 	animation: dg-skeleton-shimmer 1.5s ease-in-out infinite;
@@ -2864,7 +2957,7 @@ html.dg-account-confirm-open {
 @media (prefers-reduced-motion: reduce) {
 	.dg-skeleton {
 		animation: none;
-		background: rgba(115, 92, 0, 0.08);
+		background: var(--account-subscription-bg-hover);
 	}
 }
 

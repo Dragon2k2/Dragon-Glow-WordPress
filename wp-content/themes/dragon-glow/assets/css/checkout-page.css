@@ -40,7 +40,7 @@
 
 .woocommerce-checkout #payment .button {
     background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
-    border-bottom: 2px solid #735c00;
+    border-bottom: 2px solid var(--gold-dark);
     color: #734e4e;
     padding: 1.25rem 3rem;
     border-radius: 9999px;
@@ -87,7 +87,7 @@
     font-family: "Playfair Display", Georgia, serif;
     font-size: 1.25rem;
     font-weight: 500;
-    color: #735c00;
+    color: var(--gold-dark);
     margin-bottom: 1.5rem;
 }
 
@@ -256,7 +256,7 @@
 }
 
 .woocommerce-checkout .form-row .select2-container .select2-selection--single .select2-selection__arrow b {
-    border-color: #735c00 transparent transparent transparent !important;
+    border-color: var(--gold-dark) transparent transparent transparent !important;
     border-width: 6px 5px 0 5px !important;
 }
 
@@ -362,7 +362,7 @@
 .woocommerce-checkout #order_review table.shop_table .order-total td {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #735c00;
+    color: var(--gold-dark);
     border-top: 1px solid rgba(208, 197, 175, 0.5);
     padding-top: 1rem;
 }
@@ -493,7 +493,7 @@
 
 /* ── Selected payment visual (used by checkout.js bindPaymentSelection) ── */
 .selected-payment .payment_method {
-    border: 1.5px solid #735c00;
+    border: 1.5px solid var(--gold-dark);
 }
 
 /* ── Coupon form ── */
@@ -526,8 +526,8 @@
 
 .woocommerce-checkout .woocommerce-form-coupon button {
     background: transparent;
-    border: 1px solid #735c00;
-    color: #735c00;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-dark);
     padding: 0.625rem 1.25rem;
     border-radius: 0.75rem;
     font-weight: 600;
@@ -537,7 +537,7 @@
 }
 
 .woocommerce-checkout .woocommerce-form-coupon button:hover {
-    background: #735c00;
+    background: var(--gold-dark);
     color: #ffffff;
 }
 

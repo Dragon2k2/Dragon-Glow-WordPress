@@ -89,7 +89,7 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-top: 1px solid rgba(212, 194, 194, 0.3);
-        box-shadow: 0 4px 20px rgba(123, 84, 85, 0.1);
+        box-shadow: var(--responsive-modal-shadow);
     }
 
     #dg-mobile-menu.hidden {

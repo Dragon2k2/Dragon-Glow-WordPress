@@ -344,13 +344,13 @@
 
 /* Customer name in billing address — gold highlight per mockup review */
 .dg-thankyou-customer-name {
-	color: #d4af37 !important;
+	color: var(--gold-400) !important;
 	font-weight: 700;
 }
 
 /* Fallback if WooCommerce wraps name in <strong> without class */
 .dg-thankyou-address > strong:first-child {
-	color: #d4af37;
+	color: var(--gold-400);
 	font-weight: 700;
 }
 
@@ -470,11 +470,11 @@ a.dg-thankyou-contact-value:focus-visible {
 .dg-btn--primary {
 	background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
 	color: var(--color-on-primary);
-	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+	box-shadow: var(--thankyou-btn-shadow);
 }
 
 .dg-btn--primary:hover {
-	box-shadow: 0 8px 24px rgba(115, 92, 0, 0.3);
+	box-shadow: var(--thankyou-btn-shadow-hover);
 	transform: translateY(-2px);
 }
 
@@ -497,9 +497,9 @@ a.dg-thankyou-contact-value:focus-visible {
    ═══════════════════════════════════════════════════════════════════════ */
 
 .dg-bacs-qr {
-	--color-payment-primary: #735c00;
+	--color-payment-primary: var(--gold-dark);
 	--color-payment-primary-rgb: 115, 92, 0;
-	--color-payment-accent: #d4af37;
+	--color-payment-accent: var(--gold-400);
 	--color-payment-accent-rgb: 212, 175, 55;
 	--color-payment-on-primary: #ffffff;
 	--dg-bacs-qr-accent: var(--color-payment-accent);
@@ -884,7 +884,7 @@ a.dg-thankyou-contact-value:focus-visible {
 	.dg-btn--primary:hover,
 	.dg-btn--ghost:hover {
 		transform: none;
-		box-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+		box-shadow: var(--thankyou-btn-shadow);
 	}
 
 	.dg-btn--ghost:hover {

@@ -118,7 +118,7 @@ input[type="range"]::-webkit-slider-thumb {
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
-	background: var(--color-primary, #7b5455);
+	background: var(--color-primary, var(--color-primary));
 	cursor: pointer;
 	border: 2px solid #fff;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -127,7 +127,7 @@ input[type="range"]::-moz-range-thumb {
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
-	background: var(--color-primary, #7b5455);
+	background: var(--color-primary, var(--color-primary));
 	cursor: pointer;
 	border: 2px solid #fff;
 }
@@ -135,7 +135,7 @@ input[type="range"]::-moz-range-thumb {
 /* Custom scrollbar for the desktop filter sidebar */
 .custom-scrollbar {
 	scrollbar-width: thin;
-	scrollbar-color: rgba(115, 92, 0, 0.2) transparent;
+	scrollbar-color: var(--shop-scrollbar-thumb) transparent;
 }
 .custom-scrollbar::-webkit-scrollbar {
 	width: 6px;
@@ -144,11 +144,11 @@ input[type="range"]::-moz-range-thumb {
 	background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-	background: rgba(115, 92, 0, 0.2);
+	background: var(--shop-scrollbar-thumb);
 	border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	background: rgba(115, 92, 0, 0.4);
+	background: var(--shop-scrollbar-thumb-hover);
 }
 
 /* Add to Cart Button */
@@ -195,7 +195,7 @@ input[type="range"]::-moz-range-thumb {
 	transition: box-shadow 0.5s ease;
 }
 .dg-product-card:hover {
-	box-shadow: 0 20px 60px rgba(115, 92, 0, 0.13);
+	box-shadow: var(--shop-shadow-luxury);
 }
 
 /* ── Star rating (card layout — matches mock product page) ─────────
@@ -285,10 +285,10 @@ input[type="range"]::-moz-range-thumb {
 	-webkit-backdrop-filter: blur(12px);
 	border: 1px solid rgba(255, 255, 255, 0.4);
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-	color: var(--color-primary, #735c00);
+	color: var(--color-primary, var(--gold-dark));
 }
 .dg-badge-right {
-	background-color: var(--color-primary, #735c00);
+	background-color: var(--color-primary, var(--gold-dark));
 	color: var(--color-on-primary, #ffffff);
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -370,7 +370,7 @@ input[type="range"]::-moz-range-thumb {
 .dg-product-divider {
 	width: 32px;
 	height: 1px;
-	background: rgba(115, 92, 0, 0.35);
+	background: var(--shop-cat-divider);
 	margin: 10px auto;
 }
 
@@ -390,7 +390,7 @@ input[type="range"]::-moz-range-thumb {
 	font-size: 16px;
 	font-weight: 600;
 	font-style: italic;
-	color: #735c00;
+	color: var(--gold-dark);
 }
 
 .luxury-shadow {
@@ -434,7 +434,7 @@ input[type="range"]::-moz-range-thumb {
 	border: 1px solid var(--filter-glass-border);
 	border-radius: 16px;
 	box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.12),
-	            0 8px 30px -8px rgba(123, 84, 85, 0.08);
+	            var(--shop-shadow-card);
 	padding: 24px;
 	z-index: 70;
 	opacity: 0;
@@ -533,7 +533,7 @@ input[type="range"]::-moz-range-thumb {
 	font-weight: 600;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--color-primary, #7b5455);
+	color: var(--color-primary, var(--color-primary));
 	margin-bottom: 12px;
 }
 
@@ -636,13 +636,13 @@ input[type="range"]::-moz-range-thumb {
 	border: 2px solid var(--color-outline-variant, #d4c2c2);
 	border-radius: 4px;
 	cursor: pointer;
-	accent-color: var(--color-primary, #7b5455);
+	accent-color: var(--color-primary, var(--color-primary));
 	transition: all 0.2s ease;
 }
 
 .dg-filter-glass-checkbox input[type="checkbox"]:checked {
-	background: var(--color-primary, #7b5455);
-	border-color: var(--color-primary, #7b5455);
+	background: var(--color-primary, var(--color-primary));
+	border-color: var(--color-primary, var(--color-primary));
 }
 
 .dg-filter-glass-checkbox input[type="checkbox"]:focus-visible {
@@ -657,7 +657,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .dg-filter-glass-checkbox:has(input:checked) .dg-filter-glass-checkbox-label {
-	color: var(--color-primary, #7b5455);
+	color: var(--color-primary, var(--color-primary));
 	font-weight: 500;
 }
 
@@ -779,7 +779,7 @@ input[type="range"]::-moz-range-thumb {
 
 .dg-filter-glass-btn--secondary:hover {
 	background: var(--filter-clear-bg-hover);
-	color: var(--color-primary, #7b5455);
+	color: var(--color-primary, var(--color-primary));
 	border-color: var(--filter-clear-border-hover);
 }
 
@@ -825,8 +825,8 @@ input[type="range"]::-moz-range-thumb {
 /* Filter trigger open state */
 .dg-filter-trigger.is-open .dg-filter-trigger-text,
 .dg-filter-trigger.is-open .dg-filter-trigger-icon {
-	color: var(--color-primary, #7b5455);
-	border-color: var(--color-primary, #7b5455);
+	color: var(--color-primary, var(--color-primary));
+	border-color: var(--color-primary, var(--color-primary));
 }
 .dg-filter-trigger.is-open .dg-filter-trigger-icon {
 	transform: rotate(180deg);
@@ -891,7 +891,7 @@ a.dg-product-stretched-link {
  * to hint that clicking will remove the item.
  */
 .dg-add-to-cart.dg-quick-add--added:hover {
-	background-color: var(--color-primary-container, #d4af37);
+	background-color: var(--color-primary-container, var(--gold-400));
 	color: var(--color-on-primary-container, #554300);
 	transform: translateY(-2px);
 }
@@ -929,12 +929,12 @@ a.dg-product-stretched-link {
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: #735c00;
+	color: var(--gold-dark);
 	text-decoration: none;
 
 	/* Shadow */
 	box-shadow:
-		0 1px 3px rgba(123, 84, 85, 0.06),
+		var(--product-qty-btn-shadow-hover),
 		0 4px 16px rgba(201, 169, 110, 0.12);
 
 	/* Motion */
@@ -982,7 +982,7 @@ a.dg-product-stretched-link {
 .dg-pager-btn:hover:not(.dg-pager-btn--disabled) {
 	color: #4a3500;
 	box-shadow:
-		0 2px 8px rgba(123, 84, 85, 0.1),
+		var(--product-qty-btn-shadow-active),
 		0 8px 32px rgba(201, 169, 110, 0.22);
 	transform: translateY(-2px);
 }
@@ -1028,7 +1028,7 @@ a.dg-product-stretched-link {
 	font-size: 12px;
 	font-weight: 600;
 	letter-spacing: 0.06em;
-	color: #735c00;
+	color: var(--gold-dark);
 	text-decoration: none;
 
 	border: 1.5px solid transparent;
@@ -1036,7 +1036,7 @@ a.dg-product-stretched-link {
 		linear-gradient(135deg, #d4c9b0 0%, #e0d5c0 100%);
 	background-origin: border-box;
 	background-clip: padding-box, border-box;
-	box-shadow: 0 1px 4px rgba(123, 84, 85, 0.06);
+	box-shadow: var(--shop-pagination-shadow);
 
 	transition:
 		color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -1049,7 +1049,7 @@ a.dg-product-stretched-link {
 	background-image: linear-gradient(rgba(255, 245, 220, 0.6), rgba(255, 245, 220, 0.6)),
 		linear-gradient(135deg, #c9a96e 0%, #e8d5a3 40%, #c9a96e 70%, #a07840 100%);
 	box-shadow:
-		0 1px 4px rgba(123, 84, 85, 0.08),
+		var(--shop-shadow-card-hover),
 		0 4px 16px rgba(201, 169, 110, 0.18);
 	transform: translateY(-1px);
 }

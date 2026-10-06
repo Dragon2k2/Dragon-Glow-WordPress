@@ -71,7 +71,7 @@
 	width: 40px;
 	height: 40px;
 	background: rgba(0, 0, 0, 0.5);
-	border: 1px solid rgba(201, 162, 75, 0.3);
+	border: 1px solid var(--order-modal-border);
 	border-radius: 50%;
 	color: var(--color-soft-pearl, #F8F6F3);
 	cursor: pointer;
@@ -101,7 +101,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	background: rgba(10, 10, 10, 0.98);
-	border: 1px solid rgba(201, 162, 75, 0.2);
+	border: 1px solid var(--order-modal-header-border);
 	max-height: 85vh;
 	overflow: hidden;
 }
@@ -117,9 +117,9 @@
    ========================================= */
 
 .dg-order-modal__timeline {
-	background: linear-gradient(180deg, rgba(201, 162, 75, 0.1) 0%, rgba(201, 162, 75, 0.05) 100%);
+	background: var(--order-modal-header-bg);
 	padding: 2rem;
-	border-right: 1px solid rgba(201, 162, 75, 0.2);
+	border-right: 1px solid var(--order-modal-header-border);
 	overflow-y: auto;
 	max-height: 85vh;
 }
@@ -151,7 +151,7 @@
 	border-radius: 50%;
 	background: var(--color-accent-gold, #C9A24B);
 	border: 2px solid rgba(10, 10, 10, 1);
-	box-shadow: 0 0 0 4px rgba(201, 162, 75, 0.2);
+	box-shadow: 0 0 0 4px var(--order-modal-header-border);
 	z-index: 2;
 }
 
@@ -162,7 +162,7 @@
 	top: 12px;
 	width: 2px;
 	height: calc(100% + 2rem);
-	background: rgba(201, 162, 75, 0.3);
+	background: var(--order-modal-border);
 	z-index: 1;
 }
 
@@ -232,8 +232,8 @@
    ========================================= */
 
 .dg-order-section {
-	background: rgba(201, 162, 75, 0.05);
-	border: 1px solid rgba(201, 162, 75, 0.2);
+	background: var(--order-modal-summary-bg);
+	border: 1px solid var(--order-modal-header-border);
 	border-radius: 12px;
 	padding: 1.5rem;
 	margin-bottom: 2rem;
@@ -310,8 +310,8 @@
 }
 
 .dg-order-info-card {
-	background: rgba(201, 162, 75, 0.05);
-	border: 1px solid rgba(201, 162, 75, 0.2);
+	background: var(--order-modal-summary-bg);
+	border: 1px solid var(--order-modal-header-border);
 	border-radius: 12px;
 	padding: 1.5rem;
 }
@@ -358,7 +358,7 @@
 .dg-order-summary__row--total {
 	padding-top: 1rem;
 	margin-top: 1rem;
-	border-top: 2px solid rgba(201, 162, 75, 0.3);
+	border-top: 2px solid var(--order-modal-border);
 	font-weight: 700;
 	font-size: 1.2rem;
 	color: var(--color-accent-gold, #C9A24B);
@@ -422,7 +422,7 @@
 @media (max-width: 767.98px) {
 	.dg-order-modal__timeline {
 		border-right: none;
-		border-bottom: 1px solid rgba(201, 162, 75, 0.2);
+		border-bottom: 1px solid var(--order-modal-header-border);
 		max-height: 30vh;
 		padding: 1.5rem;
 	}
@@ -497,20 +497,20 @@
 
 .dg-order-modal__timeline::-webkit-scrollbar-track,
 .dg-order-modal__details::-webkit-scrollbar-track {
-	background: rgba(201, 162, 75, 0.05);
+	background: var(--order-modal-summary-bg);
 	border-radius: 4px;
 }
 
 .dg-order-modal__timeline::-webkit-scrollbar-thumb,
 .dg-order-modal__details::-webkit-scrollbar-thumb {
-	background: rgba(201, 162, 75, 0.3);
+	background: var(--order-modal-border);
 	border-radius: 4px;
 	transition: background 0.2s ease;
 }
 
 .dg-order-modal__timeline::-webkit-scrollbar-thumb:hover,
 .dg-order-modal__details::-webkit-scrollbar-thumb:hover {
-	background: rgba(201, 162, 75, 0.5);
+	background: var(--order-modal-progress-fill);
 }
 
 /* =========================================

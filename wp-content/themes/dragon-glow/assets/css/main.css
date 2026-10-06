@@ -53,7 +53,7 @@ body.dg-hide-site-chrome .footer-main {
     background: rgba(255, 255, 255, 0.40);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+    border-bottom: 1px solid var(--account-hero-glow-bottom);
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
@@ -147,7 +147,7 @@ body.dg-hide-site-chrome .footer-main {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.50);
-    box-shadow: 0 4px 30px rgba(123, 84, 85, 0.05);
+    box-shadow: var(--main-header-shadow);
 }
 
 .product-card-glass {
@@ -160,14 +160,14 @@ body.dg-hide-site-chrome .footer-main {
 
 .product-card-glass:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px -15px rgba(123, 84, 85, 0.10);
+    box-shadow: var(--main-header-shadow-scroll);
 }
 
 .glass-sidebar {
     background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-right: 1px solid rgba(255, 255, 255, 0.30);
+    border-right: 1px solid var(--account-hero-glow-top);
 }
 
 .glass-panel {
@@ -244,7 +244,7 @@ body.dg-hide-site-chrome .footer-main {
 }
 
 .input-ethereal:focus {
-    border-bottom: 2px solid #735c00;
+    border-bottom: 2px solid var(--gold-dark);
     box-shadow: none;
 }
 
@@ -264,7 +264,7 @@ body.dg-hide-site-chrome .footer-main {
 /* Primary Button */
 .btn-primary {
     background: linear-gradient(135deg, #f4c2c2 0%, #e1e1f5 100%);
-    border-bottom: 2px solid #735c00;
+    border-bottom: 2px solid var(--gold-dark);
     color: #734e4e;
     padding: 16px 40px;
     border-radius: 9999px;
@@ -293,8 +293,8 @@ body.dg-hide-site-chrome .footer-main {
 /* Ghost Button */
 .btn-ghost {
     background: transparent;
-    border: 1px solid #735c00;
-    color: #735c00;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-dark);
     padding: 16px 40px;
     border-radius: 9999px;
     font-weight: 700;
@@ -306,7 +306,7 @@ body.dg-hide-site-chrome .footer-main {
 }
 
 .btn-ghost:hover {
-    background: #735c00;
+    background: var(--gold-dark);
     color: #ffffff;
     text-decoration: none;
 }
@@ -314,8 +314,8 @@ body.dg-hide-site-chrome .footer-main {
 /* Outline Gold Button — primary-secondary pair with .btn-primary */
 .btn-outline-gold {
     background: transparent;
-    border: 1.5px solid #735c00;
-    color: #735c00;
+    border: 1.5px solid var(--gold-dark);
+    color: var(--gold-dark);
     transition: background-color 0.3s ease, color 0.3s ease,
                 transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -405,8 +405,8 @@ body.dg-hide-site-chrome .footer-main {
 
 .step-active {
     background: rgba(244, 194, 194, 0.30);
-    border-color: #7b5455 !important;
-    color: #7b5455;
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary);
 }
 
 .step-inactive {
@@ -415,8 +415,8 @@ body.dg-hide-site-chrome .footer-main {
 }
 
 .step-done {
-    background: #7b5455;
-    border-color: #7b5455;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
     color: #ffffff;
 }
 
@@ -439,7 +439,7 @@ body.dg-hide-site-chrome .footer-main {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #7b5455;
+    background: var(--color-primary);
 }
 
 /* Hide scrollbar for carousel — navigation via prev/next buttons only */
@@ -529,7 +529,7 @@ body.dg-hide-site-chrome .footer-main {
 .woocommerce-message,
 .woocommerce-info {
     background: #e1e1f5;
-    border-top-color: #7b5455;
+    border-top-color: var(--color-primary);
     color: #1b1c1a;
     border-radius: 1rem;
     padding: 1rem 1.5rem;
@@ -595,14 +595,14 @@ select:focus {
 
 .prose h2 {
     font-family: 'Playfair Display', serif;
-    color: #7b5455;
+    color: var(--color-primary);
     margin-top: 2em;
     margin-bottom: 0.75em;
 }
 
 .prose h3 {
     font-family: 'Playfair Display', serif;
-    color: #7b5455;
+    color: var(--color-primary);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
 }
@@ -639,7 +639,7 @@ select:focus {
 
 .search-form .search-field:focus {
     width: 280px;
-    border-color: #7b5455;
+    border-color: var(--color-primary);
     outline: none;
 }
 
@@ -652,7 +652,7 @@ select:focus {
 }
 
 .search-form .search-submit:hover {
-    color: #7b5455;
+    color: var(--color-primary);
 }
 
 /* =========================================
@@ -753,7 +753,7 @@ table th {
     width: auto;
     height: auto;
     padding: 12px 24px;
-    background: #7b5455;
+    background: var(--color-primary);
     color: #ffffff;
     font-weight: 600;
     text-decoration: none;
@@ -833,20 +833,20 @@ table th {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Subtle shadow for depth */
-    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    box-shadow: var(--main-dropdown-shadow);
 }
 
 .dg-carousel-nav-btn:hover {
     background: var(--color-gold);
     border-color: var(--color-gold-dark);
-    box-shadow: 0 4px 16px rgba(115, 92, 0, 0.16);
+    box-shadow: var(--main-dropdown-shadow-hover);
     transform: translateY(-2px);
 }
 
 .dg-carousel-nav-btn:active {
     transform: translateY(0) scale(0.96);
     background: var(--color-gold-dark);
-    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    box-shadow: var(--main-dropdown-shadow);
 }
 
 .dg-carousel-nav-btn:focus-visible {
@@ -863,7 +863,7 @@ table th {
 .dg-carousel-nav-btn:disabled:hover {
     transform: none;
     background: #f1ca50;
-    box-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    box-shadow: var(--main-dropdown-shadow);
 }
 
 .dg-carousel-nav-btn .material-symbols-outlined {
