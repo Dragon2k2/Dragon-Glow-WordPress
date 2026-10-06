@@ -12,15 +12,10 @@
    ========================================= */
 
 .dg-account {
-	--account-sidebar: 280px;
-	--account-radius: 24px;
-	--account-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
-	--account-border: rgba(255, 255, 255, 0.55);
-
 	padding: clamp(2rem, 5vw, 4rem) 0 clamp(3rem, 6vw, 5rem);
 	background:
-		radial-gradient(1200px 600px at 0% 0%, rgba(212, 175, 55, 0.06), transparent 60%),
-		radial-gradient(900px 600px at 100% 0%, rgba(244, 194, 194, 0.10), transparent 60%),
+		radial-gradient(1200px 600px at 0% 0%, var(--account-bg-gradient-tl), transparent 60%),
+		radial-gradient(900px 600px at 100% 0%, var(--account-bg-gradient-br), transparent 60%),
 		var(--color-background);
 }
 
@@ -45,7 +40,7 @@
 
 @media (min-width: 1024px) {
 	.dg-account__layout {
-		grid-template-columns: var(--account-sidebar) 1fr;
+		grid-template-columns: var(--account-sidebar-width) 1fr;
 		gap: 32px;
 		align-items: flex-start;
 	}
@@ -72,8 +67,7 @@
 	position: relative;
 	overflow: hidden;
 	border-radius: var(--account-radius);
-	background:
-		linear-gradient(135deg, rgba(115, 92, 0, 0.95), rgba(212, 175, 55, 0.95));
+	background: var(--account-hero-gradient);
 	color: #fff;
 	padding: clamp(1.5rem, 4vw, 2.5rem);
 	box-shadow: var(--account-shadow);
@@ -84,8 +78,8 @@
 	position: absolute;
 	inset: 0;
 	background-image:
-		radial-gradient(circle at 90% 0%, rgba(255, 255, 255, 0.30), transparent 50%),
-		radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.20), transparent 50%);
+		radial-gradient(circle at 90% 0%, var(--account-hero-glow-top), transparent 50%),
+		radial-gradient(circle at 0% 100%, var(--account-hero-glow-bottom), transparent 50%);
 	pointer-events: none;
 }
 
@@ -109,8 +103,8 @@
 	height: 100%;
 	border-radius: 50%;
 	object-fit: cover;
-	border: 3px solid rgba(255, 255, 255, 0.85);
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+	border: 3px solid var(--account-avatar-border);
+	box-shadow: var(--account-avatar-shadow);
 }
 
 .dg-account-hero__tier {
@@ -125,7 +119,7 @@
 	border-radius: 999px;
 	font-size: 11px;
 	font-weight: 600;
-	background: rgba(0, 0, 0, 0.65);
+	background: var(--account-tier-bg);
 	color: #fff;
 	letter-spacing: 0.06em;
 	white-space: nowrap;
@@ -136,15 +130,15 @@
 }
 
 .dg-account-hero__tier[data-tier="lumiere"] {
-	background: linear-gradient(135deg, #735c00, #d4af37);
+	background: var(--account-tier-lumiere);
 }
 
 .dg-account-hero__tier[data-tier="aria"] {
-	background: linear-gradient(135deg, #5c5d6e, #bba3c2);
+	background: var(--account-tier-aria);
 }
 
 .dg-account-hero__tier[data-tier="glow"] {
-	background: rgba(0, 0, 0, 0.6);
+	background: var(--account-tier-glow);
 }
 
 .dg-account-hero__copy {
@@ -312,14 +306,14 @@
 
 .dg-account-nav__link:hover,
 .dg-account-nav__link:focus-visible {
-	background: rgba(115, 92, 0, 0.06);
+	background: var(--account-nav-bg);
 	color: var(--color-on-surface);
 }
 
 .dg-account-nav__link.is-active {
-	background: linear-gradient(135deg, rgba(115, 92, 0, 0.12), rgba(212, 175, 55, 0.18));
+	background: var(--account-nav-bg-active);
 	color: var(--color-primary);
-	box-shadow: inset 0 0 0 1px rgba(115, 92, 0, 0.18);
+	box-shadow: inset 0 0 0 1px var(--account-nav-border-active);
 }
 
 .dg-account-nav__icon {
@@ -345,7 +339,7 @@
 	height: 22px;
 	padding: 0 8px;
 	border-radius: 999px;
-	background: rgba(115, 92, 0, 0.10);
+	background: var(--account-nav-bg-hover);
 	color: var(--color-primary);
 	font-size: 12px;
 	font-weight: 600;

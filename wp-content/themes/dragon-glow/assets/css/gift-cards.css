@@ -28,22 +28,22 @@
 }
 
 .dg-gift {
-	--gift-bg: var(--color-background, #fcf9f8);
-	--gift-surface: var(--color-surface, #fcf9f8);
-	--gift-surface-low: var(--color-surface-container-low, #f6f3f2);
-	--gift-surface-container: var(--color-surface-container, #f0eded);
-	--gift-ink: var(--color-on-surface, #1c1b1b);
-	--gift-muted: var(--color-on-surface-variant, #4b463d);
-	--gift-line: var(--color-outline-variant, #cec5ba);
+	--gift-bg: var(--color-background);
+	--gift-surface: var(--color-surface);
+	--gift-surface-low: var(--color-surface-container-low);
+	--gift-surface-container: var(--color-surface-container);
+	--gift-ink: var(--color-on-surface);
+	--gift-muted: var(--color-on-surface-variant);
+	--gift-line: var(--color-outline-variant);
 	--gift-line-soft: rgba(229, 226, 225, 0.5);
 
-	--gift-pink: var(--color-secondary, #b90760);
+	--gift-pink: var(--color-secondary);
 	--gift-pink-soft: rgba(185, 7, 96, 0.06);
 	--gift-pink-glow: rgba(185, 7, 96, 0.08);
 
-	--gift-gold: var(--color-primary, #685d4a);
-	--gift-gold-soft-bg: var(--color-primary-container, #f7e7ce);
-	--gift-gold-soft-ink: var(--color-on-primary-container, #726753);
+	--gift-gold: var(--color-primary);
+	--gift-gold-soft-bg: var(--color-primary-container);
+	--gift-gold-soft-ink: var(--color-on-primary-container);
 
 	--gift-glass-bg-strong: rgba(255, 255, 255, 0.8);   /* input focus */
 	--gift-glass-bg-filled: rgba(255, 255, 255, 0.72);  /* input has-value */
@@ -106,7 +106,7 @@
 	font-weight: 200;
 	letter-spacing: -0.04em;
 	line-height: 1.1;
-	color: var(--color-tertiary, #735c00);
+	color: var(--color-tertiary);
 	margin: 0 0 1.5rem;
 }
 

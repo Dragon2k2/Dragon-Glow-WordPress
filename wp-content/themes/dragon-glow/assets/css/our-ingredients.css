@@ -18,30 +18,21 @@
 	font-family: 'Geist Variable', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
 	font-size: 16px;
 	line-height: 1.6;
-	color: #1c1b1b;
-	background: #fcf9f8;
+	color: var(--color-on-surface);  /* was #1c1b1b */
+	background: var(--neutral-warm-50);  /* was #fcf9f8 */
 
-	/* Stitch design tokens (scoped) */
-	--oi-bg: #fcf9f8;
-	--oi-on-bg: #1c1b1b;
-	--oi-on-surface: #1c1b1b;
-	--oi-on-surface-variant: #4d4635;
-	--oi-secondary: #5f5e5a;
-	--oi-tertiary: #5e5e5d;
-	--oi-primary: #735c00;
-	--oi-primary-container: #d4af37;
-	--oi-on-primary-container: #554300;
-	--oi-outline: #7f7663;
-	--oi-outline-variant: #d0c5af;
-	--oi-surface-container: #f6f3f2;
-	--oi-inverse-surface: #313030;
-	--oi-inverse-on-surface: #f3f0ef;
-
-	/* Spacing tokens */
+	/* ========== COMPONENT-SPECIFIC TOKENS (Spacing & Layout) ========== */
 	--oi-margin-mobile: 20px;
 	--oi-margin-desktop: 64px;
 	--oi-gutter: 24px;
 	--oi-section-gap: 120px;
+
+	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
+	/* OLD tokens removed: --oi-bg, --oi-on-bg, --oi-on-surface, */
+	/* --oi-on-surface-variant, --oi-secondary, --oi-tertiary, --oi-primary, */
+	/* --oi-primary-container, --oi-on-primary-container, --oi-outline, */
+	/* --oi-outline-variant, --oi-surface-container, --oi-inverse-surface, */
+	/* --oi-inverse-on-surface */
 }
 
 /* ── Type scale ───────────────────────────────────────────── */
@@ -51,7 +42,7 @@
 	line-height: 1;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--oi-secondary);
+	color: var(--color-on-surface-variant);  /* was --oi-secondary: #5f5e5a */
 	margin: 0 0 1.5rem;
 }
 
@@ -60,7 +51,7 @@
 	font-weight: 300;
 	line-height: 1.0;
 	letter-spacing: -0.04em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0 0 2rem;
 }
 
@@ -69,7 +60,7 @@
 	font-weight: 300;
 	line-height: 1.6;
 	letter-spacing: 0.01em;
-	color: var(--oi-secondary);
+	color: var(--color-on-surface-variant);  /* was --oi-secondary: #5f5e5a */
 	max-width: 38ch;
 	margin: 0 0 2.5rem;
 }
@@ -79,7 +70,7 @@
 	font-weight: 300;
 	line-height: 1.1;
 	letter-spacing: -0.03em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0;
 	text-align: center;
 }
@@ -90,7 +81,7 @@
 	line-height: 1;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--oi-secondary);
+	color: var(--color-on-surface-variant);  /* was --oi-secondary: #5f5e5a */
 	margin: 0 0 0.75rem;
 }
 
@@ -99,7 +90,7 @@
 	font-weight: 400;
 	line-height: 1.2;
 	letter-spacing: -0.02em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0 0 0.5rem;
 }
 
@@ -109,7 +100,7 @@
 	line-height: 1.4;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	color: var(--oi-secondary);
+	color: var(--color-on-surface-variant);  /* was --oi-secondary: #5f5e5a */
 	margin: 0 0 2rem;
 }
 
@@ -117,7 +108,7 @@
 	font-size: 18px;
 	font-weight: 300;
 	line-height: 1.6;
-	color: var(--oi-on-surface);
+	color: var(--color-on-surface);  /* was --oi-on-surface: #1c1b1b */
 	max-width: 38ch;
 	margin: 0;
 }
@@ -127,7 +118,7 @@
 	font-weight: 300;
 	line-height: 1.1;
 	letter-spacing: -0.03em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0;
 }
 
@@ -136,7 +127,7 @@
 	font-weight: 400;
 	line-height: 1.2;
 	letter-spacing: -0.02em;
-	color: var(--oi-on-surface);
+	color: var(--color-on-surface);  /* was --oi-on-surface: #1c1b1b */
 	margin: 0 0 0.75rem;
 }
 
@@ -146,7 +137,7 @@
 	line-height: 1.4;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	color: var(--oi-secondary);
+	color: var(--color-on-surface-variant);  /* was --oi-secondary: #5f5e5a */
 	margin: 0;
 }
 
@@ -154,7 +145,7 @@
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.6;
-	color: var(--oi-on-surface);
+	color: var(--color-on-surface);  /* was --oi-on-surface: #1c1b1b */
 	margin: 0;
 }
 
@@ -171,7 +162,7 @@
 	font-size: 18px;
 	font-weight: 300;
 	line-height: 1.6;
-	color: var(--oi-on-surface-variant);
+	color: var(--color-on-surface-variant);  /* was --oi-on-surface-variant: #4d4635 */
 	max-width: 40ch;
 	margin: 0 0 2.5rem;
 }
@@ -202,7 +193,7 @@
 	font-weight: 300;
 	line-height: 1.1;
 	letter-spacing: -0.03em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0;
 }
 
@@ -211,7 +202,7 @@
 	font-weight: 400;
 	line-height: 1.2;
 	letter-spacing: -0.02em;
-	color: var(--oi-on-surface);
+	color: var(--color-on-surface);  /* was --oi-on-surface: #1c1b1b */
 	margin: 0;
 }
 
@@ -220,7 +211,7 @@
 	font-weight: 300;
 	line-height: 1.1;
 	letter-spacing: -0.03em;
-	color: var(--oi-primary);
+	color: var(--gold-dark);  /* was --oi-primary: #735c00 */
 	margin: 0 0 2.5rem;
 	text-align: center;
 }
@@ -247,8 +238,8 @@
 }
 
 [data-page="our-ingredients"] .dg-oi-btn:hover {
-	background: var(--oi-inverse-surface);
-	color: var(--oi-inverse-on-surface);
+	background: var(--color-inverse-surface);  /* was --oi-inverse-surface: #313030 */
+	color: var(--color-inverse-on-surface);  /* was --oi-inverse-on-surface: #f3f0ef */
 }
 
 /* ══════════════════════════════════════════════
@@ -459,7 +450,7 @@
 	width: 100%;
 	aspect-ratio: 1 / 1;
 	overflow: hidden;
-	background: var(--oi-surface-container);
+	background: var(--color-surface-container);  /* was --oi-surface-container: #f6f3f2 */
 	margin-bottom: 1.5rem;
 }
 

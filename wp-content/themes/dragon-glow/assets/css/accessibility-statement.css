@@ -12,22 +12,19 @@
 }
 
 .dg-accessibility {
-	--a11y-bg:           #faf9f6;
-	--a11y-surface-low:  #f4f3f1;
-	--a11y-ink:          #1a1a1a;
-	--a11y-muted:        #444748;
-	--a11y-line:         #e5e4e0;
-	--a11y-line-soft:    rgba(229, 228, 224, 0.5);
-	--a11y-gold:         #c5a059;
-	--a11y-gold-soft:    rgba(197, 160, 89, 0.4);
-	--a11y-glass:        rgba(249, 248, 246, 0.95);
+	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
 	--a11y-radius:       0.25rem;
 	--a11y-sidebar-w:    280px;
 	--a11y-content-w:    720px;
 	--a11y-gutter:       40px;
 
-	color: var(--a11y-ink);
-	background: var(--a11y-bg);
+	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
+	/* OLD tokens removed: --a11y-bg, --a11y-surface-low, --a11y-ink, */
+	/* --a11y-muted, --a11y-line, --a11y-line-soft, --a11y-gold, */
+	/* --a11y-gold-soft, --a11y-glass */
+
+	color: var(--color-on-surface);  /* was --a11y-ink: #1a1a1a */
+	background: var(--neutral-warm-100);  /* was --a11y-bg: #faf9f6 */
 }
 
 /* FOUC guard: ẩn phần tử sẽ reveal cho tới khi JS chạy */
@@ -63,7 +60,7 @@
 	font-weight: 600;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	color: var(--a11y-muted);
+	color: var(--color-on-surface-variant);  /* was --a11y-muted */
 	margin: 0 0 1rem;
 }
 
@@ -72,7 +69,7 @@
 	font-weight: 300;
 	letter-spacing: -0.04em;
 	line-height: 1.05;
-	color: #735C00;
+	color: var(--gold-dark);
 	margin: 0 0 1.5rem;
 	font-feature-settings: "ss01" 1;
 }
@@ -85,7 +82,7 @@
 	font-size: 1.125rem;
 	font-weight: 300;
 	line-height: 1.6;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	max-width: 60ch;
 	margin: 0 0 2rem;
 }
@@ -105,10 +102,10 @@
 	position: sticky;
 	top: 0;
 	z-index: 40;
-	background: var(--a11y-glass);
+	background: var(--neutral-warm-100-alpha-95);  /* was --a11y-glass */
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	border-bottom: 1px solid var(--a11y-line);
+	border-bottom: 1px solid var(--color-outline);  /* was --a11y-line */
 	padding: 1rem 0;
 	margin: 0 0 2rem;
 }
@@ -122,13 +119,13 @@
 .dg-accessibility-toc-select {
 	width: 100%;
 	height: 48px;
-	border: 1px solid var(--a11y-line);
+	border: 1px solid var(--color-outline);  /* was --a11y-line */
 	border-radius: var(--a11y-radius);
 	background: transparent;
 	font-family: inherit;
 	font-size: 1rem;
 	font-weight: 400;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	padding: 0 3rem 0 1rem;
 	appearance: none;
 	-webkit-appearance: none;
@@ -146,7 +143,7 @@
 	right: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	color: var(--a11y-muted);
+	color: var(--color-on-surface-variant);  /* was --a11y-muted */
 	pointer-events: none;
 	font-family: "Material Symbols Outlined", sans-serif;
 	font-size: 1.25rem;
@@ -190,7 +187,7 @@
 }
 
 .dg-accessibility-nav {
-	border-right: 1px solid var(--a11y-line-soft);
+	border-right: 1px solid var(--color-outline-variant);  /* was --a11y-line-soft */
 	padding: 0.5rem 1.25rem 0.5rem 0;
 }
 
@@ -200,7 +197,7 @@
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: var(--a11y-muted);
+	color: var(--color-on-surface-variant);  /* was --a11y-muted */
 	margin: 0 0 1rem;
 	padding-bottom: 0.75rem;
 	border-bottom: 1px solid var(--a11y-line-soft);
@@ -210,7 +207,7 @@
 	display: block;
 	font-size: 0.9375rem;
 	font-weight: 400;
-	color: var(--a11y-muted);
+	color: var(--color-on-surface-variant);  /* was --a11y-muted */
 	text-decoration: none;
 	padding: 0.65rem 0 0.65rem 1.25rem;
 	border-right: 2px solid transparent;
@@ -219,17 +216,17 @@
 }
 
 .dg-accessibility-nav-link:hover {
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 }
 
 .dg-accessibility-nav-link.is-active {
-	color: var(--a11y-gold);
+	color: var(--color-primary);  /* was --a11y-gold */
 	font-weight: 500;
 	border-right-color: var(--a11y-gold);
 }
 
 .dg-accessibility-nav-link:focus-visible {
-	outline: 2px solid var(--a11y-gold);
+	outline: 2px solid var(--color-primary);  /* was --a11y-gold */
 	outline-offset: 2px;
 	border-radius: 2px;
 }
@@ -263,7 +260,7 @@
 	font-weight: 500;
 	letter-spacing: -0.01em;
 	line-height: 1.3;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	margin: 0 0 1.5rem;
 }
 
@@ -271,7 +268,7 @@
 	font-family: inherit;
 	font-size: 0.95em;
 	font-weight: 300;
-	color: #735C00;
+	color: var(--gold-dark);
 	letter-spacing: 0;
 }
 
@@ -279,7 +276,7 @@
 	font-size: 1rem;
 	font-weight: 300;
 	line-height: 1.7;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	margin: 0 0 1rem;
 	max-width: 65ch;
 }
@@ -298,7 +295,7 @@
 	font-size: 1rem;
 	font-weight: 300;
 	line-height: 1.7;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	margin-bottom: 0.5rem;
 	max-width: 65ch;
 }
@@ -312,7 +309,7 @@
 }
 
 .dg-accessibility-section a {
-	color: var(--a11y-gold);
+	color: var(--color-primary);  /* was --a11y-gold */
 	text-decoration: underline;
 	text-decoration-color: var(--a11y-gold);
 	text-underline-offset: 4px;
@@ -324,7 +321,7 @@
 }
 
 .dg-accessibility-section a:focus-visible {
-	outline: 2px solid var(--a11y-gold);
+	outline: 2px solid var(--color-primary);  /* was --a11y-gold */
 	outline-offset: 2px;
 	border-radius: 2px;
 }
@@ -338,20 +335,20 @@
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	text-decoration: none;
 	padding-bottom: 0.25rem;
-	border-bottom: 1px solid var(--a11y-line);
+	border-bottom: 1px solid var(--color-outline);  /* was --a11y-line */
 	transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .dg-accessibility-back-top:hover {
-	color: var(--a11y-gold);
+	color: var(--color-primary);  /* was --a11y-gold */
 	border-bottom-color: var(--a11y-gold);
 }
 
 .dg-accessibility-back-top:focus-visible {
-	outline: 2px solid var(--a11y-gold);
+	outline: 2px solid var(--color-primary);  /* was --a11y-gold */
 	outline-offset: 4px;
 	border-radius: 2px;
 }
@@ -360,8 +357,8 @@
    SECTION 3 — CONTACT BOX
    ═══════════════════════════════════════════ */
 .dg-accessibility-contact-box {
-	background: var(--a11y-surface-low);
-	border: 1px solid var(--a11y-line);
+	background: var(--color-surface-container-low);  /* was --a11y-surface-low */
+	border: 1px solid var(--color-outline);  /* was --a11y-line */
 	border-radius: var(--a11y-radius);
 	padding: 2rem;
 	margin: 1.5rem 0 0;
@@ -377,7 +374,7 @@
 	font-size: 1rem;
 	font-weight: 300;
 	line-height: 1.7;
-	color: var(--a11y-ink);
+	color: var(--color-on-surface);  /* was --a11y-ink */
 	margin-bottom: 1rem;
 }
 

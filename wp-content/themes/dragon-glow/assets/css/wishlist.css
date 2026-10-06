@@ -27,19 +27,19 @@
 }
 
 .dg-wishlist {
-	--wl-bg: var(--color-background, #fbf9f5);
-	--wl-surface: var(--color-surface, #fbf9f5);
-	--wl-ink: var(--color-on-surface, #1b1c1a);
-	--wl-muted: var(--color-on-surface-variant, #504444);
-	--wl-line: var(--color-outline-variant, #d4c2c2);
-	--wl-error: var(--color-error, #ba1a1a);
+	--wl-bg: var(--color-background);
+	--wl-surface: var(--color-surface);
+	--wl-ink: var(--color-on-surface);
+	--wl-muted: var(--color-on-surface-variant);
+	--wl-line: var(--color-outline-variant);
+	--wl-error: var(--color-error);
 
-	--wl-primary: var(--color-primary, #735c00);
-	--wl-on-primary: var(--color-on-primary, #ffffff);
-	--wl-primary-container: var(--color-primary-container, #f4c2c2);
-	--wl-on-primary-container: var(--color-on-primary-container, #734e4e);
-	--wl-gold: var(--color-gold, #d4af37);
-	--wl-surface-container: var(--color-surface-container, #efeeea);
+	--wl-primary: var(--color-primary);
+	--wl-on-primary: var(--color-on-primary);
+	--wl-primary-container: var(--color-primary-container);
+	--wl-on-primary-container: var(--color-on-primary-container);
+	--wl-gold: var(--color-gold);
+	--wl-surface-container: var(--color-surface-container);
 
 	--wl-glass-bg: rgba(255, 255, 255, 0.55);
 	--wl-glass-bg-strong: rgba(255, 255, 255, 0.78);

@@ -37,6 +37,10 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --primary-500: #a68e00;      /* Light */
     --primary-rgb: 115, 92, 0;   /* RGB of primary-700 for alpha channels */
     
+    /* ----- NEW: Canonical Dark Gold (Primary Brand) ----- */
+    --gold-dark: #735c00;        /* Canonical primary brand color (replaces 15+ duplicate names) */
+    --gold-dark-rgb: 115, 92, 0; /* RGB for alpha channels */
+    
     /* ----- Gold Accent (Luxury Highlight) ----- */
     --gold-100: #fff8e7;         /* Lightest — subtle tint backgrounds */
     --gold-200: #ffe182;         /* Light — borders, dividers */
@@ -55,15 +59,20 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     /* ----- Neutral (Surface & Background) ----- */
     --neutral-0: #ffffff;        /* Pure white */
-    --neutral-50: #fbf9f5;       /* Lightest — page background */
+    --neutral-50: #fbf9f5;       /* Lightest — page background (canonical cool ivory) */
     --neutral-100: #f7f4ee;      /* Very light — card backgrounds */
     --neutral-200: #efeeea;      /* Light — container backgrounds */
     --neutral-300: #eae8e4;      /* Medium-light — borders */
     --neutral-400: #d4c2c2;      /* Medium — dividers */
     --neutral-500: #827473;      /* Medium-dark — borders */
     --neutral-600: #504444;      /* Dark — secondary text */
-    --neutral-700: #1b1c1a;      /* Darker — body text */
+    --neutral-700: #1b1c1a;      /* Darker — body text (canonical text color) */
     --neutral-800: #1e1b17;      /* Darkest — headings */
+    --neutral-900: #313030;      /* Deepest — dark backgrounds, footer */
+    
+    /* ----- NEW: Warm Background Variants ----- */
+    --neutral-warm-50: #fcf9f8;  /* Warm ivory (replaces 12 duplicate definitions) */
+    --neutral-warm-100: #faf9f6; /* Cooler warm ivory variant */
     
     /* ----- Functional Colors ----- */
     --error-500: #ba1a1a;        /* Error state */
@@ -90,22 +99,25 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
        ===================================================== */
     
     /* ----- Brand Identity ----- */
-    --color-primary: var(--primary-700);
+    --color-primary: var(--gold-dark);        /* ← UPDATED: Now references canonical --gold-dark */
     --color-primary-dark: var(--primary-800);
     --color-primary-light: var(--primary-600);
     --color-on-primary: var(--neutral-0);
     --color-on-primary-container: var(--primary-800);
     
     /* ----- Accent & Emphasis ----- */
-    --color-accent: var(--gold-500);
+    --color-accent: var(--gold-400);          /* Light gold highlight */
+    --color-accent-alt: var(--gold-500);      /* ← NEW: Alt gold variant */
     --color-accent-light: var(--gold-400);
     --color-accent-dark: var(--gold-700);
     --color-on-accent: var(--primary-900);
     
     /* ----- Surface & Background ----- */
     --color-background: var(--neutral-50);
+    --color-background-warm: var(--neutral-warm-50); /* ← NEW: Warm background variant */
     --color-surface: var(--neutral-50);
     --color-surface-container: var(--neutral-200);
+    --color-surface-container-low: var(--neutral-100); /* ← NEW: Explicit low variant */
     --color-surface-container-high: var(--neutral-300);
     --color-on-background: var(--neutral-700);
     --color-on-surface: var(--neutral-700);
@@ -131,11 +143,16 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* ----- Legacy Aliases (for backward compatibility) ----- */
     /* These map old token names to new canonical values */
     --color-primary-container: #f4c2c2;  /* Pale pink container */
-    --color-tertiary: var(--primary-700); /* Same as primary */
+    --color-tertiary: var(--gold-dark);  /* ← UPDATED: Now references canonical --gold-dark */
     --color-on-tertiary: var(--neutral-0);
     --color-tertiary-container: #f1ca50;
     --color-on-tertiary-container: var(--gold-800);
     --color-checkout-icon: var(--warning-500);
+    
+    /* ----- NEW: Additional Legacy Aliases ----- */
+    /* Allow old token names to work during migration */
+    --primary-700: var(--gold-dark);     /* OLD NAME → NEW CANONICAL TOKEN */
+    --color-gold: var(--gold-400);       /* OLD NAME → CLARIFY WHICH GOLD */
     
     /* =====================================================
        LAYER 3: COMPONENT TOKENS (Context-Specific)
@@ -322,6 +339,341 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-frame-outer: rgba(212, 175, 55, 0.4);
     --register-frame-inner: rgba(197, 155, 39, 0.2);
     --register-flourish: rgba(197, 155, 39, 0.6);
+    
+    /* ========== Account Component ========== */
+    /* My Account dashboard — sidebar nav, glass cards, stat tiles */
+    --account-sidebar-width: 280px;
+    --account-radius: 24px;
+    --account-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
+    --account-border: rgba(255, 255, 255, 0.55);
+    
+    --account-bg-gradient-tl: rgba(212, 175, 55, 0.06);
+    --account-bg-gradient-br: rgba(244, 194, 194, 0.10);
+    
+    --account-hero-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.95), rgba(212, 175, 55, 0.95));
+    --account-hero-glow-top: rgba(255, 255, 255, 0.30);
+    --account-hero-glow-bottom: rgba(255, 255, 255, 0.20);
+    
+    --account-avatar-border: rgba(255, 255, 255, 0.85);
+    --account-avatar-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    
+    --account-tier-bg: rgba(0, 0, 0, 0.65);
+    --account-tier-lumiere: linear-gradient(135deg, #735c00, #d4af37);
+    --account-tier-aria: linear-gradient(135deg, #5c5d6e, #bba3c2);
+    --account-tier-glow: rgba(0, 0, 0, 0.6);
+    
+    --account-nav-bg: rgba(115, 92, 0, 0.06);
+    --account-nav-bg-active: linear-gradient(135deg, rgba(115, 92, 0, 0.12), rgba(212, 175, 55, 0.18));
+    --account-nav-border-active: rgba(115, 92, 0, 0.18);
+    --account-nav-bg-hover: rgba(115, 92, 0, 0.10);
+    --account-nav-text-active: var(--gold-dark);
+    
+    --account-card-shadow: 0 12px 28px rgba(123, 84, 85, 0.08);
+    --account-card-bg-hover: rgba(115, 92, 0, 0.10);
+    --account-card-shadow-hover: 0 8px 18px rgba(123, 84, 85, 0.06);
+    
+    --account-stat-bg-hover: rgba(115, 92, 0, 0.10);
+    
+    --account-input-focus-ring: rgba(115, 92, 0, 0.12);
+    --account-input-bg-disabled: rgba(115, 92, 0, 0.06);
+    
+    --account-btn-primary-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+    --account-btn-primary-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.28);
+    --account-btn-secondary-border: rgba(115, 92, 0, 0.30);
+    --account-btn-secondary-bg-hover: rgba(115, 92, 0, 0.06);
+    
+    --account-table-shadow: 0 4px 16px rgba(115, 92, 0, 0.08);
+    --account-table-border: rgba(115, 92, 0, 0.06);
+    
+    --account-badge-shadow: 0 6px 18px rgba(115, 92, 0, 0.28);
+    --account-badge-bg-pending: rgba(115, 92, 0, 0.08);
+    --account-badge-bg-processing: rgba(115, 92, 0, 0.16);
+    
+    --account-order-border: rgba(115, 92, 0, 0.06);
+    
+    --account-downloads-bg: rgba(115, 92, 0, 0.06);
+    --account-downloads-shadow: 0 14px 32px rgba(123, 84, 85, 0.10);
+    --account-downloads-border: rgba(115, 92, 0, 0.20);
+    --account-downloads-badge-bg: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
+    --account-downloads-badge-border: rgba(115, 92, 0, 0.10);
+    --account-downloads-badge-bg-hover: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+    --account-downloads-text-primary: var(--gold-dark);
+    
+    --account-address-border: rgba(115, 92, 0, 0.08);
+    --account-address-divider: rgba(115, 92, 0, 0.10);
+    --account-address-btn-border: rgba(115, 92, 0, 0.20);
+    --account-address-btn-bg-hover: rgba(115, 92, 0, 0.08);
+    --account-address-btn-shadow: 0 6px 14px rgba(115, 92, 0, 0.10);
+    --account-address-btn-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.28);
+    --account-address-btn-shadow-focus: 0 4px 12px rgba(115, 92, 0, 0.18);
+    
+    --account-payment-border: rgba(115, 92, 0, 0.16);
+    --account-payment-bg-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.14), rgba(212, 175, 55, 0.22));
+    
+    --account-subscription-border: rgba(115, 92, 0, 0.22);
+    --account-subscription-bg-hover: rgba(115, 92, 0, 0.08);
+    --account-subscription-shadow: 0 6px 16px rgba(115, 92, 0, 0.22);
+    --account-subscription-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.30);
+    
+    --account-rewards-bg: rgba(115, 92, 0, 0.04);
+    --account-rewards-border: rgba(115, 92, 0, 0.25);
+    --account-rewards-stripe: repeating-linear-gradient(135deg, transparent 0 14px, rgba(115, 92, 0, 0.04) 14px 15px);
+    --account-rewards-empty-bg: rgba(115, 92, 0, 0.04);
+    --account-rewards-empty-border: rgba(115, 92, 0, 0.18);
+    
+    --account-history-divider: rgba(115, 92, 0, 0.10);
+    --account-history-hover-bg: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+    
+    --account-wishlist-focus-ring: rgba(115, 92, 0, 0.12);
+    
+    --account-review-shadow: 0 12px 32px rgba(115, 92, 0, 0.12);
+    --account-review-input-focus-ring: rgba(115, 92, 0, 0.10);
+    --account-review-input-bg-hover: rgba(115, 92, 0, 0.10);
+    --account-review-input-bg-focus: rgba(115, 92, 0, 0.15);
+    
+    --account-loyalty-border: rgba(115, 92, 0, 0.16);
+    --account-loyalty-shadow: 0 8px 24px rgba(115, 92, 0, 0.06);
+    --account-loyalty-progress-border: rgba(115, 92, 0, 0.18);
+    --account-loyalty-progress-bg-hover: rgba(115, 92, 0, 0.10);
+    --account-loyalty-tier-bg: rgba(115, 92, 0, 0.04);
+    --account-loyalty-tier-border: rgba(115, 92, 0, 0.14);
+    --account-loyalty-tier-border-left: rgba(115, 92, 0, 0.45);
+    --account-loyalty-tier-bg-hover: rgba(115, 92, 0, 0.08);
+    --account-loyalty-tier-border-current: rgba(115, 92, 0, 0.45);
+    
+    --account-referral-divider: rgba(115, 92, 0, 0.10);
+    --account-referral-btn-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+    --account-referral-btn-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.28);
+    --account-referral-link-shadow: 0 4px 12px rgba(115, 92, 0, 0.16);
+    
+    --account-avatar-upload-focus-ring: rgba(115, 92, 0, 0.12);
+    --account-avatar-upload-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.28);
+    
+    --account-prefs-skeleton-bg: rgba(115, 92, 0, 0.06);
+    --account-prefs-skeleton-shimmer: linear-gradient(90deg, 
+                                       rgba(115, 92, 0, 0.06) 0%, 
+                                       rgba(115, 92, 0, 0.12) 50%, 
+                                       rgba(115, 92, 0, 0.06) 100%);
+    --account-prefs-switch-bg-hover: rgba(115, 92, 0, 0.08);
+    
+    /* ========== Wishlist Component ========== */
+    /* Wishlist page — hero banner, product cards, share modal */
+    --wl-glass-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
+    --wl-hero-border: rgba(115, 92, 0, 0.20);
+    --wl-hero-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.94), rgba(212, 175, 55, 0.94));
+    
+    --wl-btn-shadow: 0 4px 16px rgba(115, 92, 0, 0.20);
+    --wl-btn-shadow-hover: 0 8px 22px rgba(115, 92, 0, 0.30);
+    --wl-btn-border: rgba(115, 92, 0, 0.55);
+    
+    --wl-chip-bg: rgba(115, 92, 0, 0.06);
+    --wl-chip-bg-hover: rgba(115, 92, 0, 0.12);
+    --wl-chip-shadow-active: 0 2px 10px rgba(115, 92, 0, 0.30);
+    
+    --wl-share-border: rgba(115, 92, 0, 0.40);
+    
+    --wl-card-shadow: 0 2px 8px rgba(115, 92, 0, 0.06);
+    --wl-card-shadow-hover: 0 4px 16px rgba(115, 92, 0, 0.15);
+    --wl-card-shadow-focus: 0 6px 20px rgba(115, 92, 0, 0.18);
+    --wl-card-shadow-lift: 0 20px 48px rgba(115, 92, 0, 0.18);
+    --wl-card-badge-shadow: 0 2px 8px rgba(115, 92, 0, 0.08);
+    
+    --wl-modal-shadow: 0 24px 48px -20px rgba(123, 84, 85, 0.18);
+    --wl-modal-btn-shadow: 0 8px 20px rgba(115, 92, 0, 0.25);
+    
+    --wl-empty-border: rgba(115, 92, 0, 0.25);
+    --wl-empty-shadow: 0 12px 36px rgba(123, 84, 85, 0.16);
+    
+    --wl-toast-shadow: 0 18px 48px rgba(123, 84, 85, 0.22);
+    
+    --wl-input-focus-ring: rgba(115, 92, 0, 0.12);
+    
+    --wl-fab-shadow: 0 16px 40px rgba(123, 84, 85, 0.18);
+    
+    /* ========== Shop Component ========== */
+    /* Shop page — filters, product grid, pagination */
+    --shop-scrollbar-thumb: rgba(115, 92, 0, 0.2);
+    --shop-scrollbar-thumb-hover: rgba(115, 92, 0, 0.4);
+    
+    --shop-shadow-luxury: 0 20px 60px rgba(115, 92, 0, 0.13);
+    --shop-shadow-card: 0 8px 30px -8px rgba(123, 84, 85, 0.08);
+    --shop-shadow-card-hover: 0 1px 4px rgba(123, 84, 85, 0.08);
+    
+    --shop-range-thumb-bg: var(--gold-dark);
+    --shop-range-thumb-border: #fff;
+    --shop-range-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    
+    --shop-badge-bg: var(--gold-400);
+    
+    --shop-cat-divider: rgba(115, 92, 0, 0.35);
+    
+    --shop-pagination-shadow: 0 1px 4px rgba(123, 84, 85, 0.06);
+    --shop-pagination-shadow-hover: 0 1px 4px rgba(123, 84, 85, 0.08);
+    
+    --shop-summary-shadow: 0 2px 8px rgba(123, 84, 85, 0.1);
+    
+    /* ========== Single Product Component ========== */
+    /* Single product page — title, price, add to cart, tabs */
+    --product-title-color: var(--gold-dark);
+    --product-price-color: var(--gold-dark);
+    --product-price-del: var(--neutral-500);
+    --product-description-color: var(--neutral-600);
+    
+    --product-btn-gradient: linear-gradient(135deg, #c9a96e 0%, #e8d5a3 45%, #c9a96e 75%, #a07840 100%);
+    --product-btn-shadow: 0 2px 8px rgba(123, 84, 85, 0.15), 0 8px 28px rgba(201, 169, 110, 0.35);
+    --product-btn-shadow-hover: 0 4px 14px rgba(123, 84, 85, 0.2), 0 12px 36px rgba(201, 169, 110, 0.45);
+    --product-btn-sheen: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    
+    --product-btn-buynow-shadow: 0 1px 4px rgba(123, 84, 85, 0.08), 0 2px 8px rgba(123, 84, 85, 0.1);
+    --product-btn-buynow-shadow-hover: 0 2px 8px rgba(123, 84, 85, 0.12), 0 4px 14px rgba(123, 84, 85, 0.14);
+    
+    --product-qty-border: rgba(123, 84, 85, 0.12);
+    --product-qty-shadow: 0 1px 3px rgba(123, 84, 85, 0.06);
+    --product-qty-shadow-focus: 0 2px 6px rgba(123, 84, 85, 0.1);
+    --product-qty-btn-border: rgba(123, 84, 85, 0.08);
+    --product-qty-btn-shadow: 0 1px 2px rgba(123, 84, 85, 0.08);
+    --product-qty-btn-shadow-hover: 0 1px 3px rgba(123, 84, 85, 0.06);
+    --product-qty-btn-shadow-active: 0 2px 8px rgba(123, 84, 85, 0.1);
+    
+    --product-focus-outline: var(--gold-dark);
+    
+    /* ========== Cart Component ========== */
+    /* Cart page — item list, coupon, summary */
+    --cart-shadow-card: 0 4px 24px rgba(115, 92, 0, 0.06);
+    --cart-shadow-lift: 0 12px 32px rgba(115, 92, 0, 0.18);
+    
+    --cart-divider-gold: #d4af37;
+    --cart-divider-gold-dark: var(--gold-dark);
+    
+    --cart-highlight-bg: rgba(115, 92, 0, 0.10);
+    --cart-highlight-text: var(--gold-dark);
+    
+    --cart-input-border: rgba(115, 92, 0, 0.40);
+    --cart-input-focus-ring: rgba(115, 92, 0, 0.10);
+    
+    --cart-btn-gradient: linear-gradient(90deg, rgba(115, 92, 0, 0.04), transparent 70%);
+    
+    --cart-checkout-shadow: 0 18px 48px rgba(123, 84, 85, 0.22);
+    
+    --cart-coupon-border: rgba(115, 92, 0, 0.30);
+    --cart-coupon-bg-hover: rgba(115, 92, 0, 0.08);
+    
+    --cart-remove-border: rgba(115, 92, 0, 0.30);
+    --cart-remove-bg-hover: rgba(115, 92, 0, 0.08);
+    
+    /* ========== Checkout Component ========== */
+    /* Checkout page — forms, payment methods, order review */
+    --checkout-divider: var(--gold-dark);
+    --checkout-step-text: var(--gold-dark);
+    
+    --checkout-arrow-border: var(--gold-dark);
+    
+    --checkout-card-text: var(--gold-dark);
+    
+    --checkout-input-border: var(--gold-dark);
+    --checkout-input-text: var(--gold-dark);
+    --checkout-input-bg-focus: var(--gold-dark);
+    
+    --checkout-select-border: var(--gold-dark);
+    
+    /* ========== Order Modal Component ========== */
+    /* Order review modal — items, totals, payment methods */
+    --order-modal-border: rgba(201, 162, 75, 0.3);
+    --order-modal-header-border: rgba(201, 162, 75, 0.2);
+    --order-modal-header-bg: linear-gradient(180deg, rgba(201, 162, 75, 0.1) 0%, rgba(201, 162, 75, 0.05) 100%);
+    --order-modal-header-divider: rgba(201, 162, 75, 0.2);
+    
+    --order-modal-focus-ring: rgba(201, 162, 75, 0.2);
+    
+    --order-modal-radio-bg-checked: rgba(201, 162, 75, 0.3);
+    --order-modal-radio-border-hover: rgba(201, 162, 75, 0.4);
+    
+    --order-modal-summary-bg: rgba(201, 162, 75, 0.05);
+    --order-modal-summary-border: rgba(201, 162, 75, 0.2);
+    
+    --order-modal-payment-bg: rgba(201, 162, 75, 0.05);
+    --order-modal-payment-border: rgba(201, 162, 75, 0.2);
+    
+    --order-modal-divider: rgba(201, 162, 75, 0.3);
+    --order-modal-item-border: rgba(201, 162, 75, 0.2);
+    
+    --order-modal-actions-bg: rgba(201, 162, 75, 0.05);
+    
+    --order-modal-progress-bg: rgba(201, 162, 75, 0.3);
+    --order-modal-progress-fill: rgba(201, 162, 75, 0.5);
+    
+    /* ========== Main Navigation & Header ========== */
+    /* Global header, navigation, announcement bar */
+    --main-header-shadow: 0 4px 30px rgba(123, 84, 85, 0.05);
+    --main-header-shadow-scroll: 0 20px 40px -15px rgba(123, 84, 85, 0.10);
+    
+    --main-nav-divider: var(--gold-dark);
+    --main-nav-link-text: var(--gold-dark);
+    --main-nav-link-border: var(--gold-dark);
+    --main-nav-link-bg-hover: var(--gold-dark);
+    
+    --main-btn-outline-border: var(--gold-dark);
+    --main-btn-outline-text: var(--gold-dark);
+    --main-btn-outline-bg-hover: var(--gold-dark);
+    --main-btn-outline-border-hover: var(--gold-dark);
+    
+    --main-btn-filled-bg: var(--gold-dark);
+    --main-btn-filled-border: var(--gold-dark);
+    
+    --main-search-divider: var(--gold-dark);
+    
+    --main-announcement-bg: var(--gold-dark);
+    
+    --main-cart-badge-text: var(--gold-dark);
+    --main-cart-badge-text-hover: var(--gold-dark);
+    --main-cart-badge-border-hover: var(--gold-dark);
+    
+    --main-dropdown-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    --main-dropdown-shadow-hover: 0 4px 16px rgba(115, 92, 0, 0.16);
+    --main-dropdown-shadow-focus: 0 2px 8px rgba(115, 92, 0, 0.12);
+    
+    --main-mobile-toggle-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    
+    /* ========== WooCommerce Global ========== */
+    /* Shared WooCommerce elements across pages */
+    --wc-link-text: var(--gold-dark);
+    --wc-link-text-hover: var(--gold-dark);
+    
+    --wc-btn-bg: var(--gold-dark);
+    --wc-btn-border: var(--gold-dark);
+    
+    --wc-notice-text: var(--gold-dark);
+    
+    --wc-input-shadow: 0 2px 8px rgba(123, 84, 85, 0.10);
+    --wc-input-shadow-focus: 0 4px 14px rgba(123, 84, 85, 0.16);
+    
+    --wc-focus-outline: var(--gold-dark);
+    
+    --wc-tabs-shadow: 0 4px 10px rgba(115, 92, 0, 0.25);
+    
+    /* ========== Thank You Page Component ========== */
+    /* Order confirmation page after checkout */
+    --thankyou-icon-text: #d4af37;
+    --thankyou-icon-text-alt: #d4af37;
+    
+    --thankyou-btn-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+    --thankyou-btn-shadow-hover: 0 8px 24px rgba(115, 92, 0, 0.3);
+    --thankyou-btn-shadow-mobile: 0 4px 12px rgba(115, 92, 0, 0.2);
+    
+    --thankyou-payment-primary: var(--gold-dark);
+    --thankyou-payment-accent: #d4af37;
+    
+    /* ========== Responsive Component ========== */
+    /* Mobile-specific adjustments */
+    --responsive-modal-shadow: 0 4px 20px rgba(123, 84, 85, 0.1);
+    
+    /* ========== Careers Component ========== */
+    /* Careers page — job listings, application form */
+    /* (Placeholder — careers.css có 45 hard-coded values cần tokenize) */
+    
+    /* ========== Other Components ========== */
+    /* Contact, FAQ, Legal pages, etc. */
+    /* (Placeholder — 15 files còn lại có ~200 hard-coded values cần tokenize) */
 }
 
 /* =========================================

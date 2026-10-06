@@ -4,10 +4,10 @@
    Geist + tokens scoped to [data-page="help-center"].
    ============================================================ */
 
-/* ── FOUC guard ────────────────────────────────────────────── */
+/* ── FOUC guard ──────────────────────────────────────────────
 .dg-js [data-page="help-center"] [data-sr] {
 	opacity: 0;
-}
+} */
 
 /* ══════════════════════════════════════════════
    SCOPED GEIST + TOKENS
@@ -16,29 +16,21 @@
 	font-family: 'Geist Variable', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	font-size: 16px;
 	line-height: 1.6;
-	color: var(--hc-on-surface);
-	background: var(--hc-bg);
+	color: var(--color-on-surface);  /* was --hc-on-surface: #1c1b1b */
+	background: var(--color-background-warm);  /* was --hc-bg: #fcf9f8 */
 
-	--hc-bg: #fcf9f8;
-	--hc-on-surface: #1c1b1b;
-	--hc-on-surface-variant: #4d4635;
-	--hc-primary: #605e5c;
-	--hc-on-primary: #ffffff;
-	--hc-secondary: #615e57;
-	--hc-outline: #797770;
-	--hc-outline-variant: #c9c6be;
-	--hc-ivory: #f6f3f2;
-	--hc-champagne: #e8e2d9;
-	--hc-gold: #735C00;
-	--hc-gold-title: #D4AF37;
-	--hc-gold-muted: #a08520;
-	--hc-gold-hover: #4a3b00;
+	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
 	--hc-radius-sm: 0.25rem;
 	--hc-radius-md: 0.5rem;
 	--hc-shadow-hover: 0 20px 40px rgba(45, 45, 45, 0.03);
 	--hc-shadow-icon: 0 10px 20px rgba(45, 45, 45, 0.02);
 	--hc-gutter: 32px;
 	--hc-ease: cubic-bezier(0.2, 0, 0, 1);
+
+	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
+	/* OLD tokens removed: --hc-bg, --hc-on-surface, --hc-on-surface-variant, */
+	/* --hc-primary, --hc-on-primary, --hc-secondary, --hc-outline, --hc-outline-variant, */
+	/* --hc-ivory, --hc-champagne, --hc-gold, --hc-gold-title, --hc-gold-muted, --hc-gold-hover */
 }
 
 /* ══════════════════════════════════════════════
@@ -64,7 +56,7 @@
 	font-weight: 500;
 	line-height: 1.1;
 	letter-spacing: -0.04em;
-	color: var(--hc-gold);
+	color: var(--color-primary);  /* was --hc-gold */
 	margin: 0 0 16px;
 }
 
@@ -74,7 +66,7 @@
 	font-weight: 300;
 	line-height: 1.6;
 	letter-spacing: 0.01em;
-	color: var(--hc-secondary);
+	color: var(--color-on-surface-variant);  /* was --hc-secondary */
 	margin: 0 auto;
 	max-width: 56ch;
 }
@@ -108,7 +100,7 @@
 	bottom: 0;
 	width: 100%;
 	height: 1px;
-	background-color: var(--hc-outline-variant);
+	background-color: var(--color-outline-variant);  /* was --hc-outline-variant */
 	opacity: 0.4;
 	transition:
 		background-color 500ms var(--hc-ease),
@@ -121,7 +113,7 @@
 
 [data-page="help-center"] .dg-hc-search-container:focus-within::after {
 	height: 100%;
-	background-color: var(--hc-ivory);
+	background-color: var(--color-surface-container-low);  /* was --hc-ivory */
 	opacity: 1;
 	border-radius: var(--hc-radius-md);
 	box-shadow: var(--hc-shadow-hover);
@@ -134,7 +126,7 @@
 	width: 32px;
 	height: 32px;
 	margin-left: 8px;
-	color: var(--hc-outline);
+	color: var(--color-outline);  /* was --hc-outline */
 	font-size: 20px;
 	vertical-align: middle;
 }
@@ -150,7 +142,7 @@
 	font-weight: 400;
 	line-height: 1.4;
 	letter-spacing: -0.01em;
-	color: var(--hc-primary);
+	color: var(--neutral-600);  /* was --hc-primary */
 	transition: padding 500ms var(--hc-ease);
 }
 
@@ -160,7 +152,7 @@
 }
 
 [data-page="help-center"] .dg-hc-search-input::placeholder {
-	color: var(--hc-outline);
+	color: var(--color-outline);  /* was --hc-outline */
 	opacity: 0.5;
 	font-weight: 300;
 }
@@ -170,7 +162,7 @@
 	font-weight: 500;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--hc-outline);
+	color: var(--color-outline);  /* was --hc-outline */
 	margin: 12px 0 0;
 	min-height: 1em;
 }
@@ -213,7 +205,7 @@
 	background-color: var(--hc-bg);
 	border: 1px solid rgba(212, 175, 55, 0.3);
 	box-shadow: var(--hc-shadow-icon);
-	color: var(--hc-gold-title);
+	color: var(--gold-400);  /* was --hc-gold-title */
 	flex-shrink: 0;
 	transition: background-color 300ms var(--hc-ease), color 300ms var(--hc-ease);
 }
@@ -229,7 +221,7 @@
 	font-weight: 400;
 	line-height: 1.4;
 	letter-spacing: -0.01em;
-	color: var(--hc-gold-title);
+	color: var(--gold-400);  /* was --hc-gold-title */
 	margin: 0;
 }
 
@@ -238,7 +230,7 @@
 	font-size: 16px;
 	font-weight: 300;
 	line-height: 1.6;
-	color: var(--hc-secondary);
+	color: var(--color-on-surface-variant);  /* was --hc-secondary */
 	margin: 0;
 	padding: 24px 0;
 	border-top: 1px solid rgba(201, 198, 190, 0.3);
@@ -267,12 +259,12 @@
 	cursor: pointer;
 	text-align: left;
 	font: inherit;
-	color: var(--hc-on-surface);
+	color: var(--color-on-surface);  /* was --hc-on-surface */
 	transition: color 300ms var(--hc-ease);
 }
 
 [data-page="help-center"] .dg-hc-faq-trigger:hover {
-	color: var(--hc-gold);
+	color: var(--color-primary);  /* was --hc-gold */
 }
 
 [data-page="help-center"] .dg-hc-faq-question {
@@ -292,12 +284,12 @@
 	width: 24px;
 	height: 24px;
 	flex-shrink: 0;
-	color: var(--hc-gold);
+	color: var(--color-primary);  /* was --hc-gold */
 	transition: color 300ms var(--hc-ease);
 }
 
 [data-page="help-center"] .dg-hc-faq-item.is-open .dg-hc-faq-icon {
-	color: var(--hc-gold-hover);
+	color: var(--gold-dark);  /* was --hc-gold-hover */
 }
 
 [data-page="help-center"] .dg-hc-faq-icon .material-symbols-outlined {
@@ -321,7 +313,7 @@
 	font-weight: 400;
 	line-height: 1.65;
 	letter-spacing: 0.01em;
-	color: var(--hc-secondary);
+	color: var(--color-on-surface-variant);  /* was --hc-secondary */
 	margin: 0;
 	max-width: 64ch;
 }
@@ -332,8 +324,8 @@
 	justify-content: center;
 	margin-top: 24px;
 	padding: 14px 28px;
-	background-color: var(--hc-primary);
-	color: var(--hc-on-primary);
+	background-color: var(--neutral-600);  /* was --hc-primary */
+	color: var(--neutral-50);  /* was --hc-on-primary */
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 600;
@@ -346,7 +338,7 @@
 }
 
 [data-page="help-center"] .dg-hc-faq-cta:hover {
-	background-color: #313030;
+	background-color: var(--neutral-900);
 }
 
 /* ══════════════════════════════════════════════
@@ -373,7 +365,7 @@
 	font-weight: 300;
 	line-height: 1.4;
 	letter-spacing: -0.01em;
-	color: var(--hc-primary);
+	color: var(--neutral-600);  /* was --hc-primary */
 	margin: 0 0 12px;
 }
 
@@ -382,7 +374,7 @@
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.6;
-	color: var(--hc-secondary);
+	color: var(--color-on-surface-variant);  /* was --hc-secondary */
 	margin: 0;
 }
 
@@ -434,7 +426,7 @@
    FOCUS STATES
    ══════════════════════════════════════════════ */
 [data-page="help-center"] :focus-visible {
-	outline: 2px solid var(--hc-primary);
+	outline: 2px solid var(--neutral-600);  /* was --hc-primary */
 	outline-offset: 4px;
 	border-radius: 2px;
 }

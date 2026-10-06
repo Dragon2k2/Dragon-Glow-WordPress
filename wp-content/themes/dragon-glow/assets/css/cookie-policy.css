@@ -11,23 +11,19 @@
 }
 
 .dg-cookie {
-	--cookie-bg:           #faf9f6;
-	--cookie-surface-low:  #f4f3f1;
-	--cookie-table-header: #f4f3f1;
-	--cookie-ink:          #1a1a1a;
-	--cookie-muted:        #444748;
-	--cookie-line:         #e5e4e0;
-	--cookie-line-soft:    rgba(229, 228, 224, 0.5);
-	--cookie-gold:         #c5a059;
-	--cookie-gold-soft:    rgba(197, 160, 89, 0.4);
-	--cookie-glass:        rgba(249, 248, 246, 0.95);
+	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
 	--cookie-radius:       0.25rem;
 	--cookie-sidebar-w:    280px;
 	--cookie-content-w:    720px;
 	--cookie-gutter:       40px;
 
-	color: var(--cookie-ink);
-	background: var(--cookie-bg);
+	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
+	/* OLD tokens removed: --cookie-bg, --cookie-surface-low, --cookie-table-header, */
+	/* --cookie-ink, --cookie-muted, --cookie-line, --cookie-line-soft, */
+	/* --cookie-gold, --cookie-gold-soft, --cookie-glass */
+
+	color: var(--color-on-surface);  /* was --cookie-ink: #1a1a1a */
+	background: var(--neutral-warm-100);  /* was --cookie-bg: #faf9f6 */
 }
 
 /* FOUC guard: ẩn phần tử sẽ reveal cho tới khi JS chạy */
@@ -69,7 +65,7 @@
 	font-weight: 300;
 	letter-spacing: -0.04em;
 	line-height: 1.05;
-	color: #735C00;
+	color: var(--gold-dark);
 	margin: 0 0 1.5rem;
 	font-feature-settings: "ss01" 1;
 }
@@ -80,7 +76,7 @@
 	gap: 0.5rem;
 	font-size: 0.875rem;
 	font-weight: 400;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 	margin-bottom: 1.5rem;
 }
 
@@ -106,7 +102,7 @@
 	font-size: 1.125rem;
 	font-weight: 300;
 	line-height: 1.6;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	max-width: 60ch;
 	margin: 0 0 2rem;
 }
@@ -117,7 +113,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	background: var(--cookie-gold);
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	border: 1px solid var(--cookie-ink);
 	border-radius: var(--cookie-radius);
 	padding: 0.875rem 1.5rem;
@@ -136,7 +132,7 @@
 }
 
 .dg-cookie-manage-btn:focus-visible {
-	outline: 2px solid var(--cookie-gold);
+	outline: 2px solid var(--color-primary);  /* was --cookie-gold */
 	outline-offset: 3px;
 }
 
@@ -164,10 +160,10 @@
 	position: sticky;
 	top: 0;
 	z-index: 40;
-	background: var(--cookie-glass);
+	background: var(--neutral-warm-100-alpha-95);  /* was --cookie-glass */
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	border-bottom: 1px solid var(--cookie-line);
+	border-bottom: 1px solid var(--color-outline);  /* was --cookie-line */
 	padding: 1rem 0;
 	margin: 0 0 2rem;
 }
@@ -181,13 +177,13 @@
 .dg-cookie-toc-select {
 	width: 100%;
 	height: 48px;
-	border: 1px solid var(--cookie-line);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
 	border-radius: var(--cookie-radius);
 	background: transparent;
 	font-family: inherit;
 	font-size: 1rem;
 	font-weight: 400;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	padding: 0 3rem 0 1rem;
 	appearance: none;
 	-webkit-appearance: none;
@@ -205,7 +201,7 @@
 	right: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 	pointer-events: none;
 	font-family: "Material Symbols Outlined", sans-serif;
 	font-size: 1.25rem;
@@ -250,7 +246,7 @@
 }
 
 .dg-cookie-nav {
-	border-right: 1px solid var(--cookie-line-soft);
+	border-right: 1px solid var(--color-outline-variant);  /* was --cookie-line-soft */
 	padding: 0.5rem 1.25rem 0.5rem 0;
 }
 
@@ -258,7 +254,7 @@
 	display: block;
 	font-size: 0.9375rem;
 	font-weight: 400;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 	text-decoration: none;
 	padding: 0.65rem 0 0.65rem 1.25rem;
 	border-right: 2px solid transparent;
@@ -267,17 +263,17 @@
 }
 
 .dg-cookie-nav-link:hover {
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 }
 
 .dg-cookie-nav-link.is-active {
-	color: var(--cookie-gold);
+	color: var(--color-primary);  /* was --cookie-gold */
 	font-weight: 500;
 	border-right-color: var(--cookie-gold);
 }
 
 .dg-cookie-nav-link:focus-visible {
-	outline: 2px solid var(--cookie-gold);
+	outline: 2px solid var(--color-primary);  /* was --cookie-gold */
 	outline-offset: 2px;
 	border-radius: 2px;
 }
@@ -294,7 +290,7 @@
 .dg-cookie-section {
 	padding-top: clamp(2rem, 5vw, 3rem);
 	margin-bottom: clamp(2.5rem, 6vw, 4rem);
-	border-top: 1px solid var(--cookie-line);
+	border-top: 1px solid var(--color-outline);  /* was --cookie-line */
 	scroll-margin-top: 5rem;
 }
 
@@ -311,7 +307,7 @@
 	font-weight: 500;
 	letter-spacing: -0.01em;
 	line-height: 1.3;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	margin: 0 0 1.5rem;
 }
 
@@ -319,7 +315,7 @@
 	font-family: inherit;
 	font-size: 0.95em;
 	font-weight: 300;
-	color: #735C00;
+	color: var(--gold-dark);
 	letter-spacing: 0;
 }
 
@@ -327,7 +323,7 @@
 	font-size: 1rem;
 	font-weight: 300;
 	line-height: 1.7;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	margin: 0 0 1rem;
 	max-width: 65ch;
 }
@@ -346,7 +342,7 @@
 	font-size: 1rem;
 	font-weight: 300;
 	line-height: 1.7;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	margin-bottom: 0.5rem;
 	max-width: 65ch;
 }
@@ -360,7 +356,7 @@
 }
 
 .dg-cookie-section a {
-	color: var(--cookie-gold);
+	color: var(--color-primary);  /* was --cookie-gold */
 	text-decoration: underline;
 	text-decoration-color: var(--cookie-gold);
 	text-underline-offset: 4px;
@@ -372,7 +368,7 @@
 }
 
 .dg-cookie-section a:focus-visible {
-	outline: 2px solid var(--cookie-gold);
+	outline: 2px solid var(--color-primary);  /* was --cookie-gold */
 	outline-offset: 2px;
 	border-radius: 2px;
 }
@@ -381,18 +377,18 @@
 	font-family: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 0.875rem;
 	padding: 0.05em 0.35em;
-	background: var(--cookie-surface-low);
+	background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 	border-radius: 2px;
-	border: 1px solid var(--cookie-line);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
 }
 
 /* Address block */
 .dg-cookie-address {
 	font-style: normal;
-	border: 1px solid var(--cookie-line);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
 	padding: 1.5rem;
 	margin: 1.5rem 0 0;
-	background: var(--cookie-surface-low);
+	background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 	border-radius: var(--cookie-radius);
 }
 
@@ -407,7 +403,7 @@
 /* Section note (after Manage Cookies button) */
 .dg-cookie-section-note {
 	font-size: 0.875rem;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 	margin-top: 1.5rem !important;
 	font-style: italic;
 }
@@ -430,8 +426,8 @@
 }
 
 .dg-cookie-category {
-	border: 1px solid var(--cookie-line);
-	background: var(--cookie-surface-low);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
+	background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 	border-radius: var(--cookie-radius);
 	padding: 1.5rem;
 	transition: border-color 0.2s ease, transform 0.2s ease;
@@ -448,7 +444,7 @@
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	margin: 0 0 0.65rem;
 }
 
@@ -456,7 +452,7 @@
 	font-size: 0.875rem;
 	font-weight: 300;
 	line-height: 1.55;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 	margin: 0;
 }
 
@@ -472,7 +468,7 @@
 	font-weight: 600;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 }
 
 @media (min-width: 768px) {
@@ -489,15 +485,15 @@
 
 .dg-cookie-table-scroll {
 	margin: 0.5rem 0 0;
-	border: 1px solid var(--cookie-line);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
 	border-radius: var(--cookie-radius);
-	background: var(--cookie-surface-low);
+	background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 }
 
 .dg-cookie-table-scroll:focus-visible {
-	outline: 2px solid var(--cookie-gold);
+	outline: 2px solid var(--color-primary);  /* was --cookie-gold */
 	outline-offset: 2px;
 }
 
@@ -511,8 +507,8 @@
 }
 
 .dg-cookie-table thead th {
-	background: var(--cookie-table-header);
-	color: var(--cookie-ink);
+	background: var(--color-surface-container-low);  /* was --cookie-table-header */
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	font-family: "Geist Variable", "Geist", system-ui, sans-serif;
 	font-size: 0.6875rem;
 	font-weight: 600;
@@ -520,23 +516,23 @@
 	text-transform: uppercase;
 	text-align: left;
 	padding: 1rem 1rem;
-	border-bottom: 1px solid var(--cookie-line);
+	border-bottom: 1px solid var(--color-outline);  /* was --cookie-line */
 	white-space: nowrap;
 }
 
 .dg-cookie-table tbody th[scope="row"],
 .dg-cookie-table tbody td {
 	padding: 1rem 1rem;
-	border-bottom: 1px solid var(--cookie-line);
+	border-bottom: 1px solid var(--color-outline);  /* was --cookie-line */
 	text-align: left;
 	vertical-align: top;
-	color: var(--cookie-muted);
+	color: var(--color-on-surface-variant);  /* was --cookie-muted */
 }
 
 .dg-cookie-table tbody th[scope="row"] {
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	font-weight: 500;
-	background: var(--cookie-surface-low);
+	background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 	white-space: nowrap;
 }
 
@@ -546,7 +542,7 @@
 }
 
 .dg-cookie-table tbody tr:hover {
-	background: var(--cookie-table-header);
+	background: var(--color-surface-container-low);  /* was --cookie-table-header */
 }
 
 .dg-cookie-table-name {
@@ -562,14 +558,14 @@
 	display: inline-block;
 	padding: 0.25rem 0.6rem;
 	background: #fff;
-	border: 1px solid var(--cookie-line);
+	border: 1px solid var(--color-outline);  /* was --cookie-line */
 	border-radius: 2px;
 	font-family: "Geist Variable", "Geist", system-ui, sans-serif;
 	font-size: 0.625rem;
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	color: var(--cookie-ink);
+	color: var(--color-on-surface);  /* was --cookie-ink */
 	white-space: nowrap;
 }
 
@@ -587,7 +583,7 @@
 
 .dg-cookie-table-type--advertising {
 	border-color: var(--cookie-gold-soft);
-	color: var(--cookie-gold);
+	color: var(--color-primary);  /* was --cookie-gold */
 }
 
 /* Mobile: sticky first column */
@@ -597,7 +593,7 @@
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: var(--cookie-surface-low);
+		background: var(--color-surface-container-low);  /* was --cookie-surface-low */
 		box-shadow: 1px 0 0 0 var(--cookie-line);
 	}
 
