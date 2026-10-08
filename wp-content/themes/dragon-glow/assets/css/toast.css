@@ -1,0 +1,169 @@
+/* =========================================
+   DRAGON GLOW — TOAST NOTIFICATION STYLES
+   Site-wide toast system (window.DGToast). Neon / Cyberpunk style —
+   glowing border + flicker, bottom-right viewport. Tokens defined in
+   style.css (:root) under "Toast Notification Component".
+   ========================================= */
+
+.dg-toast-viewport {
+	position: fixed;
+	bottom: var(--toast-viewport-offset);
+	right: var(--toast-viewport-offset);
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	gap: var(--toast-gap);
+	max-width: var(--toast-viewport-width);
+	width: calc(100vw - (var(--toast-viewport-offset) * 2));
+	pointer-events: none;
+}
+
+.dg-toast-viewport > * {
+	pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+	.dg-toast-viewport {
+		right: 16px;
+		bottom: 16px;
+		left: 16px;
+		width: auto;
+		max-width: none;
+	}
+}
+
+.dg-toast {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	gap: var(--toast-gap);
+	padding: 14px 16px;
+	border-radius: var(--toast-radius);
+	background: var(--toast-bg);
+	border: 1px solid var(--toast-border-info);
+	box-shadow: var(--toast-glow-info);
+	color: var(--toast-text);
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
+	line-height: 1.45;
+	animation: dg-toast-in 0.35s ease-out, dg-toast-flicker 2s ease-in-out infinite;
+}
+
+.dg-toast[data-tone="success"] {
+	border-color: var(--toast-border-success);
+	box-shadow: var(--toast-glow-success);
+	animation-name: dg-toast-in, dg-toast-flicker-success;
+}
+
+.dg-toast[data-tone="error"] {
+	border-color: var(--toast-border-error);
+	box-shadow: var(--toast-glow-error);
+	animation-name: dg-toast-in, dg-toast-flicker-error;
+}
+
+.dg-toast__icon {
+	flex-shrink: 0;
+	font-size: 20px;
+	line-height: 1;
+	color: var(--toast-icon-info);
+}
+
+.dg-toast[data-tone="success"] .dg-toast__icon {
+	color: var(--toast-icon-success);
+}
+
+.dg-toast[data-tone="error"] .dg-toast__icon {
+	color: var(--toast-icon-error);
+}
+
+.dg-toast__body {
+	flex: 1;
+	min-width: 0;
+}
+
+.dg-toast__title {
+	font-weight: 700;
+	margin: 0 0 2px;
+	color: #fff;
+}
+
+.dg-toast__text {
+	margin: 0;
+	color: var(--toast-text-muted);
+}
+
+.dg-toast__close {
+	flex-shrink: 0;
+	background: none;
+	border: none;
+	padding: 0;
+	color: var(--toast-text-muted);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+}
+
+.dg-toast__close .material-symbols-outlined {
+	font-size: 18px;
+}
+
+.dg-toast__close:hover {
+	color: var(--toast-text);
+}
+
+.dg-toast__close:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+/* Exit state — toggled by JS before removal. */
+.dg-toast.is-leaving {
+	opacity: 0;
+	transform: translateX(24px);
+	transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+@keyframes dg-toast-in {
+	from {
+		opacity: 0;
+		transform: translateX(30px) skewX(-5deg);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0) skewX(0);
+	}
+}
+
+@keyframes dg-toast-flicker {
+	0%, 100% { box-shadow: var(--toast-glow-info); }
+	50% { box-shadow: var(--toast-glow-info-flicker); }
+}
+
+@keyframes dg-toast-flicker-success {
+	0%, 100% { box-shadow: var(--toast-glow-success); }
+	50% { box-shadow: var(--toast-glow-success-flicker); }
+}
+
+@keyframes dg-toast-flicker-error {
+	0%, 100% { box-shadow: var(--toast-glow-error); }
+	50% { box-shadow: var(--toast-glow-error-flicker); }
+}
+
+/* Accessibility: respect reduced-motion — disable flicker + slide-in, keep fade. */
+@media (prefers-reduced-motion: reduce) {
+	.dg-toast {
+		animation: dg-toast-fade-in 0.2s ease-out;
+	}
+	.dg-toast[data-tone="success"],
+	.dg-toast[data-tone="error"] {
+		animation: dg-toast-fade-in 0.2s ease-out;
+	}
+	.dg-toast.is-leaving {
+		transform: none;
+	}
+}
+
+@keyframes dg-toast-fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}

@@ -944,9 +944,12 @@
 
 	.dg-apply,
 	.dg-apply-overlay,
-	.dg-apply-dialog {
+	.dg-apply-dialog,
+	.dg-apply-close,
+	.dg-apply-actions .dg-careers-btn {
 		transition: none !important;
 		animation: none !important;
+		transform: none !important;
 	}
 }
 
@@ -955,17 +958,20 @@
    Đặt ngoài scope .dg-careers; token riêng để dialog không phụ thuộc Geist.
    ═══════════════════════════════════════════ */
 .dg-apply {
-	--a-bg:           var(--color-surface-warm);
+	--a-bg:           var(--neutral-0);
 	--a-ink:          var(--color-on-surface);
-	--a-ink-variant:  #464742;
-	--a-tertiary:     #c5a059;
+	--a-ink-variant:  var(--color-on-surface-variant);
+	--a-tertiary:     var(--gold-600);
 	--a-surface-low:  var(--neutral-warm-100);
-	--a-surface-high: #eae7e7;
-	--a-outline:      #c7c7bf;
-	--a-radius:       0;
-	--a-pad-x:        clamp(20px, 4vw, 32px);
-	--a-shadow:       0 24px 64px rgba(28, 27, 27, 0.18);
-	--a-backdrop:     rgba(28, 27, 27, 0.45);
+	--a-surface-high: var(--neutral-200);
+	--a-outline:      var(--neutral-400);
+	--a-outline-strong: var(--neutral-500);
+	--a-radius:       8px;
+	--a-pad-x:        clamp(24px, 5vw, 40px);
+	--a-pad-y:        clamp(32px, 6vw, 48px);
+	--a-shadow:       0 24px 64px rgba(28, 27, 27, 0.18),
+	                  0 8px 24px rgba(28, 27, 27, 0.12);
+	--a-backdrop:     rgba(28, 27, 27, 0.55);
 
 	position: fixed;
 	inset: 0;
@@ -973,10 +979,13 @@
 	display: none;
 	font-family: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
 	color: var(--a-ink);
+	isolation: isolate;
 }
 
 .dg-apply[data-open] {
-	display: block;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 /* Hidden attribute ưu tiên cao hơn để tắt cho non-JS hoặc khi modal đóng. */
@@ -988,57 +997,65 @@
 	position: absolute;
 	inset: 0;
 	background: var(--a-backdrop);
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 	cursor: pointer;
+	z-index: -1;
 }
 
 .dg-apply-dialog {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: min(560px, calc(100vw - 32px));
-	max-height: calc(100vh - 32px);
+	position: relative;
+	width: min(640px, calc(100vw - 32px));
+	max-height: calc(100vh - 64px);
 	overflow-y: auto;
 	background: var(--a-bg);
 	border: 1px solid var(--a-outline);
 	box-shadow: var(--a-shadow);
-	padding: clamp(24px, 5vw, 40px);
+	padding: var(--a-pad-y) var(--a-pad-x);
 	border-radius: var(--a-radius);
+	margin: auto;
 }
 
 .dg-apply-close {
 	position: absolute;
-	top: 16px;
-	right: 16px;
-	width: 36px;
-	height: 36px;
+	top: 20px;
+	right: 20px;
+	width: 40px;
+	height: 40px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	background: transparent;
 	border: 1px solid var(--a-outline);
-	color: var(--a-ink);
-	font-size: 1.5rem;
+	border-radius: 50%;
+	color: var(--a-ink-variant);
+	font-size: 1.25rem;
 	line-height: 1;
 	cursor: pointer;
-	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+	transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+	z-index: 10;
 }
 
 .dg-apply-close:hover {
 	background: var(--a-ink);
-	color: var(--a-bg);
+	color: var(--neutral-0);
 	border-color: var(--a-ink);
+	transform: scale(1.05);
+}
+
+.dg-apply-close:active {
+	transform: scale(0.98);
 }
 
 .dg-apply-close:focus-visible {
 	outline: 2px solid var(--a-tertiary);
 	outline-offset: 3px;
+	border-color: var(--a-tertiary);
 }
 
 .dg-apply-header {
-	margin-bottom: 1.75rem;
+	margin-bottom: 2rem;
+	padding-right: 3rem;
 }
 
 .dg-apply-eyebrow {
@@ -1048,22 +1065,23 @@
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--a-tertiary);
-	margin: 0 0 0.5rem;
+	margin: 0 0 0.75rem;
 }
 
 .dg-apply-title {
 	font-family: inherit;
-	font-size: clamp(1.5rem, 4vw, 2rem);
-	font-weight: 300;
+	font-size: clamp(1.75rem, 4.5vw, 2.25rem);
+	font-weight: 400;
 	letter-spacing: -0.02em;
-	line-height: 1.2;
+	line-height: 1.15;
 	color: var(--a-ink);
-	margin: 0 0 1rem;
+	margin: 0 0 1.25rem;
 }
 
 .dg-apply-role {
 	font-family: inherit;
-	font-size: 0.875rem;
+	font-size: 0.9375rem;
+	line-height: 1.5;
 	color: var(--a-ink-variant);
 	margin: 0 0 1rem;
 }
@@ -1080,9 +1098,9 @@
 
 .dg-apply-desc {
 	font-family: inherit;
-	font-size: 0.95rem;
+	font-size: 0.9375rem;
 	font-weight: 400;
-	line-height: 1.6;
+	line-height: 1.65;
 	color: var(--a-ink-variant);
 	margin: 0;
 }
@@ -1090,13 +1108,13 @@
 .dg-apply-form {
 	display: flex;
 	flex-direction: column;
-	gap: 1.25rem;
+	gap: 1.5rem;
 }
 
 .dg-apply-field {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 0.625rem;
 }
 
 .dg-apply-field--desired-role {
@@ -1113,36 +1131,49 @@
 
 .dg-apply-label {
 	font-family: inherit;
-	font-size: 0.75rem;
+	font-size: 0.8125rem;
 	font-weight: 600;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
+	letter-spacing: 0.025em;
 	color: var(--a-ink);
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
 }
 
 .dg-apply-required {
 	color: var(--a-tertiary);
-	margin-left: 0.125rem;
 }
 
 .dg-apply-input {
 	font-family: inherit;
 	font-size: 1rem;
 	font-weight: 400;
+	line-height: 1.5;
 	color: var(--a-ink);
-	background: var(--a-bg);
-	border: 1px solid var(--a-outline);
-	padding: 0.75rem 0.875rem;
-	border-radius: var(--a-radius);
-	transition: border-color 0.2s ease, background-color 0.2s ease;
+	background: var(--a-surface-low);
+	border: 1.5px solid var(--a-outline);
+	padding: 0.875rem 1rem;
+	border-radius: calc(var(--a-radius) - 2px);
+	transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 	width: 100%;
 	box-sizing: border-box;
+}
+
+.dg-apply-input::placeholder {
+	color: var(--a-ink-variant);
+	opacity: 0.6;
+}
+
+.dg-apply-input:hover {
+	border-color: var(--a-outline-strong);
+	background: var(--neutral-0);
 }
 
 .dg-apply-input:focus {
 	outline: none;
 	border-color: var(--a-tertiary);
-	background: var(--a-surface-low);
+	background: var(--neutral-0);
+	box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.12);
 }
 
 /* Browser autofill override — keep theme colors instead of yellow autofill tint */
@@ -1165,15 +1196,25 @@
 
 .dg-apply-textarea {
 	resize: vertical;
-	min-height: 96px;
+	min-height: 120px;
 	font-family: inherit;
+	line-height: 1.6;
 }
 
 .dg-apply-file {
-	padding: 0.5rem;
-	border: 1px dashed var(--a-outline);
+	padding: 1rem;
+	border: 2px dashed var(--a-outline);
+	border-radius: calc(var(--a-radius) - 2px);
 	cursor: pointer;
 	background: var(--a-surface-low);
+	transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+	font-size: 0.9375rem;
+	color: var(--a-ink-variant);
+}
+
+.dg-apply-file:hover {
+	border-color: var(--a-outline-strong);
+	background: var(--neutral-0);
 }
 
 .dg-apply-file::file-selector-button {
@@ -1182,65 +1223,95 @@
 	font-weight: 600;
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
-	padding: 0.5rem 0.875rem;
-	margin-right: 0.75rem;
+	padding: 0.625rem 1.125rem;
+	margin-right: 1rem;
 	background: transparent;
 	color: var(--a-ink);
-	border: 1px solid var(--a-ink);
+	border: 1.5px solid var(--a-outline-strong);
+	border-radius: calc(var(--a-radius) - 4px);
 	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-apply-file::file-selector-button:hover {
+	background: var(--a-ink);
+	color: var(--neutral-0);
+	border-color: var(--a-ink);
 }
 
 .dg-apply-consent {
 	font-family: inherit;
-	font-size: 0.8125rem;
-	line-height: 1.5;
+	font-size: 0.875rem;
+	line-height: 1.6;
 	color: var(--a-ink-variant);
 	margin: 0;
 }
 
 .dg-apply-consent label {
 	display: flex;
-	gap: 0.625rem;
+	gap: 0.75rem;
 	align-items: flex-start;
 	cursor: pointer;
 }
 
 .dg-apply-consent input[type="checkbox"] {
-	margin-top: 0.2rem;
+	margin-top: 0.25rem;
 	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	accent-color: var(--a-tertiary);
+	cursor: pointer;
 }
 
 .dg-apply-consent a {
-	color: var(--a-ink);
-	text-decoration: underline;
+	color: var(--a-tertiary);
+	text-decoration: none;
+	font-weight: 500;
+	border-bottom: 1px solid transparent;
+	transition: border-color 0.25s ease;
 }
 
 .dg-apply-consent a:hover {
-	color: var(--a-tertiary);
+	border-bottom-color: var(--a-tertiary);
 }
 
 .dg-apply-status {
-	min-height: 1.25rem;
+	min-height: 1.5rem;
 	font-family: inherit;
-	font-size: 0.875rem;
+	font-size: 0.9375rem;
+	font-weight: 500;
 	line-height: 1.5;
 	margin: 0;
+	padding: 0.75rem 1rem;
+	border-radius: calc(var(--a-radius) - 2px);
 	color: var(--a-ink-variant);
+	background: transparent;
+	transition: all 0.25s ease;
+}
+
+.dg-apply-status:not(:empty) {
+	background: var(--a-surface-low);
 }
 
 .dg-apply-status[data-state="error"] {
 	color: #ba1a1a;
+	background: rgba(186, 26, 26, 0.08);
+	border-left: 3px solid #ba1a1a;
 }
 
 .dg-apply-status[data-state="success"] {
 	color: #2d6a30;
+	background: rgba(45, 106, 48, 0.08);
+	border-left: 3px solid #2d6a30;
 }
 
 .dg-apply-actions {
 	display: flex;
 	flex-direction: column-reverse;
-	gap: 0.75rem;
-	margin-top: 0.5rem;
+	gap: 0.875rem;
+	margin-top: 1rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--a-outline);
 }
 
 @media (min-width: 640px) {
@@ -1253,19 +1324,71 @@
 .dg-apply-actions .dg-careers-btn {
 	margin: 0;
 	width: auto;
+	font-size: 0.8125rem;
+	padding: 0.875rem 1.75rem;
+	border-radius: calc(var(--a-radius) - 2px);
+	transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .dg-apply-actions .dg-careers-btn--primary {
-	min-width: 180px;
+	min-width: 200px;
+	background: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+	color: var(--neutral-0);
+	border-color: rgba(var(--gold-rgb), 0.3);
+	box-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.25);
+	font-weight: 600;
+}
+
+.dg-apply-actions .dg-careers-btn--primary:hover:not([disabled]) {
+	background: linear-gradient(135deg, var(--gold-600) 0%, var(--gold-700) 100%);
+	box-shadow: 0 4px 16px rgba(var(--gold-rgb), 0.35);
+	transform: translateY(-2px);
+}
+
+.dg-apply-actions .dg-careers-btn--primary:active:not([disabled]) {
+	transform: translateY(0);
+	box-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.25);
+}
+
+.dg-apply-actions .dg-careers-btn--secondary {
+	background: transparent;
+	color: var(--a-ink);
+	border-color: var(--a-outline-strong);
+}
+
+.dg-apply-actions .dg-careers-btn--secondary:hover {
+	background: var(--a-surface-low);
+	border-color: var(--a-ink);
 }
 
 .dg-apply-actions .dg-careers-btn[disabled],
 .dg-apply-actions .dg-careers-btn.is-loading {
-	opacity: 0.6;
-	cursor: progress;
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
 }
 
 /* Tránh body scroll khi modal mở. */
 body.dg-apply-open {
 	overflow: hidden;
+}
+
+/* Scrollbar styling cho dialog (webkit browsers) */
+.dg-apply-dialog::-webkit-scrollbar {
+	width: 8px;
+}
+
+.dg-apply-dialog::-webkit-scrollbar-track {
+	background: var(--a-surface-low);
+	border-radius: 4px;
+}
+
+.dg-apply-dialog::-webkit-scrollbar-thumb {
+	background: var(--a-outline);
+	border-radius: 4px;
+	transition: background 0.25s ease;
+}
+
+.dg-apply-dialog::-webkit-scrollbar-thumb:hover {
+	background: var(--a-outline-strong);
 }

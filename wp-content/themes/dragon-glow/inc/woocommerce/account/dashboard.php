@@ -32,12 +32,12 @@ function dg_account_nav_items(): array {
 			'icon'     => 'receipt_long',
 		),
 		array(
-			'endpoint' => 'edit-address',
+			'endpoint' => 'address-details',
 			'label'    => __( 'Addresses', 'dragon-glow' ),
 			'icon'     => 'home',
 		),
 		array(
-			'endpoint' => 'edit-account',
+			'endpoint' => 'account-details',
 			'label'    => __( 'Account details', 'dragon-glow' ),
 			'icon'     => 'manage_accounts',
 		),
@@ -147,9 +147,22 @@ function dg_render_account_sidebar( string $current_endpoint ): void {
 			<span class="material-symbols-outlined dg-account-nav__toggle-icon">menu</span>
 			<span class="dg-account-nav__toggle-label">
 				<?php
+				// Default label if no match found.
 				$current_label = __( 'Dashboard', 'dragon-glow' );
+				
+				// Special case: when on edit-address, show "Addresses" label instead
+				// of "Edit address" to maintain semantic grouping.
+				// Special case: when on edit-account, show "Account details" label instead
+				// of "Edit account" to maintain semantic grouping.
+				$display_endpoint = $current_endpoint;
+				if ( 'edit-address' === $current_endpoint ) {
+					$display_endpoint = 'address-details';
+				} elseif ( 'edit-account' === $current_endpoint ) {
+					$display_endpoint = 'account-details';
+				}
+				
 				foreach ( $items as $item ) {
-					if ( $item['endpoint'] === $current_endpoint ) {
+					if ( $item['endpoint'] === $display_endpoint ) {
 						$current_label = $item['label'];
 						break;
 					}
@@ -163,8 +176,24 @@ function dg_render_account_sidebar( string $current_endpoint ): void {
 
 		<ul class="dg-account-nav__list" id="dg-account-nav-list" role="list">
 			<?php foreach ( $items as $item ) :
+				// Standard active check: endpoint matches current endpoint.
 				$is_active = ( $item['endpoint'] === $current_endpoint ) || ( '' === $item['endpoint'] && '' === $current_endpoint );
-				$url       = dg_account_endpoint_url( $item['endpoint'] );
+				
+				// Special case: "Addresses" nav item (address-details) should also be
+				// active when user is on the edit-address form, since edit-address is
+				// a sub-view of the addresses management flow.
+				if ( 'address-details' === $item['endpoint'] && 'edit-address' === $current_endpoint ) {
+					$is_active = true;
+				}
+				
+				// Special case: "Account details" nav item (account-details) should also be
+				// active when user is on the edit-account form, since edit-account is
+				// a sub-view of the account details management flow.
+				if ( 'account-details' === $item['endpoint'] && 'edit-account' === $current_endpoint ) {
+					$is_active = true;
+				}
+				
+				$url = dg_account_endpoint_url( $item['endpoint'] );
 				?>
 				<li>
 					<a
@@ -252,10 +281,52 @@ function dg_render_account_dashboard(): void {
 					<p class="dg-account-stat__value">
 						<?php echo wp_kses_post( dg_format_price( $total_spent ) ); ?>
 					</p>
-					<p class="dg-account-stat__label"><?php esc_html_e( 'Lifetime total', 'dragon-glow' ); ?></p>
+					<p class="dg-account-stat__label"><?php esc_html_e( 'Total spent', 'dragon-glow' ); ?></p>
 				</div>
 			</div>
 		</div>
+
+		<!-- Account quick info -->
+		<section class="dg-account-panel" data-sr>
+			<header class="dg-account-panel__header">
+				<h2 class="dg-account-panel__title" id="dg-dashboard-heading"><?php esc_html_e( 'Account snapshot', 'dragon-glow' ); ?></h2>
+				<a href="<?php echo esc_url( dg_account_endpoint_url( 'account-details' ) ); ?>" class="dg-account-panel__link">
+					<?php esc_html_e( 'View details', 'dragon-glow' ); ?>
+					<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+				</a>
+			</header>
+			<?php
+			$customer = wp_get_current_user();
+			$first    = (string) get_user_meta( $customer->ID, 'billing_first_name', true );
+			$last     = (string) get_user_meta( $customer->ID, 'billing_last_name', true );
+			$phone    = (string) get_user_meta( $customer->ID, 'billing_phone', true );
+			$addr_1   = (string) get_user_meta( $customer->ID, 'billing_address_1', true );
+			$city     = (string) get_user_meta( $customer->ID, 'billing_city', true );
+			$billing  = array(
+				'name'  => trim( $first . ' ' . $last ),
+				'phone' => $phone,
+				'addr'  => trim( $addr_1 . ( '' !== $city ? ', ' . $city : '' ) ),
+			);
+			?>
+			<dl class="dg-account-snapshot">
+				<div>
+					<dt><?php esc_html_e( 'Name', 'dragon-glow' ); ?></dt>
+					<dd><?php echo '' !== $billing['name'] ? esc_html( $billing['name'] ) : '—'; ?></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Email', 'dragon-glow' ); ?></dt>
+					<dd><?php echo esc_html( $customer->user_email ); ?></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Phone', 'dragon-glow' ); ?></dt>
+					<dd><?php echo '' !== $billing['phone'] ? esc_html( $billing['phone'] ) : '—'; ?></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Default address', 'dragon-glow' ); ?></dt>
+					<dd><?php echo '' !== $billing['addr'] ? esc_html( $billing['addr'] ) : '—'; ?></dd>
+				</div>
+			</dl>
+		</section>
 
 		<!-- Recent orders -->
 		<?php
@@ -282,7 +353,7 @@ function dg_render_account_dashboard(): void {
 			?>
 			<section class="dg-account-panel" data-sr>
 				<header class="dg-account-panel__header">
-					<h2 class="dg-account-panel__title" id="dg-dashboard-heading">
+					<h2 class="dg-account-panel__title">
 						<?php esc_html_e( 'Recent orders', 'dragon-glow' ); ?>
 					</h2>
 					<a href="<?php echo esc_url( dg_account_endpoint_url( 'orders' ) ); ?>" class="dg-account-panel__link">
@@ -344,48 +415,6 @@ function dg_render_account_dashboard(): void {
 				<?php endif; ?>
 			</section>
 		<?php endif; ?>
-
-		<!-- Account quick info -->
-		<section class="dg-account-panel" data-sr>
-			<header class="dg-account-panel__header">
-				<h2 class="dg-account-panel__title"><?php esc_html_e( 'Account snapshot', 'dragon-glow' ); ?></h2>
-				<a href="<?php echo esc_url( dg_account_endpoint_url( 'edit-account' ) ); ?>" class="dg-account-panel__link">
-					<?php esc_html_e( 'Edit details', 'dragon-glow' ); ?>
-					<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-				</a>
-			</header>
-			<?php
-			$customer = wp_get_current_user();
-			$first    = (string) get_user_meta( $customer->ID, 'billing_first_name', true );
-			$last     = (string) get_user_meta( $customer->ID, 'billing_last_name', true );
-			$phone    = (string) get_user_meta( $customer->ID, 'billing_phone', true );
-			$addr_1   = (string) get_user_meta( $customer->ID, 'billing_address_1', true );
-			$city     = (string) get_user_meta( $customer->ID, 'billing_city', true );
-			$billing  = array(
-				'name'  => trim( $first . ' ' . $last ),
-				'phone' => $phone,
-				'addr'  => trim( $addr_1 . ( '' !== $city ? ', ' . $city : '' ) ),
-			);
-			?>
-			<dl class="dg-account-snapshot">
-				<div>
-					<dt><?php esc_html_e( 'Name', 'dragon-glow' ); ?></dt>
-					<dd><?php echo '' !== $billing['name'] ? esc_html( $billing['name'] ) : '—'; ?></dd>
-				</div>
-				<div>
-					<dt><?php esc_html_e( 'Email', 'dragon-glow' ); ?></dt>
-					<dd><?php echo esc_html( $customer->user_email ); ?></dd>
-				</div>
-				<div>
-					<dt><?php esc_html_e( 'Phone', 'dragon-glow' ); ?></dt>
-					<dd><?php echo '' !== $billing['phone'] ? esc_html( $billing['phone'] ) : '—'; ?></dd>
-				</div>
-				<div>
-					<dt><?php esc_html_e( 'Default address', 'dragon-glow' ); ?></dt>
-					<dd><?php echo '' !== $billing['addr'] ? esc_html( $billing['addr'] ) : '—'; ?></dd>
-				</div>
-			</dl>
-		</section>
 	</section>
 	<?php
 }
@@ -445,8 +474,14 @@ function dg_render_wc_account(): void {
 						case 'orders':
 							dg_render_account_orders_panel();
 							break;
+						case 'address-details':
+							dg_render_address_details_panel();
+							break;
 						case 'edit-address':
 							dg_render_account_addresses_panel();
+							break;
+						case 'account-details':
+							dg_render_account_details_panel();
 							break;
 						case 'edit-account':
 							dg_render_account_edit_panel();

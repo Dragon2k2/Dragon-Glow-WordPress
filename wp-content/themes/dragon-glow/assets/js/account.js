@@ -431,10 +431,20 @@
 	 * @param {string} endpoint Current endpoint slug.
 	 */
 	function updateActiveNav(endpoint) {
-		const navLinks = root.querySelectorAll('.dg-account-nav__link');
+		// "edit-address" is a sub-view of the addresses management flow —
+		// treat it as "address-details" so the "Addresses" nav link stays
+		// active while editing billing/shipping. Mirrors the PHP-side rule
+		// in inc/woocommerce/account/dashboard.php.
+		const matchEndpoint = endpoint === 'edit-address' ? 'address-details' : endpoint;
+
+		// The logout link is excluded here: its href is a `?action=logout`
+		// query string with no `/my-account/{endpoint}/` segment, so
+		// extractEndpoint() resolves it to '' — the same value as the
+		// Dashboard endpoint — which would otherwise mark it active too.
+		const navLinks = root.querySelectorAll('.dg-account-nav__link:not(.dg-account-nav__link--logout)');
 		navLinks.forEach(function (link) {
 			const linkEndpoint = extractEndpoint(link.getAttribute('href') || '');
-			if (linkEndpoint === endpoint) {
+			if (linkEndpoint === matchEndpoint) {
 				link.classList.add('is-active');
 				link.setAttribute('aria-current', 'page');
 			} else {

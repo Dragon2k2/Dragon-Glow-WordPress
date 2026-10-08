@@ -112,3 +112,20 @@ function dg_get_mock_rating( int $product_id ): float {
 function dg_get_mock_review_count( int $product_id ): int {
 	return 12 + ( ( $product_id * 29 + 11 ) % 78 );
 }
+
+/**
+ * Get localized short month labels (Jan..Dec) for the site's current locale.
+ *
+ * Used to label the "Month" wheel column in the account "Date of birth"
+ * scroll-wheel date picker (see account-datepicker.js), passed to JS via
+ * wp_add_inline_script() in inc/enqueue/scripts.php.
+ *
+ * @return string[] 12 month labels, January first.
+ */
+function dg_get_month_labels(): array {
+	$labels = array();
+	for ( $month = 1; $month <= 12; $month++ ) {
+		$labels[] = date_i18n( 'M', mktime( 0, 0, 0, $month, 1 ) );
+	}
+	return $labels;
+}

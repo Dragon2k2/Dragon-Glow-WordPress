@@ -163,9 +163,9 @@
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 2rem;
-	border: 1px solid var(--sus-on-surface);
-	color: var(--color-on-surface);  /* was --sus-primary: #000000 */
-	background: transparent;
+	border: 1px solid var(--sus-btn-border);
+	color: var(--sus-btn-text);
+	background: var(--sus-btn-bg);
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 600;
@@ -174,17 +174,25 @@
 	text-transform: uppercase;
 	text-decoration: none;
 	cursor: pointer;
+	box-shadow: var(--sus-btn-shadow);
 	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
-		color 400ms cubic-bezier(0.2, 0, 0, 1);
+		box-shadow 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 300ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 [data-page="sustainability"] .dg-sus-btn:hover {
-	background: var(--color-tertiary-fixed);  /* was --sus-tertiary-fixed: #eedfda */
-	border-color: var(--color-tertiary-fixed);  /* was --sus-tertiary-fixed: #eedfda */
+	background: var(--sus-btn-bg-hover);
+	box-shadow: var(--sus-btn-shadow-hover);
+	transform: translateY(-2px);
+}
+
+[data-page="sustainability"] .dg-sus-btn:active {
+	transform: translateY(0);
+	box-shadow: var(--sus-btn-shadow);
 }
 
 [data-page="sustainability"] .dg-sus-btn:focus-visible {
-	outline: 2px solid var(--color-on-surface);  /* was --sus-primary: #000000 */
+	outline: 2px solid var(--gold-600);
 	outline-offset: 4px;
 }
 
@@ -726,6 +734,7 @@
 	[data-page="sustainability"] .dg-sus-commit,
 	[data-page="sustainability"] .dg-sus-btn {
 		transition: none !important;
+		transform: none !important;
 	}
 }
 

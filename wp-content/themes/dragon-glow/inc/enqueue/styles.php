@@ -58,6 +58,15 @@ function dg_enqueue_styles(): void {
         DG_VERSION
     );
 
+    // Toast notification system (global, loaded on all pages) — window.DGToast
+    // consumers: account.js (WC notice bridge), future cart/wishlist/etc.
+    wp_enqueue_style(
+        'dg-toast',
+        DG_URI . '/assets/css/toast.css',
+        array( 'dg-main' ),
+        DG_VERSION
+    );
+
     // WooCommerce CSS (chỉ load khi có WooCommerce).
     // Shared styles load site-wide; page-scoped styles load conditionally and
     // depend on 'dg-woocommerce' so they always print after the shared file

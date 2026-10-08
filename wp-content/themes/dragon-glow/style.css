@@ -210,6 +210,15 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --filter-clear-active-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.2);
     --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
     
+    /* ========== Sustainability Page CTA Button ========== */
+    /* Primary call-to-action with luxury gold gradient */
+    --sus-btn-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --sus-btn-bg-hover: linear-gradient(135deg, var(--gold-600) 0%, var(--gold-700) 100%);
+    --sus-btn-text: var(--neutral-0);
+    --sus-btn-border: rgba(var(--gold-rgb), 0.3);
+    --sus-btn-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.25);
+    --sus-btn-shadow-hover: 0 4px 16px rgba(var(--gold-rgb), 0.35);
+    
     /* ========== Auth Portal Component (Sign In Page) ========== */
     /* Classical heritage design with parchment tones */
     --auth-bg: var(--heritage-ivory-50);
@@ -339,7 +348,40 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-frame-outer: rgba(212, 175, 55, 0.4);
     --register-frame-inner: rgba(197, 155, 39, 0.2);
     --register-flourish: rgba(197, 155, 39, 0.6);
-    
+
+    /* ========== Toast Notification Component (Neon / Cyberpunk) ========== */
+    /* Site-wide toast system (window.DGToast) — glowing border + flicker,
+       bottom-right viewport. Primitive neon colors scoped to this component
+       only (deliberately off-brand per request — not gold/Luminous Ethereal). */
+    --toast-neon-success-rgb: 57, 255, 20;    /* #39ff14 */
+    --toast-neon-error-rgb: 255, 41, 117;     /* #ff2975 */
+    --toast-neon-info-rgb: 56, 189, 248;      /* #38bdf8 — info/neutral fallback */
+
+    --toast-bg: #0a0a0f;
+    --toast-text: #e8ffe8;
+    --toast-text-muted: rgba(232, 255, 232, 0.7);
+
+    --toast-border-success: rgba(var(--toast-neon-success-rgb), 1);
+    --toast-border-error: rgba(var(--toast-neon-error-rgb), 1);
+    --toast-border-info: rgba(var(--toast-neon-info-rgb), 1);
+
+    --toast-glow-success: 0 0 12px rgba(var(--toast-neon-success-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-success-rgb), 0.8) inset;
+    --toast-glow-error: 0 0 12px rgba(var(--toast-neon-error-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-error-rgb), 0.8) inset;
+    --toast-glow-info: 0 0 12px rgba(var(--toast-neon-info-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-info-rgb), 0.8) inset;
+
+    --toast-glow-success-flicker: 0 0 18px rgba(var(--toast-neon-success-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-success-rgb), 1) inset;
+    --toast-glow-error-flicker: 0 0 18px rgba(var(--toast-neon-error-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-error-rgb), 1) inset;
+    --toast-glow-info-flicker: 0 0 18px rgba(var(--toast-neon-info-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-info-rgb), 1) inset;
+
+    --toast-icon-success: #39ff14;
+    --toast-icon-error: #ff2975;
+    --toast-icon-info: #38bdf8;
+
+    --toast-radius: 10px;
+    --toast-gap: 12px;
+    --toast-viewport-offset: 24px;
+    --toast-viewport-width: 380px;
+
     /* ========== Account Component ========== */
     /* My Account dashboard — sidebar nav, glass cards, stat tiles */
     --account-sidebar-width: 280px;
@@ -366,7 +408,48 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --account-nav-bg-active: linear-gradient(135deg, rgba(115, 92, 0, 0.12), rgba(212, 175, 55, 0.18));
     --account-nav-border-active: rgba(115, 92, 0, 0.18);
     --account-nav-bg-hover: rgba(115, 92, 0, 0.10);
+
+    /* ========== Address Card Component (Luxury Glassmorphism) ========== */
+    /* My Account → Addresses list cards (billing/shipping). Richer glass
+       surface than the base .dg-account-panel: layered ambient shadow,
+       gradient hairline border, inner glow icon badge. Billing = warm gold
+       accent, shipping = cool rose accent (kept from the original scheme). */
+    --address-card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.42));
+    --address-card-border: rgba(var(--gold-rgb), 0.22);
+    --address-card-border-hover: rgba(var(--gold-rgb), 0.38);
+    --address-card-radius: 24px;
+    --address-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 40px rgba(var(--gold-dark-rgb), 0.08);
+    --address-card-shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 24px 56px rgba(var(--gold-dark-rgb), 0.14);
+    --address-card-glow-tl: radial-gradient(480px 240px at 0% 0%, rgba(var(--gold-rgb), 0.14), transparent 60%);
+    --address-card-glow-br: radial-gradient(420px 220px at 100% 100%, rgba(244, 194, 194, 0.14), transparent 60%);
+
+    --address-card-icon-size: 54px;
+    --address-card-icon-radius: 17px;
+    --address-card-icon-bg-billing: linear-gradient(135deg, rgba(var(--gold-rgb), 0.38), rgba(var(--gold-dark-rgb), 0.28));
+    --address-card-icon-bg-shipping: linear-gradient(135deg, rgba(244, 194, 194, 0.60), rgba(var(--gold-rgb), 0.26));
+    --address-card-icon-ring: inset 0 0 0 1px rgba(255, 255, 255, 0.5), inset 0 -6px 10px rgba(var(--gold-dark-rgb), 0.08);
+    --address-card-icon-color-billing: var(--gold-dark);
+    --address-card-icon-color-shipping: #734e4e;
+
+    --address-card-badge-bg: linear-gradient(135deg, rgba(59, 122, 56, 0.14), rgba(76, 175, 80, 0.20));
+    --address-card-badge-text: #2e7d32;
+    --address-card-badge-border: rgba(76, 175, 80, 0.28);
+
+    --address-card-panel-bg: rgba(255, 255, 255, 0.42);
+    --address-card-panel-bg-hover: rgba(255, 255, 255, 0.58);
+    --address-card-panel-border: rgba(255, 255, 255, 0.55);
+    --address-card-label-width: 140px;
+    --address-card-label-color: var(--gold-600);
+
+    --address-card-action-bg: rgba(255, 255, 255, 0.55);
+    --address-card-action-border: rgba(var(--gold-rgb), 0.28);
+    --address-card-action-bg-hover: rgba(var(--gold-rgb), 0.12);
+    --address-card-action-primary-bg: linear-gradient(135deg, var(--gold-dark) 0%, var(--primary-800) 100%);
+    --address-card-action-primary-shadow: 0 10px 24px rgba(var(--gold-dark-rgb), 0.26);
+    --address-card-action-primary-shadow-hover: 0 16px 34px rgba(var(--gold-dark-rgb), 0.36);
     --account-nav-text-active: var(--gold-dark);
+    
+    --account-snapshot-label-color: var(--gold-600);
     
     --account-card-shadow: 0 12px 28px rgba(123, 84, 85, 0.08);
     --account-card-bg-hover: rgba(115, 92, 0, 0.10);

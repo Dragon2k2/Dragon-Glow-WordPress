@@ -11,14 +11,24 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Save custom registration fields after WooCommerce creates the user account.
+ * Save the customer's name after WooCommerce creates the user account.
+ *
+ * `WC_Form_Handler::process_registration()` only reads `email`/`username`/
+ * `password` from POST — it never looks at `billing_first_name` or
+ * `billing_last_name`, even though the Dragon Glow register form
+ * (register.php) collects them. Left unhandled, new accounts end up with no
+ * WP user `first_name`/`last_name` and no `billing_first_name`/
+ * `billing_last_name` meta, which breaks:
+ * - the "Name" column on WooCommerce Analytics → Customers (reads from the
+ *   `wc_customer_lookup` table, populated from billing name / WP user name)
+ * - the "Account snapshot" name field on the My Account dashboard
+ *   (dashboard.php reads `billing_first_name`/`billing_last_name` meta).
  *
  * Fired by `WC_Form_Handler::process_registration()` right after successful
- * user creation. Saves Dragon Glow custom fields (newsletter opt-in) that
- * are not part of WooCommerce core registration.
+ * user creation.
  *
- * @param int   $customer_id New customer user ID.
- * @param array $new_customer_data Customer data from WC (unused).
+ * @param int    $customer_id New customer user ID.
+ * @param array  $new_customer_data Customer data from WC (unused).
  * @param string $password_generated Whether WC generated password (unused).
  * @return void
  */
@@ -32,6 +42,33 @@ function dg_save_registration_custom_fields( int $customer_id, array $new_custom
 	if ( isset( $_POST['newsletter'] ) ) {
 		update_user_meta( $customer_id, 'dg_newsletter_opt_in', '1' );
 	}
+
+	// Save the customer's name (required fields on the register form).
+	$first_name = isset( $_POST['billing_first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by WC core.
+	$last_name  = isset( $_POST['billing_last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_last_name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by WC core.
+
+	if ( '' === $first_name && '' === $last_name ) {
+		return;
+	}
+
+	// Billing meta — read by dashboard.php, checkout, and WC order billing.
+	if ( '' !== $first_name ) {
+		update_user_meta( $customer_id, 'billing_first_name', $first_name );
+	}
+	if ( '' !== $last_name ) {
+		update_user_meta( $customer_id, 'billing_last_name', $last_name );
+	}
+
+	// WP user name — read by WC Analytics' Customer Lookup table ("Name"
+	// column) and anywhere core WP displays the user's display name.
+	wp_update_user(
+		array(
+			'ID'           => $customer_id,
+			'first_name'   => $first_name,
+			'last_name'    => $last_name,
+			'display_name' => trim( $first_name . ' ' . $last_name ),
+		)
+	);
 }
 add_action( 'woocommerce_created_customer', 'dg_save_registration_custom_fields', 10, 3 );
 

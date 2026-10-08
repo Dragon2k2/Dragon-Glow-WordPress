@@ -37,6 +37,17 @@ function dg_enqueue_scripts_assets(): void {
         true
     );
 
+    // Toast notification system — provides window.DGToast for any feature
+    // (account.js WC notice bridge today; cart/wishlist/etc. can reuse it).
+    // No deps: pure vanilla, must be ready before any consumer script runs.
+    wp_enqueue_script(
+        'dg-toast',
+        DG_URI . '/assets/js/lib/toast.js',
+        array(),
+        DG_VERSION,
+        true
+    );
+
     // Debug-mode gate for JS console logging.
     //
     // In production (WP_DEBUG off) window.dgDebug.enabled === false and
@@ -212,7 +223,7 @@ function dg_enqueue_scripts_assets(): void {
 		// account.js only bind to `.dg-account*` elements, so the cost on
 		// other WC pages is just one extra (cached) script.
 		if ( dg_is_woocommerce_active() ) {
-			wp_enqueue_script( 'dg-account', DG_URI . '/assets/js/account.js', array( 'dg-main' ), DG_VERSION, true );
+			wp_enqueue_script( 'dg-account', DG_URI . '/assets/js/account.js', array( 'dg-main', 'dg-toast' ), DG_VERSION, true );
 			
 			// Register endpoint — password strength + form interactions
 			global $wp_query;
@@ -223,6 +234,29 @@ function dg_enqueue_scripts_assets(): void {
 					array( 'dg-main' ),
 					DG_VERSION,
 					true
+				);
+			}
+
+			// Edit-account endpoint — "Date of birth" scroll-wheel date picker
+			// (replaces native <input type="date">). ES module, uses Motion
+			// for the roll-to-select snap animation.
+			if ( is_wc_endpoint_url( 'edit-account' ) ) {
+				// Localized month labels (site locale). Printed as a classic
+				// inline script tag — ES modules execute after classic
+				// scripts in the same position, so window.dgDobI18n is
+				// guaranteed to exist before account-datepicker.js runs.
+				wp_register_script( 'dg-account-datepicker-i18n', '', array(), DG_VERSION, true );
+				wp_enqueue_script( 'dg-account-datepicker-i18n' );
+				wp_add_inline_script(
+					'dg-account-datepicker-i18n',
+					'window.dgDobI18n = ' . wp_json_encode( array( 'months' => dg_get_month_labels() ) ) . ';'
+				);
+
+				wp_enqueue_script_module(
+					'dg-account-datepicker',
+					DG_URI . '/assets/js/account-datepicker.js',
+					array(),
+					DG_VERSION
 				);
 			}
 			

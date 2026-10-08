@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Define theme constants
-define( 'DG_VERSION',   '1.9.73' );
+define( 'DG_VERSION',   '1.10.3' );
 define( 'DG_DIR',       get_template_directory() );
 define( 'DG_URI',       get_template_directory_uri() );
 

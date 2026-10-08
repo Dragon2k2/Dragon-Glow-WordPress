@@ -181,20 +181,7 @@ function dg_purge_w3tc_cache(): void {
  */
 function dg_deferred_rewrite_flush(): void {
 	if ( get_transient( 'dg_needs_rewrite_flush' ) ) {
-		// Ensure WC query vars are registered before flushing.
-		if ( class_exists( 'WooCommerce', false ) && function_exists( 'WC' ) ) {
-			$wc = WC();
-			// Trigger WC query var registration if not done yet.
-			if ( isset( $wc->query ) && is_object( $wc->query ) && method_exists( $wc->query, 'init_query_vars' ) ) {
-				$wc->query->init_query_vars();
-			}
-			if ( isset( $wc->query ) && is_object( $wc->query ) && method_exists( $wc->query, 'add_endpoints' ) ) {
-				$wc->query->add_endpoints();
-			}
-		}
-		
-		flush_rewrite_rules( false );
-		dg_purge_w3tc_cache();
+		dg_flush_rewrite_rules_safe();
 		delete_transient( 'dg_needs_rewrite_flush' );
 	}
 }
@@ -295,22 +282,8 @@ function dg_handle_manual_flush_rewrites(): void {
 		wp_die( esc_html__( 'Security check failed.', 'dragon-glow' ) );
 	}
 	
-	// Ensure WooCommerce query vars are registered.
-	if ( class_exists( 'WooCommerce', false ) && function_exists( 'WC' ) ) {
-		$wc = WC();
-		if ( isset( $wc->query ) && is_object( $wc->query ) ) {
-			if ( method_exists( $wc->query, 'init_query_vars' ) ) {
-				$wc->query->init_query_vars();
-			}
-			if ( method_exists( $wc->query, 'add_endpoints' ) ) {
-				$wc->query->add_endpoints();
-			}
-		}
-	}
-	
 	// Flush rewrite rules.
-	flush_rewrite_rules( false );
-	dg_purge_w3tc_cache();
+	dg_flush_rewrite_rules_safe();
 	
 	// Redirect back with success message.
 	wp_safe_redirect(
@@ -348,3 +321,105 @@ function dg_flush_success_notice(): void {
 	<?php
 }
 add_action( 'admin_notices', 'dg_flush_success_notice' );
+
+/**
+ * Self-healing guard for custom WooCommerce endpoints.
+ *
+ * Automatically flushes rewrite rules when custom endpoints (register,
+ * account-details, address-details) are missing from the saved rewrite rules
+ * option in the database. This handles the case where code is deployed via
+ * FTP/Git (doesn't trigger `after_switch_theme`) or endpoints are added after
+ * theme activation, causing 404 errors on direct access or page refresh.
+ *
+ * Runs once every 6 hours (throttled via transient) to avoid performance impact.
+ * Checks happen on both frontend and admin so endpoints work immediately after
+ * code deployment, regardless of whether admin visits wp-admin first.
+ *
+ * @return void
+ */
+function dg_self_heal_missing_endpoints(): void {
+	// Throttle: only check once every 6 hours to avoid performance impact.
+	$check_interval = 6 * HOUR_IN_SECONDS;
+	if ( get_transient( 'dg_endpoint_check_done' ) ) {
+		return;
+	}
+
+	// Only proceed if WooCommerce is active — our custom endpoints extend WC.
+	if ( ! class_exists( 'WooCommerce', false ) ) {
+		return;
+	}
+
+	// Custom endpoints registered by this theme via add_rewrite_endpoint().
+	$custom_endpoints = array( 'register', 'account-details', 'address-details' );
+
+	// Get saved rewrite rules from database (option written by flush_rewrite_rules).
+	$rewrite_rules = get_option( 'rewrite_rules' );
+	if ( ! is_array( $rewrite_rules ) ) {
+		// Rules option is empty/corrupt — definitely needs flush.
+		dg_flush_rewrite_rules_safe();
+		set_transient( 'dg_endpoint_check_done', true, $check_interval );
+		return;
+	}
+
+	// Convert rewrite rules array to a single string for fast substring search.
+	// Each rule's key contains the regex pattern that matches incoming URLs,
+	// and custom endpoints appear in those patterns (e.g., "my-account/account-details").
+	$rules_serialized = wp_json_encode( $rewrite_rules );
+
+	// Check if any custom endpoint is missing from the serialized rules.
+	$missing_endpoints = array();
+	foreach ( $custom_endpoints as $endpoint ) {
+		// Search for the endpoint slug in the rules string.
+		// Example: "my-account/account-details" appears in keys like
+		// "my-account/account-details(/(.*))?/?$" when the endpoint is registered.
+		if ( false === strpos( $rules_serialized, $endpoint ) ) {
+			$missing_endpoints[] = $endpoint;
+		}
+	}
+
+	// If any endpoint is missing, flush rewrite rules to regenerate them.
+	if ( ! empty( $missing_endpoints ) ) {
+		dg_flush_rewrite_rules_safe();
+		// Log to help debug if issue persists (admin can check debug.log).
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				sprintf(
+					'[Dragon Glow] Self-healing: flushed rewrite rules for missing endpoints: %s',
+					implode( ', ', $missing_endpoints )
+				)
+			);
+		}
+	}
+
+	// Mark check as done for the next 6 hours (success or not — avoid infinite flush loop).
+	set_transient( 'dg_endpoint_check_done', true, $check_interval );
+}
+add_action( 'init', 'dg_self_heal_missing_endpoints', 1000 );
+
+/**
+ * Safely flush rewrite rules with WooCommerce query vars registered.
+ *
+ * Ensures WC has initialized its query vars and endpoints before flushing,
+ * then purges W3 Total Cache to make the new rules take effect immediately.
+ * Extracted to a helper so both `dg_deferred_rewrite_flush()` and
+ * `dg_self_heal_missing_endpoints()` can reuse the same safe flush logic.
+ *
+ * @return void
+ */
+function dg_flush_rewrite_rules_safe(): void {
+	// Ensure WooCommerce query vars are registered before flushing.
+	if ( class_exists( 'WooCommerce', false ) && function_exists( 'WC' ) ) {
+		$wc = WC();
+		if ( isset( $wc->query ) && is_object( $wc->query ) ) {
+			if ( method_exists( $wc->query, 'init_query_vars' ) ) {
+				$wc->query->init_query_vars();
+			}
+			if ( method_exists( $wc->query, 'add_endpoints' ) ) {
+				$wc->query->add_endpoints();
+			}
+		}
+	}
+
+	flush_rewrite_rules( false );
+	dg_purge_w3tc_cache();
+}

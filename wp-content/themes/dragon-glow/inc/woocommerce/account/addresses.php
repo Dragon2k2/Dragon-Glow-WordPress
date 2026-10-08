@@ -13,6 +13,15 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Build the "Edit address" URL helper (for routing to edit forms).
+ *
+ * @return string
+ */
+function dg_account_edit_address_url(): string {
+	return dg_account_endpoint_url( 'edit-address' );
+}
+
+/**
  * Build the address data array for an address type (billing/shipping).
  *
  * Pulls fields directly from user_meta so we own the markup instead of being
@@ -68,6 +77,60 @@ function dg_get_account_address_data( int $customer_id, string $type ): ?array {
 function dg_format_address_field( string $value ): string {
 	$value = trim( $value );
 	return '' === $value ? '' : esc_html( $value );
+}
+
+/**
+ * Resolve a WC country code (e.g. "VN") into its full localized name
+ * (e.g. "Vietnam") via `WC()->countries->countries`.
+ *
+ * Falls back to the raw code when WooCommerce is inactive or the code is
+ * unrecognized, so display never breaks on sites without WC loaded.
+ *
+ * @param string $code Raw country value from user_meta (ISO code or free text).
+ * @return string Localized country name, or the original value if not found.
+ */
+function dg_get_country_name( string $code ): string {
+	$code = trim( $code );
+
+	if ( '' === $code ) {
+		return '';
+	}
+
+	if ( function_exists( 'WC' ) && WC()->countries ) {
+		$countries = WC()->countries->get_countries();
+		$key       = strtoupper( $code );
+
+		if ( isset( $countries[ $key ] ) ) {
+			return $countries[ $key ];
+		}
+	}
+
+	return $code;
+}
+
+/**
+ * Format an address array into one compact, comma-separated display line.
+ *
+ * Used by the "Account details" stat-tiles overview (see `account-details.php`)
+ * where each tile only has room for a single-line value — unlike the full
+ * multi-line address card on the Addresses list view.
+ *
+ * @param array<string, string> $data Address fields from dg_get_account_address_data().
+ * @return string Comma-separated address (e.g. "123 Main St, Hanoi, Vietnam"). Empty if no fields.
+ */
+function dg_format_address_compact( array $data ): string {
+	$city_line = trim( implode( ' ', array_filter( array( $data['city'], $data['state'], $data['postcode'] ) ) ) );
+
+	$parts = array_filter(
+		array(
+			trim( $data['address_1'] ),
+			trim( $data['address_2'] ),
+			$city_line,
+			dg_get_country_name( $data['country'] ),
+		)
+	);
+
+	return implode( ', ', $parts );
 }
 
 /**
@@ -127,7 +190,7 @@ function dg_render_account_addresses_list(): void {
 			<p class="dg-account-empty__text">
 				<?php esc_html_e( 'Add your billing address to speed up checkout. You can add a separate shipping address any time.', 'dragon-glow' ); ?>
 			</p>
-			<a href="<?php echo esc_url( add_query_arg( 'address', 'billing', dg_account_endpoint_url( 'edit-address' ) ) ); ?>"
+			<a href="<?php echo esc_url( add_query_arg( 'address', 'billing', dg_account_edit_address_url() ) ); ?>"
 			   class="dg-btn dg-btn--primary">
 				<span class="material-symbols-outlined" aria-hidden="true">add</span>
 				<?php esc_html_e( 'Add billing address', 'dragon-glow' ); ?>
@@ -136,16 +199,17 @@ function dg_render_account_addresses_list(): void {
 		<?php
 		return;
 	endif;
+	// Only one card will render (the other address type is unset) — let it
+	// take the full grid width instead of leaving an empty column beside it.
+	$is_single_card = ( null === $billing || null === $shipping );
 	?>
-	<div class="dg-account-addresses" data-sr-group>
+	<div class="dg-account-addresses<?php echo $is_single_card ? ' dg-account-addresses--single' : ''; ?>" data-sr-group>
 		<?php if ( null !== $billing ) : ?>
-			<?php dg_render_account_address_card( 'billing', $billing, false ); ?>
+			<?php dg_render_account_address_card( 'billing', $billing, false, $is_single_card ); ?>
 		<?php endif; ?>
 
 		<?php if ( null !== $shipping ) : ?>
-			<?php dg_render_account_address_card( 'shipping', $shipping, $default_shipping_is_billing ); ?>
-		<?php elseif ( null !== $billing ) : ?>
-			<?php dg_render_account_address_empty_card( 'shipping' ); ?>
+			<?php dg_render_account_address_card( 'shipping', $shipping, $default_shipping_is_billing, $is_single_card ); ?>
 		<?php endif; ?>
 	</div>
 
@@ -163,10 +227,13 @@ function dg_render_account_addresses_list(): void {
  * @param array<string, string>  $data                  Address fields from dg_get_account_address_data().
  * @param bool                   $is_default_for_other  True when this card is the default for the other address type
  *                                                       (e.g. shipping falls back to billing).
+ * @param bool                   $is_single_card        True when this is the only card in the grid (the other
+ *                                                       address type is unset) — widens the meta rows into a
+ *                                                       2-column layout so the full-width card doesn't look sparse.
  * @return void
  */
-function dg_render_account_address_card( string $type, array $data, bool $is_default_for_other ): void {
-	$edit_url  = add_query_arg( 'address', $type, dg_account_endpoint_url( 'edit-address' ) );
+function dg_render_account_address_card( string $type, array $data, bool $is_default_for_other, bool $is_single_card = false ): void {
+	$edit_url  = add_query_arg( 'address', $type, dg_account_edit_address_url() );
 	$title     = ( 'billing' === $type ) ? __( 'Billing address', 'dragon-glow' ) : __( 'Shipping address', 'dragon-glow' );
 	$icon      = ( 'billing' === $type ) ? 'receipt' : 'local_shipping';
 	$is_default_label = ( 'billing' === $type )
@@ -174,16 +241,17 @@ function dg_render_account_address_card( string $type, array $data, bool $is_def
 		: __( 'Default shipping address', 'dragon-glow' );
 
 	$full_name = trim( $data['first_name'] . ' ' . $data['last_name'] );
+	$company   = dg_format_address_field( $data['company'] );
 
-	// Build address lines: line1 (+optional line2), then city/state/postcode.
-	$line_1 = dg_format_address_field( $data['address_1'] );
-	$line_2 = dg_format_address_field( $data['address_2'] );
-	$city   = dg_format_address_field( $data['city'] );
-	$state  = dg_format_address_field( $data['state'] );
-	$zip    = dg_format_address_field( $data['postcode'] );
-	$country = dg_format_address_field( $data['country'] );
-
-	$city_line = trim( implode( ' ', array_filter( array( $city, $state, $zip ) ) ) );
+	// Address lines: line1 (+optional line2) stay free-form; city/state/zip/
+	// country render as individual labeled rows (enterprise address-review
+	// pattern — Amazon/Shopify style) instead of one squashed line.
+	$line_1  = dg_format_address_field( $data['address_1'] );
+	$line_2  = dg_format_address_field( $data['address_2'] );
+	$city    = dg_format_address_field( $data['city'] );
+	$state   = dg_format_address_field( $data['state'] );
+	$zip     = dg_format_address_field( $data['postcode'] );
+	$country = esc_html( dg_get_country_name( $data['country'] ) );
 	?>
 	<article class="dg-account-address" data-sr data-address-type="<?php echo esc_attr( $type ); ?>">
 		<header class="dg-account-address__head">
@@ -204,27 +272,59 @@ function dg_render_account_address_card( string $type, array $data, bool $is_def
 		</header>
 
 		<div class="dg-account-address__body">
-			<?php if ( '' !== $full_name ) : ?>
-				<p class="dg-account-address__name"><?php echo esc_html( $full_name ); ?></p>
-			<?php endif; ?>
-
-			<address class="dg-account-address__lines">
+			<dl class="dg-account-address__meta<?php echo $is_single_card ? ' dg-account-address__meta--grid' : ''; ?>">
+				<?php if ( '' !== $full_name ) : ?>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Full name', 'dragon-glow' ); ?></dt>
+						<dd><?php echo esc_html( $full_name ); ?></dd>
+					</div>
+				<?php endif; ?>
+				<?php if ( '' !== $company ) : ?>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Company', 'dragon-glow' ); ?></dt>
+						<dd><?php echo esc_html( $company ); ?></dd>
+					</div>
+				<?php endif; ?>
 				<?php if ( '' !== $line_1 ) : ?>
-					<span><?php echo $line_1; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></span>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Address line 1', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $line_1; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></dd>
+					</div>
 				<?php endif; ?>
 				<?php if ( '' !== $line_2 ) : ?>
-					<span><?php echo $line_2; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></span>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Address line 2', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $line_2; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></dd>
+					</div>
 				<?php endif; ?>
-				<?php if ( '' !== $city_line ) : ?>
-					<span><?php echo esc_html( $city_line ); ?></span>
+				<?php if ( '' !== $city ) : ?>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'City', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $city; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></dd>
+					</div>
+				<?php endif; ?>
+				<?php if ( '' !== $state ) : ?>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'State / Province', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $state; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></dd>
+					</div>
+				<?php endif; ?>
+				<?php if ( '' !== $zip ) : ?>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Postal code', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $zip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_format_address_field(). ?></dd>
+					</div>
 				<?php endif; ?>
 				<?php if ( '' !== $country ) : ?>
-					<span><?php echo esc_html( $country ); ?></span>
+					<div class="dg-account-address__meta-row">
+						<dt><?php esc_html_e( 'Country', 'dragon-glow' ); ?></dt>
+						<dd><?php echo $country; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- pre-escaped via dg_get_country_name() + esc_html() above. ?></dd>
+					</div>
 				<?php endif; ?>
-			</address>
+			</dl>
 
 			<?php if ( 'billing' === $type ) : ?>
-				<dl class="dg-account-address__contacts">
+				<dl class="dg-account-address__contacts<?php echo $is_single_card ? ' dg-account-address__contacts--grid' : ''; ?>">
 					<?php if ( '' !== $data['phone'] ) : ?>
 						<div>
 							<dt>
@@ -262,7 +362,7 @@ function dg_render_account_address_card( string $type, array $data, bool $is_def
 			</a>
 			<?php if ( 'shipping' === $type ) : ?>
 				<form method="post"
-				      action="<?php echo esc_url( dg_account_endpoint_url( 'edit-address' ) ); ?>"
+				      action="<?php echo esc_url( dg_address_details_url() ); ?>"
 				      class="dg-account-use-billing"
 				      data-dg-use-billing
 				      data-confirm-title="<?php echo esc_attr__( 'Use billing instead?', 'dragon-glow' ); ?>"
@@ -283,33 +383,6 @@ function dg_render_account_address_card( string $type, array $data, bool $is_def
 }
 
 /**
- * Render an "add address" placeholder card when one of the two addresses is unset.
- *
- * @param string $type 'billing' | 'shipping'.
- * @return void
- */
-function dg_render_account_address_empty_card( string $type ): void {
-	$add_url = add_query_arg( 'address', $type, dg_account_endpoint_url( 'edit-address' ) );
-	$title   = ( 'shipping' === $type ) ? __( 'Shipping address', 'dragon-glow' ) : __( 'Billing address', 'dragon-glow' );
-	$text    = ( 'shipping' === $type )
-		? __( 'You haven\'t added a separate shipping address. We currently ship your orders to your billing address.', 'dragon-glow' )
-		: __( 'You haven\'t added a billing address yet.', 'dragon-glow' );
-	?>
-	<article class="dg-account-address dg-account-address--empty" data-sr data-address-type="<?php echo esc_attr( $type ); ?>">
-		<div class="dg-account-address__icon" aria-hidden="true">
-			<span class="material-symbols-outlined">add_location_alt</span>
-		</div>
-		<h3 class="dg-account-address__title"><?php echo esc_html( $title ); ?></h3>
-		<p class="dg-account-address__text"><?php echo esc_html( $text ); ?></p>
-		<a href="<?php echo esc_url( $add_url ); ?>" class="dg-btn dg-btn--ghost">
-			<span class="material-symbols-outlined" aria-hidden="true">add</span>
-			<?php esc_html_e( 'Add address', 'dragon-glow' ); ?>
-		</a>
-	</article>
-	<?php
-}
-
-/**
  * Render the edit-address form (single address).
  *
  * Wraps WC's `myaccount/form-edit-address.php` in our panel shell. The shell
@@ -325,7 +398,7 @@ function dg_render_account_addresses_edit( string $type ): void {
 		? __( 'Used for invoices and as the default for your orders.', 'dragon-glow' )
 		: __( 'Where your luminous ritual kits will be delivered.', 'dragon-glow' );
 	$icon      = ( 'billing' === $type ) ? 'receipt' : 'local_shipping';
-	$back_url  = dg_account_endpoint_url( 'edit-address' );
+	$back_url  = dg_address_details_url();
 	?>
 	<article class="dg-account-address-edit" data-sr>
 		<header class="dg-account-address-edit__head">
@@ -361,46 +434,24 @@ function dg_render_account_addresses_edit( string $type ): void {
 }
 
 /**
- * Render the Addresses panel shell + route to list or edit view.
+ * Render the Addresses edit panel (only for /my-account/edit-address/?address=TYPE).
  *
- * Auto-detects whether the current request is editing one address or
- * browsing the list. Mirrors WC's `myaccount/my-address.php` + `myaccount/edit-address.php`
- * route, but with our own Luminous Ethereal markup on the list side.
+ * This endpoint now exclusively handles address editing. The read-only list view
+ * moved to `/my-account/address-details/` (see `address-details.php`).
+ * If accessed without a valid `?address=` type, redirects to address-details.
  *
  * @return void
  */
 function dg_render_account_addresses_panel(): void {
 	$edit_type = dg_current_address_edit_type();
-	?>
-	<section class="dg-account-panel dg-account-panel--addresses" data-sr>
-		<header class="dg-account-panel__header">
-			<h2 class="dg-account-panel__title"><?php esc_html_e( 'Addresses', 'dragon-glow' ); ?></h2>
-			<?php if ( '' === $edit_type ) : ?>
-				<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-account-panel__link">
-					<span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-					<?php esc_html_e( 'Back to dashboard', 'dragon-glow' ); ?>
-				</a>
-			<?php endif; ?>
-		</header>
 
-		<?php
-		// Success notice after WC save redirects to the list; errors stay on the
-		// edit form (also printed inside form-edit-address.php). Print here so
-		// the list view surfaces "Address changed successfully."
-		if ( '' === $edit_type && function_exists( 'wc_print_notices' ) ) {
-			echo '<div class="dg-account-notices">';
-			wc_print_notices();
-			echo '</div>';
-		}
+	// Redirect to address-details if no valid address type specified.
+	if ( '' === $edit_type ) {
+		wp_safe_redirect( dg_address_details_url() );
+		exit;
+	}
 
-		if ( '' !== $edit_type ) {
-			dg_render_account_addresses_edit( $edit_type );
-		} else {
-			dg_render_account_addresses_list();
-		}
-		?>
-	</section>
-	<?php
+	dg_render_account_addresses_edit( $edit_type );
 }
 
 /**
@@ -517,7 +568,7 @@ function dg_handle_use_billing_instead(): void {
 
 	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'dg_use_billing_instead' ) ) {
 		wc_add_notice( __( 'Security check failed. Please try again.', 'dragon-glow' ), 'error' );
-		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		wp_safe_redirect( dg_address_details_url() );
 		exit;
 	}
 
@@ -529,7 +580,7 @@ function dg_handle_use_billing_instead(): void {
 			__( 'Add a billing address before removing your shipping address.', 'dragon-glow' ),
 			'error'
 		);
-		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		wp_safe_redirect( dg_address_details_url() );
 		exit;
 	}
 
@@ -539,7 +590,7 @@ function dg_handle_use_billing_instead(): void {
 			__( 'Orders already ship to your billing address.', 'dragon-glow' ),
 			'notice'
 		);
-		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		wp_safe_redirect( dg_address_details_url() );
 		exit;
 	}
 
@@ -548,7 +599,7 @@ function dg_handle_use_billing_instead(): void {
 			__( 'Could not update your shipping address. Please try again.', 'dragon-glow' ),
 			'error'
 		);
-		wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+		wp_safe_redirect( dg_address_details_url() );
 		exit;
 	}
 
@@ -556,7 +607,7 @@ function dg_handle_use_billing_instead(): void {
 		__( 'Shipping address removed. Orders will ship to your billing address.', 'dragon-glow' ),
 		'success'
 	);
-	wp_safe_redirect( dg_account_endpoint_url( 'edit-address' ) );
+	wp_safe_redirect( dg_address_details_url() );
 	exit;
 }
 add_action( 'template_redirect', 'dg_handle_use_billing_instead', 5 );

@@ -60,6 +60,24 @@
 }
 
 /* =========================================
+   1b. WOOCOMMERCE NOTICES → TOAST BRIDGE
+   WC core still prints .woocommerce-message / .woocommerce-error inline
+   (edit-account via wc_print_notices() in edit-account.php, edit-address via
+   wc_print_notices() in our form-edit-address.php override). account.js
+   reads these on page load, re-dispatches them through window.DGToast,
+   then hides the inline block.
+   Hidden only when JS is available (.dg-js, FOUC-guard convention) so the
+   no-JS fallback still shows the original inline notice. Scoped to
+   .dg-account only — cart/checkout notices elsewhere are untouched.
+   ========================================= */
+
+.dg-js .dg-account .woocommerce-message,
+.dg-js .dg-account .woocommerce-error,
+.dg-js .dg-account .woocommerce-info {
+	display: none;
+}
+
+/* =========================================
    2. HERO — greeting + tier badge
    ========================================= */
 
@@ -535,6 +553,121 @@
 }
 
 /* =========================================
+   5b. ACCOUNT DETAILS — READ-ONLY TILES
+   "Stat Tiles Overview" (Concept 4) — read-only view shown at
+   /my-account/edit-account/ before the user opts into the edit form.
+   Reuses the .dg-account-stat tile grammar (icon + value) for text fields.
+   ========================================= */
+
+.dg-account-detail-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+@media (min-width: 640px) {
+	.dg-account-detail-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (min-width: 1024px) {
+	.dg-account-detail-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.dg-account-detail-tile {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 20px;
+	border-radius: 18px;
+	background: rgba(255, 255, 255, 0.45);
+	border: 1px solid var(--account-border);
+}
+
+.dg-account-detail-tile__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	flex-shrink: 0;
+	background: rgba(var(--gold-rgb), 0.14);
+	color: var(--color-primary);
+}
+
+.dg-account-detail-tile__icon .material-symbols-outlined {
+	font-size: 22px;
+}
+
+.dg-account-detail-tile__icon[data-tone="verified"] {
+	background: rgba(59, 122, 56, 0.12);
+	color: var(--color-success);
+}
+
+.dg-account-detail-tile__body {
+	min-width: 0;
+}
+
+.dg-account-detail-tile__label {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	margin: 0 0 4px;
+}
+
+.dg-account-detail-tile__value {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.dg-account-detail-tile--cta {
+	grid-column: 1 / -1;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+	flex-wrap: wrap;
+	background: var(--account-hero-gradient);
+	color: var(--color-on-primary);
+}
+
+.dg-account-detail-tile--cta .dg-account-detail-tile__icon {
+	background: rgba(255, 255, 255, 0.20);
+	color: var(--color-on-primary);
+}
+
+.dg-account-detail-tile__cta-text {
+	flex: 1;
+	min-width: 180px;
+	margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	color: var(--color-on-primary);
+	opacity: 0.92;
+}
+
+.dg-account-detail-tile__cta-btn {
+	background: rgba(255, 255, 255, 0.95);
+	color: var(--color-primary);
+	box-shadow: none;
+}
+
+.dg-account-detail-tile__cta-btn:hover {
+	background: var(--neutral-0);
+	transform: translateY(-1px);
+}
+
+/* =========================================
    6. ORDER LIST
    ========================================= */
 
@@ -726,11 +859,11 @@
 
 .dg-account-snapshot dt {
 	font-family: 'Montserrat', sans-serif;
-	font-size: 11px;
+	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: var(--color-on-surface-variant);
+	color: var(--account-snapshot-label-color);
 }
 
 .dg-account-snapshot dd {
@@ -1407,21 +1540,33 @@
 	}
 }
 
+/* Only one card rendered (billing-only or shipping-only) — span full width
+   instead of leaving an empty column beside it. */
+.dg-account-addresses--single {
+	grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+	.dg-account-addresses--single {
+		grid-template-columns: 1fr;
+	}
+}
+
 /* --- Card shell --- */
 
 .dg-account-address {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
-	padding: 22px;
-	background: rgba(255, 255, 255, 0.55);
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
-	border: 1px solid var(--account-border);
-	border-radius: 20px;
-	box-shadow: var(--account-shadow);
-	transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+	gap: 20px;
+	padding: 26px;
+	background: var(--address-card-bg);
+	backdrop-filter: blur(28px) saturate(140%);
+	-webkit-backdrop-filter: blur(28px) saturate(140%);
+	border: 1px solid var(--address-card-border);
+	border-radius: var(--address-card-radius);
+	box-shadow: var(--address-card-shadow);
+	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 	overflow: hidden;
 }
 
@@ -1429,16 +1574,14 @@
 	content: "";
 	position: absolute;
 	inset: 0;
-	background:
-		radial-gradient(420px 220px at 0% 0%, rgba(115, 92, 0, 0.06), transparent 60%),
-		radial-gradient(380px 200px at 100% 100%, rgba(244, 194, 194, 0.10), transparent 60%);
+	background: var(--address-card-glow-tl), var(--address-card-glow-br);
 	pointer-events: none;
 }
 
 .dg-account-address:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 14px 32px rgba(123, 84, 85, 0.10);
-	border-color: rgba(115, 92, 0, 0.20);
+	transform: translateY(-3px);
+	box-shadow: var(--address-card-shadow-hover);
+	border-color: var(--address-card-border-hover);
 }
 
 /* --- Card head (icon + title + default badge) --- */
@@ -1457,28 +1600,33 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 52px;
-	height: 52px;
+	width: var(--address-card-icon-size);
+	height: var(--address-card-icon-size);
 	flex-shrink: 0;
-	border-radius: 16px;
+	border-radius: var(--address-card-icon-radius);
 	background: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
 	color: var(--color-primary);
-	box-shadow: inset 0 0 0 1px rgba(115, 92, 0, 0.10);
+	box-shadow: var(--address-card-icon-ring);
+	transition: transform 0.3s ease;
+}
+
+.dg-account-address:hover .dg-account-address__icon {
+	transform: scale(1.04);
 }
 
 .dg-account-address__icon .material-symbols-outlined {
-	font-size: 26px;
+	font-size: 27px;
 }
 
 /* Address type accent — billing = warm gold, shipping = cool rose */
 .dg-account-address[data-address-type="billing"] .dg-account-address__icon {
-	background: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
-	color: #735c00;
+	background: var(--address-card-icon-bg-billing);
+	color: var(--address-card-icon-color-billing);
 }
 
 .dg-account-address[data-address-type="shipping"] .dg-account-address__icon {
-	background: linear-gradient(135deg, rgba(244, 194, 194, 0.55), rgba(212, 175, 55, 0.20));
-	color: #734e4e;
+	background: var(--address-card-icon-bg-shipping);
+	color: var(--address-card-icon-color-shipping);
 }
 
 .dg-account-address__title {
@@ -1495,14 +1643,15 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	padding: 3px 10px;
+	padding: 4px 11px;
 	border-radius: 999px;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 11px;
 	font-weight: 600;
 	letter-spacing: 0.06em;
-	background: rgba(46, 125, 50, 0.10);
-	color: #2e7d32;
+	background: var(--address-card-badge-bg);
+	color: var(--address-card-badge-text);
+	border: 1px solid var(--address-card-badge-border);
 }
 
 .dg-account-address__badge .material-symbols-outlined {
@@ -1510,7 +1659,7 @@
 }
 
 .dg-account-address__badge--default {
-	background: linear-gradient(135deg, rgba(46, 125, 50, 0.12), rgba(76, 175, 80, 0.18));
+	background: var(--address-card-badge-bg);
 }
 
 /* --- Body (name + address lines + contacts) --- */
@@ -1522,34 +1671,65 @@
 	gap: 14px;
 }
 
-.dg-account-address__name {
-	font-family: 'Montserrat', sans-serif;
-	font-size: 15px;
-	font-weight: 600;
-	color: var(--color-on-surface);
-	margin: 0;
-	word-break: break-word;
-}
-
-.dg-account-address__lines {
+/* Full name / Company / Address lines / City / State / Postal code / Country — labeled rows (enterprise address-review pattern) */
+.dg-account-address__meta {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	font-family: 'Montserrat', sans-serif;
-	font-style: normal;
-	font-size: 14px;
-	line-height: 1.55;
-	color: var(--color-on-surface-variant);
+	gap: 8px;
 	margin: 0;
-	padding: 14px 16px;
-	background: rgba(255, 255, 255, 0.45);
-	border: 1px solid rgba(115, 92, 0, 0.08);
-	border-radius: 14px;
-	word-break: break-word;
 }
 
-.dg-account-address__lines span {
-	display: block;
+.dg-account-address__meta-row {
+	display: grid;
+	grid-template-columns: var(--address-card-label-width) 1fr;
+	align-items: baseline;
+	gap: 10px;
+	padding: 9px 13px;
+	background: var(--address-card-panel-bg);
+	border: 1px solid var(--address-card-panel-border);
+	border-radius: 13px;
+	transition: background 0.2s ease;
+}
+
+.dg-account-address:hover .dg-account-address__meta-row {
+	background: var(--address-card-panel-bg-hover);
+}
+
+.dg-account-address__meta-row dt {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.10em;
+	text-transform: uppercase;
+	color: var(--address-card-label-color);
+	margin: 0;
+}
+
+.dg-account-address__meta-row dd {
+	margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-on-surface);
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+	.dg-account-address__meta-row {
+		grid-template-columns: 1fr;
+		gap: 4px;
+	}
+}
+
+/* Single-card layout (the other address type is unset) — the card spans the
+   full grid width, so lay the meta rows out in 2 columns instead of 1 long
+   column, otherwise the right half of the card reads as empty space. */
+@media (min-width: 640px) {
+	.dg-account-address__meta--grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px 12px;
+	}
 }
 
 /* Contact list (phone/email) — billing card only */
@@ -1562,12 +1742,18 @@
 
 .dg-account-address__contacts > div {
 	display: grid;
-	grid-template-columns: 90px 1fr;
+	grid-template-columns: var(--address-card-label-width) 1fr;
 	align-items: center;
 	gap: 10px;
-	padding: 8px 12px;
-	background: rgba(255, 255, 255, 0.35);
-	border-radius: 12px;
+	padding: 9px 13px;
+	background: var(--address-card-panel-bg);
+	border: 1px solid var(--address-card-panel-border);
+	border-radius: 13px;
+	transition: background 0.2s ease;
+}
+
+.dg-account-address:hover .dg-account-address__contacts > div {
+	background: var(--address-card-panel-bg-hover);
 }
 
 .dg-account-address__contacts dt {
@@ -1579,7 +1765,7 @@
 	font-weight: 600;
 	letter-spacing: 0.10em;
 	text-transform: uppercase;
-	color: var(--color-on-surface-variant);
+	color: var(--address-card-label-color);
 	margin: 0;
 }
 
@@ -1616,15 +1802,27 @@
 	}
 }
 
+/* Single-card layout — same reasoning as .dg-account-address__meta--grid
+   above: lay phone/email rows side by side instead of stacking the full
+   card width. */
+@media (min-width: 640px) {
+	.dg-account-address__contacts--grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px 12px;
+	}
+}
+
 /* --- Action bar (footer) --- */
 
 .dg-account-address__actions {
 	position: relative;
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: flex-end;
 	gap: 10px;
-	padding-top: 16px;
-	border-top: 1px solid rgba(115, 92, 0, 0.10);
+	padding-top: 18px;
+	border-top: 1px solid rgba(var(--gold-rgb), 0.16);
 }
 
 .dg-account-address__action {
@@ -1638,8 +1836,8 @@
 	font-weight: 600;
 	letter-spacing: 0.02em;
 	color: var(--color-primary);
-	background: rgba(255, 255, 255, 0.55);
-	border: 1px solid rgba(115, 92, 0, 0.20);
+	background: var(--address-card-action-bg);
+	border: 1px solid var(--address-card-action-border);
 	border-radius: 999px;
 	text-decoration: none;
 	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -1650,23 +1848,23 @@
 }
 
 .dg-account-address__action:hover {
-	background: rgba(115, 92, 0, 0.08);
+	background: var(--address-card-action-bg-hover);
 	border-color: var(--color-primary);
 	transform: translateY(-1px);
-	box-shadow: 0 6px 14px rgba(115, 92, 0, 0.10);
+	box-shadow: 0 6px 14px rgba(var(--gold-dark-rgb), 0.10);
 }
 
 .dg-account-address__action--primary {
-	background: linear-gradient(135deg, var(--color-primary), #554300);
+	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
 	border-color: transparent;
-	box-shadow: 0 4px 12px rgba(115, 92, 0, 0.18);
+	box-shadow: var(--address-card-action-primary-shadow);
 }
 
 .dg-account-address__action--primary:hover {
-	background: linear-gradient(135deg, #5e4a00, #3d2f00);
+	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
-	box-shadow: 0 10px 22px rgba(115, 92, 0, 0.28);
+	box-shadow: var(--address-card-action-primary-shadow-hover);
 }
 
 /* "Use billing instead" — inline POST form (keeps action-bar layout) */
@@ -1873,39 +2071,6 @@ html.dg-account-confirm-open {
 	.dg-account-confirm__btn:hover {
 		transform: none;
 	}
-}
-
-/* --- Empty card (one address set, the other missing) --- */
-
-.dg-account-address--empty {
-	text-align: center;
-	align-items: center;
-	gap: 14px;
-	background:
-		linear-gradient(135deg, rgba(255, 255, 255, 0.40), rgba(255, 255, 255, 0.20)),
-		repeating-linear-gradient(135deg, transparent 0 14px, rgba(115, 92, 0, 0.04) 14px 15px);
-	border-style: dashed;
-	border-color: rgba(115, 92, 0, 0.25);
-}
-
-.dg-account-address--empty .dg-account-address__icon {
-	background: rgba(255, 255, 255, 0.65);
-	color: var(--color-primary);
-	border: 1px dashed rgba(115, 92, 0, 0.30);
-	box-shadow: none;
-}
-
-.dg-account-address--empty .dg-account-address__title {
-	font-size: 18px;
-}
-
-.dg-account-address__text {
-	font-family: 'Montserrat', sans-serif;
-	font-size: 13px;
-	line-height: 1.55;
-	color: var(--color-on-surface-variant);
-	margin: 0;
-	max-width: 38ch;
 }
 
 /* --- Hint footer --- */
@@ -2762,4 +2927,354 @@ html.dg-account-confirm-open {
    Target: .woocommerce-info containing link with wc_send_verification param. */
 .dg-account-panel .woocommerce-info:has(a[href*="wc_send_verification"]) {
 	display: none !important;
+}
+
+/* =========================================
+   19. EDIT ACCOUNT FORM — Enterprise Professional Layout
+   Comprehensive account management: personal info, contact, company (B2B),
+   demographics (optional), password change. Follows luxury cosmetics industry
+   standards (Sephora, LVMH Beauty) and B2B best practices.
+   ========================================= */
+
+/* Section containers */
+.dg-account-form__section {
+	margin-bottom: 40px;
+	padding-bottom: 40px;
+	border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.dg-account-form__section:last-of-type {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+/* Section title with icon */
+.dg-account-form__section-title {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-family: 'Playfair Display', serif;
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	margin: 0 0 24px;
+	letter-spacing: 0.01em;
+}
+
+.dg-account-form__section-title .material-symbols-outlined {
+	font-size: 24px;
+	color: var(--color-primary);
+	font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.dg-account-form__section-subtitle {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--color-on-surface-variant);
+	text-transform: none;
+	letter-spacing: 0.02em;
+	margin-left: 8px;
+}
+
+/* Password section styling */
+.dg-account-form__section--password {
+	background: rgba(255, 252, 245, 0.35);
+	border: 1px solid rgba(115, 92, 0, 0.10);
+	border-radius: 16px;
+	padding: 24px;
+	margin-bottom: 32px;
+}
+
+.dg-account-form__password-note {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	color: var(--color-on-surface-variant);
+	margin: 0 0 20px;
+	line-height: 1.5;
+}
+
+/* Field rows — 2-column grid on desktop */
+.dg-account-form__row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+/* Individual field */
+.dg-account-form__field {
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.dg-account-form__row .dg-account-form__field {
+	margin-bottom: 0;
+}
+
+/* Label styling */
+.dg-account-form__label {
+	display: block;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+	margin: 0;
+}
+
+.dg-account-form__label .required {
+	color: var(--color-error);
+	text-decoration: none;
+	margin-left: 2px;
+	font-weight: 700;
+}
+
+.dg-account-form__optional {
+	font-weight: 400;
+	text-transform: lowercase;
+	opacity: 0.7;
+	letter-spacing: 0.02em;
+}
+
+/* Help text below inputs */
+.dg-account-form__help-text {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 12px;
+	color: var(--color-on-surface-variant);
+	line-height: 1.4;
+	margin: 0;
+	font-style: italic;
+}
+
+/* Input fields — consistent with address edit form */
+.dg-account-form__input,
+.dg-account-form__select {
+	width: 100%;
+	padding: 12px 14px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	color: var(--color-on-surface);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.dg-account-form__input::placeholder {
+	color: var(--color-outline);
+}
+
+.dg-account-form__input:focus,
+.dg-account-form__select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+}
+
+/* =========================================
+   DATE OF BIRTH — SCROLL WHEEL PICKER
+   3-column iOS-style wheel (Day / Month / Year), replaces the native
+   <input type="date"> browser-default calendar UI. See
+   account-datepicker.js for the scroll/snap/keyboard behavior.
+   ========================================= */
+.dg-dob-wheel {
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	padding: 14px 16px;
+}
+
+.dg-dob-wheel__row {
+	display: grid;
+	grid-template-columns: 1fr 1.3fr 1fr;
+	gap: 8px;
+	position: relative;
+	height: 144px;
+}
+
+/* Center highlight band — marks the "selected" row across all 3 columns */
+.dg-dob-wheel__row::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	height: 36px;
+	transform: translateY(-50%);
+	background: rgba(var(--gold-rgb), 0.1);
+	border-top: 1px solid rgba(var(--gold-rgb), 0.35);
+	border-bottom: 1px solid rgba(var(--gold-rgb), 0.35);
+	border-radius: 6px;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.dg-dob-wheel__col {
+	overflow-y: scroll;
+	scroll-snap-type: y mandatory;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	padding: 54px 0;
+	position: relative;
+	z-index: 2;
+	cursor: grab;
+	touch-action: none; /* let JS pointer handlers drive the drag, not native touch scroll */
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.dg-dob-wheel__col::-webkit-scrollbar {
+	display: none;
+}
+
+.dg-dob-wheel__col:focus-visible {
+	outline: 2px solid var(--gold-600);
+	outline-offset: 2px;
+	border-radius: 6px;
+}
+
+/* While actively dragging: disable snap so the wheel tracks the pointer
+   1:1 with no rubber-banding, and swap cursor to "grabbing". */
+.dg-dob-wheel__col.is-dragging {
+	scroll-snap-type: none;
+	cursor: grabbing;
+}
+
+.dg-dob-wheel__item {
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	scroll-snap-align: center;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	color: var(--color-outline);
+	cursor: pointer;
+	transition: color 0.2s ease, font-weight 0.2s ease, font-size 0.2s ease;
+}
+
+.dg-dob-wheel__item.is-center {
+	color: var(--primary-800);
+	font-weight: 700;
+	font-size: 16px;
+}
+
+@media (max-width: 480px) {
+	.dg-dob-wheel__row {
+		height: 128px;
+	}
+	.dg-dob-wheel__col {
+		padding: 46px 0;
+	}
+}
+
+/* Respect reduced-motion: snap scrolling becomes instant (no smooth-scroll) */
+@media (prefers-reduced-motion: reduce) {
+	.dg-dob-wheel__col {
+		scroll-behavior: auto;
+	}
+	.dg-dob-wheel__item {
+		transition: none;
+	}
+}
+
+/* Select dropdown styling */
+.dg-account-form__select {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23735c00' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	background-size: 10px;
+	padding-right: 40px;
+}
+
+/* Form actions — submit button */
+.dg-account-form__actions {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-start;
+	margin-top: 32px;
+	padding-top: 32px;
+	border-top: 1px solid var(--color-outline-variant);
+}
+
+.dg-account-form__submit {
+	min-width: 200px;
+}
+
+/* WooCommerce native classes compatibility */
+.dg-account-form .woocommerce-Input {
+	/* Override WC defaults to use our styling */
+	width: 100%;
+	padding: 12px 14px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	color: var(--color-on-surface);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.dg-account-form .woocommerce-Input::placeholder {
+	color: var(--color-outline);
+}
+
+.dg-account-form .woocommerce-Input:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 0 4px rgba(115, 92, 0, 0.12);
+}
+
+/* Validation states */
+.dg-account-form__field.woocommerce-validated .dg-account-form__input,
+.dg-account-form .woocommerce-validated .woocommerce-Input {
+	border-color: var(--color-primary);
+}
+
+.dg-account-form__field.woocommerce-invalid .dg-account-form__input,
+.dg-account-form .woocommerce-invalid .woocommerce-Input {
+	border-color: var(--color-error);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+	.dg-account-form__section {
+		margin-bottom: 32px;
+		padding-bottom: 32px;
+	}
+
+	.dg-account-form__section-title {
+		font-size: 18px;
+	}
+
+	.dg-account-form__section-title .material-symbols-outlined {
+		font-size: 20px;
+	}
+
+	.dg-account-form__actions {
+		flex-direction: column;
+	}
+
+	.dg-account-form__submit {
+		width: 100%;
+		min-width: auto;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-form__input,
+	.dg-account-form__select,
+	.dg-account-form .woocommerce-Input {
+		transition: none;
+	}
 }

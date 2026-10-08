@@ -168,25 +168,28 @@ import { animate, inView } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 
 			document.body.classList.add( 'dg-apply-open' );
 
-			const firstFocusable = dialog.querySelector(
-				'input:not([type="hidden"]):not([name="desired_role"]), textarea, select, button'
-			);
-			if ( firstFocusable ) {
-				firstFocusable.focus();
-			} else {
-				dialog.setAttribute( 'tabindex', '-1' );
-				dialog.focus();
-			}
+			// Delay focus để modal render trước
+			setTimeout( function () {
+				const firstFocusable = dialog.querySelector(
+					'input:not([type="hidden"]):not([name="desired_role"]), textarea, select, button'
+				);
+				if ( firstFocusable ) {
+					firstFocusable.focus();
+				} else {
+					dialog.setAttribute( 'tabindex', '-1' );
+					dialog.focus();
+				}
+			}, 50 );
 
 			if ( ! reduce ) {
 				animate(
 					modal.querySelector( '.dg-apply-overlay' ),
 					{ opacity: [ 0, 1 ] },
-					{ duration: 0.25, ease: 'easeOut' }
+					{ duration: 0.3, ease: 'easeOut' }
 				);
 				animate(
 					dialog,
-					{ opacity: [ 0, 1 ], y: [ 16, 0 ] },
+					{ opacity: [ 0, 1 ], scale: [ 0.96, 1 ] },
 					{ duration: 0.35, ease: EASE }
 				);
 			}
@@ -208,11 +211,11 @@ import { animate, inView } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 					animate(
 						modal.querySelector( '.dg-apply-overlay' ),
 						{ opacity: [ 1, 0 ] },
-						{ duration: 0.2, ease: 'easeIn' }
+						{ duration: 0.25, ease: 'easeIn' }
 					).finished,
 					animate(
 						dialog,
-						{ opacity: [ 1, 0 ], y: [ 0, 12 ] },
+						{ opacity: [ 1, 0 ], scale: [ 1, 0.96 ] },
 						{ duration: 0.25, ease: 'easeIn' }
 					).finished,
 				] ).then( function () {

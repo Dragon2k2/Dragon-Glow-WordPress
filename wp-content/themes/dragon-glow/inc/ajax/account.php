@@ -47,7 +47,7 @@ function dg_ajax_load_account_panel(): void {
 	}
 
 	// Guard: check if panel render functions are available.
-	// This can fail if inc/woocommerce/account.php was not loaded due to
+	// This can fail if inc/woocommerce/account/loader.php was not loaded due to
 	// dg_is_woocommerce_active() returning false in the AJAX context.
 	if ( ! function_exists( 'dg_render_account_dashboard' ) ) {
 		wp_send_json_error(
@@ -115,33 +115,43 @@ function dg_ajax_load_account_panel(): void {
 				: esc_html__( 'Orders', 'dragon-glow' );
 			break;
 
+		case 'address-details':
+			dg_render_address_details_panel();
+			$title = __( 'Addresses', 'dragon-glow' );
+			break;
+
 		case 'edit-address':
-				// Propagate ?address= so dg_current_address_edit_type() works in AJAX.
-				if ( '' !== $address_type ) {
-					$_GET['address'] = $address_type;
-				}
-				dg_render_account_addresses_panel();
-				$title = __( 'Addresses', 'dragon-glow' );
-				if ( 'billing' === $address_type ) {
-					$title = __( 'Billing address', 'dragon-glow' );
-				} elseif ( 'shipping' === $address_type ) {
-					$title = __( 'Shipping address', 'dragon-glow' );
-				}
-				break;
+			// Propagate ?address= so dg_current_address_edit_type() works in AJAX.
+			if ( '' !== $address_type ) {
+				$_GET['address'] = $address_type;
+			}
+			dg_render_account_addresses_panel();
+			$title = __( 'Edit address', 'dragon-glow' );
+			if ( 'billing' === $address_type ) {
+				$title = __( 'Billing address', 'dragon-glow' );
+			} elseif ( 'shipping' === $address_type ) {
+				$title = __( 'Shipping address', 'dragon-glow' );
+			}
+			break;
 
-			case 'edit-account':
-				dg_render_account_edit_panel();
-				$title = __( 'Account Details', 'dragon-glow' );
-				break;
+		case 'account-details':
+			dg_render_account_details_panel();
+			$title = __( 'Account details', 'dragon-glow' );
+			break;
 
-			case '':
-			default:
-				// Dashboard is the default endpoint.
-				dg_render_account_dashboard();
-				$title = __( 'Dashboard', 'dragon-glow' );
-				$endpoint = '';
-				break;
-		}
+		case 'edit-account':
+			dg_render_account_edit_panel();
+			$title = __( 'Edit account', 'dragon-glow' );
+			break;
+
+		case '':
+		default:
+			// Dashboard is the default endpoint.
+			dg_render_account_dashboard();
+			$title = __( 'Dashboard', 'dragon-glow' );
+			$endpoint = '';
+			break;
+	}
 
 		$html = ob_get_clean();
 

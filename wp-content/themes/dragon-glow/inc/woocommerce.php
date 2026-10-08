@@ -11,6 +11,8 @@
  *   - single-product.php   Single product page (thumbnails, related products).
  *   - cart.php             Cart fragments + selected-size line item.
  *   - checkout.php         Checkout fields, classic template, custom renderer.
+ *   - buy-now.php          "Buy Now" cart isolation — hide/restore non-Buy-Now
+ *                          cart items around the checkout + order lifecycle.
  *   - checkout-locale.php  Country states, locale field rules, cache clearing.
  *   - bacs-qr.php          BACS Direct Bank Transfer — inline EMVCo QR panel
  *                          shared between the checkout form and the order-
@@ -29,11 +31,12 @@ defined( 'ABSPATH' ) || exit;
 // dg_render_account_orders_panel()). Each function guards itself by checking
 // WC availability via function_exists('wc_...') or dg_is_woocommerce_active().
 require_once DG_DIR . '/inc/woocommerce/general.php';
-require_once DG_DIR . '/inc/woocommerce/account.php';
+require_once DG_DIR . '/inc/woocommerce/account/loader.php';
 require_once DG_DIR . '/inc/woocommerce/shop.php';
 require_once DG_DIR . '/inc/woocommerce/single-product.php';
 require_once DG_DIR . '/inc/woocommerce/cart.php';
 require_once DG_DIR . '/inc/woocommerce/checkout.php';
+require_once DG_DIR . '/inc/woocommerce/buy-now.php';
 require_once DG_DIR . '/inc/woocommerce/checkout-locale.php';
 require_once DG_DIR . '/inc/woocommerce/bacs-qr.php';
 require_once DG_DIR . '/inc/woocommerce/gateways.php';

@@ -5,12 +5,6 @@
    touch the global theme font tokens.
    ============================================================ */
 
-/* ── FOUC guard ────────────────────────────────────────────── */
-.dg-js [data-page="shipping-returns"] [data-sr],
-.dg-js [data-page="shipping-returns"] .dg-sr-faq-item {
-	opacity: 0;
-}
-
 /* ══════════════════════════════════════════════
    SCOPED GEIST + TOKENS
    Geist chỉ phạm vi trang Shipping & Returns.
