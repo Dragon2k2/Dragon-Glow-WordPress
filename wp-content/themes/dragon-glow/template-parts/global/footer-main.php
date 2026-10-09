@@ -36,24 +36,23 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
                 <?php bloginfo( 'name' ); ?>
             </a>
             <p class="text-on-secondary-container mb-8 max-w-sm">
-                <?php
-                $description = get_bloginfo( 'description' );
-                echo esc_html( $description ?: __( 'Ethereal rituals for the modern soul. Experience the transformative power of nature\'s most luminous ingredients.', 'dragon-glow' ) );
-                ?>
+                <?php echo esc_html( dg_get_footer_description() ); ?>
             </p>
             <!-- Social Icons -->
             <div class="flex gap-4">
                 <?php
                 $socials = dg_get_social_links();
                 foreach ( $socials as $social ) :
-                    if ( '#' !== $social['url'] ) :
+                    if ( '' !== $social['url'] ) :
                     ?>
                     <a href="<?php echo esc_url( $social['url'] ); ?>"
                        class="dg-footer-social-link"
                        rel="noopener noreferrer"
                        target="_blank"
                        aria-label="<?php echo esc_attr( $social['label'] ); ?>">
-                        <span class="material-symbols-outlined text-xl"><?php echo esc_html( $social['icon'] ); ?></span>
+                        <svg class="dg-footer-social-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false">
+                            <path d="<?php echo esc_attr( $social['path'] ); ?>"/>
+                        </svg>
                     </a>
                     <?php
                     endif;

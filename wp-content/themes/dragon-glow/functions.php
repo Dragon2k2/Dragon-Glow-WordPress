@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Define theme constants
-define( 'DG_VERSION',   '1.10.3' );
+define( 'DG_VERSION',   '1.10.4' );
 define( 'DG_DIR',       get_template_directory() );
 define( 'DG_URI',       get_template_directory_uri() );
 
@@ -24,6 +24,8 @@ require_once DG_DIR . '/inc/widgets.php';
 require_once DG_DIR . '/inc/ajax-handlers.php';
 require_once DG_DIR . '/inc/approval-handler.php';  // careers approval token routing (Cách A — email-only)
 require_once DG_DIR . '/inc/shop-customizer.php';
+require_once DG_DIR . '/inc/footer-customizer.php';
+require_once DG_DIR . '/inc/seo.php';
 
 // Load product abstraction layer
 require_once DG_DIR . '/inc/products/class-dg-product.php';

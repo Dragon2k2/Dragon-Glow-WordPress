@@ -100,7 +100,7 @@ function dg_register_customizer_settings( WP_Customize_Manager $wp_customize, st
 
 		$wp_customize->add_setting( $id, array(
 			'default'           => $default,
-			'sanitize_callback' => 'image' === $type
+			'sanitize_callback' => in_array( $type, array( 'image', 'url' ), true )
 				? 'esc_url_raw'
 				: ( 'textarea' === $type ? 'wp_kses_post' : 'sanitize_text_field' ),
 			'transport'         => 'refresh',

@@ -19,6 +19,8 @@
  *                          received ("Thank You") page.
  *   - gateways.php         Permanent front-end disabling of Check Payments
  *                          gateway (Cheque).
+ *   - analytics/loader.php Analytics reliability layer: manual sync tool,
+ *                          excluded statuses, queue health check, fallback sync.
  *
  * @package Dragon_Glow
  */
@@ -40,3 +42,4 @@ require_once DG_DIR . '/inc/woocommerce/buy-now.php';
 require_once DG_DIR . '/inc/woocommerce/checkout-locale.php';
 require_once DG_DIR . '/inc/woocommerce/bacs-qr.php';
 require_once DG_DIR . '/inc/woocommerce/gateways.php';
+require_once DG_DIR . '/inc/woocommerce/analytics/loader.php';

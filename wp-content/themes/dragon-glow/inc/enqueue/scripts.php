@@ -93,6 +93,16 @@ function dg_enqueue_scripts_assets(): void {
         true
     );
 
+    // Footer link active state handler — sets .is-active class on footer links.
+    // Runs on all pages since footer appears globally.
+    wp_enqueue_script(
+        'dg-footer',
+        DG_URI . '/assets/js/footer.js',
+        array( 'dg-main' ),
+        DG_VERSION,
+        true
+    );
+
     // Page-specific JS (WooCommerce conditionals)
     if ( dg_is_woocommerce_active() ) {
         if ( is_product() ) {
