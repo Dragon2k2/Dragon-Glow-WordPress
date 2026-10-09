@@ -14,6 +14,9 @@ if ( ! $product ) {
     return;
 }
 
+// Get product rating (sync with header display in content-single-product.php)
+$rating         = (float) $product->get_average_rating();
+
 // Get product description
 $description = $product->get_description();
 
@@ -162,23 +165,27 @@ $review_count = get_comments( array(
         <!-- Reviews Tab -->
         <div id="tab-reviews" class="dg-tab-pane hidden" role="tabpanel">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Review Summary -->
+                <!-- Review Summary Card -->
                 <div class="glass-card rounded-2xl p-8 text-center">
+                    <!-- Rating number -->
                     <div class="text-6xl font-headline text-primary mb-4">
-                        <?php echo number_format( (float) $product->get_average_rating(), 1 ); ?>
+                        <?php echo number_format( $rating, 1 ); ?>
                     </div>
 
-                    <?php dg_star_rating( (float) $product->get_average_rating() ); ?>
+                    <!-- Stars + Review count (same markup as header) -->
+                    <div class="flex items-center justify-center gap-3 dg-stars mb-4">
+                        <?php echo dg_mock_stars( $rating ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper returns pre-escaped HTML ?>
+                        <span class="text-sm text-on-surface-variant">
+                            (<?php
+                                printf(
+                                    esc_html( _n( '%d verified review', '%d verified reviews', $review_count, 'dragon-glow' ) ),
+                                    (int) $review_count
+                                );
+                            ?>)
+                        </span>
+                    </div>
 
-                    <p class="text-on-surface-variant mt-4">
-                        <?php
-                        printf(
-                            esc_html( _n( 'Based on %d review', 'Based on %d reviews', $review_count, 'dragon-glow' ) ),
-                            esc_html( $review_count )
-                        );
-                        ?>
-                    </p>
-
+                    <!-- CTA or verdict -->
                     <?php if ( $review_count > 0 ) : ?>
                     <a href="#reviews-list" class="btn-primary mt-6 inline-block">
                         <?php esc_html_e( 'Read Reviews', 'dragon-glow' ); ?>
