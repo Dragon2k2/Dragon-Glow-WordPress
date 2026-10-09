@@ -31,10 +31,16 @@ $comments = get_comments( array(
     'number'  => 5,
 ) );
 $review_count = get_comments( array(
-    'post_id' => get_the_ID(),
-    'status'  => 'approve',
-    'count'   => true,
+	'post_id' => get_the_ID(),
+	'status'  => 'approve',
+	'count'   => true,
 ) );
+
+// Fallback: nếu chưa có review, dùng mock rating + mock review count — sync với content-single-product.php
+if ( 0.0 === $rating && 0 === $review_count ) {
+	$rating       = dg_get_mock_rating( $product->get_id() );
+	$review_count = dg_get_mock_review_count( $product->get_id() );
+}
 ?>
 <section class="mt-section-gap" id="product-tabs">
     <!-- Tab Navigation -->
@@ -173,7 +179,7 @@ $review_count = get_comments( array(
                     </div>
 
                     <!-- Stars + Review count (same markup as header) -->
-                    <div class="flex items-center justify-center gap-3 dg-stars mb-4">
+                    <div class="flex items-center justify-center gap-3 dg-stars mt-4 mb-4">
                         <?php echo dg_mock_stars( $rating ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- helper returns pre-escaped HTML ?>
                         <span class="text-sm text-on-surface-variant">
                             (<?php
