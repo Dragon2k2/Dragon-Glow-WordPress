@@ -36,6 +36,21 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 		break;
 	}
 }
+
+// Check if "checkout with selected" mode is active. The single source
+// of truth is `WC()->session['dg_checkout_selection']`; every
+// downstream filter in `inc/woocommerce/cart-selection.php` reads from
+// the same session value via `dg_is_cart_item_selected()`. We mirror
+// that here in the template as a defensive guard so the Order Summary
+// is correct even if a third-party plugin short-circuits the
+// `woocommerce_cart_item_visible` filter chain.
+$dg_has_selection = false;
+if ( function_exists( 'dg_has_active_selection' ) ) {
+	$dg_has_selection = dg_has_active_selection();
+} elseif ( WC()->session ) {
+	$fallback_selection = WC()->session->get( 'dg_checkout_selection' );
+	$dg_has_selection   = is_array( $fallback_selection ) && ! empty( $fallback_selection );
+}
 ?>
 
 <?php foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) :
@@ -49,11 +64,25 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 		continue;
 	}
 	
+	// CRITICAL: Skip non-selected items when "checkout with selected"
+	// mode is active. Mirrors the Buy Now guard so the Order Summary
+	// matches the totals even if a third-party filter adds visible
+	// items back into the cart before the template loop runs.
+	if ( $dg_has_selection ) {
+		$dg_item_is_selected = function_exists( 'dg_is_cart_item_selected' )
+			? dg_is_cart_item_selected( $cart_item_key )
+			: in_array( $cart_item_key, (array) WC()->session->get( 'dg_checkout_selection' ), true );
+		if ( ! $dg_item_is_selected ) {
+			continue;
+		}
+	}
+	
 	$product_name  = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
 	$thumbnail     = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( array( 64, 80 ) ), $cart_item, $cart_item_key );
 	$product_price = apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $_product ), $cart_item, $cart_item_key );
 	$line_subtotal = apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key );
-	$item_data     = apply_filters( 'woocommerce_cart_item_data', array(), $cart_item, $cart_item_key );
+	// Variation attributes + filtered meta (e.g. "Size: 50ml" via dg_display_cart_item_size()).
+	$item_data     = wc_get_formatted_cart_item_data( $cart_item );
 	?>
 	<div class="dg-review-line flex gap-4 mb-4 pb-4 border-b border-outline-variant/20 last:border-b-0 last:mb-0 last:pb-0">
 		<?php if ( $thumbnail ) : ?>
@@ -64,15 +93,10 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 
 		<div class="flex-1 min-w-0">
 			<p class="font-bold text-on-surface truncate"><?php echo esc_html( wp_strip_all_tags( $product_name ) ); ?></p>
-			<?php if ( ! empty( $item_data ) ) : ?>
-				<dl class="mt-1 space-y-0.5 text-sm text-on-surface-variant">
-					<?php foreach ( $item_data as $data ) : ?>
-						<div class="flex gap-1">
-							<dt><?php echo esc_html( $data['key'] ); ?>:</dt>
-							<dd><?php echo esc_html( wp_strip_all_tags( $data['value'] ) ); ?></dd>
-						</div>
-					<?php endforeach; ?>
-				</dl>
+			<?php if ( $item_data ) : ?>
+				<div class="dg-review-line__meta mt-1 text-sm text-on-surface-variant">
+					<?php echo wp_kses_post( $item_data ); ?>
+				</div>
 			<?php endif; ?>
 			<p class="text-sm text-on-surface-variant">
 				<?php
@@ -128,10 +152,17 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 	<div class="flex justify-between font-bold text-lg text-primary pt-3 border-t border-outline-variant/20">
 		<span><?php esc_html_e( 'Estimated Total', 'dragon-glow' ); ?></span>
 		<span><?php
-			// Custom total calculation for Buy Now checkout.
-			// Standard wc_cart_totals_order_total_html() uses cached cart total,
-			// which includes items we set to price=0 in woocommerce_before_calculate_totals.
-			// We need to output the total AFTER our price manipulation.
+			// Custom total calculation for Buy Now / "checkout with
+			// selected" checkouts. The standard
+			// `wc_cart_totals_order_total_html()` uses the cached
+			// cart total which still contains the items we set to
+			// `price = 0` via `woocommerce_before_calculate_totals`,
+			// so we recompute the visible total from the surviving
+			// line items here. The two `if` branches are mutually
+			// exclusive: Buy Now takes precedence because the
+			// cart can only be in one mode at a time (a Buy Now
+			// flow drops the regular items before reaching
+			// checkout).
 			
 			$cart = WC()->cart;
 			$has_buy_now = false;
@@ -156,6 +187,25 @@ foreach ( WC()->cart->get_cart() as $dg_check_item ) {
 				
 				// Format and display.
 				echo wp_kses_post( wc_price( $buy_now_total ) );
+			} elseif ( $dg_has_selection ) {
+				// Calculate total from the selection only. Mirrors
+				// the Buy Now branch but uses the session list as
+				// the filter rather than the per-item flag.
+				$selection_total = 0.0;
+				foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+					$item_is_selected = function_exists( 'dg_is_cart_item_selected' )
+						? dg_is_cart_item_selected( $cart_item_key )
+						: in_array( $cart_item_key, (array) WC()->session->get( 'dg_checkout_selection' ), true );
+					if ( ! $item_is_selected ) {
+						continue;
+					}
+					$product = $cart_item['data'];
+					if ( ! $product ) {
+						continue;
+					}
+					$selection_total += (float) $product->get_price() * (int) $cart_item['quantity'];
+				}
+				echo wp_kses_post( wc_price( $selection_total ) );
 			} else {
 				// Standard checkout — use WC default.
 				wc_cart_totals_order_total_html();

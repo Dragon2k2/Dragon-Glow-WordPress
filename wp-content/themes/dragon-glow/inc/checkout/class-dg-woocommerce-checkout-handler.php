@@ -89,7 +89,15 @@ class DG_WooCommerce_Checkout_Handler {
 			);
 		} else {
 			// Mark as Buy Now item — checkout will filter to show ONLY this item.
-			$added = WC()->cart->add_to_cart( $product_id, $quantity, 0, array(), array( 'dg_is_buy_now' => true ) );
+			// Simple products have no variation to carry the size, so store it as
+			// cart item data (displayed by dg_display_cart_item_size()).
+			$cart_item_data = array( 'dg_is_buy_now' => true );
+			$selected_size  = $this->resolve_selected_size( $product, $size );
+			if ( '' !== $selected_size ) {
+				$cart_item_data['dg_selected_size'] = $selected_size;
+			}
+
+			$added = WC()->cart->add_to_cart( $product_id, $quantity, 0, array(), $cart_item_data );
 		}
 
 		if ( $added ) {
@@ -103,6 +111,32 @@ class DG_WooCommerce_Checkout_Handler {
 			'success' => false,
 			'message' => __( 'Could not add to cart. Please try again.', 'dragon-glow' ),
 		);
+	}
+
+	/**
+	 * Match a client-supplied size label against the product's `pa_size` options.
+	 *
+	 * The size comes from the browser, so it is only accepted when it matches
+	 * one of the sizes the product actually offers (case-insensitive).
+	 *
+	 * @param WC_Product $product Product object.
+	 * @param string     $size    Size label sent by the client.
+	 * @return string Canonical size label, or '' when empty/unknown.
+	 */
+	private function resolve_selected_size( WC_Product $product, string $size ): string {
+		if ( '' === $size ) {
+			return '';
+		}
+
+		$options = array_filter( array_map( 'trim', preg_split( '/[|,]/', $product->get_attribute( 'pa_size' ) ) ) );
+
+		foreach ( $options as $option ) {
+			if ( 0 === strcasecmp( $option, $size ) ) {
+				return $option;
+			}
+		}
+
+		return '';
 	}
 
 }

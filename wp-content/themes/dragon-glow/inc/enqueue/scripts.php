@@ -131,6 +131,15 @@ function dg_enqueue_scripts_assets(): void {
                 'dg-cart',
                 'dgCart',
                 array(
+                    // Current server-side selection. Used by
+                    // `reconcileSelectionState()` in cart.js to
+                    // decide whether the DOM checkboxes on load are
+                    // stale (e.g. bfcache restore from /checkout/)
+                    // and need to be reset. An empty array is the
+                    // expected state when no items are selected.
+                    'selection' => function_exists( 'dg_get_session_selection_keys' )
+                        ? dg_get_session_selection_keys()
+                        : ( WC()->session ? (array) WC()->session->get( 'dg_checkout_selection' ) : array() ),
                     'i18n' => array(
                         'selectItems'        => __( 'Select items first.', 'dragon-glow' ),
                         'confirmRemoveLabel' => __( 'Remove %d items', 'dragon-glow' ),
@@ -140,6 +149,10 @@ function dg_enqueue_scripts_assets(): void {
                         'alreadyEmpty'       => __( 'Your bag is already empty.', 'dragon-glow' ),
                         'removed'            => __( 'Items removed.', 'dragon-glow' ),
                         'confirmClearTitle'  => __( 'Clear your cart?', 'dragon-glow' ),
+                        // Selection-checkout additions — used by initSelectionCheckout()
+                        // to show feedback for "Checkout with selected" / "Clear selection".
+                        'processing'         => __( 'Processing…', 'dragon-glow' ),
+                        'selectedHintN'      => _n( '%d item selected for checkout', '%d items selected for checkout', 0, 'dragon-glow' ),
                     ),
                 )
             );
@@ -160,6 +173,21 @@ function dg_enqueue_scripts_assets(): void {
             // Enqueue WooCommerce country select (enables Select2 for State field)
             wp_enqueue_script( 'wc-country-select' );
             wp_enqueue_script( 'dg-checkout', DG_URI . '/assets/js/checkout.js', array( 'dg-main', 'wc-country-select' ), DG_VERSION, true );
+
+            // Localize checkout-page strings for the "Show all items" affordance
+            // on the Order Summary card. Used by bindCheckoutSelectionBar() in
+            // checkout.js.
+            wp_localize_script(
+                'dg-checkout',
+                'dgCheckoutSelection',
+                array(
+                    'i18n' => array(
+                        'network'      => __( 'Network error. Please try again.', 'dragon-glow' ),
+                        'bagUnavailable' => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ),
+                        'cleared'      => __( 'Showing every item in your bag.', 'dragon-glow' ),
+                    ),
+                )
+            );
 
             // Enqueue payment methods interactions (Motion API for animations)
             wp_enqueue_script_module( 'dg-checkout-payment', DG_URI . '/assets/js/checkout-payment.js', array(), DG_VERSION );

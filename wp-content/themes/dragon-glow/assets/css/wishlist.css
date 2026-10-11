@@ -41,6 +41,16 @@
 	--wl-gold: var(--color-gold);
 	--wl-surface-container: var(--color-surface-container);
 
+	/* Component tokens — checkbox (toolbar + card share the same palette). */
+	--wl-checkbox-bg: #fff;                              /* unchecked fill */
+	--wl-checkbox-border: rgba(115, 92, 0, 0.40);        /* unchecked border */
+	--wl-checkbox-mark-color: var(--wl-on-primary, #fff);/* check glyph ink */
+	--wl-checkbox-mark-font: system-ui, 'Segoe UI Symbol', 'Apple Symbols', sans-serif; /* pinned so the glyph renders identically in toolbar + card */
+	--wl-checkbox-size: 18px;                            /* input box edge, also the toolbar mark box */
+	--wl-checkbox-dash-width: 10px;                      /* indeterminate bar length */
+	--wl-checkbox-dash-height: 2px;                      /* indeterminate bar thickness */
+	--wl-focus-ring: rgba(201, 162, 75, 0.35);           /* keyboard focus ring */
+
 	--wl-glass-bg: rgba(255, 255, 255, 0.55);
 	--wl-glass-bg-strong: rgba(255, 255, 255, 0.78);
 	--wl-glass-border: rgba(255, 255, 255, 0.55);
@@ -493,9 +503,12 @@
 }
 
 .dg-wishlist-toolbar__select-all {
-	display: inline-flex;
+	/* Two-column grid: col 1 = checkbox box (input + checkmark stacked in the
+	   same cell), col 2 = text label. No absolute positioning needed. */
+	display: inline-grid;
+	grid-template-columns: var(--wl-checkbox-size) auto;
 	align-items: center;
-	gap: 8px;
+	column-gap: 8px;
 	font-size: 13px;
 	font-weight: 600;
 	color: var(--wl-muted);
@@ -505,23 +518,52 @@
 
 .dg-wishlist-toolbar__checkbox,
 .dg-wishlist-card__checkbox {
+	position: relative; /* anchor for the absolutely-positioned checkmark */
 	appearance: none;
 	-webkit-appearance: none;
 	width: 18px;
 	height: 18px;
-	border: 1.5px solid rgba(115, 92, 0, 0.40);
+	border: 1.5px solid var(--wl-checkbox-border, rgba(115, 92, 0, 0.40));
 	border-radius: 6px;
-	background: #fff;
+	background: var(--wl-checkbox-bg, #fff);
 	cursor: pointer;
 	display: inline-grid;
 	place-content: center;
-	transition: all 0.2s var(--wl-ease);
+	transition: background-color 0.2s var(--wl-ease),
+		border-color 0.2s var(--wl-ease),
+		box-shadow 0.2s var(--wl-ease);
 	margin: 0;
 }
 
+/* Hover — visual feedback, follows §8 token-first (uses --wl-primary). */
 .dg-wishlist-toolbar__checkbox:hover,
 .dg-wishlist-card__checkbox:hover {
 	border-color: var(--wl-primary);
+}
+
+/* Checked — fill with brand primary, swap border to match. The checkmark
+   itself lives in the adjacent `.__checkbox-mark` span and is revealed
+   via the adjacent-sibling combinator below (no JS needed). */
+.dg-wishlist-toolbar__checkbox:checked,
+.dg-wishlist-card__checkbox:checked {
+	background: var(--wl-primary);
+	border-color: var(--wl-primary);
+}
+
+/* Indeterminate (Select-all when only some cards are selected) — same
+   palette as `:checked` so the visual language is consistent. */
+.dg-wishlist-toolbar__checkbox:indeterminate,
+.dg-wishlist-card__checkbox:indeterminate {
+	background: var(--wl-primary);
+	border-color: var(--wl-primary);
+}
+
+/* a11y — visible focus ring, scoped to keyboard navigation only
+   (§8 — keyboard focus must be visible). */
+.dg-wishlist-toolbar__checkbox:focus-visible,
+.dg-wishlist-card__checkbox:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 3px var(--wl-focus-ring, rgba(201, 162, 75, 0.35));
 }
 
 .dg-wishlist-toolbar__select-all-label {
@@ -842,8 +884,106 @@
 	transform: translateY(0);
 }
 
+.dg-wishlist-toolbar__checkbox-mark,
 .dg-wishlist-card__checkbox-mark {
-	display: none;
+	/* Hidden by default — revealed when sibling input is `:checked`
+	   via the adjacent-sibling rule below. Positioned over the input so
+	   the visual checkmark sits centered regardless of the inner icon
+	   font's metrics (works for both the toolbar and the card variants
+	   whose markup may wrap a Material Symbols <span>). */
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+	color: var(--wl-checkbox-mark-color, #fff);
+	font-family: var(--wl-checkbox-mark-font);
+	font-style: normal;
+	font-size: 14px;
+	letter-spacing: 0;
+	text-transform: none;
+	line-height: 1;
+	opacity: 0;
+	transform: scale(0.6);
+	transition: opacity 0.18s var(--wl-ease),
+		transform 0.18s var(--wl-ease);
+}
+
+/* When the input is checked, fade the overlay in and pop to scale 1.
+   Uses adjacent-sibling combinator to target the mark span directly
+   following the checkbox input (matches BEM markup: input → mark span). */
+.dg-wishlist-toolbar__checkbox:checked + .dg-wishlist-toolbar__checkbox-mark,
+.dg-wishlist-card__checkbox:checked + .dg-wishlist-card__checkbox-mark {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* The toolbar's mark is an empty span — draw the check with `::after`
+   using a Unicode glyph (no icon-font dependency, a11y-safe because
+   the wrapper has `aria-hidden="true"`). */
+.dg-wishlist-toolbar__checkbox-mark::after {
+	content: "\2713"; /* ✓ heavy check mark */
+	font-weight: 700;
+}
+
+/* Toolbar only: the mark is a sibling of the label text, so instead of
+   overlaying it with `position: absolute` (which depends on whichever
+   ancestor is the containing block), stack input + mark in grid cell 1/1
+   of `.dg-wishlist-toolbar__select-all`. The glyph is then centered on
+   the checkbox box exactly like the card's checkmark. */
+.dg-wishlist-toolbar__checkbox,
+.dg-wishlist-toolbar__checkbox-mark {
+	grid-area: 1 / 1;
+}
+
+.dg-wishlist-toolbar__checkbox-mark {
+	/* Positioned (no offsets) so it paints above the also-positioned input
+	   that shares its grid cell; a `static` mark would sit underneath. */
+	position: relative;
+	inset: auto;
+	/* Give the mark the exact same box as the input and the same vertical
+	   alignment. Without an explicit size the mark shrinks to its content
+	   (e.g. the 2px indeterminate bar) and is centered on its own, which can
+	   drift from the input's center on rows with fractional heights. */
+	align-self: center;
+	justify-self: center;
+	width: var(--wl-checkbox-size);
+	height: var(--wl-checkbox-size);
+}
+
+.dg-wishlist-toolbar__select-all-label {
+	grid-column: 2;
+}
+
+/* Indeterminate (select-all when only some cards are selected, set by
+   `updateMasterCheckbox()` in wishlist.js). The input is filled via the
+   `:indeterminate` rule above, so the mark must be revealed too, otherwise
+   the box looks filled but empty. The dash is a CSS-drawn bar (not a text
+   glyph) so it centers exactly in the box regardless of font metrics; the
+   mark is `display: grid; place-items: center`, which centers the bar. */
+.dg-wishlist-toolbar__checkbox:indeterminate + .dg-wishlist-toolbar__checkbox-mark {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.dg-wishlist-toolbar__checkbox:indeterminate + .dg-wishlist-toolbar__checkbox-mark::after {
+	content: "";
+	width: var(--wl-checkbox-dash-width);
+	height: var(--wl-checkbox-dash-height);
+	border-radius: var(--wl-checkbox-dash-height);
+	background: currentColor;
+}
+
+/* The card's mark wraps a <span class="material-symbols-outlined">check</span>
+   for semantic richness; we still draw via `::after` for visual parity
+   with the toolbar, and hide the inner icon to avoid double-rendering
+   and double-font-load cost. */
+.dg-wishlist-card__checkbox-mark::after {
+	content: "\2713"; /* ✓ heavy check mark */
+	font-weight: 700;
+}
+.dg-wishlist-card__checkbox-mark > .material-symbols-outlined {
+	display: none; /* replaced by `::after` for consistent cross-output visual */
 }
 
 .dg-wishlist-card__heart {
@@ -927,6 +1067,14 @@
 
 .dg-wishlist-card:hover .dg-wishlist-card__img--primary {
 	transform: scale(1.06);
+}
+
+/* When the card has a hover image (sibling element after primary), the
+   primary fades out and the hover image fades in. The selector uses the
+   general-sibling combinator so the rule only matches when a hover image
+   actually exists in the same media container — preventing the "white
+   card" bug where the primary would fade to nothing without a replacement. */
+.dg-wishlist-card:hover .dg-wishlist-card__img--primary:has(~ .dg-wishlist-card__img--hover) {
 	opacity: 0;
 }
 
@@ -1144,7 +1292,6 @@
 	box-shadow: 0 8px 20px rgba(34, 197, 94, 0.30);
 	background: #22C55E;
 	color: #ffffff;
-}
 }
 
 /* ---- No results ---- */
@@ -1827,7 +1974,11 @@
 	.dg-wishlist-modal__panel,
 	.dg-wishlist-confirm__overlay,
 	.dg-wishlist-confirm__panel,
-	.dg-wishlist-toast {
+	.dg-wishlist-toast,
+	.dg-wishlist-toolbar__checkbox,
+	.dg-wishlist-card__checkbox,
+	.dg-wishlist-toolbar__checkbox-mark,
+	.dg-wishlist-card__checkbox-mark {
 		transition: none !important;
 		animation: none !important;
 	}

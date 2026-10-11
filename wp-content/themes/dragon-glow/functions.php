@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Define theme constants
-define( 'DG_VERSION',   '1.10.5' );
+define( 'DG_VERSION',   '1.10.13' );
 define( 'DG_DIR',       get_template_directory() );
 define( 'DG_URI',       get_template_directory_uri() );
 
@@ -38,3 +38,5 @@ require_once DG_DIR . '/inc/checkout.php';
 // Load shared cart utility functions
 require_once DG_DIR . '/inc/cart-functions.php';
 
+// Load wishlist lifecycle (sync wishlist with order events).
+require_once DG_DIR . '/inc/wishlist-lifecycle.php';

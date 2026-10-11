@@ -285,12 +285,11 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 				message: data.message,
 				quantity: 1,
 				added_at: Date.now(),
-			});
-			window.localStorage.setItem(key, JSON.stringify(list));
-		} catch (err) {
-			// localStorage unavailable — vẫn cho user tiếp tục
-			console.warn('[dg-gift] mock cart storage failed', err);
-		}
+		});
+		window.localStorage.setItem(key, JSON.stringify(list));
+	} catch (err) {
+		// localStorage unavailable — vẫn cho user tiếp tục
+	}
 
 		setFeedback(feedback, form.dataset.i18nAdded || 'Added to bag.', 'success');
 		setTimeout(function () {

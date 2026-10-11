@@ -241,6 +241,7 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 					foreach ( $sizes as $size ) :
 					?>
 						<button type="button"
+						        aria-pressed="<?php echo $first ? 'true' : 'false'; ?>"
 						        class="dg-size-btn px-4 py-2 rounded-xl border text-sm transition-all <?php echo $first ? 'is-active border-primary text-primary font-bold' : 'border-outline-variant/30 text-on-surface-variant hover:border-primary'; ?>">
 							<?php echo esc_html( $size ); ?>
 						</button>

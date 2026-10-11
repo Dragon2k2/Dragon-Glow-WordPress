@@ -431,8 +431,8 @@
     width: 100%;
     padding: 1rem;
     border-radius: 1rem;
-    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
-    color: var(--color-on-gold);
+    background: var(--btn-gold-gradient);
+    color: var(--btn-gold-text);
     font-weight: 700;
     font-size: 0.875rem;
     text-transform: uppercase;
@@ -629,4 +629,56 @@
     .dg-checkout-title__icon {
         animation: none;
     }
+}
+
+/* =========================================
+   ORDER SUMMARY — LINE ITEM META
+   Renders "Size: 50ml" under the product name.
+   Targets WC core markup from wc_get_formatted_cart_item_data():
+   <dl class="variation"><dt>Size:</dt><dd><p>50ml</p></dd></dl>
+   ========================================= */
+
+.dg-review-line__meta dl.variation {
+    margin: 0;
+}
+
+.dg-review-line__meta dl.variation dt,
+.dg-review-line__meta dl.variation dd,
+.dg-review-line__meta dl.variation dd p {
+    display: inline;
+    margin: 0;
+}
+
+.dg-review-line__meta dl.variation dt {
+    margin-inline-end: 0.25rem;
+}
+
+.dg-review-line__meta dl.variation dd::after {
+    content: "";
+    display: block;
+}
+
+/* ── Selection-clear inline notice ───────────────────────────────────
+   Tiny status line emitted by checkout.js when the "Show all items"
+   POST fails. Lives inside .dg-review-summary__selection-bar so it
+   inherits the same dashed frame; we just add a colored bar on the
+   left to signal success/error without competing with the chip. */
+.dg-review-summary__selection-notice {
+    flex-basis: 100%;
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dg-review-summary__selection-notice--info {
+    background: rgba(115, 92, 0, 0.08);
+    color: var(--color-primary);
+}
+
+.dg-review-summary__selection-notice--error {
+    background: rgba(186, 26, 26, 0.10);
+    color: var(--color-error);
 }

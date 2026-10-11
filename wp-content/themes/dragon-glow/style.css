@@ -160,6 +160,13 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
        Always reference semantic tokens, never primitives.
        ===================================================== */
     
+    /* ========== Gold CTA Button (cart "Proceed to Checkout") ========== */
+    /* Gold gradient; end stop kept light enough for AA large-text contrast with dark label */
+    --btn-gold-gradient-start: var(--gold-400);
+    --btn-gold-gradient-end: var(--gold-600);
+    --btn-gold-gradient: linear-gradient(135deg, var(--btn-gold-gradient-start) 0%, var(--btn-gold-gradient-end) 100%);
+    --btn-gold-text: var(--primary-900);
+
     /* ========== Shop Filter Component ========== */
     /* Glassmorphism dropdown with gold accents */
     --filter-glass-bg: linear-gradient(135deg, 

@@ -92,10 +92,10 @@
 
 /* ── Shimmer checkout button ─────────────────────────────── */
 .dg-shimmer-btn {
-    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    background: var(--btn-gold-gradient);
     position: relative;
     overflow: hidden;
-    color: var(--color-on-gold);   /* dark on gold for WCAG AA contrast */
+    color: var(--btn-gold-text);   /* dark on gold for WCAG AA contrast */
     transition: opacity 0.25s ease, transform 0.2s ease;
 }
 
@@ -550,6 +550,200 @@
         height: 16px;
     }
 }
+
+/* ── Selection-checkout dual CTA ─────────────────────────────────────────
+   Two CTAs in the same sidebar slot, JS toggles visibility based on the
+   live selection count:
+     - .dg-cart-checkout-cta--all       default "Proceed to Checkout"
+                                         (no selection in flight)
+     - .dg-cart-checkout-cta--selected  new "Checkout with selected"
+                                         (≥ 1 row ticked)
+   Visibility rules:
+     - On /cart/         : JS toggles `hidden` based on selection count;
+                           .dg-has-selection body class is the CSS fallback
+                           for the same toggle.
+     - On /checkout/     : .dg-has-selection is set server-side when a flag
+                           is in flight, hiding --all so the shopper
+                           cannot double-click past their selection.
+   The two rules below are mirror copies of each other on purpose: JS
+   handles the /cart/ case, CSS handles the /checkout/ case. Keeping
+   them split means either layer can change without touching the
+   other. */
+.dg-cart-checkout-cta--all[hidden],
+.dg-cart-checkout-cta--selected[hidden] {
+    display: none !important;
+}
+
+.dg-cart-checkout-cta--selected[hidden] + .dg-cart-checkout-cta__hint,
+.dg-cart-checkout-cta__hint[hidden] {
+    display: none !important;
+}
+
+/* Hint row above the selected CTA — small check + live count. */
+.dg-cart-checkout-cta__hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background: rgba(115, 92, 0, 0.06);
+    border: 1px solid rgba(115, 92, 0, 0.18);
+    border-radius: 9999px;
+    padding: 6px 12px;
+}
+
+.dg-cart-checkout-cta__hint-icon {
+    font-size: 16px !important;
+    color: var(--color-primary);
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Tertiary "Clear selection" link below the CTA — visible whenever the
+   user has a selection in flight. Same ghost button pattern as the
+   bulk action bar so the visual language stays consistent. */
+.dg-cart-checkout-cta__clear {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 16px;
+    border-radius: 9999px;
+    border: 1.5px solid rgba(115, 92, 0, 0.30);
+    background: transparent;
+    color: var(--color-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.dg-cart-checkout-cta__clear:hover {
+    background: rgba(115, 92, 0, 0.08);
+    border-color: var(--color-primary);
+}
+
+.dg-cart-checkout-cta__clear:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.dg-cart-checkout-cta__clear:disabled {
+    opacity: 0.55;
+    cursor: progress;
+}
+
+/* Server-side fallback on /checkout/: if the PHP layer flagged any cart
+   item, hide the standard "Proceed to Checkout" button — but on
+   /checkout/ there is no such button; the body class is mainly a hook
+   for the Order Summary "Show all items" affordance. We keep the body
+   class on /cart/ so the JS can also rely on it for select-state
+   recovery after a stale render. */
+body.dg-has-selection .dg-cart-checkout-cta--all {
+    display: none;
+}
+
+/* Reduced motion — kill the dual-CTA + hint transitions. */
+@media (prefers-reduced-motion: reduce) {
+    .dg-cart-checkout-cta__clear {
+        transition: none;
+    }
+}
+
+/* ── Checkout-only: Order Summary helper bar ────────────────────────────
+   On the /checkout/ page the Order Summary card now owns a small bar
+   above the totals that lets the shopper reset / verify their selection
+   without leaving the page. The Order Summary button itself stays
+   rendered (we never want JS to gate "Place Order" entirely) so this
+   chip row is the single source of truth for "which subset am I paying
+   for?". */
+
+/* The Order Summary container gets a small pad so the bar doesn't
+   crowd the first line item. */
+.dg-review-summary__selection-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px dashed rgba(115, 92, 0, 0.25);
+    border-radius: 14px;
+    background: rgba(115, 92, 0, 0.04);
+}
+
+.dg-review-summary__selection-bar[hidden] {
+    display: none !important;
+}
+
+.dg-review-summary__selection-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-primary);
+    margin-right: auto;
+}
+
+.dg-review-summary__selection-label .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.dg-review-summary__selection-clear {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 7px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(115, 92, 0, 0.30);
+    background: transparent;
+    color: var(--color-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.dg-review-summary__selection-clear:hover {
+    background: rgba(115, 92, 0, 0.08);
+    border-color: var(--color-primary);
+}
+
+.dg-review-summary__selection-clear:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.dg-review-summary__selection-clear:disabled {
+    opacity: 0.55;
+    cursor: progress;
+}
+
+/* The dual CTA on /cart/ is wrapped in body.dg-has-selection (JS sets
+   the class on /cart/, PHP sets it on /checkout/ when a flag is in
+   flight). When the body class is absent we keep both CTAs visible so
+   the cart can never end up in a state with NO CTA at all — defensive
+   fallback for the narrow case where the JS layer fails to bind. */
 
 /* ── Bulk action bar ─────────────────────────────────────────
    Floating bottom bar that appears when ≥1 row is checked.

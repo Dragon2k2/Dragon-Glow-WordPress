@@ -189,5 +189,65 @@
         bindWooCommerceEvents();
         customizeSelect2Placeholders();
         bindNumericOnly();
+        bindCheckoutSelectionBar();
     });
+
+    /* ── "Show all items" affordance on the Order Summary ──────────────
+       Mirrors the cart page's "Clear selection" button: POSTs to
+       `dg_ajax_clear_cart_selection`, then reloads so the server-side
+       filters (inc/woocommerce/cart-selection.php) re-render every line
+       item in the review table. */
+
+    function bindCheckoutSelectionBar() {
+        var btn = document.querySelector('[data-dg-checkout-show-all]');
+        if (!btn) return;
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (btn.disabled) return;
+            if (!window.dgAjax || !window.dgAjax.url) {
+                window.location.reload();
+                return;
+            }
+
+            btn.disabled = true;
+            var fd = new FormData();
+            fd.append('action', 'dg_ajax_clear_cart_selection');
+            fd.append('nonce',  window.dgAjax.nonce || '');
+
+            fetch(window.dgAjax.url, { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    // Simpler than trying to surgically re-render: full reload
+                    // re-pulls the cart contents without flags so every line item
+                    // reappears in the Order Summary. The body class also updates
+                    // so the helper bar hides itself cleanly.
+                    window.location.reload();
+                })
+                .catch(function () {
+                    btn.disabled = false;
+                    var i18n = (window.dgCheckoutSelection && window.dgCheckoutSelection.i18n) || {};
+                    // WC fragments flash a notice — fall back to a minimal inline toast.
+                    showInlineNotice((i18n.network || 'Network error. Please try again.'), 'error');
+                });
+        });
+    }
+
+    /**
+     * Minimal inline notice on the Order Summary when the Show-all
+     * helper fails. Keeps the handler self-contained without pulling
+     * in the global toast layer (which is account-scoped).
+     *
+     * @param {string} message
+     * @param {string} type
+     */
+    function showInlineNotice(message, type) {
+        var bar = document.querySelector('[data-dg-checkout-selection-bar]');
+        if (!bar) return;
+        var notice = document.createElement('p');
+        notice.className = 'dg-review-summary__selection-notice dg-review-summary__selection-notice--' + (type || 'info');
+        notice.textContent = message;
+        bar.appendChild(notice);
+        setTimeout(function () { notice.remove(); }, 3500);
+    }
 })();

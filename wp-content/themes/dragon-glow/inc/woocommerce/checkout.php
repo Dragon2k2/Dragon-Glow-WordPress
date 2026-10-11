@@ -284,6 +284,51 @@ function dg_render_wc_checkout(): void {
 
 						<?php
 						/*
+						 * Render the selection-helper bar above the line items
+						 * when the shopper reached checkout via "Checkout with
+						 * selected" on /cart/. Mirrors `dg_hide_non_selected_from_checkout_review`
+						 * — the visibility is purely driven by whether ANY cart
+						 * item has the flag set. The bar shows how many items the
+						 * shopper selected and offers a "Show all items" escape
+						 * hatch so they are never locked into a partial cart they
+						 * didn't intend.
+						 */
+						$dg_has_checkout_selection = false;
+						$dg_selected_count         = 0;
+						if ( WC()->cart && WC()->cart->get_cart() ) {
+							foreach ( WC()->cart->get_cart() as $dg_sel_item ) {
+								if ( ! empty( $dg_sel_item['dg_selected_for_checkout'] ) ) {
+									$dg_has_checkout_selection = true;
+									$dg_selected_count++;
+								}
+							}
+						}
+						?>
+						<div class="dg-review-summary__selection-bar"
+						     data-dg-checkout-selection-bar
+						     <?php echo $dg_has_checkout_selection ? '' : 'hidden'; ?>>
+							<span class="dg-review-summary__selection-label">
+								<span class="material-symbols-outlined" aria-hidden="true">checklist</span>
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %d: number of selected cart items in the current checkout. */
+										_n( '%d item selected for checkout', '%d items selected for checkout', max( 1, (int) $dg_selected_count ), 'dragon-glow' ),
+										max( 1, (int) $dg_selected_count )
+									)
+								);
+								?>
+							</span>
+							<button type="button"
+							        class="dg-review-summary__selection-clear"
+							        data-dg-checkout-show-all>
+								<span class="material-symbols-outlined" aria-hidden="true">apps</span>
+								<?php esc_html_e( 'Show all items', 'dragon-glow' ); ?>
+							</button>
+						</div>
+
+						<?php
+						/*
 						 * Render the review-order template directly (so the sticky
 						 * card contains only cart line items + totals — matching the
 						 * mock layout). The `review-order.php` override in

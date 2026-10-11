@@ -845,14 +845,9 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		// Without this, `syncAddedState()` would early-return on its first
 		// guard and the "Added!" state would never survive a page reload.
 		const bind = function () {
-			console.log('[WISHLIST] bind() function executing, DGCart available:', !!window.DGCart);
-			
 			if (!window.DGCart || typeof window.DGCart.add !== 'function') {
-				console.warn('[WISHLIST] bind() aborted — DGCart.add not available');
 				return;
 			}
-
-			console.log('[WISHLIST] Registering click event listener on grid');
 			grid.addEventListener('click', function (e) {
 					const btn = e.target.closest('.dg-wishlist-card__cta.wc-add-to-cart-btn');
 				if (!btn || btn.disabled) return;
@@ -982,19 +977,15 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 			// pageshow fires on:
 			//   - Initial page load (persisted=false)
 			//   - Back/forward navigation from bfcache (persisted=true)
-			// This ensures buttons reflect server state after refresh or
-			// browser back, without polling during active session.
-			console.log('[WISHLIST] Registering pageshow event listener');
-			window.addEventListener('pageshow', function (e) {
-				console.log('[WISHLIST] pageshow event fired, persisted:', e.persisted);
-				// Always sync on pageshow — covers both initial load and bfcache.
-				// syncAddedState() has its own inFlightAdds guard to skip
-				// when user is actively clicking buttons.
-				syncAddedState();
-			});
-		};
-
-		console.log('[WISHLIST] initQuickAddOptimistic bind() called, readyState:', document.readyState);
+		// This ensures buttons reflect server state after refresh or
+		// browser back, without polling during active session.
+		window.addEventListener('pageshow', function (e) {
+			// Always sync on pageshow — covers both initial load and bfcache.
+			// syncAddedState() has its own inFlightAdds guard to skip
+			// when user is actively clicking buttons.
+			syncAddedState();
+		});
+	};
 		
 		if (document.readyState === 'complete') {
 			bind();
@@ -1027,27 +1018,18 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	/** Swap the CTA label to "✓ Added!" and add the .is-added class.
 	    No-op when the button is already in that state. */
 	function paintAdded(btn, labelNode) {
-		const pid = parseInt(btn.dataset.productId || '0', 10);
-		const currentText = labelNode ? labelNode.textContent.trim() : '(no label node)';
-		const hasClass = btn.classList.contains('is-added');
-		
-		console.log('[WISHLIST] paintAdded(' + pid + ') — current text:', currentText, ', has .is-added:', hasClass);
-		
 		if (btn.classList.contains('is-added')) {
 			// Still ensure the label is correct in case the markup was rebuilt.
 			if (labelNode && labelNode.textContent !== '✓ Added!') {
-				console.log('[WISHLIST] paintAdded(' + pid + ') — fixing text to "✓ Added!"');
 				labelNode.textContent = '✓ Added!';
 			}
 			return;
 		}
 		btn.classList.add('is-added');
 		if (labelNode) {
-			console.log('[WISHLIST] paintAdded(' + pid + ') — setting text to "✓ Added!"');
 			labelNode.textContent = '✓ Added!';
 		} else {
 			// Fallback for text-only markup — rebuild with icon + label.
-			console.log('[WISHLIST] paintAdded(' + pid + ') — rebuilding innerHTML');
 			btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>✓ Added!';
 		}
 	}
@@ -1067,24 +1049,17 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	    cross-tab removes still reconcile. */
 	function paintNotAdded(btn, labelNode) {
 		const pid = parseInt(btn.dataset.productId || '0', 10) || 0;
-		const currentText = labelNode ? labelNode.textContent.trim() : '(no label node)';
-		const hasClass = btn.classList.contains('is-added');
-		
-		console.log('[WISHLIST] paintNotAdded(' + pid + ') — current text:', currentText, ', has .is-added:', hasClass);
 		
 		if (pid > 0 && inFlightAdds.has(pid)) {
 			// Optimistic add in flight — trust the click + local paintAdded().
-			console.log('[WISHLIST] paintNotAdded(' + pid + ') — skipped (in-flight)');
 			return;
 		}
 		if (!btn.classList.contains('is-added') && (!labelNode || labelNode.textContent !== '✓ Added!')) {
-			console.log('[WISHLIST] paintNotAdded(' + pid + ') — skipped (already in default state)');
 			return;
 		}
 		btn.classList.remove('is-added');
 		if (labelNode) {
 			const originalLabel = btn.dataset.originalLabel || 'Add to bag';
-			console.log('[WISHLIST] paintNotAdded(' + pid + ') — setting text to:', originalLabel);
 			labelNode.textContent = originalLabel;
 		}
 	}
@@ -1103,35 +1078,25 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	    Response shape: { success: true, data: { product_ids: number[] } }
 	    — `data.data.product_ids` is snake_case (WordPress convention). */
 	function syncAddedState() {
-		console.log('[WISHLIST] syncAddedState() called');
-		
 		// Skip if any add/remove is in flight — trust optimistic paint.
 		if (inFlightAdds.size > 0) {
-			console.log('[WISHLIST] syncAddedState() skipped — inFlightAdds.size =', inFlightAdds.size);
 			return;
 		}
 
 		// Skip if DGCart API not ready yet.
 		if (!window.DGCart || typeof window.DGCart.getIdentifiers !== 'function') {
-			console.warn('[WISHLIST] syncAddedState() skipped — DGCart.getIdentifiers not available');
 			return;
 		}
 
-		console.log('[WISHLIST] Fetching cart identifiers...');
 		window.DGCart.getIdentifiers()
 			.then(function (response) {
-				console.log('[WISHLIST] getIdentifiers response:', response);
-				
 				if (!response || !response.success || !response.data || !response.data.product_ids) {
-					console.warn('[WISHLIST] Invalid response shape');
 					return;
 				}
 
 				const cartPids = new Set(response.data.product_ids);
-				console.log('[WISHLIST] Cart product IDs:', Array.from(cartPids));
 				
 				const buttons = grid.querySelectorAll('.dg-wishlist-card__cta.wc-add-to-cart-btn');
-				console.log('[WISHLIST] Found', buttons.length, 'buttons to sync');
 
 				buttons.forEach(function (btn) {
 					const pid = parseInt(btn.dataset.productId || '0', 10);
@@ -1139,16 +1104,14 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 					const labelNode = captureLabelNode(btn);
 					if (cartPids.has(pid)) {
-						console.log('[WISHLIST] Painting ADDED for product', pid);
 						paintAdded(btn, labelNode);
 					} else {
-						console.log('[WISHLIST] Painting NOT ADDED for product', pid);
 						paintNotAdded(btn, labelNode);
 					}
 				});
 			})
 			.catch(function (err) {
-				console.error('[WISHLIST] getIdentifiers error:', err);
+				// Silent fail — error already logged by DGCart API if needed
 			});
 	}
 

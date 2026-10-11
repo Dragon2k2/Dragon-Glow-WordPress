@@ -379,10 +379,9 @@
 				} else {
 					throw new Error(data.data && data.data.message ? data.data.message : 'Failed to load content');
 				}
-			})
-			.catch(function (error) {
-				console.error('AJAX navigation error:', error);
-				showErrorState(content, error.message);
+		})
+		.catch(function (error) {
+			showErrorState(content, error.message);
 			})
 			.finally(function () {
 				isLoading = false;

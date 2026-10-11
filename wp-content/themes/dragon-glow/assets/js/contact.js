@@ -69,7 +69,6 @@
                     }, 1500);
                 })
                 .catch(function (error) {
-                    console.error('Error:', error);
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                     btn.classList.remove('opacity-50');

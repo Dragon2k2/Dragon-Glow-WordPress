@@ -45,10 +45,6 @@
         if (level === 'debug') return console.debug(msg, extra);
     }
 
-    if (typeof console !== 'undefined' && console.info) {
-        dgLog('info', '%c[Dragon Glow] cart.js loaded', 'color:#735c00;font-weight:bold;');
-    }
-
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Prefer the page-specific i18n (`dgCart`), fall back to the global
     // (`dgAjax`) so strings stay translatable per surface.
@@ -137,7 +133,48 @@
     })();
 
     // ── DOM ready ─────────────────────────────────────────────────────────────
+    // We bind both `DOMContentLoaded` (cold load) and `pageshow`
+    // (bfcache restore) so the selection reconciliation runs after
+    // every kind of navigation. `event.persisted === true` means the
+    // browser restored the page from its back/forward cache, in
+    // which case the DOM keeps whatever checkbox state the user
+    // last had — we have to re-run reconciliation to bring the DOM
+    // and the server back in sync.
+    // ── Form-restore guard (BEFORE any listener registration) ───────────────
+    // Chrome/Edge restore form state on back/forward navigation EVEN
+    // when `pageshow.persisted === false` (no bfcache). The restored
+    // state is applied AFTER DOMContentLoaded and AFTER our handlers
+    // run, so any explicit `cb.checked = false` we do during init can
+    // be silently overwritten by the browser a tick later. The fix is
+    // the standard one for this Chrome quirk: set `defaultChecked` on
+    // each input at parse time. `defaultChecked` is the "initial"
+    // value the form-restoration path uses; once the page is fully
+    // loaded the browser compares the live `checked` value to
+    // `defaultChecked` and only restores when they differ, so a
+    // server-rendered unchecked input stays unchecked on back-nav.
+    //
+    // This block runs at script-parse time — BEFORE DOMContentLoaded
+    // and BEFORE the browser applies any restored form state — which
+    // is the only window where setting `defaultChecked` actually
+    // matters. Adding the same line later in init() would be too late.
+    (function primeNoRestoreCheckboxes() {
+        var noRestore = document.querySelectorAll('[data-dg-cart-no-restore]');
+        if (!noRestore.length) return;
+        noRestore.forEach(function (cb) {
+            try {
+                cb.defaultChecked = false;
+            } catch (e) {
+                /* read-only on some engines — fall through */
+            }
+        });
+    })();
+
     document.addEventListener('DOMContentLoaded', init);
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            init();
+        }
+    });
 
     function init() {
         bindQtySteppers();
@@ -145,6 +182,11 @@
         initBulkSelect();
         initBulkActions();
         initConfirmModal();
+        initSelectionCheckout();
+        // Run the DOM-vs-server reconciliation after the listeners
+        // are in place so the subsequent `updateBulkBar()` call can
+        // re-emit `change` events without an infinite loop.
+        reconcileSelectionState();
     }
 
     // ── Bulk select (visual only — pure state for the bulkbar) ──────────────
@@ -209,6 +251,14 @@
         var keys    = getSelectedKeys();
         if (countEl) countEl.textContent = String(keys.length);
         bar.classList.toggle('is-visible', keys.length > 0);
+        // Keep the "Checkout with selected" CTA in sync — same selection state
+        // powers both UI surfaces.
+        updateSelectionCta(keys);
+        // Mirror the current selection to the server so /checkout/
+        // always reflects the latest tick state, not a stale session
+        // snapshot from a previous visit. Debounced 250ms inside the
+        // helper.
+        syncSelectionState(keys);
     }
 
     function resetSelection() {
@@ -219,6 +269,324 @@
         });
         updateMasterCheckbox();
         updateBulkBar();
+    }
+
+    /* ── "Checkout with selected" — companion CTA to the bulk bar ───────
+       The cart page now exposes two checkout CTAs in the sidebar:
+         - .dg-cart-checkout-cta--all        : original "Proceed to Checkout"
+         - .dg-cart-checkout-cta--selected  : new "Checkout with selected"
+       CSS (cart.css) hides --selected by default and shows it whenever
+       the body has .dg-has-selection (set by the PHP layer when there
+       are flags in the cart, primarily on /checkout/). On /cart/ we are
+       purely JS-driven — every time the selection count crosses 0 ↔ ≥1
+       we toggle a body class via updateSelectionCta() and let the
+       stylesheet flip the visibility.
+       Click flow:
+         1. checkoutWithSelected() POSTs the cart-item keys via the new
+            `dg_ajax_apply_cart_selection` handler.
+         2. On success we show a success toast and redirect to the
+            returned checkout URL — the server-side hooks in
+            inc/woocommerce/cart-selection.php filter the review-order
+            and totals to match.
+         3. On failure we surface the server message verbatim.
+       clearSelection() lets the user abandon the selection without
+       leaving the cart (sends `dg_ajax_clear_cart_selection`,
+       refreshes the master checkbox + body class). */
+
+    function initSelectionCheckout() {
+        var checkoutBtn = document.querySelector('[data-dg-cart-checkout-with-selected]');
+        var clearBtn    = document.querySelector('[data-dg-cart-clear-selection]');
+        if (!checkoutBtn && !clearBtn) {
+            return;
+        }
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function () {
+                if (checkoutBtn.disabled) return;
+                var keys = getSelectedKeys();
+                if (!keys.length) {
+                    showToast(i18n.selectItems || 'Select items first.', 'info');
+                    return;
+                }
+                checkoutWithSelected(keys, checkoutBtn);
+            });
+        }
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                if (clearBtn.disabled) return;
+                clearSelection(clearBtn);
+            });
+        }
+        // The DOM-vs-server reconciliation is performed by
+        // `init()` (cold load) and the `pageshow` handler
+        // (bfcache restore). Calling it here would double-fire
+        // the AJAX sync on cold load.
+    }
+
+    /* Reconcile the DOM checkboxes against the server-side session.
+
+       The server renders `[data-dg-cart-select]` checkboxes as
+       unchecked, but the browser's back/forward cache (bfcache)
+       can keep a previous DOM state alive when the shopper returns
+       to /cart/ via the browser back button. In that case the
+       checkboxes are still ticked even though the user has not
+       re-ticked them in this visit — and the server still has a
+       matching session selection, so /checkout/ would filter down
+       to that stale list.
+
+       This function:
+
+       1. Resets any DOM checkboxes whose value isn't part of a
+          server-known selection. We don't know the server list
+          on the client, so we treat the initial DOM as untrusted
+          and only preserve "checked" when the server told us a
+          matching selection exists.
+       2. Mirrors the (now-canonical) DOM to the server so the
+          session matches what the user actually sees.
+       3. Updates the CTA visibility and body class.
+
+       Called from both `init()` (cold load) and the `pageshow`
+       handler (bfcache restore). The handler is a no-op on a
+       normal load because `event.persisted` is false.
+    */
+    function reconcileSelectionState() {
+        // The server's view of the current selection. Empty array
+        // means "no session selection" — the user has no ticked
+        // items, and any DOM check state is by definition stale.
+        var serverSelection = readServerSelection();
+        if (!serverSelection || !serverSelection.length) {
+            // Force every DOM checkbox back to unchecked AND strip
+            // the `.is-selected` class off every row. The class is
+            // what produces the visible "dấu tích" (gradient +
+            // left-border) — failing to strip it leaves a row that
+            // *looks* selected even though `cb.checked` is false.
+            document.querySelectorAll('[data-dg-cart-select]').forEach(function (cb) {
+                if (cb.checked) {
+                    cb.checked = false;
+                }
+                var row = cb.closest('.dg-cart-row');
+                if (row) row.classList.remove('is-selected');
+            });
+            var master = document.querySelector('[data-dg-cart-select-all]');
+            if (master) {
+                master.checked = false;
+                master.indeterminate = false;
+            }
+        } else {
+            // Server has a selection. Sync the DOM to it: tick
+            // any checkbox whose value is in the list, untick the
+            // rest. Defensive against both a stale DOM (bfcache
+            // restore with wrong state) and a server that
+            // returned a different set than what the user last
+            // saw.
+            document.querySelectorAll('[data-dg-cart-select]').forEach(function (cb) {
+                var k = cb.value || cb.dataset.cartKey;
+                var shouldBeChecked = k && serverSelection.indexOf(k) !== -1;
+                if (cb.checked !== shouldBeChecked) {
+                    cb.checked = shouldBeChecked;
+                }
+                var row = cb.closest('.dg-cart-row');
+                if (row) row.classList.toggle('is-selected', shouldBeChecked);
+            });
+            // Master checkbox reflects the per-row state — defer
+            // to updateMasterCheckbox() to keep the three-state
+            // semantics correct.
+            updateMasterCheckbox();
+        }
+        // After reconciliation, read the canonical DOM state and
+        // push it to the server. This both fixes a stale server
+        // session and re-applies the canonical list in case any
+        // item disappeared from the cart since last sync.
+        //
+        // We push immediately (no debounce) so the user can click
+        // "Proceed to checkout" right after restoring the page
+        // without racing the 250ms debounce window.
+        var canonical = getSelectedKeys();
+        updateSelectionCta(canonical);
+        syncSelectionStateNow(canonical);
+    }
+
+    function readServerSelection() {
+        // The PHP layer injects the current session selection on
+        // dg-main. Reading it here is the only way the JS can
+        // know what the server believes is selected, since the
+        // DOM is not authoritative.
+        var raw = (window.dgCart && window.dgCart.selection) || (window.dgAjax && window.dgAjax.selection) || null;
+        if (!raw) {
+            return [];
+        }
+        if (Array.isArray(raw)) {
+            return raw;
+        }
+        if (typeof raw === 'string') {
+            return raw.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+        }
+        return [];
+    }
+
+    function updateSelectionCta(keys) {
+        var ctaAll      = document.querySelector('.dg-cart-checkout-cta--all');
+        var ctaSelected = document.querySelector('.dg-cart-checkout-cta--selected');
+        var hintTarget  = document.querySelector('[data-dg-cart-selected-count-hint]');
+        if (!ctaAll || !ctaSelected) {
+            return;
+        }
+        var count = (keys && keys.length) || 0;
+        var hasSelection = count > 0;
+        ctaAll.hidden = hasSelection;
+        ctaSelected.hidden = !hasSelection;
+        // Toggle body class so the global cart.css rules can also hide the
+        // shimmer button on /checkout/ if a flag is in flight.
+        document.body.classList.toggle('dg-has-selection', hasSelection);
+        if (hasSelection && hintTarget) {
+            // Use the same i18n table the cart already localized.
+            var template = (i18n.selectedHintN) || '%d items selected for checkout';
+            hintTarget.textContent = template.replace('%d', String(count));
+        }
+    }
+
+    function checkoutWithSelected(keys, btn) {
+        if (!window.dgAjax || !window.dgAjax.url) {
+            showToast(i18n.bagUnavailable || 'Your bag is currently unavailable. Please try again later.', 'error');
+            return;
+        }
+        btn.disabled = true;
+        var originalLabel = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;">progress_activity</span> ' + (i18n.processing || 'Processing…');
+
+        var fd = new FormData();
+        fd.append('action',         'dg_ajax_apply_cart_selection');
+        fd.append('nonce',          getNonce());
+        fd.append('cart_item_keys', keys.join(','));
+
+        fetch(getAjaxUrl(), { method: 'POST', body: fd, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                btn.disabled = false;
+                btn.innerHTML = originalLabel;
+                if (!data || !data.success) {
+                    var msg = (data && data.data && data.data.message) || i18n.bagUnavailable || 'Could not start checkout.';
+                    showToast(msg, 'error');
+                    return;
+                }
+                var redirect = (data && data.data && data.data.redirect) || '/checkout/';
+                // Optimistic toast so the user sees the intent succeed
+                // even though the navigation takes a moment.
+                showToast(data.data.message || 'Items ready for checkout.', 'success');
+                window.location.href = redirect;
+            })
+            .catch(function (err) {
+                btn.disabled = false;
+                btn.innerHTML = originalLabel;
+                showToast(i18n.network || 'Network error. Please try again.', 'error');
+            });
+    }
+
+    function clearSelection(btn) {
+        if (!window.dgAjax || !window.dgAjax.url) {
+            // No AJAX available — just reset the visual state locally.
+            resetSelection();
+            return;
+        }
+        btn.disabled = true;
+        var fd = new FormData();
+        fd.append('action', 'dg_ajax_clear_cart_selection');
+        fd.append('nonce',  getNonce());
+
+        fetch(getAjaxUrl(), { method: 'POST', body: fd, credentials: 'same-origin' })
+            .then(function (r) { return r.json() })
+            .then(function (data) {
+                btn.disabled = false;
+                if (!data || !data.success) {
+                    showToast((data && data.data && data.data.message) || i18n.network || 'Network error. Please try again.', 'error');
+                    return;
+                }
+                resetSelection();
+                showToast(data.data.message || 'Selection cleared.', 'info');
+            })
+            .catch(function () {
+                btn.disabled = false;
+                resetSelection();
+            });
+    }
+
+    /* ── Reactive selection sync (server is the source of truth) ─────────
+       Why this exists:
+         `dg_checkout_selection` is a server-side session key — the only
+         thing /checkout/ reads to decide which lines to show. If the user
+         ticks then unticks on /cart/ without ever clicking "Checkout
+         with selected", the session still holds the previous selection
+         and /checkout/ either hides the wrong lines or renders empty.
+         The cheapest fix that matches the rest of the theme is to
+         mirror the UI to the server on every checkbox change.
+
+       Two entry points:
+         - `syncSelectionState(keys)` (debounced 250ms) — used for
+           runtime checkbox changes so a tick/untick burst collapses
+           into one request.
+         - `syncSelectionStateNow(keys)` (immediate) — used for
+           initial paint reconciliation on /cart/ load, where we
+           cannot afford to debounce: the user may navigate to
+           /checkout/ before the timer fires, and a stale session
+           would still filter the wrong lines.
+
+       Both are fire-and-forget: no loading state, no toast on
+       success, errors are swallowed (the next successful sync —
+       typically the click on "Checkout with selected" — will fix
+       the state).
+    */
+    var syncSelectionTimer = null;
+    var syncSelectionInFlight = null;
+
+    function dispatchSelectionSync(keys) {
+        if (!window.dgAjax || !window.dgAjax.url) {
+            return;
+        }
+        var fd = new FormData();
+        fd.append('action',         'dg_ajax_apply_cart_selection');
+        fd.append('nonce',          getNonce());
+        fd.append('cart_item_keys', (keys || []).join(','));
+        // Abort any in-flight sync so out-of-order responses can't
+        // overwrite a newer state. Older requests reject with
+        // AbortError and are ignored.
+        if (syncSelectionInFlight) {
+            syncSelectionInFlight.abort();
+        }
+        var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+        syncSelectionInFlight = ctrl;
+        var fetchOpts = { method: 'POST', body: fd, credentials: 'same-origin' };
+        if (ctrl) { fetchOpts.signal = ctrl.signal; }
+        fetch(getAjaxUrl(), fetchOpts)
+            .then(function (r) { return r.json(); })
+            .catch(function (err) {
+                // AbortError from a newer sync call is expected and
+                // can be ignored — the newer request will be the
+                // source of truth.
+                if (err && err.name === 'AbortError') {
+                    return;
+                }
+                dgLog('warn', '[Dragon Glow] dispatchSelectionSync: fetch/parse failure. Inspect Network tab for the actual response.', err);
+            });
+    }
+
+    function syncSelectionState(keys) {
+        if (!window.dgAjax || !window.dgAjax.url) {
+            return;
+        }
+        if (syncSelectionTimer) {
+            clearTimeout(syncSelectionTimer);
+        }
+        syncSelectionTimer = setTimeout(function () {
+            syncSelectionTimer = null;
+            dispatchSelectionSync(keys);
+        }, 250);
+    }
+
+    function syncSelectionStateNow(keys) {
+        if (syncSelectionTimer) {
+            clearTimeout(syncSelectionTimer);
+            syncSelectionTimer = null;
+        }
+        dispatchSelectionSync(keys);
     }
 
     // ── Bulk actions (Remove selected + Clear cart) ─────────────────────────

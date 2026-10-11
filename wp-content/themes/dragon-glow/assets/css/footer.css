@@ -21,9 +21,8 @@
 }
 
 /* Footer links — active state (current page, match header active gold) */
-.dg-footer-link.is-active,
-.dg-footer-link[aria-current="page"] {
-	color: var(--color-accent-gold) !important;
+.dg-footer-link.is-active {
+	color: var(--color-accent-alt);
 	font-weight: 400;
 }
 
@@ -47,7 +46,7 @@
 
 /* Brand SVG mark — inherits link colour via fill: currentColor */
 .dg-footer-social-icon {
-	width: 1.25rem; /* 20px */
+	width: 1.25rem;
 	height: 1.25rem;
 	flex-shrink: 0;
 	display: block;

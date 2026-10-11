@@ -151,14 +151,13 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 	 * @returns {Object|null}
 	 */
 	function readPayload(panel) {
-		const el = panel.querySelector('[data-bacs-qr-payload]');
-		if (!el) return null;
-		try {
-			return JSON.parse(el.textContent || '{}');
-		} catch (err) {
-			console.warn('[DG BACS QR] Failed to parse payload', err);
-			return null;
-		}
+	const el = panel.querySelector('[data-bacs-qr-payload]');
+	if (!el) return null;
+	try {
+		return JSON.parse(el.textContent || '{}');
+	} catch (err) {
+		return null;
+	}
 	}
 
 	/**
@@ -190,7 +189,7 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 				canvas.setAttribute('aria-label', 'QR code for bank transfer');
 			})
 			.catch((err) => {
-				console.warn('[DG BACS QR] QR generation failed', err);
+				// Silent fail — QR generation error
 			});
 	}
 

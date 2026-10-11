@@ -147,6 +147,35 @@
         }
     };
 
+    // ── Size Selector ─────────────────────────────────────────
+    // Single-select group rendered by woocommerce/content-single-product.php.
+    // buy-now.js reads the selection from `.dg-size-btn.is-active`, so the
+    // class must stay in sync with the Tailwind state classes toggled here.
+    (function initSizeSelector() {
+        var sizeButtons = document.querySelectorAll('.dg-size-btn');
+        if (!sizeButtons.length) return;
+
+        var activeClasses   = ['is-active', 'border-primary', 'text-primary', 'font-bold'];
+        var inactiveClasses = ['border-outline-variant/30', 'text-on-surface-variant', 'hover:border-primary'];
+
+        sizeButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                if (btn.classList.contains('is-active')) return;
+
+                sizeButtons.forEach(function (other) {
+                    var isSelected = other === btn;
+                    activeClasses.forEach(function (cls) {
+                        other.classList.toggle(cls, isSelected);
+                    });
+                    inactiveClasses.forEach(function (cls) {
+                        other.classList.toggle(cls, !isSelected);
+                    });
+                    other.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+                });
+            });
+        });
+    }());
+
     // ── Quantity +/- Buttons ──────────────────────────────────
     // Supports both old (.minus/.plus) and new (.dg-qty-minus/.dg-qty-plus) class names.
     document.querySelectorAll('.quantity, .dg-quantity-stepper').forEach(function (container) {

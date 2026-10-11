@@ -77,6 +77,8 @@ $has_items  = ! empty( $cart_items );
                                         <input type="checkbox"
                                                class="dg-cart-select-all"
                                                data-dg-cart-select-all
+                                               data-dg-cart-no-restore
+                                               autocomplete="off"
                                                aria-label="<?php esc_attr_e( 'Select all items', 'dragon-glow' ); ?>" />
                                         <span aria-hidden="true" class="dg-cart-select-all-mark"></span>
                                     </label>
@@ -146,6 +148,8 @@ $has_items  = ! empty( $cart_items );
                                     <input type="checkbox"
                                            class="dg-cart-row__select"
                                            data-dg-cart-select
+                                           data-dg-cart-no-restore
+                                           autocomplete="off"
                                            value="<?php echo esc_attr( $cart_item_key ); ?>" />
                                     <span aria-hidden="true" class="dg-cart-row__select-mark"></span>
                                 </label>
@@ -365,12 +369,44 @@ $has_items  = ! empty( $cart_items );
                     </div>
                 </div>
 
-                <!-- Checkout CTA -->
+                <!-- Checkout CTA — two variants. The original "Proceed to Checkout"
+                     is shown when no cart-selection is in flight (regular flow).
+                     The new "Proceed with selected" variant is shown when the
+                     shopper has ticked at least one row (and a small "Showing N
+                     selected" badge sits above it as a reminder of which subset
+                     will be charged). JS in cart.js toggles between the two via
+                     the .dg-has-selection body class set by
+                     dg_maybe_hide_default_checkout_cta() in
+                     inc/woocommerce/cart-selection.php. -->
                 <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>"
-                   class="dg-shimmer-btn w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 no-underline shadow-lg">
+                   class="dg-shimmer-btn dg-cart-checkout-cta dg-cart-checkout-cta--all w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 no-underline shadow-lg">
                     <?php esc_html_e( 'Proceed to Checkout', 'dragon-glow' ); ?>
-                    <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;" class="group-hover:translate-x-1">arrow_forward</span>
+                    <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;">arrow_forward</span>
                 </a>
+
+                <div class="dg-cart-checkout-cta dg-cart-checkout-cta--selected" hidden>
+                    <p class="dg-cart-checkout-cta__hint">
+                        <span class="material-symbols-outlined dg-cart-checkout-cta__hint-icon" aria-hidden="true">checklist</span>
+                        <span data-dg-cart-selected-count-hint>
+                            <?php
+                            /* translators: %d: number of cart items currently selected. */
+                            echo esc_html( sprintf( _n( '%d item selected for checkout', '%d items selected for checkout', 0, 'dragon-glow' ), 0 ) );
+                            ?>
+                        </span>
+                    </p>
+                    <button type="button"
+                            class="dg-shimmer-btn w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 shadow-lg"
+                            data-dg-cart-checkout-with-selected>
+                        <span class="material-symbols-outlined" style="font-size:20px;">verified</span>
+                        <?php esc_html_e( 'Checkout with selected', 'dragon-glow' ); ?>
+                        <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;">arrow_forward</span>
+                    </button>
+                    <button type="button"
+                            class="dg-cart-checkout-cta__clear"
+                            data-dg-cart-clear-selection>
+                        <?php esc_html_e( 'Clear selection', 'dragon-glow' ); ?>
+                    </button>
+                </div>
 
                 <!-- SSL trust notice -->
                 <div class="flex flex-col items-center gap-3 text-center mt-1">

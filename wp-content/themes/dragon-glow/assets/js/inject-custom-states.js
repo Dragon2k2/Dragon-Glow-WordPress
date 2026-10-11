@@ -11,7 +11,6 @@
 	'use strict';
 
 	if (typeof wc_country_select_params === 'undefined' || typeof dgCustomStates === 'undefined') {
-		console.warn('Dragon Glow: Missing WC params or custom states data');
 		return;
 	}
 
