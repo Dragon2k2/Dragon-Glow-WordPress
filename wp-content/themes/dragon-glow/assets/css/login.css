@@ -131,6 +131,57 @@
 	}
 }
 
+/* Logo mark — centered above the eyebrow (decorative, not a link).
+   Markup: login.php (.dg-login__brand-logo > .dg-login__brand-logo-img)
+   Hover: a light band sweeps across the mark, same timing/easing and
+   direction as the brand title shimmer below. The band is an ::after
+   layer masked by the logo's own alpha, so the original colours stay. */
+.dg-login__brand-logo {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: var(--auth-brand-logo-gap);
+}
+
+.dg-login__brand-logo-img {
+	width: var(--auth-brand-logo-size);
+	height: var(--auth-brand-logo-size);
+	object-fit: contain;
+}
+
+.dg-login__brand-logo::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(90deg, transparent 0%, transparent 40%, var(--auth-brand-logo-shine) 50%, transparent 60%, transparent 100%);
+	background-size: 250% 100%;
+	background-position: 100% 0;
+	-webkit-mask: url('../images/logo/logo-mark.webp') center / contain no-repeat;
+	mask: url('../images/logo/logo-mark.webp') center / contain no-repeat;
+	transition: background-position 0.6s ease;
+}
+
+.dg-login__brand-logo:hover::after {
+	background-position: 0% 0;
+}
+
+/* Linked hover — hovering the logo OR the brand link (title + subtitle) sweeps
+   both. Kept as a separate rule: browsers without :has() drop it and fall back
+   to each element's own hover above. */
+.dg-login__brand-header:has(.dg-login__brand-logo:hover, .dg-account-auth__brand-link:hover) .dg-login__brand-logo::after,
+.dg-login__brand-header:has(.dg-login__brand-logo:hover, .dg-account-auth__brand-link:hover) .dg-account-auth__brand-title {
+	background-position: 0% 0;
+}
+
+@media (max-width: 640px) {
+	.dg-login__brand-logo-img {
+		width: var(--auth-brand-logo-size-mobile);
+		height: var(--auth-brand-logo-size-mobile);
+	}
+}
+
 .dg-login__brand-eyebrow {
 	display: flex;
 	align-items: center;
@@ -234,7 +285,7 @@
    ========================================= */
 
 .dg-account--signed-out {
-	padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2.5rem, 5vw, 4rem);
+	padding: var(--auth-portal-padding-top) 0 clamp(2.5rem, 5vw, 4rem);
 	background: var(--auth-bg);
 }
 

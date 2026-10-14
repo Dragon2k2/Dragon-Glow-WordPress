@@ -54,6 +54,15 @@ add_action( 'wp_enqueue_scripts', 'dg_dequeue_unnecessary', 20 );
 function dg_preload_assets(): void {
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+
+    // Icon font is needed on every page for first paint, so fetch it at top
+    // priority. `crossorigin` is mandatory for font preloads, even same-origin,
+    // otherwise the browser downloads the file twice. The URL must match the
+    // one main.css resolves (no query string) or the preload is not reused.
+    printf(
+        '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+        esc_url( DG_URI . '/assets/fonts/material-symbols-outlined.woff2' )
+    );
 }
 add_action( 'wp_head', 'dg_preload_assets', 1 );
 

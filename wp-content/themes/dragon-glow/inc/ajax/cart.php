@@ -241,6 +241,13 @@ function dg_ajax_remove_cart_items(): void {
 		);
 	}
 
+	// Drop the "checkout with selected" session list in this same request.
+	// It may reference keys that no longer exist, which would make
+	// /checkout/ hide or zero-price every remaining line. Doing it here
+	// (one request, one session save) avoids a separate client-side sync
+	// request racing this one and restoring the pre-removal cart.
+	dg_clear_session_selection();
+
 	wp_send_json_success(
 		array(
 			'removed'    => $removed,
@@ -290,6 +297,10 @@ function dg_ajax_clear_cart(): void {
 	}
 
 	WC()->cart->empty_cart();
+
+	// Same reasoning as `dg_ajax_remove_cart_items`: reset the selection
+	// session key in this request so no stale list survives the clear.
+	dg_clear_session_selection();
 
 	wp_send_json_success(
 		array(

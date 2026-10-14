@@ -98,12 +98,12 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
     <!-- Bottom bar -->
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center text-xs text-on-secondary-container/80">
         <p>&copy; <?php dg_copyright_year(); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'dragon-glow' ); ?></p>
-        <div class="flex gap-6 mt-4 md:mt-0">
-            <span><?php esc_html_e( 'English (USD)', 'dragon-glow' ); ?></span>
-            <span>
+        <div class="dg-footer-meta flex items-center gap-6 mt-4 md:mt-0">
+            <span class="dg-footer-meta__lang"><?php esc_html_e( 'English (USD)', 'dragon-glow' ); ?></span>
+            <span class="dg-footer-meta__payment inline-flex items-center gap-1">
                 <?php esc_html_e( 'Payment:', 'dragon-glow' ); ?>
-                <span class="material-symbols-outlined align-middle ml-1">account_balance_wallet</span>
-                <span class="material-symbols-outlined align-middle ml-1">credit_card</span>
+                <span class="material-symbols-outlined" aria-hidden="true">account_balance_wallet</span>
+                <span class="material-symbols-outlined" aria-hidden="true">credit_card</span>
             </span>
         </div>
     </div>

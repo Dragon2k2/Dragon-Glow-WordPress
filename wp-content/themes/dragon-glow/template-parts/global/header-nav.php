@@ -13,10 +13,16 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 ?>
 <nav class="glass-nav header-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
 <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
-        <!-- Logo -->
+        <!-- Logo: mark + site name. Mark is decorative (alt="") because the link already has an accessible name. -->
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>"
-           class="font-headline text-headline-md font-bold tracking-tight text-primary hover:opacity-80 transition-opacity"
+           class="dg-nav-brand font-headline text-headline-md font-bold tracking-tight text-primary hover:opacity-80 transition-opacity"
            aria-label="<?php bloginfo( 'name' ); ?> - Home">
+            <img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
+                 class="dg-nav-brand__mark"
+                 width="192" height="192"
+                 alt=""
+                 decoding="async"
+                 fetchpriority="high">
             <?php bloginfo( 'name' ); ?>
         </a>
 

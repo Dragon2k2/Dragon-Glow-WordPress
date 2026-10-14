@@ -10,6 +10,26 @@
 (function () {
 	'use strict';
 
+	const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const i18n = window.dgRegister || { maxName: 50, messages: {}, labels: {} };
+	const msg = i18n.messages;
+
+	// Form field key -> input id (mirrors dg_register_fields() in PHP).
+	const FIELD_IDS = {
+		first_name: 'dg-reg-first-name',
+		last_name: 'dg-reg-last-name',
+		email: 'dg-reg-email',
+		password: 'dg-reg-password',
+		terms: 'dg-reg-terms'
+	};
+	const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+	const PASSWORD_RULES = [
+		['lowercase', /[a-z]/],
+		['uppercase', /[A-Z]/],
+		['digit', /[0-9]/],
+		['special', /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/]
+	];
+
 	/**
 	 * Initialize all register page interactions.
 	 */
@@ -68,7 +88,6 @@
 			text.textContent = text.getAttribute('data-text-unsealed') || 'Password Strength: Weak';
 			text.style.color = '';
 			updateRequirements(value);
-			updateSubmitButton(0);
 			return;
 		}
 
@@ -127,9 +146,6 @@
 
 		// Update requirements checklist
 		updateRequirements(value);
-
-		// Update submit button state
-		updateSubmitButton(level);
 	}
 
 	/**
@@ -160,28 +176,6 @@
 				if (icon) icon.textContent = 'radio_button_unchecked';
 			}
 		});
-	}
-
-	/**
-	 * Enable/disable submit button based on password strength.
-	 * Only Good (level 3) or Strong (level 4) are acceptable.
-	 *
-	 * @param {number} level Strength level (0-4).
-	 */
-	function updateSubmitButton(level) {
-		const submitButton = document.querySelector('.dg-register-form__submit');
-		if (!submitButton) return;
-
-		// Minimum acceptable: level 3 (Good)
-		if (level >= 3) {
-			submitButton.removeAttribute('disabled');
-			submitButton.style.opacity = '';
-			submitButton.style.cursor = '';
-		} else {
-			submitButton.setAttribute('disabled', 'disabled');
-			submitButton.style.opacity = '0.5';
-			submitButton.style.cursor = 'not-allowed';
-		}
 	}
 
 	/**
@@ -218,42 +212,43 @@
 		const form = document.querySelector('.dg-register-form');
 		if (!form) return;
 
-		// Client-side validation before submission
+		// Client-side validation before submission: collect every problem,
+		// show them all at once, and only let the POST through when clean.
 		form.addEventListener('submit', function (e) {
-			const passwordInput = document.querySelector('[data-dg-password-strength]');
-			if (!passwordInput) return;
+			const errors = validateForm(form);
+			if (!errors.length) return;
 
-			const password = passwordInput.value;
-
-			// Validate password strength (must be Good or Strong)
-			const len = password.length;
-			const hasLower = /[a-z]/.test(password);
-			const hasUpper = /[A-Z]/.test(password);
-			const hasDigit = /[0-9]/.test(password);
-			const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
-			const hasAllTypes = hasLower && hasUpper && hasDigit && hasSpecial;
-
-			// Minimum: 12+ chars with all required types
-			if (len < 12 || !hasAllTypes) {
-				e.preventDefault();
-
-				// Show error message
-				const errorMsg = document.querySelector('.dg-register-form__password-error');
-				if (errorMsg) {
-					errorMsg.removeAttribute('hidden');
-					errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-					// Auto-hide after 5 seconds
-					setTimeout(function () {
-						errorMsg.setAttribute('hidden', '');
-					}, 5000);
-				}
-
-				// Focus password field
-				passwordInput.focus();
-				return;
-			}
+			e.preventDefault();
+			renderErrors(form, errors);
 		});
+
+		// Clear a field's error as soon as the visitor edits it.
+		form.addEventListener('input', function (e) {
+			const field = fieldKeyOf(e.target);
+			if (field) clearFieldError(form, field);
+		});
+		form.addEventListener('change', function (e) {
+			const field = fieldKeyOf(e.target);
+			if (field) clearFieldError(form, field);
+		});
+
+		// Summary links jump to (and focus) the offending control.
+		form.parentElement.addEventListener('click', function (e) {
+			const link = e.target.closest('[data-dg-error-link]');
+			if (!link) return;
+			const target = document.getElementById(link.getAttribute('href').slice(1));
+			if (!target) return;
+			e.preventDefault();
+			target.focus();
+			target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+		});
+
+		// Server-rendered errors (after a failed POST): focus the summary.
+		const summary = document.getElementById('dg-register-summary');
+		if (summary && !summary.hasAttribute('hidden')) {
+			summary.focus({ preventScroll: true });
+			summary.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+		}
 
 		// Check for success message from WooCommerce
 		const notices = document.querySelectorAll('.woocommerce-message, .woocommerce-info');
@@ -275,6 +270,146 @@
 				}, 3400);
 			}
 		}
+	}
+
+	/**
+	 * Map an input element back to its field key (null when not validated).
+	 *
+	 * @param {EventTarget} el Event target.
+	 * @return {string|null}
+	 */
+	function fieldKeyOf(el) {
+		if (!el || !el.id) return null;
+		return Object.keys(FIELD_IDS).find(function (key) {
+			return FIELD_IDS[key] === el.id;
+		}) || null;
+	}
+
+	/**
+	 * Validate every field and return all problems (mirrors register-validation.php).
+	 *
+	 * @param {HTMLFormElement} form Register form.
+	 * @return {Array<{field:string,message:string}>}
+	 */
+	function validateForm(form) {
+		const errors = [];
+		const add = function (field, message) {
+			errors.push({ field: field, message: message });
+		};
+		const val = function (key) {
+			const el = document.getElementById(FIELD_IDS[key]);
+			return el ? el.value : '';
+		};
+
+		['first_name', 'last_name'].forEach(function (key) {
+			const value = val(key).trim();
+			if (!value) {
+				add(key, msg[key + '_required']);
+			} else if (value.length > i18n.maxName) {
+				add(key, msg.name_too_long);
+			}
+		});
+
+		const email = val('email').trim();
+		if (!email) {
+			add('email', msg.email_required);
+		} else if (!EMAIL_RE.test(email)) {
+			add('email', msg.email_invalid);
+		}
+
+		const password = val('password');
+		if (!password) {
+			add('password', msg.password_required);
+		} else if (password.length < 12) {
+			add('password', msg.password_too_short);
+		} else {
+			const missing = PASSWORD_RULES.filter(function (rule) {
+				return !rule[1].test(password);
+			}).map(function (rule) {
+				return i18n.labels[rule[0]];
+			});
+			if (missing.length) {
+				add('password', msg.password_missing.replace('%s', missing.join(', ')));
+			}
+		}
+
+		const terms = document.getElementById(FIELD_IDS.terms);
+		if (terms && !terms.checked) {
+			add('terms', msg.terms_required);
+		}
+
+		return errors;
+	}
+
+	/**
+	 * Show errors: inline message per field, aria-invalid, and the summary.
+	 *
+	 * @param {HTMLFormElement} form   Register form.
+	 * @param {Array}           errors Output of validateForm().
+	 */
+	function renderErrors(form, errors) {
+		const summary = document.getElementById('dg-register-summary');
+		const list = summary ? summary.querySelector('.dg-register-form__summary-list') : null;
+
+		Object.keys(FIELD_IDS).forEach(function (key) {
+			clearFieldError(form, key, true);
+		});
+		if (list) list.textContent = '';
+
+		const grouped = {};
+		errors.forEach(function (error) {
+			(grouped[error.field] = grouped[error.field] || []).push(error.message);
+
+			if (list) {
+				const li = document.createElement('li');
+				const a = document.createElement('a');
+				a.href = '#' + FIELD_IDS[error.field];
+				a.setAttribute('data-dg-error-link', error.field);
+				a.textContent = error.message;
+				li.appendChild(a);
+				list.appendChild(li);
+			}
+		});
+
+		Object.keys(grouped).forEach(function (key) {
+			const holder = form.querySelector('[data-dg-error-for="' + key + '"]');
+			const input = document.getElementById(FIELD_IDS[key]);
+			if (holder) {
+				holder.querySelector('.dg-register-form__error-text').textContent = grouped[key].join(' ');
+				holder.removeAttribute('hidden');
+			}
+			if (input) input.setAttribute('aria-invalid', 'true');
+		});
+
+		if (summary) summary.removeAttribute('hidden');
+
+		const first = document.getElementById(FIELD_IDS[errors[0].field]);
+		if (first) {
+			first.focus({ preventScroll: true });
+			first.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+		}
+	}
+
+	/**
+	 * Clear one field's error state and prune it from the summary.
+	 *
+	 * @param {HTMLFormElement} form   Register form.
+	 * @param {string}          field  Field key.
+	 * @param {boolean}         quiet  Skip summary pruning (used during a full re-render).
+	 */
+	function clearFieldError(form, field, quiet) {
+		const holder = form.querySelector('[data-dg-error-for="' + field + '"]');
+		const input = document.getElementById(FIELD_IDS[field]);
+		if (holder) holder.setAttribute('hidden', '');
+		if (input) input.removeAttribute('aria-invalid');
+		if (quiet) return;
+
+		const summary = document.getElementById('dg-register-summary');
+		if (!summary || summary.hasAttribute('hidden')) return;
+		summary.querySelectorAll('[data-dg-error-link="' + field + '"]').forEach(function (a) {
+			a.parentElement.remove();
+		});
+		if (!summary.querySelector('li')) summary.setAttribute('hidden', '');
 	}
 
 	/**

@@ -694,7 +694,7 @@ a.dg-thankyou-contact-value:focus-visible {
 }
 
 .dg-bacs-qr__amount-value {
-	font-family: 'Playfair Display', Georgia, serif;
+	font-family: var(--thankyou-bacs-amount-font-family);
 	font-size: 1.5rem;
 	font-weight: 700;
 	color: var(--color-primary);

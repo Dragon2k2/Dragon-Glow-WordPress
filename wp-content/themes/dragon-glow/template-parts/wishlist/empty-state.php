@@ -26,11 +26,12 @@ $shop_url = dg_is_woocommerce_active()
 		</div>
 
 		<h2 class="dg-wishlist-empty__title">
-			<?php esc_html_e( 'Your wishlist is waiting', 'dragon-glow' ); ?>
+			<?php esc_html_e( 'Your Wishlist Is Waiting', 'dragon-glow' ); ?>
 		</h2>
 
 		<p class="dg-wishlist-empty__text">
-			<?php esc_html_e( 'Save the rituals you love so they are always a tap away. We will quietly notify you when they go on sale.', 'dragon-glow' ); ?>
+			<?php esc_html_e( 'Save the favourites you love and keep them within reach on every device.', 'dragon-glow' ); ?>
+			<?php esc_html_e( "We'll let you know the moment a saved item drops in price — no spam, just the deals you actually want.", 'dragon-glow' ); ?>
 		</p>
 
 		<ul class="dg-wishlist-empty__bullets">

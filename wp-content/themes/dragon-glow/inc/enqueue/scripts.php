@@ -153,6 +153,7 @@ function dg_enqueue_scripts_assets(): void {
                         // to show feedback for "Checkout with selected" / "Clear selection".
                         'processing'         => __( 'Processing…', 'dragon-glow' ),
                         'selectedHintN'      => _n( '%d item selected for checkout', '%d items selected for checkout', 0, 'dragon-glow' ),
+                        'selectedHintNone'   => __( 'Please select one or more products to proceed to checkout.', 'dragon-glow' ),
                     ),
                 )
             );
@@ -272,6 +273,18 @@ function dg_enqueue_scripts_assets(): void {
 					array( 'dg-main' ),
 					DG_VERSION,
 					true
+				);
+
+				// Same texts the server uses (register-validation.php), so
+				// client-side and server-side messages never drift apart.
+				wp_localize_script(
+					'dg-account-register',
+					'dgRegister',
+					array(
+						'maxName'  => dg_register_name_max_length(),
+						'messages' => dg_register_messages(),
+						'labels'   => wp_list_pluck( dg_register_password_rules(), 'label' ),
+					)
 				);
 			}
 

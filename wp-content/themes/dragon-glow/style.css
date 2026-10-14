@@ -76,6 +76,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     /* ----- Functional Colors ----- */
     --error-500: #ba1a1a;        /* Error state */
+    --error-700: #93000a;        /* Error state — deep (gradient end, pressed) */
+    --error-rgb: 186, 26, 26;    /* RGB of error-500 for alpha channels */
     --success-500: #3b7a38;      /* Success state */
     --warning-500: #ffc107;      /* Warning state (e.g., checkout icon) */
     
@@ -133,6 +135,9 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --color-on-error: var(--neutral-0);
     --color-success: var(--success-500);
     --color-warning: var(--warning-500);
+    
+    /* ----- Typography: monetary amounts ----- */
+    --font-price: 'Bodoni Moda', Georgia, serif;  /* Every price / amount / total shown to the shopper */
     
     /* ----- Secondary Brand ----- */
     --color-secondary: var(--secondary-700);
@@ -278,6 +283,13 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-sanctuary-badge-text: var(--gold-800);
     --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
     --auth-brand-title-text: var(--gold-600);
+
+    /* Brand logo mark — centered above the brand title (login.php) */
+    --auth-portal-padding-top: clamp(1.25rem, 3vw, 2rem);         /* Space above the brand header (was 1.5rem-3rem) */
+    --auth-brand-logo-size: 7rem;                                 /* Mark on desktop: 112px at 16px root, 98px at 14px root */
+    --auth-brand-logo-size-mobile: 6rem;                          /* Mark below 640px: 64px at 16px root, 56px at 14px root */
+    --auth-brand-logo-gap: 0.75rem;                               /* Space between mark and eyebrow */
+    --auth-brand-logo-shine: #fff6da;                             /* Hover sweep highlight (matches brand title shimmer) */
     
     /* ========== Register Page Component ========== */
     /* Luminous Radiance scheme — brighter, more inviting than auth portal */
@@ -331,6 +343,14 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-strength-fair: #F57C00;      /* Material Orange 700 — 8-11 chars */
     --register-strength-good: #1976D2;      /* Material Blue 700 — 12-15 chars */
     --register-strength-strong: #388E3C;    /* Material Green 700 — 16+ chars */
+
+    /* Validation errors (summary + inline messages) — built on the error primitives */
+    --register-error-text: var(--error-700);                    /* Message text */
+    --register-error-icon: var(--error-500);                    /* Leading icon */
+    --register-error-bg: rgba(var(--error-rgb), 0.08);          /* Summary / inline tint */
+    --register-error-border: rgba(var(--error-rgb), 0.35);     /* Summary border */
+    --register-error-input-border: var(--error-500);            /* Invalid control border */
+    --register-error-input-shadow: 0 0 0 3px rgba(var(--error-rgb), 0.15); /* Invalid control focus ring */
     
     --register-card-bg: rgba(250, 242, 235, 0.7);
     --register-card-border: rgba(212, 175, 55, 0.25);
@@ -504,6 +524,30 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --account-subscription-bg-hover: rgba(115, 92, 0, 0.08);
     --account-subscription-shadow: 0 6px 16px rgba(115, 92, 0, 0.22);
     --account-subscription-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.30);
+
+    /* ========== Account Sign-out Confirm (danger variant of confirm dialog) ========== */
+    --signout-icon-bg: linear-gradient(135deg, rgba(var(--error-rgb), 0.10), rgba(var(--error-rgb), 0.20)); /* Icon badge tint */
+    --signout-icon-color: var(--color-error);
+    --signout-eyebrow-color: var(--color-error);
+    --signout-btn-bg: linear-gradient(135deg, var(--error-500), var(--error-700)); /* Primary (destructive) action */
+    --signout-btn-shadow: 0 6px 16px rgba(var(--error-rgb), 0.24);
+    --signout-btn-shadow-hover: 0 10px 22px rgba(var(--error-rgb), 0.34);
+    --signout-focus-ring: var(--color-error);
+    --signout-nav-bg-hover: rgba(var(--error-rgb), 0.08);  /* Sidebar logout link hover */
+    --signout-user-bg: rgba(var(--gold-dark-rgb), 0.06);   /* "Signed in as" chip */
+    --signout-user-border: rgba(var(--gold-dark-rgb), 0.14);
+    --signout-overlay-bg: rgba(27, 28, 26, 0.48);
+    --signout-enter-duration: 0.32s;
+    --signout-exit-duration: 0.2s;
+    --signout-ease: cubic-bezier(0.22, 1, 0.36, 1);        /* Soft ease-out, no bounce */
+    --signout-dialog-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 230, 0.90)); /* Glass dialog surface */
+    --signout-dialog-border: rgba(var(--gold-dark-rgb), 0.16);
+    --signout-dialog-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 28px 56px rgba(27, 28, 26, 0.20);
+    --signout-btn-ghost-bg: rgba(255, 255, 255, 0.70);      /* "Stay signed in" button */
+    --signout-btn-ghost-border: rgba(var(--gold-dark-rgb), 0.22);
+    --signout-btn-ghost-bg-hover: rgba(var(--gold-dark-rgb), 0.08);
+    --signout-stagger-base: 80ms;                           /* Delay before first content item */
+    --signout-stagger-step: 50ms;                           /* Delay between content items */
     
     --account-rewards-bg: rgba(115, 92, 0, 0.04);
     --account-rewards-border: rgba(115, 92, 0, 0.25);
@@ -573,6 +617,17 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --wl-empty-border: rgba(115, 92, 0, 0.25);
     --wl-empty-shadow: 0 12px 36px rgba(123, 84, 85, 0.16);
+    
+    /* Wishlist no-result state (filter returns zero items) */
+    --wl-noresult-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)); /* frosted glass fill */
+    --wl-noresult-border: rgba(115, 92, 0, 0.25);                /* dashed outline, same as empty state */
+    --wl-noresult-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);    /* soft rose lift */
+    --wl-noresult-icon-size: 72px;                               /* icon badge diameter */
+    --wl-noresult-icon-glyph-size: 32px;                         /* material symbol size */
+    --wl-noresult-icon-bg: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(212, 175, 55, 0.18));
+    --wl-noresult-icon-ring: rgba(212, 175, 55, 0.35);           /* badge outline */
+    --wl-noresult-icon-shadow: 0 8px 24px rgba(115, 92, 0, 0.14);
+    --wl-noresult-text-size: 15px;                               /* message font size */
     
     --wl-toast-shadow: 0 18px 48px rgba(123, 84, 85, 0.22);
     
@@ -647,9 +702,46 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --cart-coupon-border: rgba(115, 92, 0, 0.30);
     --cart-coupon-bg-hover: rgba(115, 92, 0, 0.08);
+
+    /* Promo code input — glass field with gold focus ring */
+    --promo-input-bg: rgba(var(--gold-dark-rgb), 0.04);          /* Resting: faint gold tint */
+    --promo-input-bg-hover: rgba(var(--gold-dark-rgb), 0.07);    /* Hover: slightly deeper tint */
+    --promo-input-bg-focus: var(--neutral-0);                    /* Focus / filled: clean white */
+    --promo-input-border: var(--cart-coupon-border);             /* Resting border */
+    --promo-input-border-hover: var(--cart-input-border);        /* Hover border */
+    --promo-input-border-focus: var(--gold-dark);                /* Focus border */
+    --promo-input-focus-ring: 0 0 0 4px var(--cart-input-focus-ring);
+    --promo-input-text: var(--color-on-surface);
+    --promo-input-placeholder: var(--color-outline);
+    --promo-input-radius: 12px;
+    --promo-input-min-height: 44px;                              /* Touch-target minimum */
+    --promo-input-padding: 0 16px;
+    --promo-input-font-size: 14px;
+    --promo-input-font-weight: 600;
+    --promo-input-letter-spacing: 0.12em;                        /* Coupon codes read better tracked-out */
+    --promo-input-transition: 0.2s ease;
     
     --cart-remove-border: rgba(115, 92, 0, 0.30);
     --cart-remove-bg-hover: rgba(115, 92, 0, 0.08);
+
+    /* Gap between the selection hint pill and the checkout CTA below it */
+    --cart-checkout-group-gap: 10px;
+
+    /* Shared pill metrics for the selection hint + "Clear selection" button,
+       so both rows render with identical height, padding and type scale */
+    --cart-cta-pill-padding: 10px 16px;
+    --cart-cta-pill-gap: 6px;
+    --cart-cta-pill-border-width: 1.5px;
+    --cart-cta-pill-font-size: 12px;
+    --cart-cta-pill-line-height: 1.4;
+    --cart-cta-pill-letter-spacing: 0.06em;
+    --cart-cta-pill-icon-size: 16px;
+
+    /* Selection hint pill — idle state (nothing ticked): compact prompt row */
+    --cart-hint-idle-padding: 6px 12px;
+    --cart-hint-idle-gap: 8px;
+    --cart-hint-idle-border-width: 1px;
+    --cart-hint-idle-font-size: 11px;
     
     /* ========== Checkout Component ========== */
     /* Checkout page — forms, payment methods, order review */
@@ -692,15 +784,29 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --order-modal-progress-bg: rgba(201, 162, 75, 0.3);
     --order-modal-progress-fill: rgba(201, 162, 75, 0.5);
     
+    --order-modal-number-font-family: 'Plus Jakarta Sans', sans-serif; /* Order # heading in modal */
+    
     /* ========== Main Navigation & Header ========== */
     /* Global header, navigation, announcement bar */
     --main-header-shadow: 0 4px 30px rgba(123, 84, 85, 0.05);
     --main-header-shadow-scroll: 0 20px 40px -15px rgba(123, 84, 85, 0.10);
+
+    /* Brand lockup — logo mark beside the site name */
+    --main-brand-gap: 0.625rem;                                   /* Space between mark and site name */
+    --main-brand-mark-size: 4rem;                                 /* 64px mark on desktop */
+    --main-brand-mark-size-mobile: 3rem;                          /* 48px mark below 640px */
+    --main-brand-mark-radius: 0.625rem;                           /* Focus ring corner radius */
+    --main-brand-mark-transition: transform 0.3s ease;
+    --main-brand-mark-scale-hover: 1.06;
     
     --main-nav-divider: var(--gold-dark);
     --main-nav-link-text: var(--gold-dark);
     --main-nav-link-border: var(--gold-dark);
     --main-nav-link-bg-hover: var(--gold-dark);
+
+    /* Primary menu — active item (WP .current-menu-item / .current_page_item) */
+    --main-nav-link-text-active: var(--main-nav-link-text);       /* Gold text */
+    --main-nav-link-border-active: var(--main-nav-link-border);   /* Gold underline */
     
     --main-btn-outline-border: var(--gold-dark);
     --main-btn-outline-text: var(--gold-dark);
@@ -753,6 +859,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --thankyou-payment-primary: var(--gold-dark);
     --thankyou-payment-accent: #d4af37;
     
+    --thankyou-bacs-amount-font-family: var(--font-price); /* BACS QR amount value */
+    
     /* ========== Responsive Component ========== */
     /* Mobile-specific adjustments */
     --responsive-modal-shadow: 0 4px 20px rgba(123, 84, 85, 0.1);
@@ -761,6 +869,62 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Careers page — job listings, application form */
     /* (Placeholder — careers.css có 45 hard-coded values cần tokenize) */
     
+    /* ========== Contact Form Component ========== */
+    /* Glassmorphism card + floating-label fields (contact page) */
+    --contact-panel-glow-gold: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.35), transparent);
+    --contact-panel-glow-rose: radial-gradient(closest-side, rgba(244, 194, 194, 0.55), transparent);
+
+    --contact-card-bg: rgba(255, 255, 255, 0.55);
+    --contact-card-bg-solid: var(--neutral-0);              /* Fallback when backdrop-filter is unsupported */
+    --contact-card-border: rgba(255, 255, 255, 0.7);
+    --contact-card-radius: 1.5rem;
+    --contact-card-shadow: 0 20px 50px rgba(var(--gold-dark-rgb), 0.12);
+    --contact-card-blur: blur(18px);
+
+    --contact-field-bg: rgba(255, 255, 255, 0.45);
+    --contact-field-bg-focus: rgba(255, 255, 255, 0.85);
+    --contact-field-border: rgba(var(--gold-rgb), 0.3);
+    --contact-field-border-focus: var(--gold-dark);
+    --contact-field-border-error: var(--color-error);
+    --contact-field-radius: 0.75rem;
+    --contact-field-ring: 0 0 0 4px rgba(var(--gold-rgb), 0.18);
+    --contact-field-text: var(--color-on-surface);
+
+    --contact-label-color: var(--color-on-surface-variant);
+    --contact-label-color-float: var(--gold-dark);
+
+    /* Gradient starts at gold-700 so white label text keeps AA contrast */
+    --contact-btn-bg: linear-gradient(135deg, var(--gold-700), var(--gold-dark));
+    --contact-btn-text: var(--color-on-primary);
+    --contact-btn-radius: 0.75rem;
+    --contact-btn-shadow: 0 8px 20px rgba(var(--gold-dark-rgb), 0.25);
+    --contact-btn-shadow-hover: 0 12px 28px rgba(var(--gold-dark-rgb), 0.35);
+
+    --contact-btn-bg-success: var(--color-success);
+    --contact-msg-success: var(--color-success);
+    --contact-msg-error: var(--color-error);
+    --contact-count-warn: var(--color-error);
+
+    /* Inquiry-type dropdown (select popup) — glass panel + option states */
+    --contact-menu-bg: rgba(255, 255, 255, 0.72);
+    --contact-menu-bg-solid: var(--neutral-0);              /* Fallback for native popup (no backdrop-filter) */
+    --contact-menu-border: rgba(var(--gold-rgb), 0.28);
+    --contact-menu-blur: blur(20px) saturate(160%);
+    --contact-menu-radius: 1rem;
+    --contact-menu-padding: 0.5rem;
+    --contact-menu-offset: 0.5rem;                          /* Gap between control and popup */
+    --contact-menu-shadow: 0 24px 48px rgba(var(--gold-dark-rgb), 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    --contact-menu-duration: 0.2s;
+
+    --contact-option-radius: 0.625rem;
+    --contact-option-padding: 0.75rem 1rem;
+    --contact-option-text: var(--color-on-surface);
+    --contact-option-text-muted: var(--color-on-surface-variant);
+    --contact-option-bg-hover: rgba(var(--gold-rgb), 0.12);
+    --contact-option-bg-selected: rgba(var(--gold-rgb), 0.2);
+    --contact-option-text-selected: var(--gold-dark);
+    --contact-option-check: var(--gold-dark);
+
     /* ========== Other Components ========== */
     /* Contact, FAQ, Legal pages, etc. */
     /* (Placeholder — 15 files còn lại có ~200 hard-coded values cần tokenize) */

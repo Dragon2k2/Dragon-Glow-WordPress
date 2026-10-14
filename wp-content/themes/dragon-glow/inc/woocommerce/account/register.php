@@ -26,6 +26,11 @@ function dg_render_account_register_page(): void {
 	// hidden field so it survives the POST round-trip (incl. re-renders
 	// after a validation error).
 	$redirect_to = dg_account_safe_redirect_target();
+
+	// Every validation error of the last submit, tagged by field (see
+	// register-validation.php). Drives the summary + inline messages below.
+	$register_errors  = dg_register_get_errors();
+	$register_grouped = dg_register_group_errors( $register_errors );
 	?>
 	<!-- Viewport outer double-gold pinstripe frame -->
 	<div class="dg-account-auth__viewport-frame dg-account-auth__viewport-frame--outer" aria-hidden="true"></div>
@@ -42,6 +47,15 @@ function dg_render_account_register_page(): void {
 
 			<!-- Symmetrical Classical Crest Header -->
 			<header class="dg-account-auth__crest-header">
+				<?php // Decorative brand mark (not a link); the <h1> below carries the accessible brand name. ?>
+				<div class="dg-account-auth__brand-logo">
+					<img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
+						 class="dg-account-auth__brand-logo-img"
+						 width="192" height="192"
+						 alt=""
+						 decoding="async"
+						 fetchpriority="high">
+				</div>
 				<div class="dg-account-auth__crest-ornaments">
 					<span class="dg-account-auth__crest-line" aria-hidden="true"></span>
 					<div class="dg-account-auth__crest-badge">
@@ -198,12 +212,33 @@ function dg_render_account_register_page(): void {
 						</p>
 							</div>
 
-							<?php wc_print_notices(); ?>
+							<?php wc_print_notices(); // Success / info notices only; errors are rendered below. ?>
+
+							<!-- Error summary: server-rendered after a failed submit, filled by JS on client-side validation -->
+							<div class="dg-register-form__summary" id="dg-register-summary" role="alert" tabindex="-1"<?php echo empty( $register_errors ) ? ' hidden' : ''; ?>>
+								<span class="material-symbols-outlined" aria-hidden="true">error</span>
+								<div class="dg-register-form__summary-body">
+									<p class="dg-register-form__summary-title"><?php echo esc_html( dg_register_messages()['summary_title'] ); ?></p>
+									<ul class="dg-register-form__summary-list">
+										<?php foreach ( $register_errors as $register_error ) : ?>
+											<li>
+												<?php if ( isset( dg_register_fields()[ $register_error['field'] ] ) ) : ?>
+													<a href="#<?php echo esc_attr( dg_register_fields()[ $register_error['field'] ] ); ?>" data-dg-error-link="<?php echo esc_attr( $register_error['field'] ); ?>"><?php echo esc_html( $register_error['message'] ); ?></a>
+												<?php else : ?>
+													<?php echo esc_html( $register_error['message'] ); ?>
+												<?php endif; ?>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</div>
+							</div>
 
 							<!-- Registration form -->
 							<form method="post" class="dg-register-form" action="<?php echo esc_url( dg_account_endpoint_url( 'register' ) ); ?>" novalidate>
 
 								<?php do_action( 'woocommerce_register_form_start' ); ?>
+
+								<input type="hidden" name="dg_register_context" value="page" />
 
 								<!-- Row: First & Last Name -->
 								<div class="dg-register-form__row">
@@ -219,10 +254,14 @@ function dg_render_account_register_page(): void {
 												name="billing_first_name"
 												id="dg-reg-first-name"
 												placeholder="<?php esc_attr_e( 'Seraphina', 'dragon-glow' ); ?>"
+												autocomplete="given-name"
+												maxlength="<?php echo esc_attr( (string) dg_register_name_max_length() ); ?>"
 												required
+												<?php echo dg_register_field_attrs( 'first_name', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 												value="<?php echo isset( $_POST['billing_first_name'] ) ? esc_attr( wp_unslash( $_POST['billing_first_name'] ) ) : ''; // phpcs:ignore ?>" />
 											<span class="material-symbols-outlined dg-register-form__icon">person</span>
 										</div>
+										<?php dg_register_render_field_error( 'first_name', $register_grouped ); ?>
 									</div>
 
 									<div class="dg-register-form__field">
@@ -237,10 +276,14 @@ function dg_render_account_register_page(): void {
 												name="billing_last_name"
 												id="dg-reg-last-name"
 												placeholder="<?php esc_attr_e( 'Vanderbilt', 'dragon-glow' ); ?>"
+												autocomplete="family-name"
+												maxlength="<?php echo esc_attr( (string) dg_register_name_max_length() ); ?>"
 												required
+												<?php echo dg_register_field_attrs( 'last_name', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 												value="<?php echo isset( $_POST['billing_last_name'] ) ? esc_attr( wp_unslash( $_POST['billing_last_name'] ) ) : ''; // phpcs:ignore ?>" />
 											<span class="material-symbols-outlined dg-register-form__icon">shield_person</span>
 										</div>
+										<?php dg_register_render_field_error( 'last_name', $register_grouped ); ?>
 									</div>
 								</div>
 
@@ -259,9 +302,11 @@ function dg_render_account_register_page(): void {
 											autocomplete="email"
 											placeholder="<?php esc_attr_e( 'patron@maison-dragonglow.com', 'dragon-glow' ); ?>"
 											required
+											<?php echo dg_register_field_attrs( 'email', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 											value="<?php echo isset( $_POST['email'] ) ? esc_attr( wp_unslash( $_POST['email'] ) ) : ''; // phpcs:ignore ?>" />
 										<span class="material-symbols-outlined dg-register-form__icon">alternate_email</span>
 									</div>
+									<?php dg_register_render_field_error( 'email', $register_grouped ); ?>
 								</div>
 
 								<!-- Password cipher & strength indicator -->
@@ -279,6 +324,7 @@ function dg_render_account_register_page(): void {
 											autocomplete="new-password"
 											placeholder="<?php esc_attr_e( 'Minimum 12 characters with mixed types', 'dragon-glow' ); ?>"
 											required
+											<?php echo dg_register_field_attrs( 'password', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 											data-dg-password-strength />
 										<button
 											type="button"
@@ -326,11 +372,7 @@ function dg_render_account_register_page(): void {
 										</div>
 									</div>
 
-									<!-- Error message (shown on invalid submission) -->
-									<div class="dg-register-form__password-error" hidden>
-										<span class="material-symbols-outlined">error</span>
-										<span><?php esc_html_e( 'Password must be at least Good strength (12+ characters with lowercase, uppercase, number, and special character).', 'dragon-glow' ); ?></span>
-									</div>
+									<?php dg_register_render_field_error( 'password', $register_grouped ); ?>
 									</div>
 
 								<!-- Checkboxes -->
@@ -343,7 +385,7 @@ function dg_render_account_register_page(): void {
 								</label>
 
 								<label class="dg-register-form__checkbox">
-									<input type="checkbox" name="terms" value="1" required />
+									<input type="checkbox" name="terms" value="1" id="dg-reg-terms" required<?php echo dg_register_field_attrs( 'terms', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?> <?php checked( ! empty( $_POST['terms'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing ?> />
 									<span class="dg-register-form__checkbox-text">
 										<?php
 										/* translators: 1: Terms of Service link, 2: Privacy Policy link */
@@ -356,6 +398,7 @@ function dg_render_account_register_page(): void {
 										<span class="dg-register-form__required">*</span>
 									</span>
 								</label>
+								<?php dg_register_render_field_error( 'terms', $register_grouped ); ?>
 								</div>
 
 								<?php

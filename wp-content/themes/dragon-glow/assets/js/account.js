@@ -13,6 +13,7 @@
  *  - Loading states with skeleton screens.
  *  - Address form save UX (disable + spinner; POST handled by WooCommerce).
  *  - "Use billing instead" branded confirm modal + busy state (POST clears shipping).
+ *  - Sign-out confirmation dialog (focus trap, Esc, Motion stagger, busy state).
  *
  * @package Dragon_Glow
  */
@@ -693,6 +694,166 @@
 		});
 	}
 
+	/**
+	 * Sign-out confirmation dialog.
+	 *
+	 * Intercepts clicks on `[data-dg-signout]` (sidebar logout link) and shows
+	 * #dg-signout. On confirm we follow the link's own href, which already
+	 * carries the wp_logout_url() nonce. Without JS the link still works.
+	 *
+	 * Motion (CDN) is optional: it staggers the dialog content in. Overlay and
+	 * dialog transitions are plain CSS (`.is-open`), so the dialog works even
+	 * if the CDN is unreachable or reduced motion is on.
+	 */
+	function initSignOutConfirm() {
+		const modal = document.getElementById('dg-signout');
+		const triggers = document.querySelectorAll('[data-dg-signout]');
+		if (!modal || triggers.length === 0) return;
+		if (modal.dataset.dgSignoutBound === '1') return;
+		modal.dataset.dgSignoutBound = '1';
+
+		const dialog = modal.querySelector('.dg-signout__dialog');
+		const overlay = modal.querySelector('[data-dg-signout-dismiss]');
+		const cancelBtn = modal.querySelector('[data-dg-signout-cancel]');
+		const confirmBtn = modal.querySelector('[data-dg-signout-confirm]');
+		const items = modal.querySelectorAll('.dg-signout__item');
+		if (!dialog || !cancelBtn || !confirmBtn) return;
+
+		const EXIT_MS = 200;
+		let activeTrigger = null;
+		let closeTimer = null;
+		let isBusy = false;
+		let motion = null;
+
+		// Warm up Motion in the background so the first open is already smooth.
+		if (!prefersReduced) {
+			import('https://cdn.jsdelivr.net/npm/motion@11/+esm')
+				.then(function (mod) { motion = mod; })
+				.catch(function () { motion = null; });
+		}
+
+		function playItemsIn() {
+			if (prefersReduced || !motion) return;
+			motion.animate(
+				items,
+				{ opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] },
+				{
+					duration: 0.45,
+					ease: [0.22, 1, 0.36, 1],
+					delay: motion.stagger(0.05, { startDelay: 0.08 })
+				}
+			);
+		}
+
+		function open(trigger) {
+			if (!modal.hidden) return;
+			window.clearTimeout(closeTimer);
+			activeTrigger = trigger;
+
+			modal.hidden = false;
+			document.documentElement.classList.add('dg-signout-open');
+			// Force reflow so the CSS transition runs from the closed state.
+			void dialog.offsetWidth;
+			modal.classList.add('is-open');
+			playItemsIn();
+
+			// Default focus on the safe action.
+			cancelBtn.focus();
+		}
+
+		function close() {
+			if (modal.hidden || isBusy) return;
+			modal.classList.remove('is-open');
+			document.documentElement.classList.remove('dg-signout-open');
+
+			closeTimer = window.setTimeout(function () {
+				modal.hidden = true;
+				items.forEach(function (el) { el.style.opacity = ''; el.style.transform = ''; });
+				if (activeTrigger && typeof activeTrigger.focus === 'function') {
+					activeTrigger.focus();
+				}
+				activeTrigger = null;
+			}, prefersReduced ? 0 : EXIT_MS);
+		}
+
+		function setBusy() {
+			isBusy = true;
+			confirmBtn.classList.add('is-busy');
+			confirmBtn.setAttribute('aria-busy', 'true');
+			cancelBtn.disabled = true;
+
+			const icon = confirmBtn.querySelector('.dg-signout__btn-icon');
+			const label = confirmBtn.querySelector('.dg-signout__btn-label');
+			if (icon) icon.textContent = 'progress_activity';
+			if (label) label.textContent = modal.getAttribute('data-busy-label') || 'Signing out…';
+		}
+
+		function resetBusy() {
+			isBusy = false;
+			confirmBtn.classList.remove('is-busy');
+			confirmBtn.removeAttribute('aria-busy');
+			cancelBtn.disabled = false;
+		}
+
+		triggers.forEach(function (trigger) {
+			trigger.addEventListener('click', function (event) {
+				// Let Ctrl/Cmd/middle-click through (opens logout URL in a new tab).
+				if (event.ctrlKey || event.metaKey || event.shiftKey || event.button === 1) return;
+				event.preventDefault();
+				open(trigger);
+			});
+		});
+
+		confirmBtn.addEventListener('click', function () {
+			if (isBusy || !activeTrigger) return;
+			const href = activeTrigger.getAttribute('href');
+			if (!href) return;
+			setBusy();
+			announceToScreenReader(modal.getAttribute('data-busy-label') || 'Signing out…');
+			window.location.href = href;
+		});
+
+		cancelBtn.addEventListener('click', close);
+		if (overlay) overlay.addEventListener('click', close);
+
+		// Escape closes; Tab is trapped between the two buttons.
+		document.addEventListener('keydown', function (event) {
+			if (modal.hidden) return;
+
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				close();
+				return;
+			}
+
+			if (event.key === 'Tab') {
+				const focusables = [cancelBtn, confirmBtn].filter(function (el) { return !el.disabled; });
+				if (focusables.length === 0) {
+					event.preventDefault();
+					return;
+				}
+				const first = focusables[0];
+				const last = focusables[focusables.length - 1];
+				if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+					event.preventDefault();
+					last.focus();
+				} else if (!event.shiftKey && document.activeElement === last) {
+					event.preventDefault();
+					first.focus();
+				}
+			}
+		});
+
+		// Back/forward cache: returning to this page must not show a stuck spinner.
+		window.addEventListener('pageshow', function (event) {
+			if (!event.persisted) return;
+			resetBusy();
+			modal.classList.remove('is-open');
+			modal.hidden = true;
+			document.documentElement.classList.remove('dg-signout-open');
+		});
+	}
+
 	function init() {
 		initNavToggle();
 		initPasswordToggle();
@@ -701,6 +862,7 @@
 		initAjaxNavigation();
 		initAddressFormSave();
 		initUseBillingInstead();
+		initSignOutConfirm();
 	}
 
 	if (document.readyState === 'loading') {

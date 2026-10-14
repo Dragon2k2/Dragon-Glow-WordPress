@@ -13,6 +13,8 @@
  *                                swap, document title filter, body class.
  *   - register-endpoint.php      Registers the `register` WC rewrite endpoint +
  *                                admin flush-permalinks notice.
+ *   - register-validation.php    Server-side validation of every register-form
+ *                                field; collects all errors in one pass.
  *   - register-handler.php       Processes the registration form submission.
  *   - dashboard.php              Hero, sidebar nav, dashboard panel, master
  *                                `dg_render_wc_account()` dispatcher, confirm modal.
@@ -50,6 +52,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/routing.php';
 require_once __DIR__ . '/register-endpoint.php';
+require_once __DIR__ . '/register-validation.php';
 require_once __DIR__ . '/register-handler.php';
 require_once __DIR__ . '/account-details-endpoint.php';
 require_once __DIR__ . '/address-details-endpoint.php';

@@ -1574,26 +1574,16 @@
 	content: "";
 	position: absolute;
 	inset: 0;
-<<<<<<< HEAD
-	background: var(--address-card-glow-tl), var(--address-card-glow-br);
-=======
 	background:
 		radial-gradient(420px 220px at 0% 0%, var(--wl-chip-bg), transparent 60%),
 		radial-gradient(380px 200px at 100% 100%, var(--account-bg-gradient-br), transparent 60%);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 	pointer-events: none;
 }
 
 .dg-account-address:hover {
-<<<<<<< HEAD
-	transform: translateY(-3px);
-	box-shadow: var(--address-card-shadow-hover);
-	border-color: var(--address-card-border-hover);
-=======
 	transform: translateY(-2px);
 	box-shadow: var(--account-downloads-shadow);
 	border-color: var(--wl-hero-border);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 /* --- Card head (icon + title + default badge) --- */
@@ -1615,22 +1605,10 @@
 	width: var(--address-card-icon-size);
 	height: var(--address-card-icon-size);
 	flex-shrink: 0;
-<<<<<<< HEAD
-	border-radius: var(--address-card-icon-radius);
-	background: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
-	color: var(--color-primary);
-	box-shadow: var(--address-card-icon-ring);
-	transition: transform 0.3s ease;
-}
-
-.dg-account-address:hover .dg-account-address__icon {
-	transform: scale(1.04);
-=======
 	border-radius: 16px;
 	background: var(--account-downloads-badge-bg);
 	color: var(--color-primary);
 	box-shadow: inset 0 0 0 1px var(--account-address-divider);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__icon .material-symbols-outlined {
@@ -1639,13 +1617,8 @@
 
 /* Address type accent — billing = warm gold, shipping = cool rose */
 .dg-account-address[data-address-type="billing"] .dg-account-address__icon {
-<<<<<<< HEAD
-	background: var(--address-card-icon-bg-billing);
-	color: var(--address-card-icon-color-billing);
-=======
 	background: var(--account-downloads-badge-bg-hover);
 	color: var(--gold-dark);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address[data-address-type="shipping"] .dg-account-address__icon {
@@ -1701,14 +1674,11 @@
 	flex-direction: column;
 	gap: 8px;
 	margin: 0;
-<<<<<<< HEAD
-=======
 	padding: 14px 16px;
 	background: rgba(255, 255, 255, 0.45);
 	border: 1px solid var(--account-subscription-bg-hover);
 	border-radius: 14px;
 	word-break: break-word;
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__meta-row {
@@ -1853,13 +1823,8 @@
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	gap: 10px;
-<<<<<<< HEAD
-	padding-top: 18px;
-	border-top: 1px solid rgba(var(--gold-rgb), 0.16);
-=======
 	padding-top: 16px;
 	border-top: 1px solid var(--account-address-divider);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action {
@@ -1873,13 +1838,8 @@
 	font-weight: 600;
 	letter-spacing: 0.02em;
 	color: var(--color-primary);
-<<<<<<< HEAD
-	background: var(--address-card-action-bg);
-	border: 1px solid var(--address-card-action-border);
-=======
 	background: rgba(255, 255, 255, 0.55);
 	border: 1px solid var(--wl-hero-border);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 	border-radius: 999px;
 	text-decoration: none;
 	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -1890,38 +1850,23 @@
 }
 
 .dg-account-address__action:hover {
-<<<<<<< HEAD
-	background: var(--address-card-action-bg-hover);
-	border-color: var(--color-primary);
-	transform: translateY(-1px);
-	box-shadow: 0 6px 14px rgba(var(--gold-dark-rgb), 0.10);
-=======
 	background: var(--account-subscription-bg-hover);
 	border-color: var(--color-primary);
 	transform: translateY(-1px);
 	box-shadow: var(--account-address-btn-shadow);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action--primary {
 	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
 	border-color: transparent;
-<<<<<<< HEAD
-	box-shadow: var(--address-card-action-primary-shadow);
-=======
 	box-shadow: var(--account-address-btn-shadow-focus);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 .dg-account-address__action--primary:hover {
 	background: var(--address-card-action-primary-bg);
 	color: var(--color-on-primary);
-<<<<<<< HEAD
-	box-shadow: var(--address-card-action-primary-shadow-hover);
-=======
 	box-shadow: var(--account-btn-primary-shadow-hover);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 }
 
 /* "Use billing instead" — inline POST form (keeps action-bar layout) */
@@ -2130,8 +2075,316 @@ html.dg-account-confirm-open {
 	}
 }
 
-<<<<<<< HEAD
-=======
+/* =========================================
+   18e. SIGN-OUT CONFIRM DIALOG
+   Danger variant of the confirm dialog. State classes:
+   `.is-open` (visible) — toggled by account.js after `hidden` is removed.
+   Content items (`.dg-signout__item`) are staggered in by Motion.
+   ========================================= */
+
+html.dg-signout-open {
+	overflow: hidden;
+}
+
+.dg-signout[hidden] {
+	display: none !important;
+}
+
+.dg-signout {
+	position: fixed;
+	inset: 0;
+	z-index: 10001;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.dg-signout__overlay {
+	position: absolute;
+	inset: 0;
+	background: var(--signout-overlay-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	opacity: 0;
+	transition: opacity var(--signout-exit-duration) var(--signout-ease);
+	cursor: pointer;
+}
+
+.dg-signout.is-open .dg-signout__overlay {
+	opacity: 1;
+	transition-duration: var(--signout-enter-duration);
+}
+
+.dg-signout__dialog {
+	position: relative;
+	z-index: 1;
+	width: min(440px, 100%);
+	padding: 32px 26px 26px;
+	text-align: center;
+	background: var(--signout-dialog-bg);
+	border: 1px solid var(--signout-dialog-border);
+	border-radius: 24px;
+	box-shadow: var(--signout-dialog-shadow);
+	outline: none;
+	opacity: 0;
+	transform: translateY(16px) scale(0.96);
+	transition:
+		opacity var(--signout-exit-duration) var(--signout-ease),
+		transform var(--signout-exit-duration) var(--signout-ease);
+}
+
+.dg-signout.is-open .dg-signout__dialog {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	transition-duration: var(--signout-enter-duration);
+}
+
+/* Icon badge with soft pulse ring */
+.dg-signout__icon {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	margin: 0 auto 16px;
+	border-radius: 20px;
+	background: var(--signout-icon-bg);
+	color: var(--signout-icon-color);
+}
+
+.dg-signout__icon .material-symbols-outlined {
+	font-size: 30px;
+}
+
+.dg-signout__icon::after {
+	content: '';
+	position: absolute;
+	inset: -6px;
+	border-radius: 24px;
+	border: 1px solid var(--signout-icon-color);
+	opacity: 0;
+	animation: dg-signout-ring 2.4s var(--signout-ease) 0.4s infinite;
+}
+
+@keyframes dg-signout-ring {
+	0% {
+		opacity: 0.45;
+		transform: scale(0.94);
+	}
+	70%,
+	100% {
+		opacity: 0;
+		transform: scale(1.18);
+	}
+}
+
+.dg-signout__eyebrow {
+	margin: 0 0 6px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--signout-eyebrow-color);
+}
+
+.dg-signout__title {
+	margin: 0 0 10px;
+	font-family: 'Playfair Display', serif;
+	font-size: clamp(24px, 3.4vw, 28px);
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--color-primary);
+}
+
+.dg-signout__body {
+	margin: 0 0 20px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.6;
+	color: var(--color-on-surface-variant);
+}
+
+/* "Signed in as" chip */
+.dg-signout__user {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 22px;
+	padding: 10px 14px;
+	text-align: left;
+	background: var(--signout-user-bg);
+	border: 1px solid var(--signout-user-border);
+	border-radius: 16px;
+}
+
+.dg-signout__avatar {
+	flex-shrink: 0;
+	display: inline-flex;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	border-radius: 50%;
+}
+
+.dg-signout__avatar-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.dg-signout__user-copy {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	font-family: 'Montserrat', sans-serif;
+}
+
+.dg-signout__user-label {
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-on-surface-variant);
+}
+
+.dg-signout__user-name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-on-surface);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dg-signout__user-email {
+	font-size: 12px;
+	color: var(--color-on-surface-variant);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dg-signout__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+}
+
+.dg-signout__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 140px;
+	padding: 12px 22px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	border-radius: 999px;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.dg-signout__btn-icon {
+	font-size: 18px;
+}
+
+.dg-signout__btn--ghost {
+	color: var(--color-primary);
+	background: var(--signout-btn-ghost-bg);
+	border: 1px solid var(--signout-btn-ghost-border);
+}
+
+.dg-signout__btn--ghost:hover {
+	background: var(--signout-btn-ghost-bg-hover);
+	border-color: var(--color-primary);
+	transform: translateY(-1px);
+}
+
+.dg-signout__btn--danger {
+	color: var(--color-on-error);
+	background: var(--signout-btn-bg);
+	border: 0;
+	box-shadow: var(--signout-btn-shadow);
+}
+
+.dg-signout__btn--danger:hover {
+	transform: translateY(-1px);
+	box-shadow: var(--signout-btn-shadow-hover);
+}
+
+.dg-signout__btn:active {
+	transform: translateY(0) scale(0.98);
+}
+
+.dg-signout__btn:focus-visible {
+	outline: 2px solid var(--signout-focus-ring);
+	outline-offset: 2px;
+}
+
+.dg-signout__btn--ghost:focus-visible {
+	outline-color: var(--color-primary);
+}
+
+/* Busy state after confirm (page is navigating to wp-login.php) */
+.dg-signout__btn.is-busy {
+	pointer-events: none;
+	opacity: 0.85;
+}
+
+.dg-signout__btn.is-busy .dg-signout__btn-icon {
+	animation: dg-account-save-spin 0.8s linear infinite;
+}
+
+.dg-signout__btn--ghost[disabled] {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+/* Sidebar logout link hover (danger tint) */
+.dg-account-nav__link--logout:hover,
+.dg-account-nav__link--logout:focus-visible {
+	background: var(--signout-nav-bg-hover);
+	color: var(--color-error);
+}
+
+@media (max-width: 480px) {
+	.dg-signout__dialog {
+		padding: 26px 18px 18px;
+	}
+
+	.dg-signout__actions {
+		flex-direction: column-reverse;
+	}
+
+	.dg-signout__btn {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dg-signout__overlay,
+	.dg-signout__dialog {
+		transition: opacity 0.01s linear;
+		transform: none;
+	}
+
+	.dg-signout__icon::after {
+		animation: none;
+	}
+
+	.dg-signout__btn:hover,
+	.dg-signout__btn:active {
+		transform: none;
+	}
+}
+
 /* --- Empty card (one address set, the other missing) --- */
 
 .dg-account-address--empty {
@@ -2165,7 +2418,6 @@ html.dg-account-confirm-open {
 	max-width: 38ch;
 }
 
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 /* --- Hint footer --- */
 
 .dg-account-addresses__hint {

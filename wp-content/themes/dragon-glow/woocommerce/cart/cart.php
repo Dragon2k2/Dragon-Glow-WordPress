@@ -44,10 +44,10 @@ $has_items  = ! empty( $cart_items );
                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
             </span>
-            <?php esc_html_e( 'Your Ritual Essentials', 'dragon-glow' ); ?>
+            <?php esc_html_e( 'Your Cart', 'dragon-glow' ); ?>
         </h1>
         <p class="text-on-surface-variant font-body-md mt-2 opacity-80">
-            <?php esc_html_e( 'Review your selections for a revitalized complexion.', 'dragon-glow' ); ?>
+            <?php esc_html_e( 'Review your items and quantities before proceeding to secure checkout.', 'dragon-glow' ); ?>
         </p>
     </div>
 
@@ -275,7 +275,7 @@ $has_items  = ! empty( $cart_items );
                     <?php esc_html_e( 'Cruelty-Free', 'dragon-glow' ); ?>
                 </span>
                 <span class="dg-trust-badge">
-                    <span class="material-symbols-outlined" style="font-size:18px;">magic_button</span>
+                    <span class="material-symbols-outlined" style="font-size:18px;">auto_fix_high</span>
                     <?php esc_html_e( 'Organic Ingredients', 'dragon-glow' ); ?>
                 </span>
             </div>
@@ -369,43 +369,47 @@ $has_items  = ! empty( $cart_items );
                     </div>
                 </div>
 
-                <!-- Checkout CTA — two variants. The original "Proceed to Checkout"
-                     is shown when no cart-selection is in flight (regular flow).
-                     The new "Proceed with selected" variant is shown when the
-                     shopper has ticked at least one row (and a small "Showing N
-                     selected" badge sits above it as a reminder of which subset
-                     will be charged). JS in cart.js toggles between the two via
-                     the .dg-has-selection body class set by
-                     dg_maybe_hide_default_checkout_cta() in
-                     inc/woocommerce/cart-selection.php. -->
-                <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>"
-                   class="dg-shimmer-btn dg-cart-checkout-cta dg-cart-checkout-cta--all w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 no-underline shadow-lg">
-                    <?php esc_html_e( 'Proceed to Checkout', 'dragon-glow' ); ?>
-                    <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;">arrow_forward</span>
-                </a>
+                <!-- Checkout CTA. The original "Proceed to Checkout" link is kept
+                     in the markup but permanently `hidden`: shoppers must tick
+                     at least one row, then use "Checkout with selected", which
+                     is revealed by updateSelectionCta() in cart.js. The
+                     .dg-has-selection body class is set by
+                     dg_add_selection_body_class() in
+                     inc/woocommerce/cart-selection.php.
 
-                <div class="dg-cart-checkout-cta dg-cart-checkout-cta--selected" hidden>
-                    <p class="dg-cart-checkout-cta__hint">
+                     The hint row sits above both variants so it is always
+                     visible: it prompts the shopper to pick items while
+                     nothing is selected, and shows the live count otherwise
+                     (text is swapped by updateSelectionCta() in cart.js). -->
+                <div class="dg-cart-checkout-group">
+                    <p class="dg-cart-checkout-cta__hint" aria-live="polite">
                         <span class="material-symbols-outlined dg-cart-checkout-cta__hint-icon" aria-hidden="true">checklist</span>
                         <span data-dg-cart-selected-count-hint>
-                            <?php
-                            /* translators: %d: number of cart items currently selected. */
-                            echo esc_html( sprintf( _n( '%d item selected for checkout', '%d items selected for checkout', 0, 'dragon-glow' ), 0 ) );
-                            ?>
+                            <?php esc_html_e( 'Please select one or more products to proceed to checkout.', 'dragon-glow' ); ?>
                         </span>
                     </p>
-                    <button type="button"
-                            class="dg-shimmer-btn w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 shadow-lg"
-                            data-dg-cart-checkout-with-selected>
-                        <span class="material-symbols-outlined" style="font-size:20px;">verified</span>
-                        <?php esc_html_e( 'Checkout with selected', 'dragon-glow' ); ?>
+
+                    <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>"
+                       hidden
+                       class="dg-shimmer-btn dg-cart-checkout-cta dg-cart-checkout-cta--all w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 no-underline shadow-lg">
+                        <?php esc_html_e( 'Proceed to Checkout', 'dragon-glow' ); ?>
                         <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;">arrow_forward</span>
-                    </button>
-                    <button type="button"
-                            class="dg-cart-checkout-cta__clear"
-                            data-dg-cart-clear-selection>
-                        <?php esc_html_e( 'Clear selection', 'dragon-glow' ); ?>
-                    </button>
+                    </a>
+
+                    <div class="dg-cart-checkout-cta dg-cart-checkout-cta--selected" hidden>
+                        <button type="button"
+                                class="dg-shimmer-btn w-full py-5 rounded-2xl font-label-sm text-label-sm uppercase tracking-[0.18em] font-bold flex items-center justify-center gap-2 shadow-lg"
+                                data-dg-cart-checkout-with-selected>
+                            <span class="material-symbols-outlined" style="font-size:20px;">verified</span>
+                            <?php esc_html_e( 'Checkout with selected', 'dragon-glow' ); ?>
+                            <span class="material-symbols-outlined" style="font-size:20px; transition: transform 0.2s ease;">arrow_forward</span>
+                        </button>
+                        <button type="button"
+                                class="dg-cart-checkout-cta__clear"
+                                data-dg-cart-clear-selection>
+                            <?php esc_html_e( 'Clear selection', 'dragon-glow' ); ?>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- SSL trust notice -->
@@ -540,6 +544,47 @@ $has_items  = ! empty( $cart_items );
             </div>
         </div>
     </div>
+
+    <!-- Non-destructive confirm: deselects items only, cart contents stay. -->
+    <div class="dg-cart-confirm"
+         data-dg-cart-confirm="clear-selection"
+         hidden
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="dg-cart-confirm-clear-selection-title"
+         aria-describedby="dg-cart-confirm-clear-selection-desc">
+        <div class="dg-cart-confirm__overlay" data-dg-cart-confirm-close></div>
+        <div class="dg-cart-confirm__panel" role="document">
+            <div class="dg-cart-confirm__head">
+                <div class="dg-cart-confirm__icon dg-cart-confirm__icon--warning" aria-hidden="true">
+                    <span class="material-symbols-outlined">deselect</span>
+                </div>
+                <div class="dg-cart-confirm__text">
+                    <h2 class="dg-cart-confirm__title" id="dg-cart-confirm-clear-selection-title">
+                        <?php esc_html_e( 'Clear your selection?', 'dragon-glow' ); ?>
+                    </h2>
+                    <p class="dg-cart-confirm__message" id="dg-cart-confirm-clear-selection-desc">
+                        <?php esc_html_e( 'All selected items will be deselected. Your items will stay in your cart.', 'dragon-glow' ); ?>
+                    </p>
+                </div>
+            </div>
+            <div class="dg-cart-confirm__actions">
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--ghost"
+                        data-dg-cart-confirm-close>
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                    <?php esc_html_e( 'Cancel', 'dragon-glow' ); ?>
+                </button>
+                <button type="button"
+                        class="dg-cart-btn dg-cart-btn--danger"
+                        data-dg-cart-confirm-yes>
+                    <span class="material-symbols-outlined" aria-hidden="true">check</span>
+                    <?php esc_html_e( 'Clear selection', 'dragon-glow' ); ?>
+                </button>
+            </div>
+        </div>
+    </div>
     <?php endif; // $has_items ?>
 
     <!-- ── Empty cart state ──────────────────────────────────────────────────
@@ -556,7 +601,7 @@ $has_items  = ! empty( $cart_items );
             <?php esc_html_e( 'Your cart is empty', 'dragon-glow' ); ?>
         </h2>
         <p class="text-on-surface-variant font-body-lg max-w-md mx-auto mb-10 opacity-70">
-            <?php esc_html_e( 'Review your selections for a revitalized complexion.', 'dragon-glow' ); ?>
+            <?php esc_html_e( 'Browse our collection to find the right products for your skin.', 'dragon-glow' ); ?>
         </p>
         <a href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>"
            class="dg-shimmer-btn inline-flex items-center gap-4 px-10 py-5 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold no-underline shadow-xl">

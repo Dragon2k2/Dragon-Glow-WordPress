@@ -29,18 +29,13 @@ function dg_enqueue_styles(): void {
     // Google Fonts
     wp_enqueue_style(
         'dg-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700&family=Bodoni+Moda:ital,wght@1,600&display=swap',
+        'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700&family=Bodoni+Moda:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap',
         array(),
         null
     );
 
-    // Material Symbols
-    wp_enqueue_style(
-        'dg-material-symbols',
-        'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap',
-        array(),
-        null
-    );
+    // Material Symbols is self-hosted: @font-face lives in main.css (section 13)
+    // and the woff2 is preloaded in dg_preload_assets() (inc/enqueue.php).
 
     // Main theme CSS
     wp_enqueue_style(

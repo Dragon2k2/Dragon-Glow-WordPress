@@ -19,7 +19,7 @@
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
-	padding: 12px 20px;
+	padding: var(--auth-portal-padding-top) 20px 12px;
 	background: var(--register-bg);
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	color: var(--register-text-primary);
@@ -29,7 +29,7 @@
 
 @media (min-width: 640px) {
 	.dg-account--register {
-		padding: 20px;
+		padding: var(--auth-portal-padding-top) 20px 20px;
 	}
 }
 
@@ -85,7 +85,59 @@
 
 @media (min-width: 640px) {
 	.dg-account-auth__crest-header {
-		padding: 32px 0 24px;
+		padding: 4px 0 24px;
+	}
+}
+
+/* Logo mark — centered above the crest badge (decorative, not a link).
+   Markup: register.php (.dg-account-auth__brand-logo > .dg-account-auth__brand-logo-img).
+   Sizing tokens are shared with the sign-in page (style.css :root).
+   Hover: a light band sweeps across the mark, same timing/easing and
+   direction as the brand title shimmer below. The band is an ::after
+   layer masked by the logo's own alpha, so the original colours stay. */
+.dg-account-auth__brand-logo {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: var(--auth-brand-logo-gap);
+}
+
+.dg-account-auth__brand-logo-img {
+	width: var(--auth-brand-logo-size);
+	height: var(--auth-brand-logo-size);
+	object-fit: contain;
+}
+
+.dg-account-auth__brand-logo::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(90deg, transparent 0%, transparent 40%, var(--auth-brand-logo-shine) 50%, transparent 60%, transparent 100%);
+	background-size: 250% 100%;
+	background-position: 100% 0;
+	-webkit-mask: url('../images/logo/logo-mark.webp') center / contain no-repeat;
+	mask: url('../images/logo/logo-mark.webp') center / contain no-repeat;
+	transition: background-position 0.6s ease;
+}
+
+.dg-account-auth__brand-logo:hover::after {
+	background-position: 0% 0;
+}
+
+/* Linked hover — hovering the logo OR the brand link (title + subtitle) sweeps
+   both. Kept as a separate rule: browsers without :has() drop it and fall back
+   to each element's own hover above. */
+.dg-account-auth__crest-header:has(.dg-account-auth__brand-logo:hover, .dg-account-auth__brand-link:hover) .dg-account-auth__brand-logo::after,
+.dg-account-auth__crest-header:has(.dg-account-auth__brand-logo:hover, .dg-account-auth__brand-link:hover) .dg-account-auth__brand-title {
+	background-position: 0% 0;
+}
+
+@media (max-width: 640px) {
+	.dg-account-auth__brand-logo-img {
+		width: var(--auth-brand-logo-size-mobile);
+		height: var(--auth-brand-logo-size-mobile);
 	}
 }
 
@@ -943,32 +995,96 @@
 }
 
 /* =========================================
-   5b-ter. PASSWORD ERROR MESSAGE
+   5b-ter. VALIDATION ERRORS (summary + inline)
+   Summary sits above the form (outside it), inline messages sit under each
+   field. Both are filled by PHP after a failed POST and by JS before submit.
    ========================================= */
 
-.dg-register-form__password-error {
+.dg-register-form__summary {
 	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin-top: 12px;
-	padding: 12px 14px;
-	background: rgba(211, 47, 47, 0.08);
-	border: 1px solid rgba(211, 47, 47, 0.3);
+	align-items: flex-start;
+	gap: 12px;
+	padding: 14px 16px;
+	background: var(--register-error-bg);
+	border: 1px solid var(--register-error-border);
 	border-radius: 8px;
 	font-family: 'Plus Jakarta Sans', sans-serif;
 	font-size: 13px;
 	line-height: 1.5;
-	color: #B71C1C;
+	color: var(--register-error-text);
 }
 
-.dg-register-form__password-error[hidden] {
+.dg-register-form__summary[hidden] {
 	display: none;
 }
 
-.dg-register-form__password-error .material-symbols-outlined {
-	font-size: 18px;
-	color: #D32F2F;
+.dg-register-form__summary:focus-visible {
+	outline: 2px solid var(--register-error-input-border);
+	outline-offset: 2px;
+}
+
+.dg-register-form__summary > .material-symbols-outlined {
+	font-size: 20px;
+	color: var(--register-error-icon);
 	flex-shrink: 0;
+}
+
+.dg-register-form__summary-title {
+	margin: 0 0 4px;
+	font-weight: 700;
+}
+
+.dg-register-form__summary-list {
+	margin: 0;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.dg-register-form__summary-list a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.dg-register-form__summary-list a:hover,
+.dg-register-form__summary-list a:focus-visible {
+	color: var(--register-error-icon);
+}
+
+.dg-register-form__error {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	margin: 0;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12.5px;
+	line-height: 1.5;
+	color: var(--register-error-text);
+}
+
+.dg-register-form__error[hidden] {
+	display: none;
+}
+
+.dg-register-form__error .material-symbols-outlined {
+	font-size: 16px;
+	margin-top: 1px;
+	color: var(--register-error-icon);
+	flex-shrink: 0;
+}
+
+/* Invalid controls. Wrapper-scoped to beat the .dg-register-form__input-wrap
+   border rule above (same specificity trick as the base input styles). */
+.dg-register-form__input-wrap .dg-register-form__input[aria-invalid="true"] {
+	border-color: var(--register-error-input-border);
+}
+
+.dg-register-form__input-wrap .dg-register-form__input[aria-invalid="true"]:focus {
+	border-color: var(--register-error-input-border);
+	box-shadow: var(--register-error-input-shadow);
+}
+
+.dg-register-form__checkbox input[type="checkbox"][aria-invalid="true"] {
+	border-color: var(--register-error-input-border);
 }
 
 /* =========================================

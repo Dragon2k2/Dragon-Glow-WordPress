@@ -236,21 +236,33 @@
 }
 
 /* ── Toasts (bulk feedback) ────────────────────────────────────
-   Bottom-center floating stack, glassmorphism. Each toast holds:
+   Bottom-right floating stack, glassmorphism. Each toast holds:
    - an icon (success/info/error)
    - a body line
-   Used by bulk-remove and clear-all flows to surface success or error. */
+   Used by bulk-remove and clear-all flows to surface success or error.
+   Offset uses the shared --toast-viewport-offset token so the position
+   matches the site-wide toast viewport (toast.css). */
 .dg-cart-toasts {
     position: fixed;
-    left: 50%;
-    bottom: 24px;
-    transform: translateX(-50%);
+    right: var(--toast-viewport-offset);
+    bottom: var(--toast-viewport-offset);
     z-index: 1000;
     display: flex;
     flex-direction: column-reverse;
     gap: 10px;
-    width: min(440px, calc(100% - 32px));
+    width: min(440px, calc(100% - (var(--toast-viewport-offset) * 2)));
     pointer-events: none;
+}
+
+/* Small screens: stretch edge-to-edge with a 16px gutter, matching the
+   shared toast viewport in toast.css. */
+@media (max-width: 640px) {
+    .dg-cart-toasts {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        width: auto;
+    }
 }
 
 .dg-cart-toast {
@@ -327,12 +339,7 @@
 /* Stacking: keep toasts above the sticky nav. */
 .dg-cart-toasts { z-index: 1000; }
 
-@media (min-width: 1024px) {
-    .dg-cart-toasts { bottom: 32px; }
-}
-
 @media (max-width: 480px) {
-    .dg-cart-toasts { bottom: 16px; }
     .dg-cart-toast { padding: 12px 14px; }
 }
 
@@ -349,35 +356,64 @@
 }
 
 /* ── Coupon / promo code input ────────────────────────────── */
+/* Native reset is written here (no Tailwind Forms plugin — see CLAUDE.md §8b). */
 .dg-promo-input {
     flex: 1;
-    background: #f6f3f2;
-    border: 0;
-    border-bottom: 1px solid var(--gold-400);
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    color: #1c1b1b;
-    outline: none;
-    transition: border-bottom-color 0.2s ease;
+    min-width: 0;                       /* Allow shrinking inside the flex row */
+    box-sizing: border-box;
+    min-height: var(--promo-input-min-height);
+    padding: var(--promo-input-padding);
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--promo-input-bg);
+    border: 1px solid var(--promo-input-border);
+    border-radius: var(--promo-input-radius);
+    color: var(--promo-input-text);
+    caret-color: var(--promo-input-border-focus);
     font-family: 'Montserrat', sans-serif;
+    font-size: var(--promo-input-font-size);
+    font-weight: var(--promo-input-font-weight);
+    letter-spacing: var(--promo-input-letter-spacing);
+    text-transform: uppercase;          /* Display only; WooCommerce normalises the code server-side */
+    outline: 2px solid transparent;     /* Stays visible in forced-colors / high-contrast mode */
+    outline-offset: 2px;
+    transition:
+        background-color var(--promo-input-transition),
+        border-color var(--promo-input-transition),
+        box-shadow var(--promo-input-transition);
 }
 
-.dg-promo-input:focus {
-    border-bottom-width: 2px;
-    border-bottom-color: var(--gold-dark);
+.dg-promo-input:hover {
+    background-color: var(--promo-input-bg-hover);
+    border-color: var(--promo-input-border-hover);
+}
+
+.dg-promo-input:focus,
+.dg-promo-input:focus-visible {
+    background-color: var(--promo-input-bg-focus);
+    border-color: var(--promo-input-border-focus);
+    box-shadow: var(--promo-input-focus-ring);
 }
 
 /* Browser autofill override — keep theme colors instead of yellow autofill tint */
 .dg-promo-input:-webkit-autofill,
 .dg-promo-input:-webkit-autofill:hover,
 .dg-promo-input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #1c1b1b;
-    caret-color: #1c1b1b;
+    -webkit-text-fill-color: var(--promo-input-text);
+    caret-color: var(--promo-input-border-focus);
     transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 .dg-promo-input::placeholder {
-    opacity: 0.4;
+    color: var(--promo-input-placeholder);
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-promo-input {
+        transition: none;
+    }
 }
 
 .dg-promo-apply-btn {
@@ -478,8 +514,8 @@
 .dg-cart-select-all-mark::after {
     content: "";
     position: absolute;
-    left: 5px;
-    top: 1px;
+    left: 6px;
+    top: 2px;
     width: 5px;
     height: 10px;
     border-right: 2px solid var(--color-on-primary);
@@ -554,8 +590,9 @@
 /* ── Selection-checkout dual CTA ─────────────────────────────────────────
    Two CTAs in the same sidebar slot, JS toggles visibility based on the
    live selection count:
-     - .dg-cart-checkout-cta--all       default "Proceed to Checkout"
-                                         (no selection in flight)
+     - .dg-cart-checkout-cta--all       "Proceed to Checkout" — permanently
+                                         `hidden` in cart.php; shoppers must
+                                         tick rows and use the --selected CTA
      - .dg-cart-checkout-cta--selected  new "Checkout with selected"
                                          (≥ 1 row ticked)
    Visibility rules:
@@ -574,31 +611,56 @@
     display: none !important;
 }
 
-.dg-cart-checkout-cta--selected[hidden] + .dg-cart-checkout-cta__hint,
 .dg-cart-checkout-cta__hint[hidden] {
     display: none !important;
 }
 
-/* Hint row above the selected CTA — small check + live count. */
+/* Wrapper that keeps the hint pill and the checkout CTA together as ONE flex
+   item of the summary panel (which uses a larger `gap-6` between sections),
+   so the hint sits tight against the button. */
+.dg-cart-checkout-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cart-checkout-group-gap);
+}
+
+/* Hint row above the checkout CTAs — always visible. Shows a "select items"
+   prompt when nothing is ticked, and the live selected count otherwise.
+   Idle (nothing ticked) uses the compact --cart-hint-idle-* metrics. */
 .dg-cart-checkout-cta__hint {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 10px;
+    gap: var(--cart-hint-idle-gap);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 12px;
+    font-size: var(--cart-hint-idle-font-size);
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--cart-cta-pill-letter-spacing);
     text-transform: uppercase;
     color: var(--color-on-surface-variant);
     background: rgba(115, 92, 0, 0.06);
-    border: 1px solid rgba(115, 92, 0, 0.18);
+    border: var(--cart-hint-idle-border-width) solid rgba(115, 92, 0, 0.18);
     border-radius: 9999px;
-    padding: 6px 12px;
+    padding: var(--cart-hint-idle-padding);
+}
+
+/* Selected state (cart.js / dg_add_selection_body_class() set
+   body.dg-has-selection): the hint takes the same pill metrics as the
+   "Clear selection" button below it so both rows render at the same size. */
+body.dg-has-selection .dg-cart-checkout-cta__hint {
+    justify-content: center;
+    gap: var(--cart-cta-pill-gap);
+    width: 100%;
+    margin: 0;
+    font-size: var(--cart-cta-pill-font-size);
+    line-height: var(--cart-cta-pill-line-height);
+    text-align: center;
+    border-width: var(--cart-cta-pill-border-width);
+    padding: var(--cart-cta-pill-padding);
 }
 
 .dg-cart-checkout-cta__hint-icon {
-    font-size: 16px !important;
+    flex-shrink: 0;
+    font-size: var(--cart-cta-pill-icon-size) !important;
     color: var(--color-primary);
     font-variation-settings: 'FILL' 1;
 }
@@ -612,18 +674,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--cart-cta-pill-gap);
     width: 100%;
     margin-top: 10px;
-    padding: 10px 16px;
+    padding: var(--cart-cta-pill-padding);
     border-radius: 9999px;
-    border: 1.5px solid rgba(115, 92, 0, 0.30);
+    border: var(--cart-cta-pill-border-width) solid rgba(115, 92, 0, 0.30);
     background: transparent;
     color: var(--color-primary);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 12px;
+    font-size: var(--cart-cta-pill-font-size);
     font-weight: 700;
-    letter-spacing: 0.06em;
+    line-height: var(--cart-cta-pill-line-height);
+    letter-spacing: var(--cart-cta-pill-letter-spacing);
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;

@@ -523,11 +523,7 @@
 	-webkit-appearance: none;
 	width: 18px;
 	height: 18px;
-<<<<<<< HEAD
 	border: 1.5px solid var(--wl-checkbox-border, rgba(115, 92, 0, 0.40));
-=======
-	border: 1.5px solid var(--wl-share-border);
->>>>>>> 6ef9108 (refactor(css): automated tokenization - Phase 2 complete)
 	border-radius: 6px;
 	background: var(--wl-checkbox-bg, #fff);
 	cursor: pointer;
@@ -1300,25 +1296,63 @@
 
 /* ---- No results ---- */
 .dg-wishlist-noresult {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
 	margin-top: 48px;
-	padding: 48px 24px;
+	padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2.5rem);
 	text-align: center;
-	background: var(--wl-glass-bg);
-	border-radius: var(--wl-radius-lg);
-	border: 1px dashed var(--wl-line);
+	background: var(--wl-noresult-bg);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px dashed var(--wl-noresult-border);
+	border-radius: var(--wl-radius-xl);
+	box-shadow: var(--wl-noresult-shadow);
 	color: var(--wl-muted);
 }
 
-.dg-wishlist-noresult .material-symbols-outlined {
-	font-size: 36px;
-	display: block;
+/* `display: flex` above would override the UA `hidden` rule; JS toggles
+   the `hidden` attribute, so restore it explicitly. */
+.dg-wishlist-noresult[hidden] {
+	display: none;
+}
+
+/* Reveal when JS removes `hidden` (filter produced zero matches). */
+.dg-wishlist-noresult:not([hidden]) {
+	animation: wlNoResultIn 0.45s var(--wl-ease);
+}
+
+@keyframes wlNoResultIn {
+	from { opacity: 0; transform: translateY(12px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Icon badge — round frosted disc with a soft gold ring. */
+.dg-wishlist-noresult > .material-symbols-outlined {
+	display: grid;
+	place-items: center;
+	width: var(--wl-noresult-icon-size);
+	height: var(--wl-noresult-icon-size);
+	border-radius: 50%;
+	background: var(--wl-noresult-icon-bg);
+	border: 1px solid var(--wl-noresult-icon-ring);
+	box-shadow: var(--wl-noresult-icon-shadow);
+	font-size: var(--wl-noresult-icon-glyph-size);
 	color: var(--wl-primary);
-	margin-bottom: 12px;
+	font-variation-settings: "FILL" 0, "wght" 300;
 }
 
 .dg-wishlist-noresult p {
-	margin: 0 0 18px;
-	font-size: 14px;
+	margin: 0;
+	max-width: 36ch;
+	font-size: var(--wl-noresult-text-size);
+	line-height: 1.6;
+	color: var(--wl-muted);
+}
+
+.dg-wishlist-noresult .dg-wishlist-btn {
+	margin-top: 4px;
 }
 
 /* =========================================
@@ -1884,15 +1918,25 @@
    ========================================= */
 .dg-wishlist-toasts {
 	position: fixed;
-	left: 50%;
-	bottom: 100px;
-	transform: translateX(-50%);
+	right: var(--toast-viewport-offset);
+	bottom: var(--toast-viewport-offset);
 	z-index: 1100; /* above modals (1000) so success toasts land after confirm */
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	pointer-events: none;
-	width: min(440px, calc(100% - 32px));
+	width: min(440px, calc(100% - (var(--toast-viewport-offset) * 2)));
+}
+
+/* Small screens: stretch edge-to-edge with a 16px gutter, matching the
+   shared toast viewport in toast.css. */
+@media (max-width: 640px) {
+	.dg-wishlist-toasts {
+		left: 16px;
+		right: 16px;
+		bottom: 16px;
+		width: auto;
+	}
 }
 
 .dg-wishlist-toast {
@@ -1963,7 +2007,8 @@
    ========================================= */
 @media (prefers-reduced-motion: reduce) {
 	.dg-wishlist .dg-wishlist-empty__ring,
-	.dg-wishlist .dg-wishlist-empty__heart-wrap {
+	.dg-wishlist .dg-wishlist-empty__heart-wrap,
+	.dg-wishlist-noresult:not([hidden]) {
 		animation: none;
 	}
 

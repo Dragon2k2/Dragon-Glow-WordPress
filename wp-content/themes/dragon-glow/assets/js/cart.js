@@ -313,7 +313,10 @@
         if (clearBtn) {
             clearBtn.addEventListener('click', function () {
                 if (clearBtn.disabled) return;
-                clearSelection(clearBtn);
+                askConfirm({ type: 'clear-selection' }).then(function (ok) {
+                    if (!ok) return;
+                    clearSelection(clearBtn);
+                });
             });
         }
         // The DOM-vs-server reconciliation is performed by
@@ -424,23 +427,28 @@
     }
 
     function updateSelectionCta(keys) {
-        var ctaAll      = document.querySelector('.dg-cart-checkout-cta--all');
+        // The default "Proceed to Checkout" (.dg-cart-checkout-cta--all) is
+        // permanently hidden in cart.php; only the selection CTA toggles.
         var ctaSelected = document.querySelector('.dg-cart-checkout-cta--selected');
         var hintTarget  = document.querySelector('[data-dg-cart-selected-count-hint]');
-        if (!ctaAll || !ctaSelected) {
+        if (!ctaSelected) {
             return;
         }
         var count = (keys && keys.length) || 0;
         var hasSelection = count > 0;
-        ctaAll.hidden = hasSelection;
         ctaSelected.hidden = !hasSelection;
         // Toggle body class so the global cart.css rules can also hide the
         // shimmer button on /checkout/ if a flag is in flight.
         document.body.classList.toggle('dg-has-selection', hasSelection);
-        if (hasSelection && hintTarget) {
-            // Use the same i18n table the cart already localized.
-            var template = (i18n.selectedHintN) || '%d items selected for checkout';
-            hintTarget.textContent = template.replace('%d', String(count));
+        if (hintTarget) {
+            // The hint row is always visible: prompt while nothing is
+            // selected, live count otherwise. Same i18n table as the cart.
+            if (hasSelection) {
+                var template = (i18n.selectedHintN) || '%d items selected for checkout';
+                hintTarget.textContent = template.replace('%d', String(count));
+            } else {
+                hintTarget.textContent = i18n.selectedHintNone || 'Please select one or more products to proceed to checkout.';
+            }
         }
     }
 
@@ -469,9 +477,6 @@
                     return;
                 }
                 var redirect = (data && data.data && data.data.redirect) || '/checkout/';
-                // Optimistic toast so the user sees the intent succeed
-                // even though the navigation takes a moment.
-                showToast(data.data.message || 'Items ready for checkout.', 'success');
                 window.location.href = redirect;
             })
             .catch(function (err) {
@@ -536,8 +541,37 @@
     */
     var syncSelectionTimer = null;
     var syncSelectionInFlight = null;
+    var selectionSyncPaused = false;
+
+    /**
+     * Stop mirroring the selection to the server for the rest of this
+     * page view.
+     *
+     * Called by the destructive flows (bulk remove, clear cart). Their
+     * own AJAX request already owns the WC session write; a concurrent
+     * `dg_ajax_apply_cart_selection` request would load the pre-removal
+     * cart and could save it AFTER the removal, bringing the deleted
+     * items back on the next page load. The server-side remove/clear
+     * handlers reset `dg_checkout_selection` themselves, so no sync is
+     * needed. Every destructive flow ends in a reload or the empty
+     * state, so there are no checkboxes left to mirror afterwards.
+     */
+    function pauseSelectionSync() {
+        selectionSyncPaused = true;
+        if (syncSelectionTimer) {
+            clearTimeout(syncSelectionTimer);
+            syncSelectionTimer = null;
+        }
+        if (syncSelectionInFlight) {
+            syncSelectionInFlight.abort();
+            syncSelectionInFlight = null;
+        }
+    }
 
     function dispatchSelectionSync(keys) {
+        if (selectionSyncPaused) {
+            return;
+        }
         if (!window.dgAjax || !window.dgAjax.url) {
             return;
         }
@@ -684,6 +718,7 @@
         updateCartCountBadge(totalRows - rows.length);
 
         rows.forEach(function (row) { row.classList.add('is-removing'); });
+        pauseSelectionSync();
         resetSelection();
 
         var fadeMs = reduce ? 0 : 480;
@@ -778,6 +813,7 @@
         updateCartCountBadge(0);
         
         rows.forEach(function (row) { row.remove(); });
+        pauseSelectionSync();
         resetSelection();
         swapToEmptyState();
 

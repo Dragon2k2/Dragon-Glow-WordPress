@@ -417,6 +417,7 @@
 	background: transparent;
 	color: var(--gift-muted);
 	font: inherit;
+	font-family: var(--font-price);
 	font-size: 1rem;
 	font-weight: 400;
 	cursor: pointer;
@@ -674,6 +675,10 @@
 .dg-gift-submit-amount {
 	font-weight: 500;
 	opacity: 0.85;
+}
+
+.dg-gift-submit-value {
+	font-family: var(--font-price);
 }
 
 .dg-gift-submit-sep {

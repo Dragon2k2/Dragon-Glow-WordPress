@@ -734,6 +734,7 @@ input[type="range"]::-moz-range-thumb {
 .dg-filter-glass-price-labels {
 	display: flex;
 	justify-content: space-between;
+	font-family: var(--font-price);
 	font-size: 11px;
 	color: var(--color-on-surface-variant, #49454F);
 	font-weight: 500;

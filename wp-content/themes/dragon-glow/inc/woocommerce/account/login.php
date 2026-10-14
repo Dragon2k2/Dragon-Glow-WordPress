@@ -48,6 +48,15 @@ function dg_render_account_signed_out(): void {
 
 			<!-- Brand header (Imperial Collection / Dragon Glow / Est. 2026) -->
 			<header class="dg-login__brand-header" data-sr>
+				<?php // Decorative brand mark (not a link); the <h1> below carries the accessible brand name. ?>
+				<div class="dg-login__brand-logo">
+					<img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
+						 class="dg-login__brand-logo-img"
+						 width="192" height="192"
+						 alt=""
+						 decoding="async"
+						 fetchpriority="high">
+				</div>
 				<div class="dg-login__brand-eyebrow">
 					<div class="dg-login__brand-line"></div>
 					<div class="dg-login__brand-eyebrow-text">

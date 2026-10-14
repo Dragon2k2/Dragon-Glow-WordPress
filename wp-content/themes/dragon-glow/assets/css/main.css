@@ -58,6 +58,54 @@ body.dg-hide-site-chrome .footer-main {
 }
 
 /* =========================================
+   3-brand. HEADER BRAND — logo mark + site name
+   Markup: header-nav.php (.dg-nav-brand > .dg-nav-brand__mark)
+   ========================================= */
+
+.dg-nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--main-brand-gap);
+}
+
+.dg-nav-brand__mark {
+    flex-shrink: 0;
+    width: var(--main-brand-mark-size);
+    height: var(--main-brand-mark-size);
+    object-fit: contain;
+    transition: var(--main-brand-mark-transition);
+}
+
+.dg-nav-brand:hover .dg-nav-brand__mark,
+.dg-nav-brand:focus-visible .dg-nav-brand__mark {
+    transform: scale(var(--main-brand-mark-scale-hover));
+}
+
+.dg-nav-brand:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    border-radius: var(--main-brand-mark-radius);
+}
+
+@media (max-width: 640px) {
+    .dg-nav-brand__mark {
+        width: var(--main-brand-mark-size-mobile);
+        height: var(--main-brand-mark-size-mobile);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-nav-brand__mark {
+        transition: none;
+    }
+
+    .dg-nav-brand:hover .dg-nav-brand__mark,
+    .dg-nav-brand:focus-visible .dg-nav-brand__mark {
+        transform: none;
+    }
+}
+
+/* =========================================
    3a. HEADER AUTH GROUP — Log in / Sign up (signed-out state)
    Shown in header-nav.php only when !is_user_logged_in();
    replaces the account/wishlist/cart icon group.
@@ -456,7 +504,38 @@ body.dg-hide-site-chrome .footer-main {
    13. MATERIAL SYMBOLS
    ========================================= */
 
+/* Self-hosted icon font (subset of the icons the theme uses, variable axes
+   opsz/wght/FILL/GRAD). Served from the theme and preloaded in <head>
+   (dg_preload_assets in inc/enqueue.php), so it is available from the browser
+   cache on reload instead of waiting on fonts.googleapis.com / gstatic.
+   font-display: block keeps ligature names (e.g. "shopping_bag") invisible,
+   never painted as plain text, in the rare case the font is still loading.
+   The woff2 is a subset: a NEW icon name must be added to it, otherwise that
+   icon renders as plain text. */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url('../fonts/material-symbols-outlined.woff2') format('woff2');
+}
+
+/* Base icon rules (previously supplied by the Google Fonts stylesheet). */
 .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
 }
@@ -766,9 +845,8 @@ table th {
 
 .glass-nav ul li.current-menu-item > a span,
 .glass-nav ul li.current_page_item > a span {
-    border-bottom: 2px solid var(--color-accent-gold);
     padding-bottom: 2px;
-    color: var(--color-accent-gold);
+    color: var(--color-accent-alt);;
 }
 
 /* =========================================
@@ -798,7 +876,15 @@ table th {
 .dg-detail-price,
 .dg-related-price,
 .dg-sticky-price {
-    font-family: 'Bodoni Moda', Georgia, serif !important;
+    font-family: var(--font-price) !important;
+}
+
+/* Every amount rendered by WooCommerce's wc_price() / get_price_html() /
+   cart & order totals. The markup is
+   <span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>32.00</bdi></span>
+   so targeting the amount span covers the symbol and digits site-wide. */
+.woocommerce-Price-amount {
+    font-family: var(--font-price);
 }
 
 /* =========================================

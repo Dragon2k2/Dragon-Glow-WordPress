@@ -48,34 +48,34 @@ get_header();
         </div>
 
         <!-- Contact Form (Right Column) -->
-        <div class="lg:col-span-7 order-1 lg:order-2">
-            <div class="bg-surface-container-lowest p-10 md:p-16 border border-outline-variant/20 shadow-sm shadow-primary/5">
-                <form class="space-y-12" id="dg-contact-form">
+        <div class="dg-contact-panel lg:col-span-7 order-1 lg:order-2">
+            <div class="dg-contact-card">
+                <form class="dg-contact-form" id="dg-contact-form">
                     <?php wp_nonce_field( 'dg_contact_nonce', 'dg_nonce_field' ); ?>
                     <input type="hidden" name="action" value="dg_contact_form" />
 
                     <!-- First Name & Last Name -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
-                        <div class="relative input-focus-line group">
-                            <input class="peer block w-full border-0 border-b border-outline-variant/40 bg-transparent py-4 focus:ring-0 focus:border-primary text-on-surface placeholder-transparent transition-all"
+                    <div class="dg-contact-form__row">
+                        <div class="dg-contact-field">
+                            <input class="dg-contact-field__control"
                                   id="first_name"
                                   name="first_name"
                                   placeholder=" "
                                   type="text"
                                   required />
-                            <label class="absolute left-0 top-4 text-on-surface-variant/60 font-label-md uppercase tracking-widest pointer-events-none transition-all duration-300 transform -translate-y-6 scale-75 text-primary"
+                            <label class="dg-contact-field__label"
                                    for="first_name">
                                 <?php esc_html_e( 'First Name', 'dragon-glow' ); ?>
                             </label>
                         </div>
-                        <div class="relative input-focus-line group">
-                            <input class="peer block w-full border-0 border-b border-outline-variant/40 bg-transparent py-4 focus:ring-0 focus:border-primary text-on-surface placeholder-transparent transition-all"
+                        <div class="dg-contact-field">
+                            <input class="dg-contact-field__control"
                                   id="last_name"
                                   name="last_name"
                                   placeholder=" "
                                   type="text"
                                   required />
-                            <label class="absolute left-0 top-4 text-on-surface-variant/60 font-label-md uppercase tracking-widest pointer-events-none transition-all duration-300 transform -translate-y-6 scale-75 text-primary"
+                            <label class="dg-contact-field__label"
                                    for="last_name">
                                 <?php esc_html_e( 'Last Name', 'dragon-glow' ); ?>
                             </label>
@@ -83,22 +83,23 @@ get_header();
                     </div>
 
                     <!-- Email -->
-                    <div class="relative input-focus-line group">
-                        <input class="peer block w-full border-0 border-b border-outline-variant/40 bg-transparent py-4 focus:ring-0 focus:border-primary text-on-surface placeholder-transparent transition-all"
+                    <div class="dg-contact-field">
+                        <input class="dg-contact-field__control"
                               id="contact-email"
                               name="email"
                               placeholder=" "
                               type="email"
                               required />
-                        <label class="absolute left-0 top-4 text-on-surface-variant/60 font-label-md uppercase tracking-widest pointer-events-none transition-all duration-300 transform -translate-y-6 scale-75 text-primary"
+                        <label class="dg-contact-field__label"
                                for="contact-email">
                             <?php esc_html_e( 'Email Address', 'dragon-glow' ); ?>
                         </label>
                     </div>
 
                     <!-- Subject Dropdown -->
-                    <div class="relative input-focus-line group">
-                        <select class="peer block w-full border-0 border-b border-outline-variant/40 bg-transparent py-4 focus:ring-0 focus:border-primary text-on-surface transition-all appearance-none cursor-pointer"
+                    <div class="dg-contact-field dg-contact-field--select">
+                        <select class="dg-contact-field__control"
+                                aria-label="<?php esc_attr_e( 'Inquiry type', 'dragon-glow' ); ?>"
                                 id="contact-subject"
                                 name="subject"
                                 required>
@@ -121,35 +122,33 @@ get_header();
                                 <?php esc_html_e( 'Other', 'dragon-glow' ); ?>
                             </option>
                         </select>
-                        <span class="material-symbols-outlined absolute right-0 top-4 text-on-surface-variant pointer-events-none">
+                        <span class="material-symbols-outlined dg-contact-field__chevron" aria-hidden="true">
                             expand_more
                         </span>
                     </div>
 
                     <!-- Message -->
-                    <div class="relative input-focus-line group">
-                        <textarea class="peer block w-full border-0 border-b border-outline-variant/40 bg-transparent py-4 focus:ring-0 focus:border-primary text-on-surface placeholder-transparent transition-all resize-none"
+                    <div class="dg-contact-field dg-contact-field--textarea">
+                        <textarea class="dg-contact-field__control"
                                  id="contact-message"
                                  name="message"
                                  placeholder=" "
                                  rows="4"
+                                 maxlength="1000"
                                  required></textarea>
-                        <label class="absolute left-0 top-4 text-on-surface-variant/60 font-label-md uppercase tracking-widest pointer-events-none transition-all duration-300 transform -translate-y-6 scale-75 text-primary"
+                        <label class="dg-contact-field__label"
                                for="contact-message">
                             <?php esc_html_e( 'Your Message', 'dragon-glow' ); ?>
                         </label>
+                        <span class="dg-contact-field__count" id="dg-contact-count">0 / 1000</span>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="pt-8">
-                        <button type="submit"
-                                id="dg-submit-btn"
-                                class="w-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-[0.3em] py-6 px-12 transition-all duration-300 hover:opacity-90 hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98]">
-                            <?php esc_html_e( 'Send Message', 'dragon-glow' ); ?>
-                        </button>
-                    </div>
+                    <button type="submit" id="dg-submit-btn" class="dg-contact-form__submit">
+                        <?php esc_html_e( 'Send Message', 'dragon-glow' ); ?>
+                    </button>
 
-                    <p id="dg-contact-msg" class="mt-4 text-center hidden font-body-md"></p>
+                    <p id="dg-contact-msg" class="dg-contact-form__msg" role="status" aria-live="polite" hidden></p>
                 </form>
             </div>
         </div>

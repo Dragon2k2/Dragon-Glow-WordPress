@@ -213,7 +213,7 @@ $fallback_products = array(
                 <div class="px-2">
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-bold text-lg text-primary"><?php echo esc_html( $fp['name'] ); ?></h4>
-                        <span class="font-bold text-tertiary"><?php echo esc_html( $fp['price'] ); ?></span>
+                        <span class="font-serif font-bold text-tertiary"><?php echo esc_html( $fp['price'] ); ?></span>
                     </div>
 
                     <p class="text-sm text-on-surface-variant mb-4"><?php echo esc_html( $fp['desc'] ); ?></p>

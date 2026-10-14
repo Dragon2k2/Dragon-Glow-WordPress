@@ -21,7 +21,7 @@
             // Loading state.
             btn.innerHTML = '...';
             btn.disabled = true;
-            btn.classList.add('opacity-50');
+            btn.classList.add('is-loading');
 
             var formData = new FormData(contactForm);
 
@@ -36,11 +36,12 @@
                         if (data.success) {
                             // Success state.
                             btn.innerHTML = '✓ Message Received';
-                            btn.classList.remove('opacity-50', 'bg-primary');
-                            btn.classList.add('bg-secondary', 'text-on-secondary');
+                            btn.classList.remove('is-loading');
+                            btn.classList.add('is-success');
 
-                            msg.classList.remove('hidden', 'text-error');
-                            msg.classList.add('text-tertiary');
+                            msg.hidden = false;
+                            msg.classList.remove('is-error');
+                            msg.classList.add('is-success');
                             msg.textContent = (data.data && data.data.message)
                                 ? data.data.message
                                 : 'Thank you! We\'ll be in touch soon.';
@@ -49,21 +50,22 @@
                             setTimeout(function () {
                                 btn.innerHTML = originalText;
                                 btn.disabled = false;
-                                btn.classList.remove('opacity-50', 'bg-secondary', 'text-on-secondary');
-                                btn.classList.add('bg-primary', 'text-on-primary');
-                                msg.classList.add('hidden');
+                                btn.classList.remove('is-success');
+                                msg.hidden = true;
                                 contactForm.reset();
+                                resetCharCount();
                             }, 3000);
                         } else {
                             // Error state.
                             btn.innerHTML = originalText;
                             btn.disabled = false;
-                            btn.classList.remove('opacity-50');
+                            btn.classList.remove('is-loading');
 
-                            msg.classList.remove('hidden', 'text-tertiary');
-                            msg.classList.add('text-error');
-                            msg.textContent = (typeof data.data === 'string')
-                                ? data.data
+                            msg.hidden = false;
+                            msg.classList.remove('is-success');
+                            msg.classList.add('is-error');
+                            msg.textContent = (data.data && data.data.message)
+                                ? data.data.message
                                 : 'Something went wrong. Please try again.';
                         }
                     }, 1500);
@@ -71,10 +73,11 @@
                 .catch(function (error) {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                    btn.classList.remove('opacity-50');
+                    btn.classList.remove('is-loading');
 
-                    msg.classList.remove('hidden', 'text-tertiary');
-                    msg.classList.add('text-error');
+                    msg.hidden = false;
+                    msg.classList.remove('is-success');
+                    msg.classList.add('is-error');
                     msg.textContent = 'Something went wrong. Please try again.';
                 });
         });
@@ -131,23 +134,27 @@
         input.addEventListener('blur', function () {
             if (!this.value) this.classList.remove('focused');
         });
-
-        // Character count for textarea.
-        if (input.tagName === 'TEXTAREA') {
-            var charCount = document.createElement('span');
-            charCount.className = 'char-count text-label-sm text-on-surface-variant';
-            charCount.style.cssText = 'position: absolute; right: 0; bottom: -20px;';
-            input.parentElement.style.position = 'relative';
-            input.parentElement.appendChild(charCount);
-            charCount.textContent = '0 / 1000';
-
-            input.addEventListener('input', function () {
-                var len = this.value.length;
-                charCount.textContent = len + ' / 1000';
-                charCount.style.color = len > 900 ? '#ba1a1a' : '';
-            });
-        }
     });
+
+    // ── Message Character Counter ────────────────────────────
+    // Counter element is rendered by template-contact.php; styling lives in contact.css.
+    var messageArea = document.getElementById('contact-message');
+    var charCount = document.getElementById('dg-contact-count');
+
+    function updateCharCount() {
+        if (!messageArea || !charCount) return;
+        var len = messageArea.value.length;
+        charCount.textContent = len + ' / 1000';
+        charCount.classList.toggle('is-warn', len > 900);
+    }
+
+    function resetCharCount() {
+        updateCharCount();
+    }
+
+    if (messageArea) {
+        messageArea.addEventListener('input', updateCharCount);
+    }
 
     // ── Parallax on hero product image ───────────────────────
     var parallaxImg = document.getElementById('contact-parallax-img');

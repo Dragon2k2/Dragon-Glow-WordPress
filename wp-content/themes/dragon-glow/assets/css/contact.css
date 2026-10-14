@@ -1,34 +1,380 @@
 /* =========================================
    DRAGON GLOW — CONTACT PAGE STYLES
+   Glassmorphism form card over soft gold/rose glow.
+   Tokens: --contact-* in style.css (:root).
    ========================================= */
 
-/* Text glow effect */
+/* Text glow effect (also used by template-parts/global/page-hero.php) */
 .text-glow {
 	text-shadow: 0 0 15px rgba(119, 90, 25, 0.1);
 }
 
-/* Input focus line animation */
-.input-focus-line {
+/* ═══════════════════════════════════════════
+   PANEL — glow blobs behind the glass card
+   ═══════════════════════════════════════════ */
+.dg-contact-panel {
 	position: relative;
-}
-.input-focus-line::after {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	width: 0;
-	height: 1px;
-	background: #775a19;
-	transition: all 0.4s ease;
-	transform: translateX(-50%);
-}
-.input-focus-line:focus-within::after {
-	width: 100%;
+	isolation: isolate;
+	padding: clamp(0.75rem, 3vw, 2rem);
 }
 
-/* Floating label styles */
-.input-focus-line:focus-within label,
-.input-focus-line:not(:placeholder-shown) label {
-	transform: translateY(-24px) scale(0.85) !important;
-	color: #775a19 !important;
+.dg-contact-panel::before,
+.dg-contact-panel::after {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	width: 60%;
+	aspect-ratio: 1;
+	pointer-events: none;
+}
+
+.dg-contact-panel::before {
+	top: 0;
+	left: 0;
+	background: var(--contact-panel-glow-gold);
+}
+
+.dg-contact-panel::after {
+	right: 0;
+	bottom: 0;
+	background: var(--contact-panel-glow-rose);
+}
+
+/* ═══════════════════════════════════════════
+   CARD
+   ═══════════════════════════════════════════ */
+.dg-contact-card {
+	padding: clamp(1.5rem, 5vw, 4rem);
+	background: var(--contact-card-bg-solid);
+	border: 1px solid var(--contact-card-border);
+	border-radius: var(--contact-card-radius);
+	box-shadow: var(--contact-card-shadow);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.dg-contact-card {
+		background: var(--contact-card-bg);
+		-webkit-backdrop-filter: var(--contact-card-blur);
+		backdrop-filter: var(--contact-card-blur);
+	}
+}
+
+.dg-contact-form {
+	display: grid;
+	gap: 2rem;
+}
+
+.dg-contact-form__row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+@media (min-width: 768px) {
+	.dg-contact-form__row {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+/* ═══════════════════════════════════════════
+   FIELD — floating label inside the control
+   DOM: control → label (sibling) → count/chevron
+   ═══════════════════════════════════════════ */
+.dg-contact-field {
+	position: relative;
+}
+
+.dg-contact-field__control {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 1.5rem 1rem 0.5rem;
+	font: inherit;
+	color: var(--contact-field-text);
+	background: var(--contact-field-bg);
+	border: 1px solid var(--contact-field-border);
+	border-radius: var(--contact-field-radius);
+	appearance: none;
+	-webkit-appearance: none;
+	outline: 0;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.dg-contact-field__control:focus {
+	background: var(--contact-field-bg-focus);
+	border-color: var(--contact-field-border-focus);
+	box-shadow: var(--contact-field-ring);
+}
+
+.dg-contact-field__control:focus-visible {
+	outline: 2px solid var(--contact-field-border-focus);
+	outline-offset: 2px;
+}
+
+/* Select never matches :placeholder-shown, so scope the error state to text controls */
+.dg-contact-field__control:not(select):invalid:not(:placeholder-shown):not(:focus) {
+	border-color: var(--contact-field-border-error);
+}
+
+.dg-contact-field__label {
+	position: absolute;
+	top: 0;
+	left: 1rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--contact-label-color);
+	pointer-events: none;
+	transform-origin: left top;
+	transform: translateY(1.1rem);
+	transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.dg-contact-field__control:focus ~ .dg-contact-field__label,
+.dg-contact-field__control:not(:placeholder-shown) ~ .dg-contact-field__label {
+	transform: translateY(0.3rem) scale(0.82);
+	color: var(--contact-label-color-float);
+}
+
+/* Select: no floating label, native placeholder option shows instead */
+.dg-contact-field--select .dg-contact-field__control {
+	padding: 1.1rem 2.75rem 1.1rem 1rem;
+	cursor: pointer;
+}
+
+.dg-contact-field__chevron {
+	position: absolute;
+	top: 50%;
+	right: 1rem;
+	color: var(--contact-label-color);
+	pointer-events: none;
+	transform: translateY(-50%);
+}
+
+.dg-contact-field--textarea .dg-contact-field__control {
+	resize: none;
+}
+
+/* ═══════════════════════════════════════════
+   SELECT DROPDOWN — glass popup (progressive enhancement)
+   DOM: .dg-contact-field--select > select.dg-contact-field__control > option
+   Native popup cannot be styled in every browser, so:
+   1. Baseline: tinted option rows (honoured by Firefox/Windows Chrome).
+   2. Enhanced: `appearance: base-select` (Chromium 135+) exposes ::picker(select),
+      which accepts backdrop-filter, radius, shadow and per-option states.
+   ═══════════════════════════════════════════ */
+
+/* Baseline — placeholder tone + option colours */
+.dg-contact-field--select .dg-contact-field__control:invalid {
+	color: var(--contact-option-text-muted);
+}
+
+.dg-contact-field--select option {
+	color: var(--contact-option-text);
+	background-color: var(--contact-menu-bg-solid);
+}
+
+.dg-contact-field--select option:checked {
+	color: var(--contact-option-text-selected);
+	background-color: var(--contact-option-bg-selected);
+}
+
+/* Placeholder option is disabled + checked: keep it muted, not "selected" */
+.dg-contact-field--select option:disabled {
+	color: var(--contact-option-text-muted);
+	background-color: var(--contact-menu-bg-solid);
+}
+
+@supports (appearance: base-select) {
+	.dg-contact-field--select .dg-contact-field__control,
+	.dg-contact-field--select .dg-contact-field__control::picker(select) {
+		appearance: base-select;
+	}
+
+	/* Keep the theme chevron (Material Symbols) instead of the UA picker icon */
+	.dg-contact-field--select .dg-contact-field__control::picker-icon {
+		display: none;
+	}
+
+	.dg-contact-field--select .dg-contact-field__control {
+		display: flex;
+		align-items: center;
+	}
+
+	.dg-contact-field__chevron {
+		transition: transform var(--contact-menu-duration) ease;
+	}
+
+	.dg-contact-field--select:has(.dg-contact-field__control:open) .dg-contact-field__chevron {
+		transform: translateY(-50%) rotate(180deg);
+	}
+
+	/* Glass panel */
+	.dg-contact-field--select .dg-contact-field__control::picker(select) {
+		box-sizing: border-box;
+		inline-size: anchor-size(self-inline);
+		min-inline-size: anchor-size(width);
+		margin-block: var(--contact-menu-offset);
+		padding: var(--contact-menu-padding);
+		color: var(--contact-option-text);
+		background: var(--contact-menu-bg-solid);
+		border: 1px solid var(--contact-menu-border);
+		border-radius: var(--contact-menu-radius);
+		box-shadow: var(--contact-menu-shadow);
+		opacity: 1;
+		transform: translateY(0);
+		transition:
+			opacity var(--contact-menu-duration) ease,
+			transform var(--contact-menu-duration) ease,
+			overlay var(--contact-menu-duration) allow-discrete,
+			display var(--contact-menu-duration) allow-discrete;
+	}
+
+	@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+		.dg-contact-field--select .dg-contact-field__control::picker(select) {
+			background: var(--contact-menu-bg);
+			-webkit-backdrop-filter: var(--contact-menu-blur);
+			backdrop-filter: var(--contact-menu-blur);
+		}
+	}
+
+	/* Enter / exit animation */
+	@starting-style {
+		.dg-contact-field--select .dg-contact-field__control::picker(select):popover-open {
+			opacity: 0;
+			transform: translateY(calc(var(--contact-menu-offset) * -1));
+		}
+	}
+
+	.dg-contact-field--select .dg-contact-field__control::picker(select):not(:popover-open) {
+		opacity: 0;
+		transform: translateY(calc(var(--contact-menu-offset) * -1));
+	}
+
+	/* Option rows */
+	.dg-contact-field--select option {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: var(--contact-option-padding);
+		color: var(--contact-option-text);
+		background: transparent;
+		border-radius: var(--contact-option-radius);
+		cursor: pointer;
+		transition: background-color var(--contact-menu-duration) ease, color var(--contact-menu-duration) ease;
+	}
+
+	.dg-contact-field--select option:hover,
+	.dg-contact-field--select option:focus-visible {
+		background: var(--contact-option-bg-hover);
+		outline: 0;
+	}
+
+	.dg-contact-field--select option:checked {
+		font-weight: 600;
+		color: var(--contact-option-text-selected);
+		background: var(--contact-option-bg-selected);
+	}
+
+	.dg-contact-field--select option:disabled {
+		font-weight: 400;
+		color: var(--contact-option-text-muted);
+		background: transparent;
+		cursor: default;
+	}
+
+	/* Checkmark sits at the end of the row */
+	.dg-contact-field--select option::checkmark {
+		order: 1;
+		margin-inline-start: auto;
+		color: var(--contact-option-check);
+	}
+}
+
+.dg-contact-field__count {
+	position: absolute;
+	right: 0;
+	bottom: -1.5rem;
+	font-size: 0.75rem;
+	color: var(--contact-label-color);
+}
+
+.dg-contact-field__count.is-warn {
+	color: var(--contact-count-warn);
+}
+
+/* ═══════════════════════════════════════════
+   SUBMIT + STATUS MESSAGE
+   ═══════════════════════════════════════════ */
+.dg-contact-form__submit {
+	width: 100%;
+	margin-top: 0.75rem;
+	padding: 1.25rem 2rem;
+	font: inherit;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--contact-btn-text);
+	background: var(--contact-btn-bg);
+	border: 0;
+	border-radius: var(--contact-btn-radius);
+	box-shadow: var(--contact-btn-shadow);
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.dg-contact-form__submit:hover {
+	box-shadow: var(--contact-btn-shadow-hover);
+}
+
+.dg-contact-form__submit:active {
+	transform: scale(0.98);
+}
+
+.dg-contact-form__submit:focus-visible {
+	outline: 2px solid var(--contact-field-border-focus);
+	outline-offset: 3px;
+}
+
+.dg-contact-form__submit.is-loading,
+.dg-contact-form__submit:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.dg-contact-form__submit.is-success {
+	background: var(--contact-btn-bg-success);
+}
+
+.dg-contact-form__msg {
+	margin: 0;
+	text-align: center;
+}
+
+.dg-contact-form__msg.is-success {
+	color: var(--contact-msg-success);
+}
+
+.dg-contact-form__msg.is-error {
+	color: var(--contact-msg-error);
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY
+   ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+	.dg-contact-field__control,
+	.dg-contact-field__label,
+	.dg-contact-field__chevron,
+	.dg-contact-field--select option,
+	.dg-contact-field--select .dg-contact-field__control::picker(select),
+	.dg-contact-form__submit {
+		transition: none;
+	}
+
+	.dg-contact-form__submit:active {
+		transform: none;
+	}
 }
