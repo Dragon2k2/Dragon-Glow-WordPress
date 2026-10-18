@@ -240,14 +240,14 @@
 			if (!target) return;
 			e.preventDefault();
 			target.focus();
-			target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+			target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 		});
 
 		// Server-rendered errors (after a failed POST): focus the summary.
 		const summary = document.getElementById('dg-register-summary');
 		if (summary && !summary.hasAttribute('hidden')) {
 			summary.focus({ preventScroll: true });
-			summary.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+			summary.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 		}
 
 		// Check for success message from WooCommerce
@@ -386,7 +386,7 @@
 		const first = document.getElementById(FIELD_IDS[errors[0].field]);
 		if (first) {
 			first.focus({ preventScroll: true });
-			first.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+			first.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 		}
 	}
 
