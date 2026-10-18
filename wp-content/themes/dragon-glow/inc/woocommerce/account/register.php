@@ -468,7 +468,7 @@ function dg_render_account_register_page(): void {
 									<svg class="dg-register-form__social-icon" viewBox="0 0 24 24" fill="currentColor">
 										<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.77 1.04-1.85.92-2.92-.91.04-2 .6-2.65 1.37-.56.65-1.06 1.74-.93 2.8 1.02.08 2.04-.51 2.66-1.25z"/>
 									</svg>
-									<span><?php esc_html_e( 'Apple ID', 'dragon-glow' ); ?></span>
+									<span><?php esc_html_e( 'Apple', 'dragon-glow' ); ?></span>
 								<?php echo $dg_register_apple_enabled ? '</a>' : '</button>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static closing tag string, no user input. ?>
 							</div>
 
@@ -485,6 +485,25 @@ function dg_render_account_register_page(): void {
 					</div>
 
 				</div>
+
+				<!-- Apothecary Authentication Micro-Badge -->
+				<div class="dg-account-auth__trust-badges">
+					<span class="dg-account-auth__trust-badge">
+						<span class="material-symbols-outlined">eco</span>
+						<span><?php esc_html_e( 'Pure Botanical Distillation', 'dragon-glow' ); ?></span>
+					</span>
+					<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
+					<span class="dg-account-auth__trust-badge">
+						<span class="material-symbols-outlined">lock</span>
+						<span><?php esc_html_e( '256-Bit Encrypted Ledger', 'dragon-glow' ); ?></span>
+					</span>
+				<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
+				<span class="dg-account-auth__trust-badge">
+					<span class="material-symbols-outlined">cruelty_free</span>
+					<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
+				</span>
+				</div>
+
 			</div>
 		</div>
 	</main>
@@ -493,9 +512,9 @@ function dg_render_account_register_page(): void {
 	<footer class="dg-account-auth__heritage-footer">
 		<div class="dg-account-auth__heritage-locations">
 			<span><?php esc_html_e( 'Heritage Atelier San Francisco', 'dragon-glow' ); ?></span>
-			<span class="dg-account-auth__heritage-dot">&bull;</span>
+			<span class="dg-account-auth__heritage-dot" aria-hidden="true">&bull;</span>
 			<span><?php esc_html_e( 'Fifth Avenue New York', 'dragon-glow' ); ?></span>
-			<span class="dg-account-auth__heritage-dot">&bull;</span>
+			<span class="dg-account-auth__heritage-dot" aria-hidden="true">&bull;</span>
 			<span><?php esc_html_e( 'Parisian Archive', 'dragon-glow' ); ?></span>
 		</div>
 		<div class="dg-account-auth__heritage-copyright">

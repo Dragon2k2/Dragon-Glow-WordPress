@@ -234,7 +234,7 @@
 
 .dg-account-auth__brand-title {
 	font-family: 'Playfair Display', Georgia, serif;
-	font-size: 44px;
+	font-size: var(--auth-brand-title-size);
 	font-weight: 600;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
@@ -279,6 +279,28 @@
 	line-height: 1;
 }
 
+/* Narrow screens: "EST. 2026 • SAN FRANCISCO • NEW YORK" needs ~337px at
+   desktop tracking and wrapped into two touching lines (line-height: 1)
+   below ~430px. Keep the tagline on ONE line by easing the tracking and
+   size fluidly (--auth-brand-tagline-*-mobile) instead of wrapping, and
+   stop the flanking rules from being squeezed by the text. */
+@media (max-width: 639px) {
+	.dg-login__brand-subtitle {
+		justify-content: center;
+		gap: 6px;
+	}
+
+	.dg-login__brand-subtitle .dg-account-auth__brand-rule {
+		flex-shrink: 0;
+	}
+
+	.dg-login__brand-subtitle p {
+		font-size: var(--auth-brand-tagline-size-mobile);
+		letter-spacing: var(--auth-brand-tagline-tracking-mobile);
+		white-space: nowrap;
+	}
+}
+
 
 /* =========================================
    2. WRAPPER & FRAME
@@ -301,10 +323,13 @@
 	}
 }
 
+/* `minmax(0, 1fr)` instead of `1fr` (= `minmax(auto, 1fr)`): lets the
+   column shrink below its children's min-content width, so a single
+   nowrap row can never push the frame wider than the viewport. */
 .dg-login__frame {
 	position: relative;
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: minmax(0, 1fr);
 	background: var(--auth-panel-bg);
 	border: 1px solid var(--auth-panel-border);
 	border-radius: 4px;
@@ -314,7 +339,7 @@
 
 @media (min-width: 1024px) {
 	.dg-login__frame {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
 
@@ -353,6 +378,9 @@
 	border-bottom: 1px solid var(--auth-gold-300);
 }
 
+/* Stacked layout (< 1024px) follows DOM order: showcase on top, sign-in
+   panel below, separated by the showcase's border-bottom above. DOM order
+   = visual order = keyboard/AT order, so no `order` override is needed. */
 @media (min-width: 1024px) {
 	.dg-login__showcase {
 		border-bottom: 0;
@@ -370,11 +398,37 @@
 	font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
+/* One-line row: "IV • Luxury Skincare" never wraps under the badge.
+   `min-width: 0` lets the row shrink so the subtitle truncates with an
+   ellipsis on very narrow screens (≤ 320px) instead of pushing the
+   "Member Access" badge out of line. */
+/* Eyebrow metadata (IV • Luxury Skincare) — semantically matches register eyebrow */
+.dg-login__eyebrow {
+	display: block;
+	font-family: var(--login-eyebrow-font);
+	font-size: var(--login-eyebrow-size-desktop);
+	font-weight: var(--login-eyebrow-weight);
+	text-transform: uppercase;
+	letter-spacing: var(--login-eyebrow-tracking-desktop);
+	color: var(--login-eyebrow-text);
+}
+
+/* Legacy selectors (for backwards compat if template still uses old structure) */
 .dg-login__tome-row {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
+	min-width: 0;
+}
+
+.dg-login__tome-row .dg-login__dot {
+	line-height: 1; /* 20px glyph no longer inflates the row height */
+}
+
+.dg-login__tome,
+.dg-account-auth__sanctuary-badge {
+	flex-shrink: 0;
 }
 
 .dg-login__tome {
@@ -386,9 +440,51 @@
 }
 
 .dg-login__tome-sub {
+	min-width: 0;
+	overflow: hidden;
 	font-style: italic;
 	font-size: 14px;
 	color: var(--auth-sanctuary-badge-text);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+@media (max-width: 639px) {
+	.dg-login__showcase-top {
+		gap: 12px;
+	}
+
+	.dg-login__eyebrow {
+		font-size: var(--login-eyebrow-size-mobile);
+		letter-spacing: var(--login-eyebrow-tracking-mobile);
+		white-space: nowrap;
+	}
+
+	.dg-account-auth__sanctuary-badge {
+		flex-shrink: 0;
+		gap: var(--login-sanctuary-badge-gap-mobile);
+		padding: var(--login-sanctuary-badge-padding-mobile);
+		font-size: var(--login-sanctuary-badge-size-mobile);
+		letter-spacing: var(--login-sanctuary-badge-tracking-mobile);
+		white-space: nowrap;
+	}
+
+	.dg-account-auth__pulse-dot {
+		flex-shrink: 0;
+	}
+
+	/* Legacy tome-row mobile adjustments */
+	.dg-login__tome-row {
+		gap: 6px;
+	}
+
+	.dg-login__tome {
+		letter-spacing: 0.1em;
+	}
+
+	.dg-login__tome-sub {
+		font-size: 13px;
+	}
 }
 
 .dg-login__dot {
@@ -399,16 +495,44 @@
 .dg-account-auth__sanctuary-badge {
 	display: inline-flex;
 	align-items: center;
-	padding: 2px 10px;
-	font-family: var(--auth-sanctuary-badge-font);
-	font-size: 9px;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--auth-sanctuary-badge-text);
-	background: var(--auth-sanctuary-badge-bg);
-	border: 1px solid var(--auth-gold-400);
+	gap: var(--login-sanctuary-badge-gap);
+	padding: var(--login-sanctuary-badge-padding-desktop);
 	border-radius: 9999px;
+	background: var(--login-sanctuary-badge-bg);
+	border: 1px solid var(--login-sanctuary-badge-border);
+	font-family: var(--login-sanctuary-badge-font);
+	font-size: var(--login-sanctuary-badge-size-desktop);
+	font-weight: var(--login-sanctuary-badge-weight);
+	letter-spacing: var(--login-sanctuary-badge-tracking);
+	color: var(--login-sanctuary-badge-text);
 	white-space: nowrap;
+}
+
+/* Pulse dot — status indicator (active member) */
+.dg-account-auth__pulse-dot {
+	flex-shrink: 0;
+	width: var(--login-pulse-dot-size);
+	height: var(--login-pulse-dot-size);
+	border-radius: 50%;
+	background: var(--login-pulse-dot-color);
+	animation: dg-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dg-pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-auth__pulse-dot {
+		animation: none;
+		opacity: 1;
+	}
 }
 
 /* --- Arch showcase --- */
@@ -442,7 +566,9 @@
 	position: relative;
 	width: 100%;
 	max-width: 363.2px;
-	height: 500px;
+	/* Ratio instead of a fixed 500px height: identical on desktop
+	   (363.2 × 500), scales down with the width on small screens. */
+	aspect-ratio: 363.2 / 500;
 	border-radius: 999px 999px 8px 8px;
 	border: 2px solid rgba(197, 155, 39, 0.7);
 	padding: 8px;
@@ -551,7 +677,7 @@
 
 .dg-login__steps {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 8px;
 	text-align: center;
 }
@@ -579,6 +705,28 @@
 	font-size: 11px;
 	line-height: 1.2;
 	color: #5A4F3D;
+	text-wrap: balance; /* 2-line subs split evenly ("Nectar / Emulsion") */
+}
+
+/* Narrow screens: three ~70-90px cells. Keep the roman-numeral label on
+   one line ("II. INFUSE" must not break after "II."), give text a bit
+   more room via tighter side padding, and centre content vertically so
+   1-line and 2-line subs sit level across the row. */
+@media (max-width: 639px) {
+	.dg-login__steps {
+		gap: 6px;
+	}
+
+	.dg-login__step {
+		justify-content: center;
+		padding: 8px 4px;
+	}
+
+	.dg-login__step-label {
+		font-size: 11px;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+	}
 }
 
 /* =========================================
@@ -586,11 +734,16 @@
    ========================================= */
 
 .dg-login__panel-col {
-	padding: clamp(1.5rem, 4vw, 3rem);
+	padding: clamp(1.5rem, 5vw, 3rem);
 	background: var(--auth-panel-bg);
 	display: flex;
 	flex-direction: column;
-	padding: 4rem;
+}
+
+@media (min-width: 1024px) {
+	.dg-login__panel-col {
+		padding: 4rem;
+	}
 }
 
 .dg-login__head {
@@ -631,6 +784,19 @@
 	margin: 0;
 }
 
+/* Mobile: ensure "Sign In to Your Account" (25 chars) stays on 1 line
+   at all mobile viewports (320px-767px). Font scales 22px → 28px and
+   letter-spacing tightens from 0.02em to 0.01em to prevent wrapping.
+   At 320px: 22px font + 0.01em tracking fits ~25 chars in ~236px content
+   box (320px - 64px padding). White-space: nowrap as final safety guard. */
+@media (max-width: 767px) {
+	.dg-login__title {
+		font-size: var(--auth-title-size-mobile);
+		letter-spacing: var(--auth-title-tracking-mobile);
+		white-space: nowrap;
+	}
+}
+
 /* .dg-account-auth__title-rule stays shared — also used by register.php */
 .dg-account-auth__title-rule {
 	display: block;
@@ -649,6 +815,24 @@
 	max-width: 435px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+/* Narrow screens: the full sub sentence (~143 chars) wraps to ~5-6 lines
+   at desktop 13px inside the 435px content box (max-width above), pushing
+   the form below the fold on the heritage panel. Shrink the font fluidly
+   (--auth-sub-font-size-mobile: 8.5px → 9.5px) so the same text fits
+   EXACTLY 3 lines at 320-767px — no clip, no ellipsis, full copy stays
+   in the DOM and reachable for screen readers. At 375px (iPhone SE) = 9px,
+   3 lines × line-height 1.5 ≈ 40.5px total; at 320px = 8.5px × 1.5 × 3
+   ≈ 38.25px; at 767px = 9.5px × 1.5 × 3 ≈ 42.75px, preserving the
+   eyebrow / title / sub visual hierarchy. */
+@media (max-width: 767px) {
+	.dg-login__sub {
+		font-size: var(--auth-sub-font-size-mobile);
+		line-height: 1.5;
+		max-width: 100%;
+		text-align: center;
+	}
 }
 
 /* --- Form --- */
@@ -688,6 +872,43 @@
 	color: var(--auth-gold-900);
 }
 
+/* Label row (label + "Lost credentials?" / hint) on narrow screens:
+   always ONE line — label left, link right. Both sides are nowrap and
+   font sizes scale fluidly (--auth-row-label-*-size-mobile) so the pair
+   still fits the ~236px content box at 320px. Link hit area is enlarged
+   via an invisible ::after layer (--auth-touch-hit-inset), layout unchanged. */
+@media (max-width: 639px) {
+	.dg-login__panel-col .dg-account-field__row-label {
+		flex-wrap: nowrap;
+	}
+
+	.dg-login__panel-col .dg-account-field__row-label > label,
+	.dg-login__panel-col .dg-account-field__hint,
+	.dg-login__panel-col .dg-account-form__link {
+		white-space: nowrap;
+	}
+
+	.dg-login__panel-col .dg-account-field__row-label > label {
+		font-size: var(--auth-row-label-size-mobile);
+	}
+
+	.dg-login__panel-col .dg-account-field__hint,
+	.dg-login__panel-col .dg-account-form__link {
+		flex-shrink: 0;
+		font-size: var(--auth-row-link-size-mobile);
+	}
+
+	.dg-login__panel-col .dg-account-form__link {
+		position: relative;
+	}
+
+	.dg-login__panel-col .dg-account-form__link::after {
+		content: '';
+		position: absolute;
+		inset: var(--auth-touch-hit-inset);
+	}
+}
+
 .dg-login__panel-col .dg-account-field__wrap {
 	position: relative;
 	display: flex;
@@ -719,9 +940,47 @@
 	padding-left: 40px;
 }
 
+@media (max-width: 767px) {
+	.dg-login__panel-col .dg-account-field__input {
+		font-size: var(--auth-input-font-size-mobile);
+	}
+}
+
 .dg-login__panel-col .dg-account-field__input::placeholder {
 	color: var(--auth-input-placeholder);
 	font-style: italic;
+}
+
+/* Password field: reserve room for the absolutely-positioned show/hide
+   toggle so the placeholder and typed text never run underneath it. */
+.dg-login__panel-col .dg-account-field__input:has(+ .dg-account-field__toggle) {
+	padding-right: var(--auth-input-toggle-padding);
+}
+
+/* Narrow screens: at 16px the placeholders ("patron@maison-dragonglow.com",
+   "Enter your confidential cipher") need ~271px / ~238px but the inputs
+   only offer ~182px at 320px, so they were hard-clipped mid-word.
+   - Only the placeholder scales down; typed text keeps 16px (iOS no-zoom).
+   - Slightly tighter side padding buys a few more pixels.
+   - Ellipsis is the last-resort fallback instead of a hard clip. */
+@media (max-width: 639px) {
+	.dg-login__panel-col .dg-account-field__input {
+		padding-right: var(--auth-input-padding-x-mobile);
+		padding-left: var(--auth-input-padding-x-mobile);
+		text-overflow: ellipsis;
+	}
+
+	.dg-login__panel-col .dg-account-field__input--icon {
+		padding-left: var(--auth-input-icon-padding-mobile);
+	}
+
+	.dg-login__panel-col .dg-account-field__input:has(+ .dg-account-field__toggle) {
+		padding-right: var(--auth-input-toggle-padding-mobile);
+	}
+
+	.dg-login__panel-col .dg-account-field__input::placeholder {
+		font-size: var(--auth-input-placeholder-size-mobile);
+	}
 }
 
 .dg-login__panel-col .dg-account-field__input:focus {
@@ -929,9 +1188,25 @@
 .dg-login__alt-access-line {
 	display: block;
 	flex: 1 1 auto;
-	min-width: 24px;
+	min-width: 16px;
 	height: 1px;
 	background: var(--register-border-secondary);
+}
+
+/* Mobile: prevent decorative lines from touching panel edges. At 320px
+   the panel has 20px side padding (clamp resolves lower than expected),
+   leaving 280px content box. Text "ALTERNATIVE ACCESS" with letter-spacing
+   2.16px takes ~196px, leaving only ~72px for 2 lines + 12px gap = 60px
+   for lines. With min-width 16px (down from 24px), each line can shrink
+   to ~16-20px, creating ~16-20px breathing room from panel edges. Without
+   this constraint, lines hit their 24px min-width floor and right line
+   touches the border (9.88px gap = too close). Max-width 40px prevents
+   over-expansion on larger viewports where text is shorter. */
+@media (max-width: 767px) {
+	.dg-login__alt-access-line {
+		max-width: 40px;
+		min-width: 16px;
+	}
 }
 
 .dg-login__alt-access-line:last-child {
@@ -944,7 +1219,8 @@
 	gap: 6px;
 	flex-shrink: 0;
 	font-family: 'Cormorant Garamond', Georgia, serif;
-	font-size: 12px;
+	font-size: clamp(11px, 2.75vw, 12px);
+	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.18em;
 	color: #7D6638;
@@ -980,6 +1256,12 @@
 	cursor: pointer;
 	text-decoration: none; /* <a> fallback when the provider is configured — see login.php */
 	transition: all 0.2s ease;
+}
+
+@media (max-width: 767px) {
+	.dg-login__social-btn {
+		height: var(--auth-touch-target);
+	}
 }
 
 .dg-login__social-btn:focus-visible {
@@ -1029,14 +1311,51 @@
 	border-bottom-color: var(--auth-gold-900);
 }
 
+.dg-login__register-link:focus-visible {
+	outline: 2px solid var(--register-input-border-focus);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+/* Narrow screens: keep "Don't have an account? Create Account" on ONE
+   centred line at every phone width. Flex row + nowrap stops the wrap;
+   font sizes scale fluidly (--auth-register-prompt-*-size-mobile) so the
+   line still fits 320px. Baseline alignment keeps the 2 font families
+   (Plus Jakarta Sans / Cormorant Garamond) on the same text line. The CTA
+   gains a larger tap area via the shared invisible ::after hit layer. */
+@media (max-width: 639px) {
+	.dg-login__register-prompt {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-items: baseline;
+		gap: 0.35em;
+		white-space: nowrap;
+		font-size: var(--auth-register-prompt-size-mobile);
+	}
+
+	.dg-login__register-link {
+		position: relative;
+		flex-shrink: 0;
+		margin-top: 0;
+		font-size: var(--auth-register-link-size-mobile);
+	}
+
+	.dg-login__register-link::after {
+		content: '';
+		position: absolute;
+		inset: var(--auth-touch-hit-inset);
+	}
+}
+
 /* --- Heritage Footer (Classical locations + copyright) --- */
 
 .dg-account-auth__heritage-footer {
 	width: 100%;
-	padding: 20px 0;
+	padding: var(--auth-footer-padding-top) 0 20px;
 	margin-bottom: clamp(2rem, 4vw, 3rem);
 	text-align: center;
-	font-family: 'Cormorant Garamond', serif;
+	font-family: 'Plus Jakarta Sans', sans-serif;
 	text-transform: uppercase;
 	position: relative;
 	z-index: 20;
@@ -1071,11 +1390,20 @@
 	font-weight: 500;
 }
 
-/* Responsive footer — stack on small screens */
+/* Responsive footer — stack on small screens.
+   The footer sits outside <main>, so it gets no side padding from the page
+   wrapper: at 320px the copyright ran edge to edge across the viewport
+   frame lines, and at 375px it left "RESERVED." orphaned on line 2.
+   Fix: frame-safe side padding, fluid size + eased tracking for the
+   uppercase lines, and a balanced 2-line copyright when it must wrap.
+   (register.css loads after this file and tunes its own values.) */
 @media (max-width: 640px) {
 	.dg-account-auth__heritage-locations {
 		flex-direction: column;
-		gap: 4px;
+		gap: 2px;
+		font-size: var(--auth-footer-location-size-mobile);
+		letter-spacing: var(--auth-footer-location-tracking-mobile);
+		line-height: 1.5;
 	}
 
 	.dg-account-auth__heritage-dot {
@@ -1083,7 +1411,18 @@
 	}
 
 	.dg-account-auth__heritage-footer {
-		padding: 16px 0;
+		box-sizing: border-box;
+		padding: var(--auth-footer-padding-top-mobile) var(--auth-footer-padding-x-mobile) 16px;
+		gap: 8px;
+	}
+
+	.dg-account-auth__heritage-copyright {
+		max-width: 100%;
+		margin-top: 0;
+		font-size: var(--auth-footer-copyright-size-mobile);
+		letter-spacing: var(--auth-footer-copyright-tracking-mobile);
+		line-height: 1.6;
+		text-wrap: balance;
 	}
 }
 
@@ -1093,7 +1432,7 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	gap: 10px;
 	margin-top: 19px;
 	padding-top: 29px;
@@ -1120,6 +1459,18 @@
 
 .dg-login__footnote .dg-login__dot {
 	color: #7A6432;
+}
+
+/* Narrow panels: the two items wrap onto separate lines, so the bullet
+   separator would dangle at the end of line one — hide it there. */
+@media (max-width: 639px) {
+	.dg-login__footnote {
+		gap: 8px 16px;
+	}
+
+	.dg-login__footnote .dg-login__dot {
+		display: none;
+	}
 }
 
 /* =========================================

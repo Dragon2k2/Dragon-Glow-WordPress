@@ -1,0 +1,524 @@
+/* =========================================
+   DRAGON GLOW — HOME STYLES
+   Mobile-first layout for the front page: hero, trust badges, categories,
+   best sellers carousel, brand story, testimonials, Instagram, newsletter.
+   Breakpoints: 640 / 768 / 1024 (+1280 gutter step). Tokens: style.css (--home-*).
+   Colours, shadows and radii on cards stay in the Tailwind utilities in markup;
+   this file owns spacing, grids, sizing and touch behaviour.
+   ========================================= */
+
+/* ═══════════════════════════════════════
+   1. SHARED CONTAINER & SECTION RHYTHM
+   ═══════════════════════════════════════ */
+
+.dg-home-container {
+    width: 100%;
+    max-width: var(--home-container-max);
+    margin-inline: auto;
+    padding-inline: var(--home-gutter);
+}
+
+@media (min-width: 768px) {
+    .dg-home-container {
+        padding-inline: var(--home-gutter-tablet);
+    }
+}
+
+@media (min-width: 1280px) {
+    .dg-home-container {
+        padding-inline: var(--home-gutter-desktop);
+    }
+}
+
+.dg-home-section {
+    padding-block: var(--home-section-gap);
+}
+
+.dg-home-section__head {
+    margin-bottom: var(--home-head-gap);
+    text-align: center;
+}
+
+.dg-home a:focus-visible,
+.dg-home button:focus-visible {
+    outline: var(--home-focus-ring);
+    outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════
+   2. HERO
+   ═══════════════════════════════════════ */
+
+/* Mobile (<768px): stacked layout. Copy first, photo below it as its own block,
+   so text never competes with the image. From 768px the photo becomes the
+   full-bleed background and the copy overlays it. */
+.dg-home-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dg-home-hero__media {
+    position: relative;
+    z-index: 0;
+    order: 2;
+    aspect-ratio: var(--home-hero-media-ratio-mobile);
+}
+
+/* Small tablets only: a 4:5 frame gets too tall here, so cap it.
+   Not applied on phones: a viewport-height cap (svh) shrinks with the browser
+   toolbar on real devices and crops the photo, while DevTools emulation hides it. */
+@media (min-width: 640px) and (max-width: 767px) {
+    .dg-home-hero__media {
+        max-height: var(--home-hero-media-max-height-mobile);
+    }
+}
+
+.dg-home-hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 80% 30%;
+}
+
+/* Parallax only where the hero is wide enough to benefit from it. */
+@media (min-width: 768px) {
+    .dg-home-hero__img {
+        transform: translateY(var(--scroll-y, 0));
+    }
+}
+
+.dg-home-hero__fallback {
+    width: 100%;
+    height: 100%;
+}
+
+/* Mobile: the photo sits below the copy, so only blend its top edge into the surface colour. */
+.dg-home-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, var(--home-hero-overlay-top-mobile), var(--home-hero-overlay-bottom-mobile) var(--home-hero-overlay-fade-mobile));
+}
+
+.dg-home-hero__inner {
+    position: relative;
+    z-index: 10;
+    order: 1;
+    padding-top: var(--home-hero-copy-pad-top);
+    padding-bottom: var(--home-hero-copy-pad-bottom);
+}
+
+@media (min-width: 768px) {
+    .dg-home-hero {
+        flex-direction: row;
+        align-items: center;
+        min-height: max(var(--home-hero-min), var(--home-hero-height));
+        padding-block: var(--home-hero-padding-y);
+    }
+
+    .dg-home-hero__media {
+        position: absolute;
+        inset: 0;
+        order: 0;
+        aspect-ratio: auto;
+        max-height: none;
+    }
+
+    .dg-home-hero__overlay {
+        background: linear-gradient(to right, var(--home-hero-overlay-start), var(--home-hero-overlay-mid), transparent);
+    }
+
+    .dg-home-hero__inner {
+        order: 0;
+        padding-block: 0;
+    }
+}
+
+@supports (height: 1svh) {
+    @media (min-width: 768px) {
+        .dg-home-hero {
+            min-height: max(var(--home-hero-min), var(--home-hero-height-small));
+        }
+    }
+}
+
+.dg-home-hero__content {
+    max-width: var(--home-hero-content-max);
+}
+
+.dg-home-hero__title {
+    margin-bottom: clamp(16px, 2vw + 8px, 24px);
+    font-size: var(--home-hero-title-size);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+.dg-home-hero__sub {
+    margin-bottom: clamp(28px, 4vw + 8px, 40px);
+    font-size: clamp(16px, 0.5vw + 14px, 18px);
+    line-height: 1.6;
+}
+
+.dg-home-hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--home-hero-actions-gap);
+}
+
+.dg-home-hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--home-tap-size);
+    padding: var(--home-hero-cta-padding);
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .dg-home-hero__actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+}
+
+/* Blobs are decoration; keep them from bloating small screens. */
+.dg-home-hero__blob {
+    pointer-events: none;
+}
+
+@media (max-width: 767px) {
+    .dg-home-hero__blob {
+        opacity: 0.6;
+    }
+}
+
+/* ═══════════════════════════════════════
+   3. TRUST BADGES
+   ═══════════════════════════════════════ */
+
+.dg-home-trust__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px var(--home-grid-gap);
+}
+
+.dg-home-trust__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.dg-home-trust__icon {
+    flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+    .dg-home-trust__item {
+        flex-direction: row;
+        gap: 16px;
+        text-align: left;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dg-home-trust__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ═══════════════════════════════════════
+   4. FEATURED CATEGORIES
+   ═══════════════════════════════════════ */
+
+.dg-home-categories__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--home-grid-gap);
+}
+
+@media (min-width: 480px) {
+    .dg-home-categories__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .dg-home-categories__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.dg-home-category {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--home-category-radius);
+}
+
+@media (min-width: 480px) {
+    .dg-home-category {
+        aspect-ratio: 4 / 5;
+    }
+}
+
+/* The whole card is the tap target, not just the image. */
+.dg-home-category__link {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border-radius: inherit;
+}
+
+.dg-home-category__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--home-category-scrim);
+    pointer-events: none;
+}
+
+.dg-home-category__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+}
+
+.dg-home-category__caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    padding: var(--home-category-pad);
+}
+
+.dg-home-category__name {
+    font-size: var(--home-category-name-size);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* Hover motion only for real pointers; touch users get the resting state. */
+@media (hover: hover) {
+    .dg-home-category__caption {
+        transform: translateY(1rem);
+        transition: transform 0.3s ease;
+    }
+
+    .dg-home-category:hover .dg-home-category__caption,
+    .dg-home-category__link:focus-visible .dg-home-category__caption {
+        transform: translateY(0);
+    }
+
+    .dg-home-category:hover .dg-home-category__img {
+        transform: scale(1.1);
+    }
+}
+
+/* ═══════════════════════════════════════
+   5. BEST SELLERS CAROUSEL
+   Cards: 1 + peek (<640) → 2 (640–1023) → 3 (≥1024).
+   Below 1024px the scroller bleeds to the screen edge.
+   ═══════════════════════════════════════ */
+
+.dg-home-favorites__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: var(--home-head-gap);
+}
+
+.dg-home-favorites__intro {
+    min-width: 0;
+}
+
+.dg-home-favorites__nav {
+    display: flex;
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+@media (max-width: 639px) {
+    .dg-home-favorites__nav .dg-carousel-nav-btn {
+        width: var(--home-tap-size);
+        height: var(--home-tap-size);
+        padding: 10px;
+    }
+}
+
+.dg-home-carousel {
+    display: flex;
+    gap: var(--home-carousel-gap);
+    margin-inline: calc(var(--home-gutter) * -1);
+    padding: 0 var(--home-gutter) 16px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scroll-padding-inline: var(--home-gutter);
+    scroll-snap-type: x mandatory;
+}
+
+.dg-home-carousel > .dg-home-product {
+    flex: 0 0 var(--home-carousel-card-mobile);
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+    .dg-home-carousel > .dg-home-product {
+        flex-basis: calc((100% - var(--home-carousel-gap)) / 2);
+    }
+}
+
+@media (min-width: 768px) {
+    .dg-home-carousel {
+        margin-inline: calc(var(--home-gutter-tablet) * -1);
+        padding-inline: var(--home-gutter-tablet);
+        scroll-padding-inline: var(--home-gutter-tablet);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dg-home-carousel {
+        margin-inline: 0;
+        padding-inline: 0;
+        scroll-padding-inline: 0;
+    }
+
+    .dg-home-carousel > .dg-home-product {
+        flex-basis: calc((100% - 2 * var(--home-carousel-gap)) / 3);
+    }
+}
+
+.dg-home-product {
+    padding: clamp(12px, 1.2vw + 6px, 16px);
+    border-radius: var(--home-category-radius);
+}
+
+.dg-home-product__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.dg-home-product__price {
+    flex-shrink: 0;
+}
+
+/* Touch screens have no hover: keep quick-add visible and tappable. */
+@media (hover: none) {
+    .dg-home-product .dg-quick-add {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.dg-home-favorites__more {
+    margin-top: var(--home-head-gap);
+    text-align: center;
+}
+
+.dg-home-favorites__more .btn-ghost {
+    min-height: var(--home-tap-size);
+}
+
+/* ═══════════════════════════════════════
+   6. BRAND STORY
+   ═══════════════════════════════════════ */
+
+.dg-home-story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--home-split-gap);
+}
+
+@media (min-width: 1024px) {
+    .dg-home-story__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.dg-home-story__frame {
+    width: min(80%, var(--home-story-frame-max));
+}
+
+/* ═══════════════════════════════════════
+   7. TESTIMONIALS
+   One column up to 1023px (capped for line length), three from 1024px.
+   ═══════════════════════════════════════ */
+
+.dg-home-testimonials__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--home-grid-gap);
+    max-width: var(--home-testimonials-max);
+    margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+    .dg-home-testimonials__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: none;
+    }
+}
+
+.dg-home-testimonial {
+    padding: var(--home-testimonial-pad);
+    border-radius: clamp(1.25rem, 2vw + 0.5rem, 2rem);
+}
+
+/* ═══════════════════════════════════════
+   8. INSTAGRAM GRID
+   ═══════════════════════════════════════ */
+
+.dg-home-instagram__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(8px, 2vw, 16px);
+}
+
+@media (min-width: 768px) {
+    .dg-home-instagram__grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ═══════════════════════════════════════
+   9. REDUCED MOTION
+   Content must stay visible and static.
+   ═══════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-home .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .dg-home-hero__img,
+    .dg-home-category__img,
+    .dg-home-category__caption {
+        transform: none;
+        transition: none;
+    }
+
+    .dg-home .animate-pulse,
+    .dg-home .animate-float {
+        animation: none;
+    }
+
+    .dg-home-carousel {
+        scroll-behavior: auto;
+    }
+}

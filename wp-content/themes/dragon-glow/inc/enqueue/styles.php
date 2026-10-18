@@ -132,27 +132,35 @@ function dg_enqueue_styles(): void {
 				);
 			}
 
-			// Register endpoint (/my-account/register/) — Luminous Radiance palette
-			// Port of stitch_dragon_glow_auth_portal/đăng-ký design reference.
-			global $wp_query;
-			if ( is_account_page() && isset( $wp_query->query_vars['register'] ) ) {
-				// Plus Jakarta Sans (body) & Playfair Display (headings) already loaded globally
-				// Cormorant Garamond for heritage flourishes
-				wp_enqueue_style(
-					'dg-cormorant-garamond',
-					'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
-					array(),
-					null
-				);
-				wp_enqueue_style(
-					'dg-register',
-					DG_URI . '/assets/css/register.css',
-					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
-					DG_VERSION
-				);
-			}
+		// Register endpoint (/my-account/register/) — Luminous Radiance palette
+		// Port of stitch_dragon_glow_auth_portal/đăng-ký design reference.
+		global $wp_query;
+		if ( is_account_page() && isset( $wp_query->query_vars['register'] ) ) {
+			// Plus Jakarta Sans (body) & Playfair Display (headings) already loaded globally
+			// Cormorant Garamond for heritage flourishes
+			wp_enqueue_style(
+				'dg-cormorant-garamond',
+				'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
+				array(),
+				null
+			);
+			// Material Symbols Outlined (Google CDN) — full icon set for trust badges
+			// Includes cruelty_free icon not available in self-hosted subset
+			wp_enqueue_style(
+				'dg-material-symbols-cdn',
+				'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
+				array(),
+				null
+			);
+			wp_enqueue_style(
+				'dg-register',
+				DG_URI . '/assets/css/register.css',
+				array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
+				DG_VERSION
+			);
 		}
 	}
+}
 
     // Responsive CSS
     wp_enqueue_style(

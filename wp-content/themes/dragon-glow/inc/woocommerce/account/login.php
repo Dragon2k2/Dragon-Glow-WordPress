@@ -86,14 +86,13 @@ function dg_render_account_signed_out(): void {
 
 				<!-- LEFT: Heritage showcase -->
 				<div class="dg-login__showcase" data-sr>
-					<div class="dg-login__showcase-top">
-						<div class="dg-login__tome-row">
-						<span class="dg-login__tome"><?php esc_html_e( 'IV', 'dragon-glow' ); ?></span>
-						<span class="dg-login__dot" aria-hidden="true">&bull;</span>
-						<span class="dg-login__tome-sub"><?php esc_html_e( 'Luxury Skincare Collection', 'dragon-glow' ); ?></span>
-					</div>
-						<span class="dg-account-auth__sanctuary-badge"><?php esc_html_e( 'Member Access', 'dragon-glow' ); ?></span>
-					</div>
+				<div class="dg-login__showcase-top">
+					<span class="dg-login__eyebrow"><?php esc_html_e( 'IV • Luxury Skincare', 'dragon-glow' ); ?></span>
+					<span class="dg-account-auth__sanctuary-badge">
+						<span class="dg-account-auth__pulse-dot" aria-hidden="true"></span>
+						<?php esc_html_e( 'Member Access', 'dragon-glow' ); ?>
+					</span>
+				</div>
 
 					<div class="dg-login__arch-wrap">
 						<div class="dg-login__crown" aria-hidden="true">
@@ -270,7 +269,7 @@ function dg_render_account_signed_out(): void {
 							<svg class="dg-login__social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 								<path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
 							</svg>
-							<span><?php esc_html_e( 'Apple ID', 'dragon-glow' ); ?></span>
+							<span><?php esc_html_e( 'Apple', 'dragon-glow' ); ?></span>
 						<?php echo $apple_enabled ? '</a>' : '</button>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static closing tag string, no user input. ?>
 					</div>
 

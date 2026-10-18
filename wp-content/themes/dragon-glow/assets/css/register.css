@@ -369,6 +369,14 @@
 		grid-template-columns: 1fr;
 		gap: 32px;
 	}
+
+	.dg-account-auth__privileges {
+		flex-direction: row;
+		justify-content: center;
+		align-self: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
 }
 
 @media (min-width: 1024px) {
@@ -628,7 +636,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	align-self: flex-start;
 }
 
 .dg-account-auth__privilege-card {
@@ -696,14 +703,14 @@
 	border-radius: 4px;
 	background: var(--register-badge-bg);
 	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 700;
 	color: var(--register-gold-primary);
 }
 
 .dg-account-auth__privilege-text {
 	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 14px;
+	font-size: clamp(10px, 0.625rem + 0.5vw, 12px);
 	line-height: 1.5;
 	color: var(--register-text-secondary);
 	margin: 0;
@@ -712,7 +719,7 @@
 
 .dg-account-auth__privilege-code {
 	font-family: 'Monaco', 'Courier New', monospace;
-	font-size: 12px;
+	font-size: 16px;
 	font-weight: 600;
 	color: var(--register-gold-primary);
 }
@@ -1308,7 +1315,66 @@
 }
 
 /* =========================================
-   5g. EXISTING MEMBER SIGN-IN PROMPT
+   5g. TRUST BADGES (Apothecary Authentication Micro-Badge)
+   Outside panel grid, between panel and footer — full viewport width.
+   ========================================= */
+
+.dg-account-auth__trust-badges {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--register-trust-gap);
+	margin-top: 1rem;
+	padding: 0 20px;
+	font-family: var(--register-trust-font-family);
+	font-size: var(--register-trust-font-size);
+	text-transform: uppercase;
+	letter-spacing: var(--register-trust-tracking);
+	color: var(--register-trust-text);
+	opacity: var(--register-trust-text-opacity);
+	font-weight: 900;
+}
+
+.dg-account-auth__trust-badge {
+	display: flex;
+	align-items: center;
+	gap: var(--register-trust-badge-gap);
+}
+
+.dg-account-auth__trust-badge .material-symbols-outlined {
+	font-size: var(--register-trust-icon-size);
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
+.dg-account-auth__trust-separator {
+	color: var(--register-trust-text);
+}
+
+/* Responsive — wrap badges on narrow screens */
+@media (max-width: 639px) {
+	.dg-account-auth__trust-badges {
+		flex-wrap: wrap;
+		gap: 0.75rem; /* 12px — tighter on mobile */
+		font-size: 10px;
+		letter-spacing: 0.15em;
+	}
+
+	.dg-account-auth__trust-badge .material-symbols-outlined {
+		font-size: 13px;
+	}
+
+	.dg-account-auth__trust-badge {
+		gap: 0.25rem; /* 4px on mobile */
+	}
+
+	/* Hide separators on mobile to allow natural wrap */
+	.dg-account-auth__trust-separator {
+		display: none;
+	}
+}
+
+/* =========================================
+   5h. EXISTING MEMBER SIGN-IN PROMPT
    ========================================= */
 
 .dg-register-form__signin-prompt {
@@ -1317,7 +1383,7 @@
 	font-size: 14px;
 	color: var(--register-text-secondary);
 	margin: 4px 0 0;
-	padding-top: 4px;
+	padding-top: 3px;
 }
 
 .dg-register-form__signin-link {
@@ -1342,12 +1408,13 @@
 .dg-account-auth__heritage-footer {
 	width: 100%;
 	padding: 20px 0;
+	margin-top: 27px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 4px;
 	text-align: center;
-	font-family: 'Cormorant Garamond', Georgia, serif;
+	font-family: 'Plus Jakarta Sans', sans-serif;
 	position: relative;
 	z-index: 20;
 }
@@ -1359,20 +1426,281 @@
 	justify-content: center;
 	gap: 12px;
 	font-size: 13px;
-	letter-spacing: 0.1em;
-	color: #7A6A4E;
+	letter-spacing: 0.14em;
+	color: var(--auth-gold-800);
+	font-weight: 500;
 }
 
 .dg-account-auth__heritage-dot {
-	color: #7A6A4E;
-	font-size: 10px;
+	color: var(--auth-gold-800);
+	font-size: 13px;
 }
 
 .dg-account-auth__heritage-copyright {
 	font-size: 11px;
-	letter-spacing: 0.08em;
-	color: #9E8E72;
+	color: var(--auth-gold-700);
+	letter-spacing: 0.1em;
 	margin-top: 2px;
+	font-weight: 500;
+}
+
+/* =========================================
+   7b. NARROW SCREENS (< 640px)
+   Root cause of the horizontal scroll below ~600px: the terms checkbox
+   label is `white-space: nowrap` (~452px) and `.dg-account-auth--register`
+   is a shrink-to-fit flex item (parent uses `align-items: center`), so
+   its min-content width pushed the whole page to ~600px. Fixed here by
+   letting the label wrap and pinning the wrapper to the viewport width.
+   Remaining rules reclaim horizontal room (stacked paddings) and keep the
+   single-line rows (crest, tagline, eyebrow, divider, CTA) on one line
+   via fluid tokens defined in style.css :root.
+   ========================================= */
+
+@media (max-width: 639px) {
+	/* Wrapper: fill the column instead of sizing to content; drop the
+	   20px side padding from login.css — <main> already pads 20px. */
+	.dg-account-auth--register {
+		width: 100%;
+		min-width: 0;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	/* Crest header */
+	.dg-account-auth__crest-ornaments {
+		gap: 12px;
+	}
+
+	.dg-account-auth__crest-line {
+		flex-shrink: 0;
+		width: var(--register-crest-line-width-mobile);
+	}
+
+	.dg-account-auth__crest-text {
+		white-space: nowrap;
+	}
+
+	.dg-account-auth__brand-title {
+		font-size: var(--auth-brand-title-size);
+	}
+
+	/* Tagline — same one-line treatment as the sign-in page */
+	.dg-account-auth__brand-meta {
+		justify-content: center;
+		gap: 6px;
+	}
+
+	.dg-account-auth__brand-meta .dg-account-auth__brand-rule {
+		flex-shrink: 0;
+	}
+
+	.dg-account-auth__brand-tagline {
+		font-size: var(--auth-brand-tagline-size-mobile);
+		letter-spacing: var(--auth-brand-tagline-tracking-mobile);
+		white-space: nowrap;
+	}
+
+	/* Panel — tighter filigree frame so the form gets ~230px at 320px */
+	.dg-account-auth__panel-grid {
+		margin: var(--register-panel-grid-margin-mobile);
+		padding: var(--register-panel-grid-padding-mobile);
+	}
+
+	.dg-account-auth__showcase-col {
+		margin-bottom: 24px;
+	}
+
+	/* Showcase meta row — eyebrow + "Member Benefits" pill stay on ONE row
+	   (they need ~268px at desktop sizing vs ~232px available at 320px). */
+	.dg-account-auth__showcase-meta {
+		flex-wrap: nowrap;
+		gap: 6px;
+	}
+
+	.dg-account-auth__eyebrow {
+		font-size: var(--register-showcase-eyebrow-size-mobile);
+		letter-spacing: var(--register-showcase-eyebrow-tracking-mobile);
+		white-space: nowrap;
+	}
+
+	.dg-account-auth__sanctuary-badge {
+		flex-shrink: 0;
+		gap: 4px;
+		padding: 3px 8px;
+		font-size: var(--register-sanctuary-badge-size-mobile);
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	.dg-account-auth__pulse-dot {
+		flex-shrink: 0;
+	}
+
+	.dg-account-auth__showcase-title {
+		font-size: var(--register-showcase-title-size-mobile);
+		letter-spacing: 0.01em;
+	}
+
+	/* Privilege cards — reclaim horizontal room so "Welcome Gift" and its
+	   "15% Off" badge share one line. */
+	.dg-account-auth__privileges {
+		align-self: flex-start;
+	}
+
+	.dg-account-auth__privilege-card {
+		gap: 8px;
+		padding: 12px 10px;
+	}
+
+	.dg-account-auth__privilege-header {
+		gap: 8px;
+	}
+
+	.dg-account-auth__privilege-title {
+		font-size: var(--register-privilege-title-size-mobile);
+		letter-spacing: var(--register-privilege-title-tracking-mobile);
+	}
+
+	.dg-account-auth__privilege-badge {
+		padding: 2px 6px;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	/* Form header */
+	.dg-account-auth__form-header {
+		align-items: center;
+		text-align: center;
+	}
+
+	.dg-account-auth__form-eyebrow {
+		justify-content: center;
+		gap: 6px;
+		letter-spacing: var(--register-eyebrow-tracking-mobile);
+		white-space: nowrap;
+	}
+
+	/* "Create Your Account" needs ~247px at 26px vs ~232px at 320px:
+	   fluid size keeps it on 1 line. */
+	.dg-account-auth__form-title {
+		font-size: var(--register-form-title-size-mobile);
+	}
+
+	/* Subtitle: 3 balanced lines across all phone widths — fluid size for
+	   320-368px, capped measure so wider phones don't collapse it to 2. */
+	.dg-account-auth__form-subtitle {
+		max-width: var(--register-form-subtitle-max-width-mobile);
+		font-size: var(--register-form-subtitle-size-mobile);
+		text-wrap: balance;
+	}
+
+	/* Inputs: >= 16px stops iOS Safari auto-zoom on focus */
+	.dg-register-form__input {
+		height: var(--auth-touch-target);
+		font-size: var(--auth-input-font-size-mobile);
+	}
+
+	.dg-register-form__input::placeholder {
+		font-size: clamp(9px, 0.4rem + 0.6vw, 14px);
+	}
+
+	/* Password toggle: 44px tap target, icon stays visually centered */
+	.dg-register-form__toggle {
+		right: 2px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--auth-touch-target);
+		height: var(--auth-touch-target);
+		padding: 0;
+	}
+
+	/* Checkboxes — label wraps; box aligns with the first text line */
+	.dg-register-form__checkbox {
+		align-items: flex-start;
+	}
+
+	.dg-register-form__checkbox input[type="checkbox"] {
+		margin-top: 1px;
+	}
+
+	/* Fluid size keeps the newsletter label to 2 lines (it ran to 3 at
+	   320-359px); shared class, so the terms label scales with it. */
+	.dg-register-form__checkbox-text {
+		white-space: normal;
+		min-width: 0;
+		font-size: var(--register-checkbox-text-size-mobile);
+	}
+
+	/* Primary CTA — label on ONE line: fluid size + eased tracking, tighter
+	   padding. Not `nowrap`: if a fallback font is wider it still wraps
+	   instead of overflowing the pill. */
+	.dg-register-form__submit {
+		min-height: var(--auth-touch-target);
+		padding: 12px 10px;
+		gap: 6px;
+		font-size: var(--register-submit-font-size-mobile);
+		letter-spacing: var(--register-submit-tracking-mobile);
+		line-height: 1.4;
+		text-align: center;
+	}
+
+	.dg-register-form__submit .material-symbols-outlined {
+		flex-shrink: 0;
+		font-size: 17px;
+	}
+
+	/* Divider label */
+	.dg-register-form__divider-text {
+		padding: 0 10px;
+		letter-spacing: var(--register-divider-tracking-mobile);
+	}
+
+	/* Social buttons: 44px tap target */
+	.dg-register-form__social {
+		gap: 10px;
+	}
+
+	.dg-register-form__social-btn {
+		height: var(--auth-touch-target);
+		padding: 0 12px;
+	}
+
+	/* Toast never wider than the viewport */
+	.dg-account-auth__toast {
+		max-width: calc(100vw - 32px);
+		top: 20px;
+	}
+
+	/* Heritage footer — sits outside <main>, so it gets no side padding
+	   from the page wrapper: at 320px the copyright ran edge to edge across
+	   the viewport frame lines. Stacking (dots hidden) comes from login.css;
+	   here: frame-safe side padding, tighter rhythm, and a copyright that
+	   breaks into 2 balanced lines instead of leaving an orphan word. */
+	.dg-account-auth__heritage-footer {
+		box-sizing: border-box;
+		padding: 16px var(--register-footer-padding-x-mobile);
+		gap: 8px;
+	}
+
+	.dg-account-auth__heritage-locations {
+		gap: 2px;
+		font-size: var(--register-footer-location-size-mobile);
+		line-height: 1.5;
+	}
+
+	.dg-account-auth__heritage-dot {
+		display: none;
+	}
+
+	.dg-account-auth__heritage-copyright {
+		max-width: 100%;
+		font-size: var(--register-footer-copyright-size-mobile);
+		letter-spacing: var(--register-footer-copyright-tracking-mobile);
+		line-height: 1.6;
+		margin-top: 0;
+		text-wrap: balance;
+	}
 }
 
 /* =========================================

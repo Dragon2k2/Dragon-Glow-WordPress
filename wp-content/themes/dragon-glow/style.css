@@ -139,6 +139,11 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* ----- Typography: monetary amounts ----- */
     --font-price: 'Bodoni Moda', Georgia, serif;  /* Every price / amount / total shown to the shopper */
     
+    /* ----- Typography: primitive body fonts (Layer 1 — reusable across semantic tokens) ----- */
+    --font-body: 'Plus Jakarta Sans', sans-serif;  /* Primary body font for UI text */
+    --font-display: 'Playfair Display', serif;     /* Headings, luxury brand text */
+    --font-heritage: 'Cormorant Garamond', serif;  /* Legacy flourishes, sophisticated elegance */
+    
     /* ----- Secondary Brand ----- */
     --color-secondary: var(--secondary-700);
     --color-on-secondary: var(--neutral-0);
@@ -278,11 +283,46 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --auth-footer-location-text: #7a6a4e;
     --auth-footer-copyright-text: #9e8e72;
+    --auth-footer-padding-top: 8px;                               /* Heritage footer top padding: tucks the footer closer to the auth panel (was 20px) */
+    --auth-footer-padding-top-mobile: 6px;                        /* Same, < 640px (was 16px) */
+    --auth-footer-padding-x-mobile: 28px;                         /* Heritage footer side padding < 640px: clears the 14px inner viewport frame + 14px air */
+    --auth-footer-location-size-mobile: clamp(11px, 3.6vw, 13px); /* Stacked uppercase location lines: ~11.5px @320 → 13px from ~361 */
+    --auth-footer-location-tracking-mobile: 0.1em;                /* Location tracking (0.14em on desktop) */
+    --auth-footer-copyright-size-mobile: clamp(10px, 2.9vw, 11px);/* Copyright: 10px @320 → 11px from ~380 */
+    --auth-footer-copyright-tracking-mobile: 0.06em;              /* Copyright tracking (0.1em on desktop) */
     --auth-medallion-bg: var(--heritage-ivory-150);
     --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8);
     --auth-sanctuary-badge-text: var(--gold-800);
     --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
     --auth-brand-title-text: var(--gold-600);
+
+    /* Login eyebrow (IV • Luxury Skincare) — matches register eyebrow style */
+    --login-eyebrow-text: var(--gold-800);
+    --login-eyebrow-font: 'Plus Jakarta Sans', sans-serif;
+    --login-eyebrow-size-desktop: 11px;
+    --login-eyebrow-size-mobile: clamp(10px, 3.1vw, 11px);
+    --login-eyebrow-weight: 700;
+    --login-eyebrow-tracking-desktop: 0.2em;
+    --login-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em);
+
+    /* Login sanctuary-badge (Member Access) — matches register badge style */
+    --login-sanctuary-badge-bg: rgba(255, 253, 249, 0.8);
+    --login-sanctuary-badge-text: var(--gold-800);
+    --login-sanctuary-badge-border: rgba(212, 175, 55, 0.35);
+    --login-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --login-sanctuary-badge-size-desktop: 10px;
+    --login-sanctuary-badge-size-mobile: clamp(9px, 2.8vw, 10px);
+    --login-sanctuary-badge-padding-desktop: 3px 10px;
+    --login-sanctuary-badge-padding-mobile: 3px 8px;
+    --login-sanctuary-badge-gap: 5px;
+    --login-sanctuary-badge-gap-mobile: 4px;
+    --login-sanctuary-badge-weight: 600;
+    --login-sanctuary-badge-tracking: 0.04em;
+    --login-sanctuary-badge-tracking-mobile: 0.02em;
+
+    /* Login pulse-dot (status indicator) */
+    --login-pulse-dot-size: 5px;
+    --login-pulse-dot-color: rgba(197, 155, 39, 0.6);
 
     /* Brand logo mark — centered above the brand title (login.php) */
     --auth-portal-padding-top: clamp(1.25rem, 3vw, 2rem);         /* Space above the brand header (was 1.5rem-3rem) */
@@ -290,7 +330,25 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --auth-brand-logo-size-mobile: 6rem;                          /* Mark below 640px: 64px at 16px root, 56px at 14px root */
     --auth-brand-logo-gap: 0.75rem;                               /* Space between mark and eyebrow */
     --auth-brand-logo-shine: #fff6da;                             /* Hover sweep highlight (matches brand title shimmer) */
-    
+    --auth-brand-title-size: clamp(28px, 9vw, 44px);              /* "Dragon Glow" title: fits one line down to 320px, 44px from ~490px up */
+    --auth-input-font-size-mobile: 16px;                          /* >= 16px stops iOS Safari auto-zooming on input focus */
+    --auth-input-placeholder-size-mobile: clamp(9px, 0.4rem + 0.6vw, 14px); /* Placeholder only (typed text stays 16px): 9px @mobile → 14px @desktop */
+    --auth-input-icon-padding-mobile: 34px;                       /* Text start: leading icon ends at 30px + 4px air (40px on desktop) */
+    --auth-input-padding-x-mobile: 10px;                          /* Trailing padding on plain inputs (12px on desktop) */
+    --auth-input-toggle-padding: 44px;                            /* Trailing padding when the 36px show/hide toggle sits inside the input */
+    --auth-input-toggle-padding-mobile: 38px;                     /* Same, < 640px: eye glyph spans 14-34px from the edge + 4px air */
+    --auth-touch-target: 44px;                                    /* WCAG 2.5.5 / Apple HIG minimum tap size on touch layouts */
+    --auth-row-label-size-mobile: clamp(12px, 3.9vw, 14px);       /* "Security Passphrase" label < 640px: 12.5px @320 → 14px from 360 (fits 1 line with link) */
+    --auth-row-link-size-mobile: clamp(12px, 3.6vw, 13px);        /* "Lost credentials?" link < 640px: 12px @320 → 13px from 360 */
+    --auth-register-prompt-size-mobile: clamp(12px, 3.75vw, 15px);/* "Don't have an account?" < 640px: 12px @320 → 15px from 400 */
+    --auth-register-link-size-mobile: clamp(13px, 4.1vw, 17px);   /* "Create Account" CTA < 640px: 13px @320 → 17px from ~415 */
+    --auth-brand-tagline-size-mobile: clamp(8px, 2.6vw, 11px);   /* "Est. 2026 • San Francisco • New York" < 640px: 10px @320 → 11px from ~425 */
+    --auth-brand-tagline-tracking-mobile: clamp(0.1em, 1.7vw - 4.2px, 0.28em); /* Tracking eases 0.28em → ~0.12em @320 so the tagline stays on 1 line */
+    --auth-touch-hit-inset: -6px -8px;                            /* Invisible ::after hit-area around inline text links: 20px line → 32px tall (> WCAG 2.5.8 24px) without overlapping the input 6px below */
+    --auth-sub-font-size-mobile: clamp(8.5px, 2.4vw, 9.5px);    /* Sub copy ("Access your orders, saved items, and exclusive member benefits...") < 768px: scales 8.5px → 9.5px as viewport grows, ensuring the full ~143-char sentence fits EXACTLY 3 lines at 320-767px without clip/ellipsis. At 375px (iPhone SE) = 9px, 3 lines × line-height 1.5 ≈ 40.5px total, preserving the eyebrow / title / sub visual hierarchy */
+    --auth-title-size-mobile: clamp(22px, 6.4vw, 28px);          /* H1 title ("Sign In to Your Account") < 768px: scales 22px @320 → 28px @640+, ensuring the 25-char title stays on 1 line at all mobile viewports with reduced letter-spacing (0.01em vs 0.02em desktop) */
+    --auth-title-tracking-mobile: 0.01em;                         /* Letter-spacing for title on mobile — tighter than desktop 0.02em to prevent wrapping */
+
     /* ========== Register Page Component ========== */
     /* Luminous Radiance scheme — brighter, more inviting than auth portal */
     --register-bg: var(--neutral-100);
@@ -352,6 +410,29 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-error-input-border: var(--error-500);            /* Invalid control border */
     --register-error-input-shadow: 0 0 0 3px rgba(var(--error-rgb), 0.15); /* Invalid control focus ring */
     
+    /* Narrow screens (< 640px) — fluid values so single-line rows fit down to 320px */
+    --register-crest-line-width-mobile: clamp(16px, 10vw - 8px, 48px);  /* Crest ornament rules: 24px @320 → 48px from 560 */
+    --register-eyebrow-tracking-mobile: clamp(0.1em, 1.5vw - 2.8px, 0.22em); /* "✦ New Member Registration ✦" stays on 1 line */
+    --register-divider-tracking-mobile: clamp(0.1em, 1.6vw - 3px, 0.24em);   /* "✦ Alternative Accession ✦" stays on 1 line */
+    --register-submit-font-size-mobile: clamp(11px, 3.3vw, 13px);      /* CTA label on 1 line: 11px @320 → 13px from ~394 */
+    --register-submit-tracking-mobile: clamp(0px, 0.5vw - 1.6px, 0.52px); /* CTA tracking: 0 @320 → 0.04em from ~424 (0.14em on desktop) */
+    --register-showcase-eyebrow-size-mobile: clamp(10px, 3.1vw, 11px); /* "IV • Registration": 10px @320 → 11px from ~355 */
+    --register-showcase-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em); /* Eases 0.2em → 0.06em @320 so eyebrow + badge share 1 row */
+    --register-sanctuary-badge-size-mobile: clamp(9px, 2.8vw, 10px);   /* "Member Benefits" pill: 9px @320 → 10px from ~357 */
+    --register-showcase-title-size-mobile: clamp(19px, 6vw, 22px);     /* "Welcome to Dragon Glow" on 1 line: 19px @320 → 22px from ~367 */
+    --register-privilege-title-size-mobile: clamp(12px, 3.75vw, 13px); /* Privilege card titles: 12px @320 → 13px from ~347 */
+    --register-privilege-title-tracking-mobile: 0.06em;                /* Card title tracking (0.08em on desktop) */
+    --register-panel-grid-margin-mobile: 8px;                          /* Filigree frame inset inside the glass panel */
+    --register-panel-grid-padding-mobile: 14px;                        /* Content padding inside the filigree frame */
+    --register-form-title-size-mobile: clamp(22px, 7.4vw, 26px);       /* "Create Your Account" on 1 line: ~23.7px @320 → 26px from ~351 */
+    --register-form-subtitle-size-mobile: clamp(11.5px, 3.6vw, 14px);  /* Subtitle in 3 lines: ~11.5px @320 → 14px from ~389 */
+    --register-form-subtitle-max-width-mobile: 340px;                  /* Caps the measure so wider phones still get 3 balanced lines (not 2) */
+    --register-checkbox-text-size-mobile: clamp(11px, 3.4vw, 12.5px);  /* Newsletter label in 2 lines: 11px @320 → 12.5px from ~368 */
+    --register-footer-padding-x-mobile: 28px;                          /* Heritage footer side padding: clears the 14px inner viewport frame + 14px air */
+    --register-footer-location-size-mobile: clamp(11px, 3.5vw, 13px);  /* Stacked location lines: 11px @320 → 13px from ~372 */
+    --register-footer-copyright-size-mobile: clamp(10px, 2.9vw, 11px); /* Copyright: 10px @320 → 11px from ~380 */
+    --register-footer-copyright-tracking-mobile: 0.06em;               /* Copyright tracking (0.1em on desktop) */
+
     --register-card-bg: rgba(250, 242, 235, 0.7);
     --register-card-border: rgba(212, 175, 55, 0.25);
 
@@ -375,6 +456,16 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-frame-outer: rgba(212, 175, 55, 0.4);
     --register-frame-inner: rgba(197, 155, 39, 0.2);
     --register-flourish: rgba(197, 155, 39, 0.6);
+
+    /* Trust badges (apothecary authentication micro-badge) */
+    --register-trust-font-family: var(--font-body);  /* Semantic: reference Layer 1 primitive for consistency */
+    --register-trust-text: #A67C1E;                  /* Gold-brown #8C6D23 */
+    --register-trust-text-opacity: 0.8;              /* 80% opacity */
+    --register-trust-icon-size: 16px;
+    --register-trust-font-size: 13px;
+    --register-trust-tracking: 0.2em;
+    --register-trust-gap: 1.5rem;                    /* 24px gap between badges */
+    --register-trust-badge-gap: 0.375rem;            /* 6px gap between icon and text */
 
     /* ========== Toast Notification Component (Neon / Cyberpunk) ========== */
     /* Site-wide toast system (window.DGToast) — glowing border + flicker,
