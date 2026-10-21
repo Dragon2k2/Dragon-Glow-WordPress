@@ -64,24 +64,8 @@
     }
 
     // ── Mobile Nav Toggle ──────────────────────────────────────
-    var menuToggle = document.getElementById('dg-mobile-menu-toggle');
-    var mobileMenu = document.getElementById('dg-mobile-menu');
-
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', function () {
-            mobileMenu.classList.toggle('hidden');
-            var isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-                mobileMenu.classList.add('hidden');
-                menuToggle.setAttribute('aria-expanded', 'false');
-            }
-        });
-    }
+    // MOVED to mobile-menu.js (ES module with Motion animation)
+    // Original toggle logic removed — now using Motion slide-in drawer
 
     // ── Filter Toggle (mobile) ────────────────────────────────
     var filterToggle = document.getElementById('dg-mobile-filter-toggle');

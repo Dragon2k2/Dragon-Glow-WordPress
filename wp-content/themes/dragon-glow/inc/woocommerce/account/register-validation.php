@@ -92,6 +92,9 @@ function dg_register_messages(): array {
 		'password_missing'    => __( 'Password must contain: %s.', 'dragon-glow' ),
 		'terms_required'      => __( 'Please accept the Terms of Service and Privacy Policy to continue.', 'dragon-glow' ),
 		'session_expired'     => __( 'Your session has expired. Please submit the form again.', 'dragon-glow' ),
+		/* Password visibility toggle button aria-labels (screenreader text) */
+		'label_show_password' => __( 'Show password', 'dragon-glow' ),
+		'label_hide_password' => __( 'Hide password', 'dragon-glow' ),
 	);
 }
 

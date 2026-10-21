@@ -52,11 +52,14 @@
 /* Mobile (<768px): stacked layout. Copy first, photo below it as its own block,
    so text never competes with the image. From 768px the photo becomes the
    full-bleed background and the copy overlays it. */
+
+/* Hero section z-index - ensure it stays below navigation (nav z-index: 100, menu z-index: 100000) */
 .dg-home-hero {
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    z-index: 1;
 }
 
 .dg-home-hero__media {
@@ -520,5 +523,45 @@
 
     .dg-home-carousel {
         scroll-behavior: auto;
+    }
+}
+
+/* =========================================
+   RESPONSIVE — HERO SECTION
+   ========================================= */
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 70vh;
+    }
+
+    .hero-content {
+        max-width: 100%;
+    }
+
+    /* Stack CTA buttons */
+    .hero-cta {
+        flex-direction: column;
+    }
+
+    .hero-cta a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* =========================================
+   RESPONSIVE — TESTIMONIALS
+   ========================================= */
+
+@media (max-width: 768px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 }

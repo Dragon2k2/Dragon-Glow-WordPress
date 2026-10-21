@@ -88,7 +88,7 @@ function dg_render_account_signed_out(): void {
 				<div class="dg-login__showcase" data-sr>
 				<div class="dg-login__showcase-top">
 					<span class="dg-login__eyebrow"><?php esc_html_e( 'IV • Luxury Skincare', 'dragon-glow' ); ?></span>
-					<span class="dg-account-auth__sanctuary-badge">
+					<span class="dg-account-auth__member-badge">
 						<span class="dg-account-auth__pulse-dot" aria-hidden="true"></span>
 						<?php esc_html_e( 'Member Access', 'dragon-glow' ); ?>
 					</span>
@@ -377,15 +377,33 @@ function dg_render_account_signed_out(): void {
 				<span class="material-symbols-outlined" aria-hidden="true">eco</span>
 				<span><?php esc_html_e( 'Natural Ingredients', 'dragon-glow' ); ?></span>
 			</span>
-				<span class="dg-login__dot" aria-hidden="true">&bull;</span>
-				<span class="dg-login__footnote-item">
-					<span class="material-symbols-outlined" aria-hidden="true">verified</span>
-					<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
-				</span>
+			<span class="dg-login__dot" aria-hidden="true">&bull;</span>
+			<span class="dg-login__footnote-item">
+				<span class="material-symbols-outlined" aria-hidden="true">verified</span>
+				<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
+			</span>
 			</div>
 
 				</div>
 
+			</div>
+
+			<!-- Apothecary Authentication Micro-Badge -->
+			<div class="dg-account-auth__trust-badges">
+				<span class="dg-account-auth__trust-badge">
+					<span class="material-symbols-outlined">eco</span>
+					<span><?php esc_html_e( 'Pure Botanical Distillation', 'dragon-glow' ); ?></span>
+				</span>
+				<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
+				<span class="dg-account-auth__trust-badge">
+					<span class="material-symbols-outlined">shield</span>
+					<span><?php esc_html_e( 'Your Data Protected', 'dragon-glow' ); ?></span>
+				</span>
+				<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
+				<span class="dg-account-auth__trust-badge">
+					<span class="material-symbols-outlined">cruelty_free</span>
+					<span><?php esc_html_e( 'Certified Cruelty-Free', 'dragon-glow' ); ?></span>
+				</span>
 			</div>
 		</div>
 	</main>

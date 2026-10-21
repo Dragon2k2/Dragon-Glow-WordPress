@@ -236,9 +236,45 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --sus-btn-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.25);
     --sus-btn-shadow-hover: 0 4px 16px rgba(var(--gold-rgb), 0.35);
     
+    /* ========== Mobile Navigation Menu Component ========== */
+    /* Responsive drawer with icon + text layout, glassmorphism accents */
+    
+    /* Primary navigation items (Home, Shop, Our Story, Contact) */
+    --mobile-nav-primary-icon: var(--color-accent-alt);        /* Gold-500 icon color */
+    --mobile-nav-primary-text: var(--color-on-surface);        /* Neutral-700 dark text */
+    --mobile-nav-primary-text-hover: var(--color-primary);     /* Gold-dark on hover */
+    --mobile-nav-primary-bg-hover: linear-gradient(90deg, 
+                                    rgba(var(--gold-rgb), 0.06) 0%, 
+                                    rgba(var(--gold-rgb), 0.12) 100%);
+    --mobile-nav-primary-font-weight: 500;                     /* Medium weight */
+    
+    /* Secondary navigation items (Account, Wishlist, Cart — after divider) */
+    --mobile-nav-secondary-icon: var(--color-primary);         /* Primary gold-dark */
+    --mobile-nav-secondary-text: var(--color-on-surface-variant); /* Neutral-600 lighter */
+    --mobile-nav-secondary-text-hover: var(--color-primary);
+    --mobile-nav-secondary-bg-hover: rgba(var(--gold-rgb), 0.08);
+    --mobile-nav-secondary-border-hover: rgba(var(--gold-rgb), 0.15);
+    --mobile-nav-secondary-font-weight: 400;                   /* Regular weight */
+    
+    /* Active / Current menu item state */
+    --mobile-nav-active-bg: linear-gradient(90deg, 
+                            rgba(var(--gold-rgb), 0.12) 0%, 
+                            rgba(var(--gold-rgb), 0.18) 100%);
+    --mobile-nav-active-text: var(--color-primary);
+    --mobile-nav-active-icon: var(--gold-600);                 /* Darker gold for filled icon */
+    --mobile-nav-active-font-weight: 600;                      /* Semi-bold */
+    --mobile-nav-active-border: rgba(var(--gold-rgb), 0.25);
+    
+    /* Divider styling */
+    --mobile-nav-divider: rgba(var(--gold-rgb), 0.18);
+    
+    /* Focus state (accessibility) */
+    --mobile-nav-focus-ring: var(--color-primary);
+    --mobile-nav-focus-ring-offset: 2px;
+
     /* ========== Auth Portal Component (Sign In Page) ========== */
     /* Classical heritage design with parchment tones */
-    --auth-bg: var(--heritage-ivory-50);
+    --auth-bg: var(--neutral-100);  /* Light cream background (#f7f4ee) — signed-out portal main background */
     --auth-panel-bg: var(--heritage-ivory-0);
     --auth-panel-border: rgba(217, 196, 150, 0.8);
     --auth-showcase-gradient: linear-gradient(180deg, 
@@ -283,17 +319,17 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --auth-footer-location-text: #7a6a4e;
     --auth-footer-copyright-text: #9e8e72;
-    --auth-footer-padding-top: 8px;                               /* Heritage footer top padding: tucks the footer closer to the auth panel (was 20px) */
-    --auth-footer-padding-top-mobile: 6px;                        /* Same, < 640px (was 16px) */
+    --auth-footer-padding-top: 47px;                               /* Heritage footer top padding: tucks the footer closer to the auth panel (was 20px) */
+    --auth-footer-padding-top-mobile: 35px;                        /* Same, < 640px (was 16px) */
     --auth-footer-padding-x-mobile: 28px;                         /* Heritage footer side padding < 640px: clears the 14px inner viewport frame + 14px air */
     --auth-footer-location-size-mobile: clamp(11px, 3.6vw, 13px); /* Stacked uppercase location lines: ~11.5px @320 → 13px from ~361 */
     --auth-footer-location-tracking-mobile: 0.1em;                /* Location tracking (0.14em on desktop) */
     --auth-footer-copyright-size-mobile: clamp(10px, 2.9vw, 11px);/* Copyright: 10px @320 → 11px from ~380 */
     --auth-footer-copyright-tracking-mobile: 0.06em;              /* Copyright tracking (0.1em on desktop) */
     --auth-medallion-bg: var(--heritage-ivory-150);
-    --auth-sanctuary-badge-bg: rgba(255, 253, 249, 0.8);
-    --auth-sanctuary-badge-text: var(--gold-800);
-    --auth-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --auth-member-badge-bg: rgba(255, 253, 249, 0.8);
+    --auth-member-badge-text: var(--gold-800);
+    --auth-member-badge-font: 'Plus Jakarta Sans', sans-serif;
     --auth-brand-title-text: var(--gold-600);
 
     /* Login eyebrow (IV • Luxury Skincare) — matches register eyebrow style */
@@ -305,24 +341,34 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --login-eyebrow-tracking-desktop: 0.2em;
     --login-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em);
 
-    /* Login sanctuary-badge (Member Access) — matches register badge style */
-    --login-sanctuary-badge-bg: rgba(255, 253, 249, 0.8);
-    --login-sanctuary-badge-text: var(--gold-800);
-    --login-sanctuary-badge-border: rgba(212, 175, 55, 0.35);
-    --login-sanctuary-badge-font: 'Plus Jakarta Sans', sans-serif;
-    --login-sanctuary-badge-size-desktop: 10px;
-    --login-sanctuary-badge-size-mobile: clamp(9px, 2.8vw, 10px);
-    --login-sanctuary-badge-padding-desktop: 3px 10px;
-    --login-sanctuary-badge-padding-mobile: 3px 8px;
-    --login-sanctuary-badge-gap: 5px;
-    --login-sanctuary-badge-gap-mobile: 4px;
-    --login-sanctuary-badge-weight: 600;
-    --login-sanctuary-badge-tracking: 0.04em;
-    --login-sanctuary-badge-tracking-mobile: 0.02em;
+    /* Login member-badge (Member Access) — matches register badge style */
+    --login-member-badge-bg: rgba(255, 253, 249, 0.8);
+    --login-member-badge-text: var(--gold-800);
+    --login-member-badge-border: rgba(212, 175, 55, 0.35);
+    --login-member-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --login-member-badge-size-desktop: 10px;
+    --login-member-badge-size-mobile: clamp(9px, 2.8vw, 10px);
+    --login-member-badge-padding-desktop: 3px 10px;
+    --login-member-badge-padding-mobile: 3px 8px;
+    --login-member-badge-gap: 5px;
+    --login-member-badge-gap-mobile: 4px;
+    --login-member-badge-weight: 600;
+    --login-member-badge-tracking: 0.04em;
+    --login-member-badge-tracking-mobile: 0.02em;
 
     /* Login pulse-dot (status indicator) */
     --login-pulse-dot-size: 5px;
     --login-pulse-dot-color: rgba(197, 155, 39, 0.6);
+
+    /* Login trust badges (apothecary authentication micro-badge) — parity with register page */
+    --login-trust-font-family: var(--font-body);
+    --login-trust-text: #A67C1E;
+    --login-trust-text-opacity: 0.8;
+    --login-trust-icon-size: 16px;
+    --login-trust-font-size: 13px;
+    --login-trust-tracking: 0.2em;
+    --login-trust-gap: 1.5rem;
+    --login-trust-badge-gap: 0.375rem;
 
     /* Brand logo mark — centered above the brand title (login.php) */
     --auth-portal-padding-top: clamp(1.25rem, 3vw, 2rem);         /* Space above the brand header (was 1.5rem-3rem) */
@@ -409,6 +455,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-error-border: rgba(var(--error-rgb), 0.35);     /* Summary border */
     --register-error-input-border: var(--error-500);            /* Invalid control border */
     --register-error-input-shadow: 0 0 0 3px rgba(var(--error-rgb), 0.15); /* Invalid control focus ring */
+    --register-error-link-font-size: clamp(11px, 2.8vw, 13px);  /* Error summary link: responsive mobile 11px → desktop 13px */
     
     /* Narrow screens (< 640px) — fluid values so single-line rows fit down to 320px */
     --register-crest-line-width-mobile: clamp(16px, 10vw - 8px, 48px);  /* Crest ornament rules: 24px @320 → 48px from 560 */
@@ -418,7 +465,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --register-submit-tracking-mobile: clamp(0px, 0.5vw - 1.6px, 0.52px); /* CTA tracking: 0 @320 → 0.04em from ~424 (0.14em on desktop) */
     --register-showcase-eyebrow-size-mobile: clamp(10px, 3.1vw, 11px); /* "IV • Registration": 10px @320 → 11px from ~355 */
     --register-showcase-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em); /* Eases 0.2em → 0.06em @320 so eyebrow + badge share 1 row */
-    --register-sanctuary-badge-size-mobile: clamp(9px, 2.8vw, 10px);   /* "Member Benefits" pill: 9px @320 → 10px from ~357 */
+    --register-member-badge-size-mobile: clamp(9px, 2.8vw, 10px);   /* "Member Benefits" pill: 9px @320 → 10px from ~357 */
     --register-showcase-title-size-mobile: clamp(19px, 6vw, 22px);     /* "Welcome to Dragon Glow" on 1 line: 19px @320 → 22px from ~367 */
     --register-privilege-title-size-mobile: clamp(12px, 3.75vw, 13px); /* Privilege card titles: 12px @320 → 13px from ~347 */
     --register-privilege-title-tracking-mobile: 0.06em;                /* Card title tracking (0.08em on desktop) */

@@ -1,8 +1,6 @@
 ---
-description: Always respond to user messages in Vietnamese
 alwaysApply: true
 ---
-
 # Vietnamese Response Language
 
 Always respond to user messages in Vietnamese (Tiếng Việt), unless the user explicitly requests a different language.

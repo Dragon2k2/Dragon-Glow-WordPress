@@ -104,7 +104,7 @@ function dg_render_account_register_page(): void {
 							<div class="dg-account-auth__showcase-header">
 								<div class="dg-account-auth__showcase-meta">
 									<span class="dg-account-auth__eyebrow"><?php esc_html_e( 'IV • Registration', 'dragon-glow' ); ?></span>
-									<span class="dg-account-auth__sanctuary-badge">
+									<span class="dg-account-auth__member-badge">
 										<span class="dg-account-auth__pulse-dot" aria-hidden="true"></span>
 										<?php esc_html_e( 'Member Benefits', 'dragon-glow' ); ?>
 									</span>
@@ -326,13 +326,15 @@ function dg_render_account_register_page(): void {
 											required
 											<?php echo dg_register_field_attrs( 'password', $register_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 											data-dg-password-strength />
-										<button
-											type="button"
-											class="dg-register-form__toggle"
-											aria-label="<?php esc_attr_e( 'Show password', 'dragon-glow' ); ?>"
-											data-dg-toggle-password="#dg-reg-password">
-											<span class="material-symbols-outlined">visibility</span>
-										</button>
+									<button
+										type="button"
+										class="dg-register-form__toggle"
+										aria-label="<?php esc_attr_e( 'Show password', 'dragon-glow' ); ?>"
+										data-dg-toggle-password="#dg-reg-password"
+										data-label-show="<?php esc_attr_e( 'Show password', 'dragon-glow' ); ?>"
+										data-label-hide="<?php esc_attr_e( 'Hide password', 'dragon-glow' ); ?>">
+										<span class="material-symbols-outlined">visibility</span>
+									</button>
 									</div>
 
 									<!-- Password strength indicator -->
@@ -494,8 +496,8 @@ function dg_render_account_register_page(): void {
 					</span>
 					<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
 					<span class="dg-account-auth__trust-badge">
-						<span class="material-symbols-outlined">lock</span>
-						<span><?php esc_html_e( '256-Bit Encrypted Ledger', 'dragon-glow' ); ?></span>
+						<span class="material-symbols-outlined">shield</span>
+						<span><?php esc_html_e( 'Your Data Protected', 'dragon-glow' ); ?></span>
 					</span>
 				<span class="dg-account-auth__trust-separator" aria-hidden="true">&bull;</span>
 				<span class="dg-account-auth__trust-badge">

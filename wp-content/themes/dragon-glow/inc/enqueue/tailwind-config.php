@@ -19,6 +19,15 @@ defined( 'ABSPATH' ) || exit;
 function dg_get_tailwind_config(): string {
     $config = <<<'JS'
 tailwind.config = {
+  safelist: [
+    'hidden',
+    'md:block',
+    'md:hidden',
+    'md:flex',
+    'md\\:block',
+    'md\\:hidden',
+    'md\\:flex',
+  ],
   theme: {
     extend: {
       colors: {

@@ -12,22 +12,29 @@ $cart_count   = dg_get_cart_item_count();
 $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' );
 ?>
 <nav class="glass-nav header-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
-<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
-        <!-- Logo: mark + site name. Mark is decorative (alt="") because the link already has an accessible name. -->
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>"
-           class="dg-nav-brand font-headline text-headline-md font-bold tracking-tight text-primary hover:opacity-80 transition-opacity"
-           aria-label="<?php bloginfo( 'name' ); ?> - Home">
-            <img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
-                 class="dg-nav-brand__mark"
-                 width="192" height="192"
-                 alt=""
-                 decoding="async"
-                 fetchpriority="high">
-            <?php bloginfo( 'name' ); ?>
-        </a>
+<div class="dg-nav-container flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
+        <!-- Logo + Brand Name (left) — flex container for desktop inline layout -->
+        <div class="flex items-center lg:gap-3">
+            <!-- Logo: mark (left) -->
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>"
+               class="dg-nav-logo hover:opacity-80 transition-opacity"
+               aria-label="<?php bloginfo( 'name' ); ?> - Home">
+                <img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
+                     class="dg-nav-brand__mark"
+                     width="192" height="192"
+                     alt=""
+                     decoding="async"
+                     fetchpriority="high">
+            </a>
 
-        <!-- Primary Nav Menu -->
-        <div class="hidden md:flex gap-6">
+            <!-- Brand Name (center on mobile/tablet, right of logo on desktop) -->
+            <span class="dg-nav-brand-name font-headline text-headline-md font-bold tracking-tight text-primary">
+                <?php bloginfo( 'name' ); ?>
+            </span>
+        </div>
+
+        <!-- Primary Nav Menu (hidden on mobile/tablet, shown on desktop) -->
+        <div class="hidden lg:flex gap-6">
             <?php
             if ( has_nav_menu( 'primary' ) ) {
                 wp_nav_menu( array(
@@ -75,14 +82,14 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
                  cache is stale or "woocommerce_myaccount_page_id" is unset — same
                  helper the dashboard nav uses, keeps the header icon in sync. -->
             <a href="<?php echo esc_url( dg_is_woocommerce_active() ? dg_account_endpoint_url( '' ) : wp_login_url() ); ?>"
-               class="p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
+               class="hidden lg:block p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
                aria-label="<?php esc_attr_e( 'Account', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">person</span>
             </a>
 
             <!-- Wishlist -->
             <a href="<?php echo esc_url( $wishlist_url ); ?>"
-               class="p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary relative"
+               class="hidden lg:block p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary relative"
                aria-label="<?php esc_attr_e( 'Wishlist', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">favorite</span>
                 <?php echo dg_render_wishlist_count_badge(); ?>
@@ -90,14 +97,14 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 
             <!-- Cart -->
             <a href="<?php echo esc_url( dg_get_cart_url() ); ?>"
-               class="relative p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
+               class="hidden lg:block relative p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
                aria-label="<?php esc_attr_e( 'Cart', 'dragon-glow' ); ?>">
                 <span class="material-symbols-outlined">shopping_bag</span>
                 <?php echo dg_render_cart_count_badge( $cart_count ); ?>
             </a>
 
-            <!-- Mobile menu toggle -->
-            <button class="md:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
+            <!-- Mobile/Tablet menu toggle (logged in) -->
+            <button class="lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
                 <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
@@ -113,30 +120,50 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
                 </a>
             </div>
 
-            <!-- Mobile menu toggle -->
-            <button class="md:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
+            <!-- Mobile/Tablet menu toggle (logged out) -->
+            <button class="lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
                 <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
         <?php endif; ?>
     </div>
-
-    <!-- Mobile Nav Drawer -->
-    <div class="hidden md:hidden" id="dg-mobile-menu">
-        <?php
-        wp_nav_menu( array(
-            'theme_location' => 'primary',
-            'container'      => false,
-            'menu_class'     => 'flex flex-col px-margin-mobile py-4 gap-4 border-t border-outline-variant/20',
-            'fallback_cb'    => false,
-            'link_before'    => '<span class="font-body text-body-md text-on-surface">',
-            'link_after'     => '</span>',
-        ) );
-        ?>
-
-        <!-- Mobile Search -->
-        <div class="px-margin-mobile pb-4">
-            <?php get_search_form(); ?>
-        </div>
-    </div>
 </nav>
+
+<!-- Mobile Menu Backdrop (outside nav to avoid overflow clip) -->
+<div id="dg-mobile-menu-backdrop"></div>
+
+<!-- Mobile/Tablet Nav Drawer (outside nav to avoid overflow clip) -->
+<div class="lg:hidden" id="dg-mobile-menu">
+    <!-- Menu Header: Logo (left) + Brand Name (center) + Close button (right) -->
+    <div class="dg-mobile-menu__header">
+        <!-- Logo (left) -->
+        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" 
+           class="dg-mobile-menu__logo"
+           aria-label="<?php bloginfo( 'name' ); ?> - Home">
+            <img src="<?php echo esc_url( add_query_arg( 'ver', DG_VERSION, DG_URI . '/assets/images/logo/logo-mark.webp' ) ); ?>"
+                 class="dg-mobile-menu__logo-mark"
+                 alt=""
+                 decoding="async">
+        </a>
+
+        <!-- Brand Name (center) -->
+        <span class="dg-mobile-menu__brand-name"><?php bloginfo( 'name' ); ?></span>
+
+        <!-- Close button (right) -->
+        <button class="dg-mobile-menu__close" id="dg-mobile-menu-close" aria-label="<?php esc_attr_e( 'Close menu', 'dragon-glow' ); ?>">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+
+    <?php
+    wp_nav_menu( array(
+        'theme_location' => 'primary',
+        'container'      => false,
+        'menu_class'     => 'dg-mobile-menu__list flex flex-col px-margin-mobile py-4 gap-4 border-t border-outline-variant/20',
+        'fallback_cb'    => false,
+        'link_before'    => '<span class="font-body text-body-md text-on-surface">',
+        'link_after'     => '</span>',
+        'item_spacing'   => 'discard',
+    ) );
+    ?>
+</div>

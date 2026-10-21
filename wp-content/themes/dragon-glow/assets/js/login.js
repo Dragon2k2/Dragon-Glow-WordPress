@@ -101,7 +101,6 @@
 		const focusTarget = field || summary;
 
 		focusTarget.focus({ preventScroll: true });
-		summary.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 	}
 
 	/**

@@ -34,9 +34,17 @@
 	 * Initialize all register page interactions.
 	 */
 	function init() {
-		initPasswordStrength();
-		initPasswordToggle();
-		initFormSubmission();
+		try {
+			initPasswordStrength();
+		} catch (e) {
+			console.warn('Error in initPasswordStrength:', e);
+		}
+		
+		try {
+			initFormSubmission();
+		} catch (e) {
+			console.warn('Error in initFormSubmission:', e);
+		}
 	}
 
 	/**
@@ -179,33 +187,6 @@
 	}
 
 	/**
-	 * Password visibility toggle (reuse from account-auth pattern).
-	 */
-	function initPasswordToggle() {
-		const toggleButtons = document.querySelectorAll('[data-dg-toggle-password]');
-
-		toggleButtons.forEach(function (button) {
-			button.addEventListener('click', function () {
-				const targetSelector = this.getAttribute('data-dg-toggle-password');
-				const input = document.querySelector(targetSelector);
-				const icon = this.querySelector('.material-symbols-outlined');
-
-				if (!input || !icon) return;
-
-				if (input.type === 'password') {
-					input.type = 'text';
-					icon.textContent = 'visibility_off';
-					this.setAttribute('aria-label', this.getAttribute('data-label-show') || 'Hide password');
-				} else {
-					input.type = 'password';
-					icon.textContent = 'visibility';
-					this.setAttribute('aria-label', this.getAttribute('data-label-hide') || 'Show password');
-				}
-			});
-		});
-	}
-
-	/**
 	 * Form submission handling (client-side validation + toast notification).
 	 */
 	function initFormSubmission() {
@@ -243,11 +224,10 @@
 			target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 		});
 
-		// Server-rendered errors (after a failed POST): focus the summary.
+		// Server-rendered errors (after a failed POST): focus the summary only, no scroll.
 		const summary = document.getElementById('dg-register-summary');
 		if (summary && !summary.hasAttribute('hidden')) {
 			summary.focus({ preventScroll: true });
-			summary.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
 		}
 
 		// Check for success message from WooCommerce
@@ -433,8 +413,11 @@
 
 	// Initialize on DOM ready
 	if (document.readyState === 'loading') {
+		// DOM still loading, wait for DOMContentLoaded
 		document.addEventListener('DOMContentLoaded', init);
 	} else {
-		init();
+		// DOM already loaded (interactive or complete)
+		// Use setTimeout to ensure DOM is fully parsed before running
+		setTimeout(init, 0);
 	}
 })();

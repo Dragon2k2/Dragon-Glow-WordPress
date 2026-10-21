@@ -243,3 +243,105 @@ function dg_mock_stars( float $rating, string $icon_size = '16px' ): string {
 
 	return '<span class="flex items-center gap-0.5" aria-label="' . sprintf( esc_attr__( 'Rating: %s out of 5 stars', 'dragon-glow' ), number_format_i18n( $rating, 1 ) ) . '">' . $html . '</span>';
 }
+
+/**
+ * Add icon classes to mobile menu items.
+ *
+ * Maps menu item URLs to icon classes for the mobile navigation drawer.
+ * Uses filter on nav_menu_css_class to inject classes like 'dg-mobile-menu-item--home'.
+ *
+ * CSS then uses ::before with Material Symbols icon to display icon on mobile.
+ *
+ * @param array    $classes  Array of CSS classes assigned to the menu item.
+ * @param WP_Post  $item     The current menu item.
+ * @param stdClass $args     An object of wp_nav_menu() arguments.
+ * @param int      $depth    Depth of menu item (0-based).
+ * @return array
+ */
+function dg_mobile_menu_item_icon_classes( array $classes, $item, $args, int $depth ): array {
+	// Only apply to primary menu in mobile drawer (depth 0 only).
+	if ( 'primary' !== $args->theme_location || 0 !== $depth ) {
+		return $classes;
+	}
+
+	// Map URL patterns to icon class.
+	$item_url = $item->url;
+	$home_url = home_url( '/' );
+
+	// Determine icon class based on URL pattern.
+	if ( $item_url === $home_url ) {
+		$classes[] = 'dg-mobile-menu-item--home';
+	} elseif ( false !== strpos( $item_url, '/shop/' ) ) {
+		$classes[] = 'dg-mobile-menu-item--shop';
+	} elseif ( false !== strpos( $item_url, '/our-story/' ) ) {
+		$classes[] = 'dg-mobile-menu-item--our-story';
+	} elseif ( false !== strpos( $item_url, '/contact/' ) ) {
+		$classes[] = 'dg-mobile-menu-item--contact';
+	}
+
+	// DEBUG: Log for troubleshooting (remove in production).
+	// error_log( sprintf( 'Menu item: %s | URL: %s | Classes: %s', $item->title, $item_url, implode( ', ', $classes ) ) );
+
+	return $classes;
+}
+add_filter( 'nav_menu_css_class', 'dg_mobile_menu_item_icon_classes', 10, 4 );
+
+/**
+ * Inject mobile menu items (Account, Wishlist, Cart) into the primary menu
+ * 
+ * This function uses wp_nav_menu_items filter to append items directly
+ * into the <ul> element before it closes. This ensures items are semantic
+ * <li> elements within the proper <ul> container.
+ * 
+ * IMPORTANT: Only inject for mobile menu (menu_class contains 'dg-mobile-menu__list').
+ * Desktop menu already has icon-based navigation in header.
+ * 
+ * @hook wp_nav_menu_items — Priority 10, runs AFTER menu items are rendered
+ * 
+ * @param string $items    HTML output of menu items (<li>...</li>)
+ * @param object $args     Menu arguments from wp_nav_menu()
+ * 
+ * @return string Modified menu items HTML with injected <li> elements
+ */
+function dg_inject_mobile_menu_items( string $items, object $args ): string {
+	// Only inject for primary menu on mobile drawer
+	if ( 'primary' !== $args->theme_location ) {
+		return $items;
+	}
+
+	// Check if this is the mobile menu by looking at menu_class
+	// Desktop menu class: 'flex gap-6 items-center'
+	// Mobile menu class:  'dg-mobile-menu__list flex flex-col ...'
+	if ( ! isset( $args->menu_class ) || false === strpos( $args->menu_class, 'dg-mobile-menu__list' ) ) {
+		return $items; // Not mobile menu, skip injection
+	}
+
+	// Build injected items HTML
+	$divider = sprintf(
+		'<li class="menu-item dg-mobile-menu-item--divider"><span class="block border-t border-outline-variant/20 my-2"></span></li>'
+	);
+
+	$account = sprintf(
+		'<li class="menu-item dg-mobile-menu-item--account"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		esc_url( dg_is_woocommerce_active() ? dg_account_endpoint_url( '' ) : wp_login_url() ),
+		esc_html__( 'Account', 'dragon-glow' )
+	);
+
+	$wishlist = sprintf(
+		'<li class="menu-item dg-mobile-menu-item--wishlist"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		esc_url( get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' ) ),
+		esc_html__( 'Wishlist', 'dragon-glow' )
+	);
+
+	$cart = sprintf(
+		'<li class="menu-item dg-mobile-menu-item--cart"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		esc_url( dg_get_cart_url() ),
+		esc_html__( 'Cart', 'dragon-glow' )
+	);
+
+	// Append injected items to existing menu items
+	$items .= $divider . $account . $wishlist . $cart;
+
+	return $items;
+}
+add_filter( 'wp_nav_menu_items', 'dg_inject_mobile_menu_items', 10, 2 );

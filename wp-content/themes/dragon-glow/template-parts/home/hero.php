@@ -16,7 +16,7 @@ $cta1_url    = get_theme_mod( 'dg_cta1_url', dg_is_woocommerce_active() ? get_pe
 $cta2_text   = get_theme_mod( 'dg_cta2_text', __( 'Discover the Ritual', 'dragon-glow' ) );
 $cta2_url    = get_theme_mod( 'dg_cta2_url', get_permalink( get_page_by_path( 'our-story' ) ) ?: home_url( '/our-story/' ) );
 ?>
-<header class="relative h-[90vh] flex items-center overflow-hidden">
+<header class="dg-home-hero relative h-[90vh] flex items-center overflow-hidden">
     <!-- Background Image with Parallax -->
     <div class="absolute inset-0 z-0">
         <?php if ( $hero_image ) : ?>

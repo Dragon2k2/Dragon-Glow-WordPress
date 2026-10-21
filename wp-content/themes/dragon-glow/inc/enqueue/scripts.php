@@ -37,6 +37,15 @@ function dg_enqueue_scripts_assets(): void {
         true
     );
 
+    // Mobile Menu Animation — slide-in drawer with Motion vanilla API
+    // ES module (import Motion từ CDN) — load site-wide for mobile/tablet nav
+    wp_enqueue_script_module(
+        'dg-mobile-menu',
+        DG_URI . '/assets/js/mobile-menu.js',
+        array(),
+        DG_VERSION
+    );
+
     // Toast notification system — provides window.DGToast for any feature
     // (account.js WC notice bridge today; cart/wishlist/etc. can reuse it).
     // No deps: pure vanilla, must be ready before any consumer script runs.
@@ -285,6 +294,27 @@ function dg_enqueue_scripts_assets(): void {
 						'messages' => dg_register_messages(),
 						'labels'   => wp_list_pluck( dg_register_password_rules(), 'label' ),
 					)
+				);
+
+				// Page-load animations for brand logo + title.
+				// Applies .is-animate class to trigger CSS transitions defined in register.css.
+				wp_enqueue_script(
+					'dg-account-register-animations',
+					DG_URI . '/assets/js/account-register-animations.js',
+					array( 'dg-main' ),
+					DG_VERSION,
+					true
+				);
+			}
+
+			// Login endpoint (signed-out auth gate) — page-load animations for brand logo + title
+			if ( is_account_page() && ! is_user_logged_in() && ! isset( $wp_query->query_vars['register'] ) ) {
+				wp_enqueue_script(
+					'dg-account-login-animations',
+					DG_URI . '/assets/js/account-login-animations.js',
+					array( 'dg-main' ),
+					DG_VERSION,
+					true
 				);
 			}
 

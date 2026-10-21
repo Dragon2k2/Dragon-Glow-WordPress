@@ -62,6 +62,25 @@ function dg_enqueue_styles(): void {
         DG_VERSION
     );
 
+    // Header Navigation CSS (global, loaded on all pages)
+    // Includes responsive mobile menu with icons, desktop nav styling
+    wp_enqueue_style(
+        'dg-header-nav',
+        DG_URI . '/assets/css/header-nav.css',
+        array( 'dg-main', 'dg-material-symbols-nav' ),
+        DG_VERSION
+    );
+
+    // Material Symbols Outlined from Google CDN (full icon set for mobile menu icons)
+    // Loaded globally to ensure all icon names are available (home, shopping_bag, info, mail)
+    // The self-hosted subset in main.css has limited glyphs, so we need the full CDN set.
+    wp_enqueue_style(
+        'dg-material-symbols-nav',
+        'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
+        array(),
+        null
+    );
+
     // WooCommerce CSS (chỉ load khi có WooCommerce).
     // Shared styles load site-wide; page-scoped styles load conditionally and
     // depend on 'dg-woocommerce' so they always print after the shared file
@@ -113,24 +132,32 @@ function dg_enqueue_styles(): void {
 				DG_VERSION
 			);
 
-			// Signed-out auth gate (Sign in / Create account) — Heritage Gold
-			// visual style, scoped to `.dg-account-auth*` / `.dg-login*` only.
-			// Loaded only when the visitor isn't logged in, since logged-in
-			// customers never see this markup.
-			if ( is_account_page() && ! is_user_logged_in() ) {
-				wp_enqueue_style(
-					'dg-cormorant-garamond',
-					'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
-					array(),
-					null
-				);
-				wp_enqueue_style(
-					'dg-login',
-					DG_URI . '/assets/css/login.css',
-					array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
-					DG_VERSION
-				);
-			}
+		// Signed-out auth gate (Sign in / Create account) — Heritage Gold
+		// visual style, scoped to `.dg-account-auth*` / `.dg-login*` only.
+		// Loaded only when the visitor isn't logged in, since logged-in
+		// customers never see this markup.
+		if ( is_account_page() && ! is_user_logged_in() ) {
+			wp_enqueue_style(
+				'dg-cormorant-garamond',
+				'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
+				array(),
+				null
+			);
+			// Material Symbols Outlined (Google CDN) — full icon set for trust badges
+			// Includes cruelty_free icon not available in self-hosted subset
+			wp_enqueue_style(
+				'dg-material-symbols-cdn',
+				'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
+				array(),
+				null
+			);
+			wp_enqueue_style(
+				'dg-login',
+				DG_URI . '/assets/css/login.css',
+				array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
+				DG_VERSION
+			);
+		}
 
 		// Register endpoint (/my-account/register/) — Luminous Radiance palette
 		// Port of stitch_dragon_glow_auth_portal/đăng-ký design reference.
@@ -160,15 +187,7 @@ function dg_enqueue_styles(): void {
 			);
 		}
 	}
-}
-
-    // Responsive CSS
-    wp_enqueue_style(
-        'dg-responsive',
-        DG_URI . '/assets/css/responsive.css',
-        array( 'dg-main' ),
-        DG_VERSION
-    );
+	}
 
     // Shop page specific styles (luxury / editorial layout)
     if (
@@ -196,6 +215,16 @@ function dg_enqueue_styles(): void {
         wp_enqueue_style(
             'dg-product',
             DG_URI . '/assets/css/product.css',
+            array( 'dg-main' ),
+            DG_VERSION
+        );
+    }
+
+    // Homepage specific styles
+    if ( is_page_template( 'page-templates/template-home.php' ) || is_front_page() ) {
+        wp_enqueue_style(
+            'dg-home',
+            DG_URI . '/assets/css/home.css',
             array( 'dg-main' ),
             DG_VERSION
         );
