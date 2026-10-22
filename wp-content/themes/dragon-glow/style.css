@@ -263,10 +263,10 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --mobile-nav-active-text: var(--color-primary);
     --mobile-nav-active-icon: var(--gold-600);                 /* Darker gold for filled icon */
     --mobile-nav-active-font-weight: 600;                      /* Semi-bold */
-    --mobile-nav-active-border: rgba(var(--gold-rgb), 0.25);
+    --mobile-nav-active-border: rgba(var(--gold-rgb), 0.55);
     
     /* Divider styling */
-    --mobile-nav-divider: rgba(var(--gold-rgb), 0.18);
+    --mobile-nav-divider: rgba(var(--gold-rgb), 0.35);
     
     /* Focus state (accessibility) */
     --mobile-nav-focus-ring: var(--color-primary);

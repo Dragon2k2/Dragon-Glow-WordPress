@@ -154,4 +154,25 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
         }
     });
 
+    // Optimistic active transfer — bấm mục mới thì mục cũ nhả active ngay
+    // trong lúc trình duyệt đang load trang mới (server chưa kịp render
+    // current-menu-item). Chỉ đổi class, không chặn navigation.
+    const menuLinks = mobileMenu.querySelectorAll('.dg-mobile-menu__list .menu-item a');
+    menuLinks.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            // Bỏ qua mở tab mới (Ctrl/Cmd+click, chuột giữa, target=_blank):
+            // trang hiện tại không unload nên giữ nguyên active cũ.
+            if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button === 1 || link.target === '_blank') return;
+            const clickedItem = link.closest('.menu-item');
+            if (!clickedItem || clickedItem.classList.contains('current-menu-item')) return;
+            menuItems.forEach(function (item) {
+                item.classList.remove('current-menu-item', 'current_page_item');
+                const oldLink = item.querySelector('a');
+                if (oldLink) oldLink.removeAttribute('aria-current');
+            });
+            clickedItem.classList.add('current-menu-item');
+            link.setAttribute('aria-current', 'page');
+        });
+    });
+
 })();

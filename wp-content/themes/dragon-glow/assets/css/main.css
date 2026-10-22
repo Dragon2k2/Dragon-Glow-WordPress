@@ -33,9 +33,14 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Hide site chrome (header nav + footer) when auth portal body class is present */
+/* Hide site chrome (header nav + footer + mobile drawer/backdrop) when auth portal body class is present.
+   #dg-mobile-menu and #dg-mobile-menu-backdrop live outside <nav class="header-nav">
+   (see template-parts/global/header-nav.php), so they need explicit hiding —
+   scoped to body.dg-hide-site-chrome so no other page is affected. */
 body.dg-hide-site-chrome .header-nav,
-body.dg-hide-site-chrome .footer-main {
+body.dg-hide-site-chrome .footer-main,
+body.dg-hide-site-chrome #dg-mobile-menu,
+body.dg-hide-site-chrome #dg-mobile-menu-backdrop {
     display: none;
 }
 

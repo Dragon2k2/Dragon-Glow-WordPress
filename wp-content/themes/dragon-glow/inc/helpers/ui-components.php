@@ -260,7 +260,13 @@ function dg_mock_stars( float $rating, string $icon_size = '16px' ): string {
  */
 function dg_mobile_menu_item_icon_classes( array $classes, $item, $args, int $depth ): array {
 	// Only apply to primary menu in mobile drawer (depth 0 only).
+	// The drawer <ul> carries 'dg-mobile-menu__list' in menu_class —
+	// the desktop <ul> shares the same `primary` location, so without
+	// this guard the icon classes leak onto desktop items.
 	if ( 'primary' !== $args->theme_location || 0 !== $depth ) {
+		return $classes;
+	}
+	if ( ! isset( $args->menu_class ) || false === strpos( $args->menu_class, 'dg-mobile-menu__list' ) ) {
 		return $classes;
 	}
 
@@ -321,21 +327,35 @@ function dg_inject_mobile_menu_items( string $items, object $args ): string {
 		'<li class="menu-item dg-mobile-menu-item--divider"><span class="block border-t border-outline-variant/20 my-2"></span></li>'
 	);
 
+	// Active-state detection for injected items. WP core only marks menu
+	// items registered in the menu editor as current — these injected
+	// <li> elements never match, so detect the current page here and
+	// mirror core's classes + aria-current.
+	$is_account  = dg_is_woocommerce_active() && function_exists( 'is_account_page' ) && is_account_page();
+	$is_wishlist = is_page_template( 'page-templates/template-wishlist.php' ) || is_page( 'wishlist' );
+	$is_cart     = dg_is_woocommerce_active() && function_exists( 'is_cart' ) && is_cart();
+
 	$account = sprintf(
-		'<li class="menu-item dg-mobile-menu-item--account"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		'<li class="menu-item dg-mobile-menu-item--account%s"><a href="%s"%s><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		$is_account ? ' current-menu-item' : '',
 		esc_url( dg_is_woocommerce_active() ? dg_account_endpoint_url( '' ) : wp_login_url() ),
+		$is_account ? ' aria-current="page"' : '',
 		esc_html__( 'Account', 'dragon-glow' )
 	);
 
 	$wishlist = sprintf(
-		'<li class="menu-item dg-mobile-menu-item--wishlist"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		'<li class="menu-item dg-mobile-menu-item--wishlist%s"><a href="%s"%s><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		$is_wishlist ? ' current-menu-item' : '',
 		esc_url( get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' ) ),
+		$is_wishlist ? ' aria-current="page"' : '',
 		esc_html__( 'Wishlist', 'dragon-glow' )
 	);
 
 	$cart = sprintf(
-		'<li class="menu-item dg-mobile-menu-item--cart"><a href="%s"><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		'<li class="menu-item dg-mobile-menu-item--cart%s"><a href="%s"%s><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		$is_cart ? ' current-menu-item' : '',
 		esc_url( dg_get_cart_url() ),
+		$is_cart ? ' aria-current="page"' : '',
 		esc_html__( 'Cart', 'dragon-glow' )
 	);
 
