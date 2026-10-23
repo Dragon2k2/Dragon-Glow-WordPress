@@ -26,6 +26,33 @@
 }
 
 /* =========================================
+   0b. SCROLL STABILITY (auth portal — login + register)
+   The portal must open exactly at top. Two guards, no JS scroll hacking:
+   1. `scroll-behavior: auto` — with smooth enabled (main.css), any
+      restoration/focus nudge on entry becomes a visible animated drift.
+      `:has()` specificity beats main.css `html` regardless of load order
+      (`:has()` is already used elsewhere in this file). The body rule is
+      the fallback for browsers without `:has()` support.
+   2. `overflow-anchor: none` on the brand header — the webfont swap
+      (Playfair Display / Cormorant Garamond) resizing above-the-fold
+      content makes the browser compensate with a small scroll jump.
+   Single source here: `dg-login` loads on every signed-out auth page,
+   so register.php is covered without duplicating selectors.
+   ========================================= */
+
+html:has(body.dg-hide-site-chrome) {
+	scroll-behavior: auto;
+}
+
+body.dg-hide-site-chrome {
+	scroll-behavior: auto;
+}
+
+.dg-login__brand-header {
+	overflow-anchor: none;
+}
+
+/* =========================================
    0a. VIEWPORT DOUBLE-GOLD PINSTRIPE FRAME
    Decorative outer frame + corner flourishes fixed to the browser
    viewport (matches the "Atelier Imperial" reference — a frame around
@@ -175,6 +202,16 @@
 	background-position: 0% 0;
 }
 
+/* One-time autoplay — same sweep as hover, triggered by JS on page load.
+   Scoped to the header so logo + title sweep together, exactly like the
+   linked :hover above. Works at every breakpoint: the swept property
+   (background-position) is breakpoint-independent. JS removes the class
+   after the transition so hover keeps working afterwards. */
+.dg-login__brand-header.is-shine-once .dg-login__brand-logo::after,
+.dg-login__brand-header.is-shine-once .dg-account-auth__brand-title {
+	background-position: 0% 0;
+}
+
 @media (max-width: 640px) {
 	.dg-login__brand-logo-img {
 		width: var(--auth-brand-logo-size-mobile);
@@ -307,7 +344,7 @@
    ========================================= */
 
 .dg-account--signed-out {
-	padding: var(--auth-portal-padding-top) 0 clamp(2.5rem, 5vw, 4rem);
+	padding: var(--auth-portal-padding-top) 0 clamp(2.5rem, 5vw, 3rem);
 	background: var(--auth-bg);
 }
 
@@ -332,7 +369,7 @@
 	grid-template-columns: minmax(0, 1fr);
 	background: var(--auth-panel-bg);
 	border: 1px solid var(--auth-panel-border);
-	border-radius: 4px;
+	border-radius: 16px;
 	box-shadow: 0 25px 60px rgba(113, 85, 9, 0.06), 0 2px 8px rgba(113, 85, 9, 0.03);
 	overflow: hidden;
 }
@@ -469,7 +506,7 @@
 		white-space: nowrap;
 	}
 
-	.dg-account-auth__pulse-dot {
+	.dg-login__pulse-dot {
 		flex-shrink: 0;
 	}
 
@@ -509,7 +546,7 @@
 }
 
 /* Pulse dot — status indicator (active member) */
-.dg-account-auth__pulse-dot {
+.dg-login__pulse-dot {
 	flex-shrink: 0;
 	width: var(--login-pulse-dot-size);
 	height: var(--login-pulse-dot-size);
@@ -529,7 +566,7 @@
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-	.dg-account-auth__pulse-dot {
+	.dg-login__pulse-dot {
 		animation: none;
 		opacity: 1;
 	}
@@ -1390,14 +1427,16 @@
 	font-weight: 500;
 }
 
-/* Responsive footer — stack on small screens.
+/* Responsive footer — stack on small + narrow tablet screens.
    The footer sits outside <main>, so it gets no side padding from the page
    wrapper: at 320px the copyright ran edge to edge across the viewport
    frame lines, and at 375px it left "RESERVED." orphaned on line 2.
    Fix: frame-safe side padding, fluid size + eased tracking for the
    uppercase lines, and a balanced 2-line copyright when it must wrap.
+   Extended to 780px: the 3-location row still exceeds the content box at
+   641–780px, so 641–780px keeps the exact 640px stacked look (dots hidden).
    (register.css loads after this file and tunes its own values.) */
-@media (max-width: 640px) {
+@media (max-width: 780px) {
 	.dg-account-auth__heritage-locations {
 		flex-direction: column;
 		gap: 2px;
@@ -1458,18 +1497,170 @@
 }
 
 .dg-login__footnote .dg-login__dot {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	align-self: center;
+	font-size: 11px; /* Match item text so the glyph box centers optically. */
+	line-height: 1;
+	transform: translateY(-0.04em); /* Optical nudge: bullet glyph sits high in most fonts. */
 	color: #7A6432;
 }
 
-/* Narrow panels: the two items wrap onto separate lines, so the bullet
-   separator would dangle at the end of line one — hide it there. */
-@media (max-width: 639px) {
+/* Below 447px the two items wrap onto separate lines, so the bullet
+   separator would dangle at the end of line one — hide it there.
+   From 447px up the row fits on one line, so the dot stays visible. */
+@media (max-width: 446px) {
 	.dg-login__footnote {
 		gap: 8px 16px;
 	}
 
 	.dg-login__footnote .dg-login__dot {
 		display: none;
+	}
+}
+
+/* 447px – 639px: keep text + dot on ONE line. The two labels (~41 uppercase
+   chars) + icons + gaps exceed the ~357px content box at 447px, so tighten
+   type/spacing just enough to fit without wrapping or overflow.
+   `flex-wrap: nowrap` is the guarantee; the size trims remove the overflow. */
+@media (min-width: 445.5px) and (max-width: 639px) {
+	.dg-login__footnote {
+		flex-wrap: nowrap;
+		gap: 5px;
+		white-space: nowrap;
+	}
+
+	.dg-login__footnote-item {
+		flex-shrink: 0;
+		font-size: 11px;
+		letter-spacing: 0.04em;
+		gap: 4px;
+	}
+
+	.dg-login__footnote-item .material-symbols-outlined {
+		font-size: 15px;
+	}
+
+	.dg-login__footnote .dg-login__dot {
+		font-size: 11px;
+	}
+}
+
+/* =========================================
+   4b. TRUST BADGES (Apothecary Authentication Micro-Badge)
+   Shared chrome with register.php — single source lives here because
+   `dg-login` always loads on every signed-out auth page (see
+   inc/enqueue/styles.php), while `dg-register` only loads on the
+   /register/ endpoint. register.css must NOT redefine these selectors.
+   Outside panel grid, between panel and footer — full viewport width.
+   Tokens consumed from style.css :root (`--register-trust-*`).
+   ========================================= */
+
+.dg-login__trust-badges {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--register-trust-gap);
+	margin-top: 48px;
+	padding: 0 20px;
+	font-family: var(--register-trust-font-family);
+	font-size: var(--register-trust-font-size);
+	text-transform: uppercase;
+	letter-spacing: var(--register-trust-tracking);
+	color: var(--register-trust-text);
+	opacity: var(--register-trust-text-opacity);
+	font-weight: 900;
+}
+
+.dg-login__trust-badge {
+	display: flex;
+	align-items: center;
+	gap: var(--register-trust-badge-gap);
+}
+
+.dg-login__trust-badge .material-symbols-outlined {
+	font-size: var(--register-trust-icon-size);
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
+.dg-login__trust-separator {
+	color: var(--register-trust-text);
+}
+
+/* Responsive — wrap badges on narrow screens (below 639px) */
+@media (max-width: 638px) {
+	.dg-login__trust-badges {
+		flex-wrap: wrap;
+		gap: 0.75rem; /* 12px — tighter on mobile */
+		font-size: 10px;
+		letter-spacing: 0.15em;
+		margin-top: 40px; /* Reduce from desktop 48px → 24px on mobile */
+	}
+
+	.dg-login__trust-badge .material-symbols-outlined {
+		font-size: 13px;
+	}
+
+	.dg-login__trust-badge {
+		gap: 0.25rem; /* 4px on mobile */
+	}
+
+	/* Hide separators on mobile to allow natural wrap */
+	.dg-login__trust-separator {
+		display: none;
+	}
+}
+
+/* 639px and up: single row like desktop. The three labels (~67 uppercase
+   chars at 13px/0.2em) + icons + gaps exceed the ~559px content box at
+   639px, so tighten type/spacing in two steps until the full desktop
+   values fit at 1024px. `nowrap` + `flex-shrink: 0` is the guarantee;
+   the size trims remove the overflow (no wrap, no ellipsis). */
+@media (min-width: 639px) {
+	.dg-login__trust-badges {
+		flex-wrap: nowrap;
+		white-space: nowrap;
+	}
+
+	.dg-login__trust-badge {
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+
+	.dg-login__trust-separator {
+		flex-shrink: 0;
+	}
+}
+
+@media (min-width: 639px) and (max-width: 767px) {
+	.dg-login__trust-badges {
+		gap: 1rem; 
+		font-size: 10px;
+		letter-spacing: 0.012em;
+		margin-top: 32px; /* Reduce from desktop 48px → 32px on tablet */
+	}
+
+	.dg-login__trust-badge {
+		gap: 0.25rem; /* 4px */
+	}
+
+	.dg-login__trust-badge .material-symbols-outlined {
+		font-size: 12px;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.dg-login__trust-badges {
+		gap: 1rem; 
+		font-size: 10px;
+		letter-spacing: 0.012em;
+		margin-top: 39px; /* Reduce from desktop 48px → 36px on tablet-lg */
+	}
+
+	.dg-login__trust-badge .material-symbols-outlined {
+		font-size: 13px;
 	}
 }
 

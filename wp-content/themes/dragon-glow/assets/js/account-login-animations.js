@@ -1,64 +1,103 @@
 /**
- * Dragon Glow — Account Login Page: Page Load Animations
+ * Dragon Glow — Account Login Page: Brand Shine Autoplay
  *
- * Simulates a single hover animation on brand logo and title when the
- * login page loads. Applies `.is-animate` class to trigger one-time
- * CSS transition, then removes it to allow hover interactions to work freely.
+ * Plays the brand-header shimmer sweep once on page load, reusing the exact
+ * same CSS transition as hover (`.is-shine-once` in login.css mirrors the
+ * `:hover` / `:has()` rules). Works at every breakpoint because the swept
+ * property (background-position) is breakpoint-independent.
+ *
+ * Waits for the [data-sr] reveal (account.js adds `.is-visible`) so the
+ * sweep runs while the header is actually visible. Falls back to a timed
+ * play when the reveal class never arrives (e.g. no IntersectionObserver).
+ *
+ * Respects `prefers-reduced-motion`: no autoplay, hover still works.
  *
  * @package Dragon_Glow
  */
 
-(() => {
+(function () {
 	'use strict';
 
-	// Store the scroll position before disabling restoration
-	const savedScrollPosition = window.scrollY || window.pageYOffset;
+	var SHINE_CLASS = 'is-shine-once';
+	var VISIBLE_CLASS = 'is-visible';
+	var HOLD_MS = 700;
+	var AFTER_VISIBLE_DELAY = 150;
+	var FALLBACK_MS = 2000;
 
-	// Disable browser's automatic scroll restoration on page load
-	window.history.scrollRestoration = 'manual';
+	var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	/**
-	 * Play one-time on-load animation for logo + title
+	 * Add the shine class, then release it so hover keeps working.
+	 *
+	 * @param {HTMLElement} header Brand header element.
+	 * @return void
 	 */
-	function initOnPageLoad() {
-		// Set scroll-behavior to auto to prevent smooth scroll during page load
-		document.documentElement.style.scrollBehavior = 'auto';
-		document.body.style.scrollBehavior = 'auto';
+	function playShine(header) {
+		if (header.classList.contains(SHINE_CLASS)) {
+			return;
+		}
+		header.classList.add(SHINE_CLASS);
+		window.setTimeout(function () {
+			header.classList.remove(SHINE_CLASS);
+		}, HOLD_MS);
+	}
 
-		const brandLogo = document.querySelector('.dg-login__brand-logo');
-		const brandTitle = document.querySelector('.dg-account-auth__brand-title');
-
-		if (!brandLogo || !brandTitle) {
+	/**
+	 * Play the one-time shine sweep on the brand header.
+	 *
+	 * @return void
+	 */
+	function initBrandShine() {
+		var header = document.querySelector('.dg-login__brand-header');
+		if (!header || prefersReduced) {
 			return;
 		}
 
-		// Apply .is-animate class with slight delay for better perception
-		setTimeout(() => {
-			brandLogo.classList.add('is-animate');
-		}, 50);
+		// Already revealed — sweep on the next frame.
+		if (header.classList.contains(VISIBLE_CLASS)) {
+			window.requestAnimationFrame(function () {
+				window.setTimeout(function () {
+					playShine(header);
+				}, AFTER_VISIBLE_DELAY);
+			});
+			return;
+		}
 
-		// Title animates 20ms later for staggered effect
-		setTimeout(() => {
-			brandTitle.classList.add('is-animate');
-		}, 70);
+		// Not revealed yet — wait for account.js to add `.is-visible`.
+		var played = false;
+		var observer = null;
 
-		// Remove animation class after transition completes and restore scroll position
-		setTimeout(() => {
-			brandLogo.classList.remove('is-animate');
-			brandTitle.classList.remove('is-animate');
+		function playOnce() {
+			if (played) {
+				return;
+			}
+			played = true;
+			if (observer) {
+				observer.disconnect();
+			}
+			window.requestAnimationFrame(function () {
+				window.setTimeout(function () {
+					playShine(header);
+				}, AFTER_VISIBLE_DELAY);
+			});
+		}
 
-			// Restore the saved scroll position
-			window.scrollTo(0, savedScrollPosition);
+		if ('MutationObserver' in window) {
+			observer = new MutationObserver(function () {
+				if (header.classList.contains(VISIBLE_CLASS)) {
+					playOnce();
+				}
+			});
+			observer.observe(header, { attributes: true, attributeFilter: ['class'] });
+		}
 
-			// Re-enable scroll restoration for future navigations
-			window.history.scrollRestoration = 'auto';
-		}, 700);
+		// Fallback: play anyway so the sweep is never skipped silently.
+		window.setTimeout(playOnce, FALLBACK_MS);
 	}
 
-	// Run as early as possible
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initOnPageLoad);
+		document.addEventListener('DOMContentLoaded', initBrandShine);
 	} else {
-		initOnPageLoad();
+		initBrandShine();
 	}
 })();
