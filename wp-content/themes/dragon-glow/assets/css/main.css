@@ -29,13 +29,8 @@ button, a, label,
     user-select: none;
 }
 
-/* Smooth anchor scrolling only when the user has no reduced-motion
-   preference (accessibility requirement). Unconditional smooth turns any
-   restoration/focus nudge into a visible drift right after page entry. */
-@media (prefers-reduced-motion: no-preference) {
-    html {
-        scroll-behavior: smooth;
-    }
+html {
+    scroll-behavior: smooth;
 }
 
 /* Hide site chrome (header nav + footer + mobile drawer/backdrop) when auth portal body class is present.
@@ -998,23 +993,8 @@ table th {
 }
 
 @media (max-width: 767px) {
-    /* Mobile: show 1 card + small peek of next (56px keeps card wide enough for title + price). */
+    /* Mobile: show 1 card + peek of next */
     #dg-carousel > article {
-        width: calc(100% - 56px);
-    }
-}
-
-/* Touch screens have no hover: keep quick-add visible and tappable. */
-@media (hover: none) {
-    #dg-carousel .dg-quick-add {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-/* Reduced motion: no smooth scrolling in carousel. */
-@media (prefers-reduced-motion: reduce) {
-    #dg-carousel {
-        scroll-behavior: auto;
+        width: calc(100% - 96px);
     }
 }

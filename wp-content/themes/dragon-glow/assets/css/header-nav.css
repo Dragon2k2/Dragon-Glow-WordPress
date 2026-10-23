@@ -141,7 +141,6 @@
 .dg-mobile-menu__list {
 	list-style: none;
 	margin: 0;
-	flex-grow: 1;  /* Take up available space so auth buttons stick below */
 }
 
 .dg-mobile-menu__list .menu-item {
@@ -318,104 +317,14 @@
 }
 
 /* =========================================
-   5. AUTH BUTTONS (mobile only) — Log In / Sign Up
-   Below menu items, only shown when logged out.
-   Two-column layout on smaller viewports; full-width stacked on ultra-small.
-   Uses design tokens: --mobile-nav-auth-* and semantic --color-* fallbacks.
-   ========================================= */
-
-.dg-mobile-menu__auth-group {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mobile-nav-auth-gap, 0.75rem);
-	padding: var(--mobile-nav-auth-padding, 1rem 1.25rem);
-	border-top: 1px solid var(--mobile-nav-divider);
-}
-
-.dg-mobile-menu__auth-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 0.75rem 1rem;
-	border: 1px solid transparent;
-	border-radius: 0.75rem;
-	font-family: var(--font-body);
-	font-size: 0.9375rem;
-	font-weight: 600;
-	text-decoration: none;
-	white-space: nowrap;
-	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Login button — secondary / outline style */
-.dg-mobile-menu__auth-btn--login {
-	color: var(--color-primary);
-	background: transparent;
-	border-color: var(--color-primary);
-}
-
-.dg-mobile-menu__auth-btn--login:hover {
-	background: var(--color-primary);
-	color: var(--color-on-primary);
-}
-
-.dg-mobile-menu__auth-btn--login:focus-visible {
-	outline: 2px solid var(--mobile-nav-focus-ring);
-	outline-offset: var(--mobile-nav-focus-ring-offset);
-}
-
-/* Sign up button — primary / solid style */
-.dg-mobile-menu__auth-btn--signup {
-	color: var(--color-on-primary);
-	background: var(--color-primary);
-	border-color: var(--color-primary);
-}
-
-.dg-mobile-menu__auth-btn--signup:hover {
-	background: var(--color-primary-dark);
-	border-color: var(--color-primary-dark);
-}
-
-.dg-mobile-menu__auth-btn--signup:focus-visible {
-	outline: 2px solid var(--mobile-nav-focus-ring);
-	outline-offset: var(--mobile-nav-focus-ring-offset);
-}
-
-/* Icon styling for auth buttons */
-.dg-mobile-menu__auth-btn::before {
-	content: '';  /* Placeholder — actual icon rendered by <span> with Material Symbols */
-	display: none;
-}
-
-.dg-mobile-menu__auth-btn .material-symbols-outlined {
-	font-size: 1.25rem;
-	flex-shrink: 0;
-}
-
-/* =========================================
-   5a. AUTH GROUP DIVIDER (visual separation)
-   Only show if there are menu items above — the border-top
-   already exists via .dg-mobile-menu__auth-group CSS.
-   ========================================= */
-
-/* Fallback text styling for inline <span> inside auth buttons */
-.dg-mobile-menu__auth-btn span:not(.material-symbols-outlined) {
-	font-weight: 600;
-	flex: 1;
-	text-align: center;
-}
-
-/* =========================================
-   6. REDUCED MOTION — auth buttons included
+   6. REDUCED MOTION
    ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
 	#dg-mobile-menu-backdrop,
 	.dg-mobile-menu__close,
 	.dg-mobile-menu__list a,
-	.dg-mobile-menu__list a::before,
-	.dg-mobile-menu__auth-btn {
+	.dg-mobile-menu__list a::before {
 		transition: none;
 	}
 }
