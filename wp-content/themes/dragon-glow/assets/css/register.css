@@ -134,6 +134,16 @@
 	background-position: 0% 0;
 }
 
+/* One-time autoplay — same sweep as hover, triggered by JS on page load.
+   Scoped to the header so logo + title sweep together, exactly like the
+   linked :hover above. Works at every breakpoint: the swept property
+   (background-position) is breakpoint-independent. JS removes the class
+   after the transition so hover keeps working afterwards. */
+.dg-account-auth__crest-header.is-shine-once .dg-account-auth__brand-logo::after,
+.dg-account-auth__crest-header.is-shine-once .dg-account-auth__brand-title {
+	background-position: 0% 0;
+}
+
 @media (max-width: 640px) {
 	.dg-account-auth__brand-logo-img {
 		width: var(--auth-brand-logo-size-mobile);
@@ -1316,62 +1326,10 @@
 
 /* =========================================
    5g. TRUST BADGES (Apothecary Authentication Micro-Badge)
-   Outside panel grid, between panel and footer — full viewport width.
+   Single source lives in login.css (§4b) — `dg-login` always loads on every
+   signed-out auth page (see inc/enqueue/styles.php), so register reuses it.
+   Do NOT redefine `.dg-account-auth__trust-*` selectors here.
    ========================================= */
-
-.dg-account-auth__trust-badges {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--register-trust-gap);
-	margin-top: 1rem;
-	padding: 0 20px;
-	font-family: var(--register-trust-font-family);
-	font-size: var(--register-trust-font-size);
-	text-transform: uppercase;
-	letter-spacing: var(--register-trust-tracking);
-	color: var(--register-trust-text);
-	opacity: var(--register-trust-text-opacity);
-	font-weight: 900;
-}
-
-.dg-account-auth__trust-badge {
-	display: flex;
-	align-items: center;
-	gap: var(--register-trust-badge-gap);
-}
-
-.dg-account-auth__trust-badge .material-symbols-outlined {
-	font-size: var(--register-trust-icon-size);
-	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
-}
-
-.dg-account-auth__trust-separator {
-	color: var(--register-trust-text);
-}
-
-/* Responsive — wrap badges on narrow screens */
-@media (max-width: 639px) {
-	.dg-account-auth__trust-badges {
-		flex-wrap: wrap;
-		gap: 0.75rem; /* 12px — tighter on mobile */
-		font-size: 10px;
-		letter-spacing: 0.15em;
-	}
-
-	.dg-account-auth__trust-badge .material-symbols-outlined {
-		font-size: 13px;
-	}
-
-	.dg-account-auth__trust-badge {
-		gap: 0.25rem; /* 4px on mobile */
-	}
-
-	/* Hide separators on mobile to allow natural wrap */
-	.dg-account-auth__trust-separator {
-		display: none;
-	}
-}
 
 /* =========================================
    5h. EXISTING MEMBER SIGN-IN PROMPT
@@ -1700,6 +1658,119 @@
 		line-height: 1.6;
 		margin-top: 0;
 		text-wrap: balance;
+	}
+}
+
+
+/* =========================================
+   7c. TRUST BADGES — Register Page Only
+   Responsive badges (eco, shield, cruelty-free) below form panel.
+   Tokens consumed from style.css :root (`--register-trust-*`).
+   ========================================= */
+
+.dg-account-auth--register .dg-account-auth__trust-badges {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--register-trust-gap);
+	margin-top: 21px;
+	padding: 0 20px;
+	font-family: var(--register-trust-font-family);
+	font-size: var(--register-trust-font-size);
+	text-transform: uppercase;
+	letter-spacing: var(--register-trust-tracking);
+	color: var(--register-trust-text);
+	opacity: var(--register-trust-text-opacity);
+	font-weight: 900;
+}
+
+.dg-account-auth--register .dg-account-auth__trust-badge {
+	display: flex;
+	align-items: center;
+	gap: var(--register-trust-badge-gap);
+}
+
+.dg-account-auth--register .dg-account-auth__trust-badge .material-symbols-outlined {
+	font-size: var(--register-trust-icon-size);
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
+.dg-account-auth--register .dg-account-auth__trust-separator {
+	color: var(--register-trust-text);
+}
+
+/* Responsive — wrap badges on narrow screens (below 639px) */
+@media (max-width: 638px) {
+	.dg-account-auth--register .dg-account-auth__trust-badges {
+		flex-wrap: wrap;
+		gap: 0.75rem; 
+		font-size: 10px;
+		letter-spacing: 0.15em;
+		margin-top: 5px; 
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge .material-symbols-outlined {
+		font-size: 13px;
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge {
+		gap: 0.25rem; /* 4px on mobile */
+	}
+
+	/* Hide separators on mobile to allow natural wrap */
+	.dg-account-auth--register .dg-account-auth__trust-separator {
+		display: none;
+	}
+}
+
+/* 639px and up: single row like desktop. The three labels (~67 uppercase
+   chars at 13px/0.2em) + icons + gaps exceed the ~559px content box at
+   639px, so tighten type/spacing in two steps until the full desktop
+   values fit at 1024px. `nowrap` + `flex-shrink: 0` is the guarantee;
+   the size trims remove the overflow (no wrap, no ellipsis). */
+@media (min-width: 639px) {
+	.dg-account-auth--register .dg-account-auth__trust-badges {
+		flex-wrap: nowrap;
+		white-space: nowrap;
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge {
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-separator {
+		flex-shrink: 0;
+	}
+}
+
+@media (min-width: 639px) and (max-width: 767px) {
+	.dg-account-auth--register .dg-account-auth__trust-badges {
+		gap: 1rem; 
+		font-size: 10px;
+		letter-spacing: 0.012em;
+		margin-top: 18px; 
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge {
+		gap: 0.25rem; /* 4px */
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge .material-symbols-outlined {
+		font-size: 12px;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.dg-account-auth--register .dg-account-auth__trust-badges {
+		gap: 1rem; 
+		font-size: 10px;
+		letter-spacing: 0.012em;
+		margin-top: 16px; 
+	}
+
+	.dg-account-auth--register .dg-account-auth__trust-badge .material-symbols-outlined {
+		font-size: 13px;
 	}
 }
 

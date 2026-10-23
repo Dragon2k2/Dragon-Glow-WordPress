@@ -182,7 +182,7 @@ function dg_enqueue_styles(): void {
 			wp_enqueue_style(
 				'dg-register',
 				DG_URI . '/assets/css/register.css',
-				array( 'dg-woocommerce-account', 'dg-cormorant-garamond' ),
+				array( 'dg-woocommerce-account', 'dg-login', 'dg-cormorant-garamond' ),
 				DG_VERSION
 			);
 		}

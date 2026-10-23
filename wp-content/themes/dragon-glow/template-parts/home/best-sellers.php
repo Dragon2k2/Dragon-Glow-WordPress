@@ -91,27 +91,27 @@ $fallback_products = array(
     <!-- Floating organic shape background -->
     <div class="absolute top-0 right-0 w-1/2 h-full bg-primary-container/10 blur-[120px] rounded-full translate-x-1/2"></div>
 
-    <div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
-        <div class="flex justify-between items-end mb-16 reveal">
-            <div>
-                <h2 class="font-headline text-headline-lg text-primary mb-4">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
+        <div class="flex flex-col gap-6 mb-8 sm:flex-row sm:items-end sm:justify-between md:mb-16 reveal">
+            <div class="min-w-0">
+                <h2 class="font-headline text-headline-lg-mobile md:text-headline-lg text-primary mb-3 md:mb-4">
                     <?php esc_html_e( 'Glow Favorites', 'dragon-glow' ); ?>
                 </h2>
-                <p class="text-on-surface-variant">
+                <p class="text-sm md:text-base text-on-surface-variant">
                     <?php esc_html_e( "Our community's most-loved essentials for a radiant daily ritual.", 'dragon-glow' ); ?>
                 </p>
             </div>
-            <div class="flex gap-4">
-                <button class="dg-carousel-nav-btn" id="dg-prev-btn" aria-label="<?php esc_attr_e( 'Previous', 'dragon-glow' ); ?>">
+            <div class="hidden shrink-0 gap-3 sm:gap-4 lg:flex">
+                <button type="button" class="dg-carousel-nav-btn" id="dg-prev-btn" data-dg-carousel-nav="prev" aria-label="<?php esc_attr_e( 'Previous', 'dragon-glow' ); ?>">
                     <span class="material-symbols-outlined">chevron_left</span>
                 </button>
-                <button class="dg-carousel-nav-btn" id="dg-next-btn" aria-label="<?php esc_attr_e( 'Next', 'dragon-glow' ); ?>">
+                <button type="button" class="dg-carousel-nav-btn" id="dg-next-btn" data-dg-carousel-nav="next" aria-label="<?php esc_attr_e( 'Next', 'dragon-glow' ); ?>">
                     <span class="material-symbols-outlined">chevron_right</span>
                 </button>
             </div>
         </div>
 
-        <div class="flex gap-8 overflow-x-auto pb-4 scroll-smooth custom-scrollbar snap-x snap-mandatory" id="dg-carousel">
+        <div class="flex gap-4 md:gap-8 overflow-x-auto pb-4 scroll-smooth custom-scrollbar snap-x snap-mandatory" id="dg-carousel">
             <?php
             $delay = 0;
             $has_products = $products->have_posts();
@@ -133,6 +133,9 @@ $fallback_products = array(
                     
                     $is_sale  = $product->is_on_sale();
                     $is_new   = $product->is_featured();
+
+                    // Full short description: no word limit, no CSS clamp, so no ellipsis on any viewport.
+                    $desc = trim( wp_strip_all_tags( (string) $product->get_short_description() ) );
             ?>
             <article <?php wc_product_class( 'w-[320px] max-w-[320px] glass-card p-4 rounded-3xl group flex-shrink-0 snap-start reveal', $product ); ?>
                      style="transition-delay: <?php echo esc_attr( $delay ); ?>ms">
@@ -165,18 +168,20 @@ $fallback_products = array(
                 </div>
 
                 <div class="px-2">
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold text-lg text-primary">
+                    <div class="flex justify-between items-start gap-3 mb-2">
+                        <h4 class="min-w-0 flex-1 font-bold text-lg text-primary">
                             <a href="<?php the_permalink(); ?>" class="hover:underline">
                                 <?php the_title(); ?>
                             </a>
                         </h4>
-                        <span class="font-bold text-tertiary"><?php echo wp_kses_post( $price ); ?></span>
+                        <span class="shrink-0 whitespace-nowrap font-bold text-tertiary"><?php echo wp_kses_post( $price ); ?></span>
                     </div>
 
+                    <?php if ( '' !== $desc ) : ?>
                     <p class="text-sm text-on-surface-variant mb-4">
-                        <?php echo esc_html( wp_trim_words( get_the_excerpt(), 8 ) ); ?>
+                        <?php echo esc_html( $desc ); ?>
                     </p>
+                    <?php endif; ?>
 
                     <?php dg_star_rating( (float) $stars, $count ); ?>
                 </div>
@@ -211,9 +216,9 @@ $fallback_products = array(
                 </div>
 
                 <div class="px-2">
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold text-lg text-primary"><?php echo esc_html( $fp['name'] ); ?></h4>
-                        <span class="font-serif font-bold text-tertiary"><?php echo esc_html( $fp['price'] ); ?></span>
+                    <div class="flex justify-between items-start gap-3 mb-2">
+                        <h4 class="min-w-0 flex-1 font-bold text-lg text-primary"><?php echo esc_html( $fp['name'] ); ?></h4>
+                        <span class="shrink-0 whitespace-nowrap font-serif font-bold text-tertiary"><?php echo esc_html( $fp['price'] ); ?></span>
                     </div>
 
                     <p class="text-sm text-on-surface-variant mb-4"><?php echo esc_html( $fp['desc'] ); ?></p>
@@ -225,6 +230,15 @@ $fallback_products = array(
                 endforeach;
             endif;
             ?>
+        </div>
+
+        <div class="flex justify-center gap-3 sm:gap-4 mt-8 reveal lg:hidden">
+            <button type="button" class="dg-carousel-nav-btn" data-dg-carousel-nav="prev" aria-label="<?php esc_attr_e( 'Previous', 'dragon-glow' ); ?>">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button type="button" class="dg-carousel-nav-btn" data-dg-carousel-nav="next" aria-label="<?php esc_attr_e( 'Next', 'dragon-glow' ); ?>">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
         </div>
 
         <!-- View All Link -->

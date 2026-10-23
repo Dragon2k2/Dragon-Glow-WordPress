@@ -51,15 +51,30 @@
 
     // ── Carousel (Best Sellers) ────────────────────────────────
     var carousel = document.getElementById('dg-carousel');
-    var prevBtn = document.getElementById('dg-prev-btn');
-    var nextBtn = document.getElementById('dg-next-btn');
+    var prevBtns = carousel ? document.querySelectorAll('[data-dg-carousel-nav="prev"]') : [];
+    var nextBtns = carousel ? document.querySelectorAll('[data-dg-carousel-nav="next"]') : [];
 
-    if (carousel && nextBtn && prevBtn) {
-        nextBtn.addEventListener('click', function () {
-            carousel.scrollBy({ left: 320, behavior: 'smooth' });
+    // Fallback: legacy single-button markup using IDs.
+    if (carousel && ! prevBtns.length && ! nextBtns.length) {
+        var legacyPrev = document.getElementById('dg-prev-btn');
+        var legacyNext = document.getElementById('dg-next-btn');
+        if (legacyPrev) { prevBtns = [legacyPrev]; }
+        if (legacyNext) { nextBtns = [legacyNext]; }
+    }
+
+    if (carousel && prevBtns.length && nextBtns.length) {
+        var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var step = function (dir) {
+            var card = carousel.querySelector('article');
+            var gap = parseFloat(getComputedStyle(carousel).columnGap) || 16;
+            var amount = card ? card.getBoundingClientRect().width + gap : 320;
+            carousel.scrollBy({ left: dir * amount, behavior: prefersReduced ? 'auto' : 'smooth' });
+        };
+        nextBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () { step(1); });
         });
-        prevBtn.addEventListener('click', function () {
-            carousel.scrollBy({ left: -320, behavior: 'smooth' });
+        prevBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () { step(-1); });
         });
     }
 

@@ -1,49 +1,64 @@
 /**
- * Dragon Glow — Account Register Page: Page Load Animations
+ * Dragon Glow — Account Register Page: Brand Shine Autoplay
  *
- * Simulates a single hover animation on brand logo and title when the
- * register page loads. Applies `.is-animate` class to trigger one-time
- * CSS transition, then removes it to allow hover interactions to work freely.
+ * Plays the crest-header shimmer sweep once on page load, reusing the exact
+ * same CSS transition as hover (`.is-shine-once` in register.css mirrors the
+ * `:hover` / `:has()` rules). Works at every breakpoint because the swept
+ * property (background-position) is breakpoint-independent.
+ *
+ * The crest header carries no [data-sr] reveal, so the sweep plays shortly
+ * after DOM ready. Respects `prefers-reduced-motion`: no autoplay, hover
+ * still works.
  *
  * @package Dragon_Glow
  */
 
-(() => {
+(function () {
 	'use strict';
 
+	var SHINE_CLASS = 'is-shine-once';
+	var HOLD_MS = 700;
+	var START_DELAY = 350;
+
+	var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 	/**
-	 * Play one-time on-load animation for logo + title
+	 * Add the shine class, then release it so hover keeps working.
+	 *
+	 * @param {HTMLElement} header Crest header element.
+	 * @return void
 	 */
-	function initOnPageLoad() {
-		const brandLogo = document.querySelector('.dg-account-auth__brand-logo');
-		const brandTitle = document.querySelector('.dg-account-auth__brand-title');
-
-		// Ensure both elements exist
-		if (!brandLogo || !brandTitle) return;
-
-		// Apply .is-animate class with slight delay for better perception
-		// Logo animates first (50ms)
-		setTimeout(() => {
-			brandLogo.classList.add('is-animate');
-		}, 50);
-
-		// Title animates 20ms later for staggered effect
-		setTimeout(() => {
-			brandTitle.classList.add('is-animate');
-		}, 70);
-
-		// Remove animation class after transition completes (600ms + buffer)
-		// This allows hover to work freely without interference
-		setTimeout(() => {
-			brandLogo.classList.remove('is-animate');
-			brandTitle.classList.remove('is-animate');
-		}, 700);
+	function playShine(header) {
+		if (header.classList.contains(SHINE_CLASS)) {
+			return;
+		}
+		header.classList.add(SHINE_CLASS);
+		window.setTimeout(function () {
+			header.classList.remove(SHINE_CLASS);
+		}, HOLD_MS);
 	}
 
-	// Run on DOM ready
+	/**
+	 * Play the one-time shine sweep on the crest header.
+	 *
+	 * @return void
+	 */
+	function initBrandShine() {
+		var header = document.querySelector('.dg-account-auth__crest-header');
+		if (!header || prefersReduced) {
+			return;
+		}
+
+		window.requestAnimationFrame(function () {
+			window.setTimeout(function () {
+				playShine(header);
+			}, START_DELAY);
+		});
+	}
+
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initOnPageLoad);
+		document.addEventListener('DOMContentLoaded', initBrandShine);
 	} else {
-		setTimeout(initOnPageLoad, 0);
+		initBrandShine();
 	}
 })();

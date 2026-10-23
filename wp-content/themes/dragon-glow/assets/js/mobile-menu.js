@@ -19,6 +19,7 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
     const backdrop = document.getElementById('dg-mobile-menu-backdrop');
     const menuClose = document.getElementById('dg-mobile-menu-close');
     const menuItems = document.querySelectorAll('.dg-mobile-menu__list .menu-item');
+    const authButtons = document.querySelectorAll('.dg-mobile-menu__auth-btn');
 
     if (!menuToggle || !mobileMenu || !backdrop || !menuClose) return;
 
@@ -58,9 +59,11 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
                 }
             );
 
-            // Stagger menu items — fade-in lần lượt
+            // Stagger menu items + auth buttons — fade-in lần lượt
+            // Combine menu items and auth buttons into single animation
+            const allAnimatedItems = [...menuItems, ...authButtons];
             animate(
-                menuItems,
+                allAnimatedItems,
                 { opacity: [0, 1], x: [20, 0] },
                 { 
                     duration: 0.4,
@@ -107,9 +110,10 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
                 backdrop.style.visibility = 'hidden';
             });
 
-            // Fade-out menu items
+            // Fade-out menu items + auth buttons
+            const allAnimatedItems = [...menuItems, ...authButtons];
             animate(
-                menuItems,
+                allAnimatedItems,
                 { opacity: [1, 0] },
                 { 
                     duration: 0.25,
