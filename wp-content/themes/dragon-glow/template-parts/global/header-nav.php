@@ -101,10 +101,16 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 			</button>
 		</div>
 		<?php else : ?>
-		<div class="flex items-center gap-3">
-			<button class="lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
-				<span class="material-symbols-outlined">menu</span>
-			</button>
+		<!-- Auth Buttons: Log In / Sign Up (visible on all breakpoints when logged out) -->
+		<div class="dg-nav-auth-group">
+			<a href="<?php echo esc_url( home_url( '/my-account/' ) ); ?>"
+			   class="dg-nav-auth-btn dg-nav-auth-btn--login">
+				<?php esc_html_e( 'Log in', 'dragon-glow' ); ?>
+			</a>
+			<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"
+			   class="dg-nav-auth-btn dg-nav-auth-btn--signup">
+				<?php esc_html_e( 'Sign up', 'dragon-glow' ); ?>
+			</a>
 		</div>
 		<?php endif; ?>
 	</div>
@@ -144,17 +150,30 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 	) );
 	?>
 
-	<!-- Auth Buttons: ALWAYS render (no PHP conditional) -->
+	<!-- Sign Out Button — Logged-In Users Only -->
+	<?php if ( is_user_logged_in() ) : ?>
 	<div class="dg-mobile-menu__auth-group">
-		<a href="<?php echo esc_url( wp_login_url() ?: home_url( '/wp-login.php' ) ); ?>"
-		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--login">
-			<span class="material-symbols-outlined">login</span>
-			<span><?php esc_html_e( 'Log in', 'dragon-glow' ); ?></span>
-		</a>
-		<a href="<?php echo esc_url( wp_registration_url() ?: home_url( '/wp-register.php' ) ); ?>"
-		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--signup">
-			<span class="material-symbols-outlined">person_add</span>
-			<span><?php esc_html_e( 'Sign up', 'dragon-glow' ); ?></span>
+		<a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>"
+		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--logout"
+		   data-dg-signout
+		   aria-haspopup="dialog">
+			<span class="material-symbols-outlined">logout</span>
+			<span class="font-body text-body-md"><?php esc_html_e( 'Sign out', 'dragon-glow' ); ?></span>
 		</a>
 	</div>
+	<?php else : ?>
+	<!-- Auth Buttons: Log In / Sign Up — Logged-Out Users Only -->
+	<div class="dg-mobile-menu__auth-group">
+		<a href="<?php echo esc_url( home_url( '/my-account/' ) ); ?>"
+		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--login">
+			<span class="material-symbols-outlined">login</span>
+			<span class="font-body text-body-md"><?php esc_html_e( 'Log in', 'dragon-glow' ); ?></span>
+		</a>
+		<a href="<?php echo esc_url( home_url( '/my-account/register/' ) ); ?>"
+		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--signup">
+			<span class="material-symbols-outlined">person_add</span>
+			<span class="font-body text-body-md"><?php esc_html_e( 'Sign up', 'dragon-glow' ); ?></span>
+		</a>
+	</div>
+	<?php endif; ?>
 </div>

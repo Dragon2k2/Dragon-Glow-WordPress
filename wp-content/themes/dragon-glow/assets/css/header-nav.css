@@ -6,7 +6,35 @@
    ========================================= */
 
 /* =========================================
-   1. MOBILE DRAWER BACKDROP
+   1. HEADER NAV CONTAINER — Responsive padding
+   Main nav container with responsive horizontal
+   padding that scales from mobile → tablet → desktop.
+   ========================================= */
+
+.header-nav .dg-nav-container {
+	/* Mobile: use narrow margin from theme */
+	padding-left: var(--nav-container-padding-x-mobile);
+	padding-right: var(--nav-container-padding-x-mobile);
+	padding-top: var(--nav-container-padding-y);
+	padding-bottom: var(--nav-container-padding-y);
+}
+
+@media (min-width: 640px) and (max-width: 767.98px) {
+	.header-nav .dg-nav-container {
+		padding-left: var(--nav-container-padding-x-tablet);
+		padding-right: var(--nav-container-padding-x-tablet);
+	}
+}
+
+@media (min-width: 768px) {
+	.header-nav .dg-nav-container {
+		padding-left: var(--nav-container-padding-x-desktop);
+		padding-right: var(--nav-container-padding-x-desktop);
+	}
+}
+
+/* =========================================
+   1a. MOBILE DRAWER BACKDROP
    Fixed scrim behind the drawer. Visibility is
    toggled by mobile-menu.js via inline style +
    `.active` class — this CSS only defines the
@@ -152,7 +180,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	padding: 0.75rem 1.25rem;
+	padding: 0.6875rem 1.25rem;
 	border: 1px solid var(--mobile-nav-divider);
 	border-radius: 0.75rem;
 	color: var(--mobile-nav-primary-text);
@@ -231,7 +259,7 @@
 }
 
 .dg-mobile-menu__list .dg-mobile-menu-item--our-story a::before {
-	content: 'spa';
+	content: 'auto_stories';
 }
 
 .dg-mobile-menu__list .dg-mobile-menu-item--contact a::before {
@@ -277,30 +305,33 @@
 }
 
 /* =========================================
-   4b. HEADER BRAND CENTERING — mobile/tablet only
-   Markup: template-parts/global/header-nav.php
-   (.dg-nav-container > div > .dg-nav-brand-name).
-   Below lg the bar is [logo+brand] left vs [icons/toggle]
-   right; absolute-centering the brand puts it midway
-   between logo and menu icon. Desktop (lg+) keeps the
-   inline flow: brand sits right of logo. Scoped to
-   max-width so desktop layout is untouched.
+   4b. MOBILE ONLY — Logo & Brand Name Sizing
+   Responsive only on mobile (< 768px).
+   Tablet/desktop keep original lg:gap-3 layout.
    ========================================= */
 
-@media (max-width: 1023.98px) {
-	.header-nav .dg-nav-container {
-		position: relative;
-	}
-
+@media (max-width: 767.98px) {
+	/* Shrink brand name on mobile to save space */
 	.header-nav .dg-nav-brand-name {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		text-align: center;
-		max-width: 55vw;
+		display: block;
+		flex: 0 1 auto;
+		min-width: 0;
+		font-size: var(--nav-brand-name-font-size-mobile);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		margin: 0;
+	}
+
+	/* Shrink logo on mobile */
+	.header-nav .dg-nav-brand__mark {
+		width: var(--nav-logo-size-mobile);
+		height: var(--nav-logo-size-mobile);
+	}
+
+	/* Reduce gap between logo and brand name on mobile */
+	.header-nav > div > div:first-child {
+		gap: var(--nav-logo-brand-gap-mobile);
 	}
 }
 
@@ -327,22 +358,24 @@
 .dg-mobile-menu__auth-group {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mobile-nav-auth-gap, 0.75rem);
-	padding: var(--mobile-nav-auth-padding, 1rem 1.25rem);
+	gap: 1rem;
+	padding: 1rem 1.25rem;
 	border-top: 1px solid var(--mobile-nav-divider);
-}
+}		
 
 .dg-mobile-menu__auth-btn {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 0.75rem 1rem;
+	justify-content: flex-start;
+	gap: 0.75rem;
+	width: 100%;
+	padding: 0.75rem 1.25rem;
 	border: 1px solid transparent;
 	border-radius: 0.75rem;
 	font-family: var(--font-body);
-	font-size: 0.9375rem;
+	font-size: 1rem;
 	font-weight: 600;
+	line-height: 1.5;
 	text-decoration: none;
 	white-space: nowrap;
 	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -382,6 +415,25 @@
 	outline-offset: var(--mobile-nav-focus-ring-offset);
 }
 
+/* Sign out button — primary / solid style (logged-in users only)
+   Full-width: inherits from base .dg-mobile-menu__auth-btn
+   Color matches Sign Up button: solid primary background */
+.dg-mobile-menu__auth-btn--logout {
+	color: var(--color-on-primary);
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+}
+
+.dg-mobile-menu__auth-btn--logout:hover {
+	background: var(--color-primary-dark);
+	border-color: var(--color-primary-dark);
+}
+
+.dg-mobile-menu__auth-btn--logout:focus-visible {
+	outline: 2px solid var(--mobile-nav-focus-ring);
+	outline-offset: var(--mobile-nav-focus-ring-offset);
+}
+
 /* Icon styling for auth buttons */
 .dg-mobile-menu__auth-btn::before {
 	content: '';  /* Placeholder — actual icon rendered by <span> with Material Symbols */
@@ -389,7 +441,7 @@
 }
 
 .dg-mobile-menu__auth-btn .material-symbols-outlined {
-	font-size: 1.25rem;
+	font-size: 1.375rem;
 	flex-shrink: 0;
 }
 
@@ -399,11 +451,14 @@
    already exists via .dg-mobile-menu__auth-group CSS.
    ========================================= */
 
-/* Fallback text styling for inline <span> inside auth buttons */
+/* Fallback text styling for inline <span> inside auth buttons
+   Note: Icon spans (.material-symbols-outlined) excluded.
+   Text spans inherit button's color token (--color-on-primary / --color-primary)
+   and do NOT expand to fill space (flex: none). */
 .dg-mobile-menu__auth-btn span:not(.material-symbols-outlined) {
 	font-weight: 600;
-	flex: 1;
-	text-align: center;
+	flex: none;
+	text-align: left;
 }
 
 /* =========================================
@@ -417,5 +472,128 @@
 	.dg-mobile-menu__list a::before,
 	.dg-mobile-menu__auth-btn {
 		transition: none;
+	}
+}
+
+/* =========================================
+   7. DESKTOP AUTH BUTTONS (when not logged in)
+   Right side of header: Log In / Sign Up.
+   Hidden on mobile/tablet; shown on desktop (lg+).
+   Reuses design tokens from main.css .dg-auth-group.
+   ========================================= */
+
+.dg-nav-auth-group {
+	display: flex;
+	align-items: center;
+	gap: var(--nav-auth-gap);
+	flex-shrink: 0;
+}
+
+/* Responsive gap — mobile/tablet use consistent spacing */
+	@media (max-width: 767.98px) {
+		.dg-nav-auth-group {
+			gap: var(--nav-auth-gap-mobile);
+		}
+	}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+	.dg-nav-auth-group {
+		gap: var(--nav-auth-gap-tablet);
+	}
+}
+
+/* Base button styles */
+.dg-nav-auth-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--nav-auth-btn-padding);
+	border: 1px solid transparent;
+	border-radius: var(--nav-auth-btn-radius);
+	font-family: var(--font-body);
+	font-size: var(--nav-auth-btn-font-size);
+	font-weight: var(--nav-auth-btn-font-weight);
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Mobile sizing — optimized padding and font size for cramped spaces */
+@media (max-width: 639.98px) {
+	.dg-nav-auth-btn {
+		padding: var(--nav-auth-btn-padding-mobile);
+		font-size: var(--nav-auth-btn-font-size-mobile);
+		font-weight: 600;
+	}
+}
+
+/* Tablet sizing — balanced padding between mobile and desktop */
+@media (min-width: 640px) and (max-width: 767.98px) {
+	.dg-nav-auth-btn {
+		padding: var(--nav-auth-btn-padding-mobile);
+		font-size: var(--nav-auth-btn-font-size-mobile);
+	}
+}
+
+.dg-nav-auth-btn:focus-visible {
+	outline: 2px solid var(--nav-auth-focus-ring);
+	outline-offset: 2px;
+}
+
+/* Log In button — outline style */
+.dg-nav-auth-btn--login {
+	color: var(--nav-auth-login-text);
+	background: var(--nav-auth-login-bg);
+	border-color: transparent;
+}
+
+.dg-nav-auth-btn--login:hover {
+	background: var(--nav-auth-login-bg-hover);
+}
+
+/* Sign Up button — solid style with shimmer */
+.dg-nav-auth-btn--signup {
+	position: relative;
+	overflow: hidden;
+	color: var(--nav-auth-signup-text);
+	background: var(--nav-auth-signup-bg);
+	border-color: transparent;
+}
+
+.dg-nav-auth-btn--signup:hover {
+	background: var(--nav-auth-signup-bg-hover);
+	color: var(--nav-auth-signup-text);
+}
+
+/* Shimmer effect — text wrapper */
+.dg-nav-auth-btn--signup span {
+	position: relative;
+	z-index: 1;
+}
+
+/* Shimmer highlight overlay */
+.dg-nav-auth-btn--signup::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -60%;
+	width: 40%;
+	height: 100%;
+	background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+	animation: dg-nav-auth-shimmer 2.8s ease-in-out infinite;
+	pointer-events: none;
+}
+
+/* Shimmer animation keyframes */
+@keyframes dg-nav-auth-shimmer {
+	0% { left: -60%; }
+	100% { left: 130%; }
+}
+
+/* Reduced motion — disable shimmer */
+@media (prefers-reduced-motion: reduce) {
+	.dg-nav-auth-btn--signup::after {
+		animation: none;
 	}
 }

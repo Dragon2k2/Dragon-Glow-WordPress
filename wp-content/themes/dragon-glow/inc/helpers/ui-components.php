@@ -365,3 +365,74 @@ function dg_inject_mobile_menu_items( string $items, object $args ): string {
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'dg_inject_mobile_menu_items', 10, 2 );
+
+/**
+ * Render global sign-out confirmation dialog.
+ *
+ * Displays the same modal on all pages when a user is logged in.
+ * Opened by account.js when a `[data-dg-signout]` link is clicked
+ * (desktop account nav or mobile menu drawer).
+ *
+ * The modal is placed outside main content region so it persists
+ * when AJAX page transitions occur.
+ *
+ * User info (avatar, name, email) is populated dynamically by
+ * account.js when the modal opens, using the current logged-in
+ * user data (no per-page rendering needed).
+ *
+ * @return void
+ */
+function dg_render_global_signout_modal(): void {
+	// Only render for logged-in users.
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+	?>
+	<div class="dg-signout" id="dg-signout" hidden
+		 data-busy-label="<?php echo esc_attr__( 'Signing out…', 'dragon-glow' ); ?>">
+		<div class="dg-signout__overlay" data-dg-signout-dismiss></div>
+		<div class="dg-signout__dialog"
+			 role="alertdialog"
+			 aria-modal="true"
+			 aria-labelledby="dg-signout-title"
+			 aria-describedby="dg-signout-body"
+			 tabindex="-1">
+			<div class="dg-signout__icon dg-signout__item" aria-hidden="true">
+				<span class="material-symbols-outlined">logout</span>
+			</div>
+			<p class="dg-signout__eyebrow dg-signout__item"><?php esc_html_e( 'Sign out', 'dragon-glow' ); ?></p>
+			<h2 class="dg-signout__title dg-signout__item" id="dg-signout-title">
+				<?php esc_html_e( 'Leaving so soon?', 'dragon-glow' ); ?>
+			</h2>
+			<p class="dg-signout__body dg-signout__item" id="dg-signout-body">
+				<?php esc_html_e( 'You will need to sign in again to view your orders, addresses and account details.', 'dragon-glow' ); ?>
+			</p>
+
+			<div class="dg-signout__user dg-signout__item">
+				<span class="dg-signout__avatar" aria-hidden="true" id="dg-signout-avatar">
+					<!-- Avatar populated by account.js -->
+				</span>
+				<span class="dg-signout__user-copy">
+					<span class="dg-signout__user-label"><?php esc_html_e( 'Signed in as', 'dragon-glow' ); ?></span>
+					<span class="dg-signout__user-name" id="dg-signout-user-name">
+						<!-- Name populated by account.js -->
+					</span>
+					<span class="dg-signout__user-email" id="dg-signout-user-email">
+						<!-- Email populated by account.js -->
+					</span>
+				</span>
+			</div>
+
+			<div class="dg-signout__actions dg-signout__item">
+				<button type="button" class="dg-signout__btn dg-signout__btn--ghost" data-dg-signout-cancel>
+					<?php esc_html_e( 'Stay signed in', 'dragon-glow' ); ?>
+				</button>
+				<button type="button" class="dg-signout__btn dg-signout__btn--danger" data-dg-signout-confirm>
+					<span class="material-symbols-outlined dg-signout__btn-icon" aria-hidden="true">logout</span>
+					<span class="dg-signout__btn-label"><?php esc_html_e( 'Sign out', 'dragon-glow' ); ?></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<?php
+}

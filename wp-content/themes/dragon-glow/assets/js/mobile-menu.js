@@ -19,7 +19,7 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
     const backdrop = document.getElementById('dg-mobile-menu-backdrop');
     const menuClose = document.getElementById('dg-mobile-menu-close');
     const menuItems = document.querySelectorAll('.dg-mobile-menu__list .menu-item');
-    const authButtons = document.querySelectorAll('.dg-mobile-menu__auth-btn');
+    const authButtons = document.querySelectorAll('.dg-mobile-menu__auth-btn');  // Empty if user logged in
 
     if (!menuToggle || !mobileMenu || !backdrop || !menuClose) return;
 
@@ -61,16 +61,22 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 
             // Stagger menu items + auth buttons — fade-in lần lượt
             // Combine menu items and auth buttons into single animation
-            const allAnimatedItems = [...menuItems, ...authButtons];
-            animate(
-                allAnimatedItems,
-                { opacity: [0, 1], x: [20, 0] },
-                { 
-                    duration: 0.4,
-                    delay: stagger(0.04, { start: 0.15 }),  // Start sau khi drawer vào 0.15s
-                    ease: 'easeOut'
-                }
-            );
+            // Auth buttons chỉ hiển thị khi user chưa đăng nhập (authButtons có thể empty)
+            const allAnimatedItems = authButtons.length > 0 
+                ? [...menuItems, ...authButtons]
+                : [...menuItems];
+            
+            if (allAnimatedItems.length > 0) {
+                animate(
+                    allAnimatedItems,
+                    { opacity: [0, 1], x: [20, 0] },
+                    { 
+                        duration: 0.4,
+                        delay: stagger(0.04, { start: 0.15 }),  // Start sau khi drawer vào 0.15s
+                        ease: 'easeOut'
+                    }
+                );
+            }
         }
     }
 
@@ -111,15 +117,21 @@ import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
             });
 
             // Fade-out menu items + auth buttons
-            const allAnimatedItems = [...menuItems, ...authButtons];
-            animate(
-                allAnimatedItems,
-                { opacity: [1, 0] },
-                { 
-                    duration: 0.25,
-                    ease: 'easeIn'
-                }
-            );
+            // Auth buttons có thể rỗng nếu user đã đăng nhập
+            const allAnimatedItems = authButtons.length > 0 
+                ? [...menuItems, ...authButtons]
+                : [...menuItems];
+            
+            if (allAnimatedItems.length > 0) {
+                animate(
+                    allAnimatedItems,
+                    { opacity: [1, 0] },
+                    { 
+                        duration: 0.25,
+                        ease: 'easeIn'
+                    }
+                );
+            }
         }
     }
 
