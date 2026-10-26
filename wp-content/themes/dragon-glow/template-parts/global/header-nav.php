@@ -16,10 +16,10 @@ header( 'Expires: 0' );
 $cart_count   = dg_get_cart_item_count();
 $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' );
 ?>
-<nav class="glass-nav header-nav sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
+<nav class="glass-nav header-nav<?php echo is_user_logged_in() ? ' header-nav--logged-in' : ''; ?> sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
 	<div class="dg-nav-container flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
 		<!-- Logo + Brand Name (left) -->
-		<div class="flex items-center lg:gap-3">
+		<div class="dg-nav-brand-group flex items-center lg:gap-3">
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>"
 			   class="dg-nav-logo hover:opacity-80 transition-opacity"
 			   aria-label="<?php bloginfo( 'name' ); ?> - Home">
@@ -75,7 +75,7 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 
 		<!-- Right side: Icons or Toggle Button -->
 		<?php if ( is_user_logged_in() ) : ?>
-		<div class="flex items-center gap-3">
+		<div class="dg-nav-actions flex items-center gap-3">
 			<a href="<?php echo esc_url( dg_is_woocommerce_active() ? dg_account_endpoint_url( '' ) : wp_login_url() ); ?>"
 			   class="hidden lg:block p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary"
 			   aria-label="<?php esc_attr_e( 'Account', 'dragon-glow' ); ?>">
@@ -96,7 +96,7 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 				<?php echo dg_render_cart_count_badge( $cart_count ); ?>
 			</a>
 
-			<button class="lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
+			<button class="dg-nav-toggle lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
 				<span class="material-symbols-outlined">menu</span>
 			</button>
 		</div>

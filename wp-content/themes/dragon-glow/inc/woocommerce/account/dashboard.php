@@ -504,70 +504,10 @@ function dg_render_wc_account(): void {
 		// swaps do not destroy it. Used by "Use billing instead".
 		dg_render_account_confirm_modal();
 
-		// Sign-out confirmation, same placement rule (outside AJAX region).
-		dg_render_account_signout_modal( $customer );
+		// Sign-out confirmation is rendered globally in footer.php
+		// via dg_render_global_signout_modal() (outside the AJAX region).
 		?>
 	</main>
-	<?php
-}
-
-/**
- * Account sign-out confirmation dialog (Luminous Ethereal, danger variant).
- *
- * Opened by account.js when a `[data-dg-signout]` link is clicked. The link's
- * own href (wp_logout_url with nonce) is what gets followed on confirm.
- *
- * @param WP_User $customer Current customer.
- * @return void
- */
-function dg_render_account_signout_modal( WP_User $customer ): void {
-	$display_name = trim( (string) $customer->display_name );
-	if ( '' === $display_name ) {
-		$display_name = (string) $customer->user_login;
-	}
-	?>
-	<div class="dg-signout" id="dg-signout" hidden
-		 data-busy-label="<?php echo esc_attr__( 'Signing out…', 'dragon-glow' ); ?>">
-		<div class="dg-signout__overlay" data-dg-signout-dismiss></div>
-		<div class="dg-signout__dialog"
-			 role="alertdialog"
-			 aria-modal="true"
-			 aria-labelledby="dg-signout-title"
-			 aria-describedby="dg-signout-body"
-			 tabindex="-1">
-			<div class="dg-signout__icon dg-signout__item" aria-hidden="true">
-				<span class="material-symbols-outlined">logout</span>
-			</div>
-			<p class="dg-signout__eyebrow dg-signout__item"><?php esc_html_e( 'Sign out', 'dragon-glow' ); ?></p>
-			<h2 class="dg-signout__title dg-signout__item" id="dg-signout-title">
-				<?php esc_html_e( 'Leaving so soon?', 'dragon-glow' ); ?>
-			</h2>
-			<p class="dg-signout__body dg-signout__item" id="dg-signout-body">
-				<?php esc_html_e( 'You will need to sign in again to view your orders, addresses and account details.', 'dragon-glow' ); ?>
-			</p>
-
-			<div class="dg-signout__user dg-signout__item">
-				<span class="dg-signout__avatar" aria-hidden="true">
-					<?php echo get_avatar( $customer->ID, 40, '', '', array( 'class' => 'dg-signout__avatar-img' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_avatar returns escaped HTML. ?>
-				</span>
-				<span class="dg-signout__user-copy">
-					<span class="dg-signout__user-label"><?php esc_html_e( 'Signed in as', 'dragon-glow' ); ?></span>
-					<span class="dg-signout__user-name"><?php echo esc_html( $display_name ); ?></span>
-					<span class="dg-signout__user-email"><?php echo esc_html( $customer->user_email ); ?></span>
-				</span>
-			</div>
-
-			<div class="dg-signout__actions dg-signout__item">
-				<button type="button" class="dg-signout__btn dg-signout__btn--ghost" data-dg-signout-cancel>
-					<?php esc_html_e( 'Stay signed in', 'dragon-glow' ); ?>
-				</button>
-				<button type="button" class="dg-signout__btn dg-signout__btn--danger" data-dg-signout-confirm>
-					<span class="material-symbols-outlined dg-signout__btn-icon" aria-hidden="true">logout</span>
-					<span class="dg-signout__btn-label"><?php esc_html_e( 'Sign out', 'dragon-glow' ); ?></span>
-				</button>
-			</div>
-		</div>
-	</div>
 	<?php
 }
 

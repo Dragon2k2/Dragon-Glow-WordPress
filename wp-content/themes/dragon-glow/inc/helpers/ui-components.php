@@ -374,11 +374,10 @@ add_filter( 'wp_nav_menu_items', 'dg_inject_mobile_menu_items', 10, 2 );
  * (desktop account nav or mobile menu drawer).
  *
  * The modal is placed outside main content region so it persists
- * when AJAX page transitions occur.
+ * when AJAX panel swaps occur on the account page.
  *
- * User info (avatar, name, email) is populated dynamically by
- * account.js when the modal opens, using the current logged-in
- * user data (no per-page rendering needed).
+ * User info (avatar, name, email) is rendered server-side for the
+ * current user, so no client-side fetch is needed.
  *
  * @return void
  */
@@ -386,6 +385,12 @@ function dg_render_global_signout_modal(): void {
 	// Only render for logged-in users.
 	if ( ! is_user_logged_in() ) {
 		return;
+	}
+
+	$customer     = wp_get_current_user();
+	$display_name = trim( (string) $customer->display_name );
+	if ( '' === $display_name ) {
+		$display_name = (string) $customer->user_login;
 	}
 	?>
 	<div class="dg-signout" id="dg-signout" hidden
@@ -409,17 +414,13 @@ function dg_render_global_signout_modal(): void {
 			</p>
 
 			<div class="dg-signout__user dg-signout__item">
-				<span class="dg-signout__avatar" aria-hidden="true" id="dg-signout-avatar">
-					<!-- Avatar populated by account.js -->
+				<span class="dg-signout__avatar" aria-hidden="true">
+					<?php echo get_avatar( $customer->ID, 40, '', '', array( 'class' => 'dg-signout__avatar-img' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_avatar returns escaped HTML. ?>
 				</span>
 				<span class="dg-signout__user-copy">
 					<span class="dg-signout__user-label"><?php esc_html_e( 'Signed in as', 'dragon-glow' ); ?></span>
-					<span class="dg-signout__user-name" id="dg-signout-user-name">
-						<!-- Name populated by account.js -->
-					</span>
-					<span class="dg-signout__user-email" id="dg-signout-user-email">
-						<!-- Email populated by account.js -->
-					</span>
+					<span class="dg-signout__user-name"><?php echo esc_html( $display_name ); ?></span>
+					<span class="dg-signout__user-email"><?php echo esc_html( $customer->user_email ); ?></span>
 				</span>
 			</div>
 

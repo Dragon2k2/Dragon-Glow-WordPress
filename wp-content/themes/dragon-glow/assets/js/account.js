@@ -750,51 +750,6 @@
 			window.clearTimeout(closeTimer);
 			activeTrigger = trigger;
 
-			// Populate user info (avatar, name, email) from current logged-in user.
-			// Use REST API endpoint for reliable current user data.
-			fetch('/wp-json/wp/v2/users/me', {
-				credentials: 'same-origin',
-				headers: {
-					'X-WP-Nonce': window.wpApiSettings?.nonce || ''
-				}
-			})
-			.then(response => {
-				if (!response.ok) throw new Error('Failed to fetch user data');
-				return response.json();
-			})
-			.then(user => {
-				// Populate user name.
-				const nameEl = modal.querySelector('#dg-signout-user-name');
-				if (nameEl && user.name) {
-					nameEl.textContent = user.name;
-				}
-
-				// Populate user email.
-				const emailEl = modal.querySelector('#dg-signout-user-email');
-				if (emailEl && user.email) {
-					emailEl.textContent = user.email;
-				}
-
-				// Populate avatar using WordPress avatar endpoint.
-				const avatarEl = modal.querySelector('#dg-signout-avatar');
-				if (avatarEl && user.id) {
-					// Use get_avatar_url equivalent via REST meta.
-					const avatarUrl = user.avatar_urls?.[96] || user.avatar_urls?.[48] || user.avatar_urls?.[24];
-					if (avatarUrl) {
-						const img = document.createElement('img');
-						img.src = avatarUrl;
-						img.alt = '';
-						img.className = 'dg-signout__avatar-img';
-						avatarEl.innerHTML = '';
-						avatarEl.appendChild(img);
-					}
-				}
-			})
-			.catch(error => {
-				console.warn('Could not fetch current user data:', error);
-				// Fallback: leave placeholder content as-is
-			});
-
 			modal.hidden = false;
 			document.documentElement.classList.add('dg-signout-open');
 			// Force reflow so the CSS transition runs from the closed state.

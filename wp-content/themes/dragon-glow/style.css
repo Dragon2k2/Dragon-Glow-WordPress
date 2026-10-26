@@ -1070,6 +1070,19 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --nav-logo-size-mobile: 2rem;
     --nav-brand-name-font-size-mobile: 16px;
     --nav-logo-brand-gap-mobile: 0.375rem;
+
+    /* Logged-in header (< 1024px) — brand name centered between logo and menu toggle */
+    --nav-logged-in-column-gap: 0.5rem;
+
+    /* Logged-in header — mobile only (< 768px): larger brand name + logo mark */
+    --nav-logged-in-brand-name-font-size-mobile: 22px;
+    --nav-logged-in-logo-size-mobile: 2.625rem;
+
+    /* Logged-in header — tablet only (768px–1023px): larger menu toggle icon */
+    --nav-logged-in-toggle-icon-size-tablet: 32px;
+
+    /* Logged-out header — tablet only (768px–1023px): logo/brand gap, matches desktop `lg:gap-3` */
+    --nav-brand-gap-tablet: 0.75rem;
     
     /* Container Padding — Responsive */
     --nav-container-padding-x-mobile: 1rem;

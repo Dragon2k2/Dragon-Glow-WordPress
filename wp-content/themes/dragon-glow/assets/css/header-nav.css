@@ -336,6 +336,77 @@
 }
 
 /* =========================================
+   4c. LOGGED-IN HEADER (mobile + tablet) — centered brand name
+   Below 1024px, logged-in users see: logo | brand name | menu toggle.
+   A 1fr / auto / 1fr grid keeps the brand name on the true horizontal
+   center regardless of the different widths of the logo and the toggle.
+   `display: contents` lifts the logo + name out of their wrapper so
+   they become direct grid items.
+   Scoped to `.header-nav--logged-in` (added in header-nav.php) so the
+   desktop layout and the logged-out header stay untouched.
+   ========================================= */
+
+@media (max-width: 1023.98px) {
+	.header-nav--logged-in .dg-nav-container {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		column-gap: var(--nav-logged-in-column-gap);
+	}
+
+	.header-nav--logged-in .dg-nav-brand-group {
+		display: contents;
+	}
+
+	.header-nav--logged-in .dg-nav-logo {
+		justify-self: start;
+	}
+
+	.header-nav--logged-in .dg-nav-brand-name {
+		justify-self: center;
+		text-align: center;
+	}
+
+	.header-nav--logged-in .dg-nav-actions {
+		justify-self: end;
+	}
+}
+
+/* 4c-1. Mobile only (< 768px) — larger brand name + logo mark.
+   Declared after 4b so it overrides the shared mobile sizes for
+   logged-in users only; tablet keeps its current sizes. The menu
+   toggle icon keeps its default 24px size. */
+@media (max-width: 767.98px) {
+	.header-nav--logged-in .dg-nav-brand-name {
+		font-size: var(--nav-logged-in-brand-name-font-size-mobile);
+	}
+
+	.header-nav--logged-in .dg-nav-brand__mark {
+		width: var(--nav-logged-in-logo-size-mobile);
+		height: var(--nav-logged-in-logo-size-mobile);
+	}
+}
+
+/* 4c-2. Tablet only (768px–1023px) — larger menu toggle icon.
+   Mobile keeps the default 24px glyph; at 1024px+ the toggle is hidden
+   (`lg:hidden`), so desktop is unaffected. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+	.header-nav--logged-in .dg-nav-toggle .material-symbols-outlined {
+		font-size: var(--nav-logged-in-toggle-icon-size-tablet);
+	}
+}
+
+/* 4d. Tablet only (768px–1023px), logged-out — logo/brand gap.
+   Markup only sets `lg:gap-3` (1024px+), so tablet had no gap. This
+   applies the same value for logged-out users; logged-in users are
+   excluded (their brand group uses `display: contents`), and mobile
+   keeps its own gap from 4b. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+	.header-nav:not(.header-nav--logged-in) .dg-nav-brand-group {
+		gap: var(--nav-brand-gap-tablet);
+	}
+}
+
+/* =========================================
    5. DESKTOP SAFETY — drawer never shows
    at lg+ even if Tailwind CDN fails.
    Breakpoint 1024px matches theme standard.
