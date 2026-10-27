@@ -53,6 +53,43 @@
 }
 
 /* =========================================
+   MOBILE LAYOUT (< 768px)
+   Centre every block inside the footer. Tablet (768–1023px) and
+   desktop (1024px+) keep the original left-aligned multi-column layout.
+   Breakpoint matches header-nav.css (max-width: 767.98px).
+   Markup: template-parts/global/footer-main.php
+   ========================================= */
+
+@media (max-width: 767.98px) {
+	/* Brand + link columns: centre headings, lists and text. */
+	.footer-main .dg-footer-brand,
+	.footer-main .dg-footer-column {
+		text-align: center;
+	}
+
+	/* Description has a max-width cap (max-w-sm) — centre the box itself. */
+	.footer-main .dg-footer-description {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	/* Social icons row is a flex container — centre the icons. */
+	.footer-main .dg-footer-socials {
+		justify-content: center;
+	}
+
+	/* Bottom bar: centre copyright text and the language/payment meta row. */
+	.footer-main .dg-footer-bottom {
+		text-align: center;
+	}
+
+	.footer-main .dg-footer-meta {
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+}
+
+/* =========================================
    ACCESSIBILITY — REDUCED MOTION
    ========================================= */
 

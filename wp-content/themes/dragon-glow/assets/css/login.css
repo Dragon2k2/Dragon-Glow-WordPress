@@ -497,15 +497,6 @@ body.dg-hide-site-chrome {
 		white-space: nowrap;
 	}
 
-	.dg-account-auth__sanctuary-badge {
-		flex-shrink: 0;
-		gap: var(--login-sanctuary-badge-gap-mobile);
-		padding: var(--login-sanctuary-badge-padding-mobile);
-		font-size: var(--login-sanctuary-badge-size-mobile);
-		letter-spacing: var(--login-sanctuary-badge-tracking-mobile);
-		white-space: nowrap;
-	}
-
 	.dg-login__pulse-dot {
 		flex-shrink: 0;
 	}
@@ -529,46 +520,64 @@ body.dg-hide-site-chrome {
 	font-size: 20px;
 }
 
-.dg-account-auth__sanctuary-badge {
+/* "Member Access" badge — ivory/gold glass pill with a live status dot.
+   Mobile (< 640px) overrides follow the base rule so the cascade resolves
+   in their favour. */
+.dg-login__member-badge {
 	display: inline-flex;
+	flex-shrink: 0;
 	align-items: center;
-	gap: var(--login-sanctuary-badge-gap);
-	padding: var(--login-sanctuary-badge-padding-desktop);
+	gap: var(--login-member-badge-gap);
+	padding: var(--login-member-badge-padding-desktop);
 	border-radius: 9999px;
-	background: var(--login-sanctuary-badge-bg);
-	border: 1px solid var(--login-sanctuary-badge-border);
-	font-family: var(--login-sanctuary-badge-font);
-	font-size: var(--login-sanctuary-badge-size-desktop);
-	font-weight: var(--login-sanctuary-badge-weight);
-	letter-spacing: var(--login-sanctuary-badge-tracking);
-	color: var(--login-sanctuary-badge-text);
+	background: var(--login-member-badge-bg);
+	border: 1px solid var(--login-member-badge-border);
+	box-shadow: var(--login-member-badge-shadow);
+	-webkit-backdrop-filter: blur(var(--login-member-badge-blur));
+	backdrop-filter: blur(var(--login-member-badge-blur));
+	font-family: var(--login-member-badge-font);
+	font-size: var(--login-member-badge-size-desktop);
+	font-weight: var(--login-member-badge-weight);
+	line-height: 1.2;
+	letter-spacing: var(--login-member-badge-tracking);
+	color: var(--login-member-badge-text);
 	white-space: nowrap;
 }
 
-/* Pulse dot — status indicator (active member) */
+@media (max-width: 639px) {
+	.dg-login__member-badge {
+		gap: var(--login-member-badge-gap-mobile);
+		padding: var(--login-member-badge-padding-mobile);
+		font-size: var(--login-member-badge-size-mobile);
+		letter-spacing: var(--login-member-badge-tracking-mobile);
+	}
+}
+
+/* Pulse dot — status indicator (active member): solid core + expanding halo */
 .dg-login__pulse-dot {
 	flex-shrink: 0;
 	width: var(--login-pulse-dot-size);
 	height: var(--login-pulse-dot-size);
 	border-radius: 50%;
 	background: var(--login-pulse-dot-color);
-	animation: dg-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	box-shadow: 0 0 0 0 var(--login-pulse-dot-halo);
+	animation: dg-login-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@keyframes dg-pulse {
-	0%, 100% {
-		opacity: 1;
+@keyframes dg-login-pulse {
+	0% {
+		box-shadow: 0 0 0 0 var(--login-pulse-dot-halo);
 	}
-	50% {
-		opacity: 0.5;
+	70%, 100% {
+		box-shadow: 0 0 0 var(--login-pulse-dot-halo-size) transparent;
 	}
 }
 
-/* Respect prefers-reduced-motion */
+/* Respect prefers-reduced-motion: static dot with a faint fixed halo */
 @media (prefers-reduced-motion: reduce) {
 	.dg-login__pulse-dot {
 		animation: none;
-		opacity: 1;
+		box-shadow: 0 0 0 3px var(--login-pulse-dot-halo);
 	}
 }
 

@@ -455,24 +455,14 @@ input[type="range"]::-moz-range-thumb {
 	pointer-events: auto;
 }
 
-/* Mobile: fixed bottom sheet */
+/* Mobile: same drop-down-below-trigger behaviour as tablet/desktop.
+   Position, width (capped by max-width above) and open/close transform are
+   inherited from the base rules; only cap the height so long filter lists
+   scroll inside the panel. */
 @media (max-width: 640px) {
 	.dg-filter-dropdown {
-		position: fixed;
-		top: auto;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		width: 100%;
-		max-width: 100vw;
 		max-height: 85vh;
 		overflow-y: auto;
-		border-radius: 16px 16px 0 0;
-		padding: 24px;
-		transform: translateY(100%);
-	}
-	.dg-filter-dropdown.is-open {
-		transform: translateY(0);
 	}
 }
 
@@ -604,6 +594,25 @@ input[type="range"]::-moz-range-thumb {
 
 .dg-filter-glass-item--active .dg-filter-glass-item-count {
 	opacity: 0.7;
+}
+
+/* Mobile: more compact category rows (tighter list gap, row padding and
+   label size). Tablet/desktop keep the base sizing above. */
+@media (max-width: 640px) {
+	.dg-filter-glass-list {
+		gap: var(--filter-item-gap-mobile);
+	}
+
+	.dg-filter-glass-item {
+		padding: var(--filter-item-padding-mobile);
+		border-radius: var(--filter-item-radius-mobile);
+		font-size: var(--filter-item-font-size-mobile);
+	}
+
+	.dg-filter-glass-item-count {
+		font-size: var(--filter-item-count-font-size-mobile);
+		margin-left: var(--filter-item-count-gap-mobile);
+	}
 }
 
 /* =========================================
@@ -799,6 +808,19 @@ input[type="range"]::-moz-range-thumb {
 
 .dg-filter-glass-btn--primary:active {
 	transform: translateY(0);
+}
+
+/* Mobile: Reset and Apply Filters share the same size and the label stays
+   on one line. min-width: 0 lets both flex items shrink equally instead of
+   the longer label widening its button. Tablet/desktop keep the base sizing. */
+@media (max-width: 640px) {
+	.dg-filter-glass-btn {
+		min-width: 0;
+		padding: var(--filter-btn-padding-mobile);
+		font-size: var(--filter-btn-font-size-mobile);
+		letter-spacing: var(--filter-btn-letter-spacing-mobile);
+		white-space: nowrap;
+	}
 }
 
 /* =========================================

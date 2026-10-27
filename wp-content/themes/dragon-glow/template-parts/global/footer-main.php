@@ -26,20 +26,20 @@ $tos_url     = get_permalink( get_page_by_path( 'terms-of-service' ) ) ?: '#';
 $cookie_url = get_permalink( get_page_by_path( 'cookie-policy' ) ) ?: '#';
 $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
 ?>
-<footer class="footer-main bg-gradient-to-br from-[#f4c2c2] via-[#e1e1f5] to-[#e1e1f5] mt-section-gap pt-section-gap flat no-shadows">
+<footer class="footer-main bg-gradient-to-br from-[#f4c2c2] via-[#e1e1f5] to-[#e1e1f5] flat no-shadows">
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 flex flex-wrap justify-between gap-gutter">
 
         <!-- Brand Column -->
-        <div class="w-full lg:w-1/3 mb-12 lg:mb-0">
+        <div class="dg-footer-brand w-full lg:w-1/3 mb-12 lg:mb-0">
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>"
                class="font-headline text-headline-md text-primary mb-6 block font-bold hover:opacity-80 transition-opacity">
                 <?php bloginfo( 'name' ); ?>
             </a>
-            <p class="text-on-secondary-container mb-8 max-w-sm">
+            <p class="dg-footer-description text-on-secondary-container mb-8 max-w-sm">
                 <?php echo esc_html( dg_get_footer_description() ); ?>
             </p>
             <!-- Social Icons -->
-            <div class="flex gap-4">
+            <div class="dg-footer-socials flex gap-4">
                 <?php
                 $socials = dg_get_social_links();
                 foreach ( $socials as $social ) :
@@ -62,7 +62,7 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         </div>
 
         <!-- Customer Care Column -->
-        <div class="w-full md:w-1/4 lg:w-1/6">
+        <div class="dg-footer-column w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Customer Care', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
                 <li><a href="<?php echo esc_url( $shipping_url ); ?>" class="dg-footer-link" <?php echo is_page_template( 'page-templates/template-shipping-returns.php' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Shipping & Returns', 'dragon-glow' ); ?></a></li>
@@ -73,7 +73,7 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         </div>
 
         <!-- Company Column -->
-        <div class="w-full md:w-1/4 lg:w-1/6">
+        <div class="dg-footer-column w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Company', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
                 <li><a href="<?php echo esc_url( $about_url ); ?>" class="dg-footer-link" <?php echo is_page( 'our-story' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'About Us', 'dragon-glow' ); ?></a></li>
@@ -84,7 +84,7 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
         </div>
 
         <!-- Legal Column -->
-        <div class="w-full md:w-1/4 lg:w-1/6">
+        <div class="dg-footer-column w-full md:w-1/4 lg:w-1/6">
             <h5 class="font-bold text-on-primary-container mb-6"><?php esc_html_e( 'Legal', 'dragon-glow' ); ?></h5>
             <ul class="space-y-4 text-sm text-on-secondary-container">
                 <li><a href="<?php echo esc_url( $privacy_url ); ?>" class="dg-footer-link" <?php echo is_page( 'privacy-policy' ) ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'Privacy Policy', 'dragon-glow' ); ?></a></li>
@@ -96,7 +96,7 @@ $access_url = get_permalink( get_page_by_path( 'accessibility' ) ) ?: '#';
     </div>
 
     <!-- Bottom bar -->
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center text-xs text-on-secondary-container/80">
+    <div class="dg-footer-bottom max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center text-xs text-on-secondary-container/80">
         <p>&copy; <?php dg_copyright_year(); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'dragon-glow' ); ?></p>
         <div class="dg-footer-meta flex items-center gap-6 mt-4 md:mt-0">
             <span class="dg-footer-meta__lang"><?php esc_html_e( 'English (USD)', 'dragon-glow' ); ?></span>

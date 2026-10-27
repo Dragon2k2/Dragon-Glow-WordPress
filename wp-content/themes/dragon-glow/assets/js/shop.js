@@ -127,7 +127,8 @@
         var activeFilters = {
             category: null,
             ingredients: [],
-            minRating: 0
+            minRating: 0,
+            maxPrice: null
         };
 
         // Init activeFilters from URL (so reload restores selected state).
@@ -144,9 +145,15 @@
         var priceSlider = document.getElementById('price-range');
         var priceMaxLabel = document.getElementById('price-max-label');
         var priceMinLabel = document.getElementById('price-min-label');
+        // Restore an applied price filter from the URL (max_price).
+        var urlMaxPrice = parseInt(new URLSearchParams(window.location.search).get('max_price'), 10);
+        if (priceSlider && !isNaN(urlMaxPrice) && urlMaxPrice >= 0) {
+            activeFilters.maxPrice = Math.min(urlMaxPrice, parseInt(priceSlider.max, 10) || 200);
+        }
         if (priceSlider && priceMaxLabel) {
             priceSlider.addEventListener('input', function () {
                 var val = priceSlider.value;
+                activeFilters.maxPrice = parseInt(val, 10);
                 if (priceMaxLabel) priceMaxLabel.textContent = val;
                 if (priceMinLabel) priceMinLabel.textContent = '0';
             });
@@ -263,9 +270,8 @@
             if (activeFilters.minRating > 0) {
                 tags.push({ label: activeFilters.minRating + '★ & Up', key: 'rating', value: activeFilters.minRating });
             }
-            if (priceSlider) {
-                var maxVal = parseInt(priceSlider.value, 10);
-                if (maxVal < 200) tags.push({ label: '$0 - $' + maxVal, key: 'price', value: maxVal });
+            if (activeFilters.maxPrice !== null) {
+                tags.push({ label: '$0 - $' + activeFilters.maxPrice, key: 'price', value: activeFilters.maxPrice });
             }
             if (tags.length === 0) return;
 
@@ -308,6 +314,7 @@
                 activeFilters.minRating = 0;
                 document.querySelectorAll('[data-rating-filter]').forEach(function (r) { r.checked = false; });
             } else if (key === 'price') {
+                activeFilters.maxPrice = null;
                 if (priceSlider) {
                     priceSlider.value = 200;
                     if (priceMaxLabel) priceMaxLabel.textContent = '200';
@@ -320,6 +327,7 @@
             activeFilters.category = null;
             activeFilters.ingredients = [];
             activeFilters.minRating = 0;
+            activeFilters.maxPrice = null;
             document.querySelectorAll('[data-category-item]').forEach(function (el) {
                 el.classList.remove('dg-filter-glass-item--active', 'text-primary', 'font-semibold');
                 el.classList.add('text-on-surface-variant');
@@ -357,12 +365,9 @@
                 url.searchParams.append('ingredient[]', slug);
             });
             if (activeFilters.minRating > 0) url.searchParams.set('rating', String(activeFilters.minRating));
-            if (priceSlider) {
-                var maxVal = parseInt(priceSlider.value, 10);
-                if (maxVal < 200) {
-                    url.searchParams.set('min_price', '0');
-                    url.searchParams.set('max_price', String(maxVal));
-                }
+            if (activeFilters.maxPrice !== null) {
+                url.searchParams.set('min_price', '0');
+                url.searchParams.set('max_price', String(activeFilters.maxPrice));
             }
 
             closeFilterDropdown();

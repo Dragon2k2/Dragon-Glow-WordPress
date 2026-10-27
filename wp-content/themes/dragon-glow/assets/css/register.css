@@ -461,35 +461,54 @@
 	color: var(--register-text-eyebrow);
 }
 
-.dg-account-auth__sanctuary-badge {
+/* "Member Benefits" badge — ivory/gold glass pill with a live status dot.
+   Mobile (< 640px) overrides live in the mobile block further down. */
+.dg-account-auth__member-badge {
 	display: inline-flex;
+	flex-shrink: 0;
 	align-items: center;
-	gap: 5px;
-	padding: 3px 10px;
+	gap: var(--register-member-badge-gap);
+	padding: var(--register-member-badge-padding-desktop);
 	border-radius: 9999px;
-	background: var(--register-surface-container);
-	border: 1px solid var(--register-border-primary);
-	font-family: 'Plus Jakarta Sans', sans-serif;
-	font-size: 10px;
-	font-weight: 600;
-	letter-spacing: 0.04em;
-	color: var(--register-gold-primary);
+	background: var(--register-member-badge-bg);
+	border: 1px solid var(--register-member-badge-border);
+	box-shadow: var(--register-member-badge-shadow);
+	-webkit-backdrop-filter: blur(var(--register-member-badge-blur));
+	backdrop-filter: blur(var(--register-member-badge-blur));
+	font-family: var(--register-member-badge-font);
+	font-size: var(--register-member-badge-size-desktop);
+	font-weight: var(--register-member-badge-weight);
+	line-height: 1.2;
+	letter-spacing: var(--register-member-badge-tracking);
+	color: var(--register-member-badge-text);
+	white-space: nowrap;
 }
 
+/* Pulse dot — status indicator (active member): solid core + expanding halo */
 .dg-account-auth__pulse-dot {
-	width: 5px;
-	height: 5px;
+	flex-shrink: 0;
+	width: var(--register-pulse-dot-size);
+	height: var(--register-pulse-dot-size);
 	border-radius: 50%;
-	background: var(--register-border-secondary);
-	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	background: var(--register-pulse-dot-color);
+	box-shadow: 0 0 0 0 var(--register-pulse-dot-halo);
+	animation: dg-register-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@keyframes pulse {
-	0%, 100% {
-		opacity: 1;
+@keyframes dg-register-pulse {
+	0% {
+		box-shadow: 0 0 0 0 var(--register-pulse-dot-halo);
 	}
-	50% {
-		opacity: 0.5;
+	70%, 100% {
+		box-shadow: 0 0 0 var(--register-pulse-dot-halo-size) transparent;
+	}
+}
+
+/* Respect prefers-reduced-motion: static dot with a faint fixed halo */
+@media (prefers-reduced-motion: reduce) {
+	.dg-account-auth__pulse-dot {
+		animation: none;
+		box-shadow: 0 0 0 3px var(--register-pulse-dot-halo);
 	}
 }
 
@@ -1481,17 +1500,11 @@
 		white-space: nowrap;
 	}
 
-	.dg-account-auth__sanctuary-badge {
-		flex-shrink: 0;
-		gap: 4px;
-		padding: 3px 8px;
-		font-size: var(--register-sanctuary-badge-size-mobile);
-		letter-spacing: 0.02em;
-		white-space: nowrap;
-	}
-
-	.dg-account-auth__pulse-dot {
-		flex-shrink: 0;
+	.dg-account-auth__member-badge {
+		gap: var(--register-member-badge-gap-mobile);
+		padding: var(--register-member-badge-padding-mobile);
+		font-size: var(--register-member-badge-size-mobile);
+		letter-spacing: var(--register-member-badge-tracking-mobile);
 	}
 
 	.dg-account-auth__showcase-title {
