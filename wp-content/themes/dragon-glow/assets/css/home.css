@@ -775,35 +775,35 @@
 /* Product Button — Compact & Elegant */
 .dg-home-instagram-reel__product-button {
     width: 100%;
-    padding: 0.625rem 0.875rem; /* py-2.5 px-3.5 — compact */
-    border-radius: 1rem; /* 16px — rounded-2xl */
-    background: rgba(248, 249, 250, 0.85); /* semi-transparent white — light background */
-    backdrop-filter: blur(12px);
-    color: rgb(27, 28, 26); /* on-surface dark text */
+    padding: var(--instagram-button-padding-y) var(--instagram-button-padding-x);
+    border-radius: var(--instagram-button-radius);
+    background: var(--instagram-button-bg-default);
+    backdrop-filter: blur(var(--instagram-button-backdrop-blur));
+    color: var(--instagram-button-text-primary);
     border: none;
     font-family: var(--font-label-sm, sans-serif);
-    font-size: 0.75rem; /* label-sm: 12px */
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: var(--instagram-button-font-size);
+    font-weight: var(--instagram-button-font-weight-name);
+    letter-spacing: var(--instagram-button-letter-spacing);
+    text-transform: var(--instagram-button-text-transform);
+    box-shadow: var(--instagram-button-shadow-default);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--instagram-button-motion-duration) var(--instagram-button-motion-easing);
     cursor: pointer;
 }
 
 .dg-home-instagram-reel__product-button:hover {
-    background: rgba(248, 249, 250, 0.95); /* more opaque on hover */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-1px);
+    background: var(--instagram-button-bg-hover);
+    box-shadow: var(--instagram-button-shadow-hover);
+    transform: translateY(var(--instagram-button-hover-lift));
 }
 
 .dg-home-instagram-reel__product-button:active {
     transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--instagram-button-shadow-active);
 }
 
 .dg-home-instagram-reel__product-button:focus-visible {
@@ -811,22 +811,101 @@
     outline-offset: 2px;
 }
 
-/* Product Name — Truncate */
+/* Product Name — Truncate (inherit button color) */
 .dg-home-instagram-reel__product-button .product-name {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: left;
-    color: rgb(27, 28, 26); /* on-surface */
+    font-weight: var(--instagram-button-font-weight-name);
+    /* color: inherit from button (text-primary) */
 }
 
-/* Price & CTA — Secondary Color */
+/* Price & CTA — Secondary Color (Bold) */
 .dg-home-instagram-reel__product-button .product-price {
-    color: rgb(92, 93, 110); /* secondary */
+    color: var(--instagram-button-text-secondary);
     flex-shrink: 0;
     white-space: nowrap;
-    font-weight: 500; /* Semi-bold for price emphasis */
+    font-weight: var(--instagram-button-font-weight-price);
+}
+
+/* Quote Text — Creator Testimonial */
+.dg-home-instagram-reel__quote {
+    font-family: var(--instagram-reel-quote-font-family);
+    font-size: var(--instagram-reel-quote-font-size);
+    line-height: var(--instagram-reel-quote-line-height);
+    font-weight: var(--instagram-reel-quote-font-weight);
+    color: var(--instagram-reel-quote-color);
+    margin-top: var(--instagram-reel-quote-margin-top);
+}
+
+/* Audio Label — Icon + Text (Single Line) */
+.dg-home-instagram-reel__audio-label {
+    display: var(--instagram-reel-audio-label-display);
+    align-items: var(--instagram-reel-audio-label-align);
+    gap: var(--instagram-reel-audio-label-gap);
+    white-space: var(--instagram-reel-audio-label-whitespace);
+    font-family: var(--instagram-reel-audio-label-font-family);
+    font-size: var(--instagram-reel-audio-label-font-size);
+    color: var(--instagram-reel-audio-label-color);
+}
+
+/* Audio Icon — Graphic Equalizer */
+.dg-home-instagram-reel__audio-label .audio-icon {
+    font-size: var(--instagram-reel-audio-icon-size);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Instagram Section Header — Eyebrow Label */
+.dg-home-instagram-header__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--instagram-header-text-color);
+    font-size: var(--instagram-header-eyebrow-font-size);
+    font-weight: var(--instagram-header-eyebrow-font-weight);
+    letter-spacing: var(--instagram-header-eyebrow-letter-spacing);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+/* Instagram Section Header — CTA Link */
+.dg-home-instagram-header__cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--instagram-header-text-color);
+    font-size: var(--instagram-header-cta-font-size);
+    font-weight: var(--instagram-header-cta-font-weight);
+    letter-spacing: var(--instagram-header-cta-letter-spacing);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: var(--instagram-header-cta-transition);
+}
+
+.dg-home-instagram-header__cta-link:hover {
+    opacity: var(--instagram-header-cta-hover-opacity);
+}
+
+.dg-home-instagram-header__cta-link:focus-visible {
+    outline: 2px solid var(--instagram-header-text-color);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* CTA Link Icons */
+.dg-home-instagram-header__cta-link .cta-icon-primary {
+    font-size: var(--instagram-header-cta-icon-primary-size);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.dg-home-instagram-header__cta-link .cta-icon-secondary {
+    font-size: var(--instagram-header-cta-icon-secondary-size);
+    flex-shrink: 0;
+    line-height: 1;
 }
 
 /* Reduced Motion: Disable hover lift */

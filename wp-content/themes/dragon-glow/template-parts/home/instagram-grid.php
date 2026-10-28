@@ -23,7 +23,7 @@ $reels  = dg_instagram_reels_cards_data();
 		<!-- Header with Hashtag and Feed Link -->
 		<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
 			<div>
-				<div class="flex items-center gap-2 text-secondary font-label-md text-label-md uppercase tracking-[0.2em] mb-2 font-semibold">
+				<div class="dg-home-instagram-header__eyebrow">
 					<span class="material-symbols-outlined text-sm">photo_camera</span>
 					<span><?php echo esc_html( $header['eyebrow'] ); ?></span>
 				</div>
@@ -34,10 +34,10 @@ $reels  = dg_instagram_reels_cards_data();
 					<?php echo esc_html( $header['description'] ); ?>
 				</p>
 			</div>
-			<a class="inline-flex items-center gap-2 font-label-lg text-label-lg text-secondary uppercase tracking-wider hover:opacity-80 transition-opacity" href="<?php echo esc_url( $header['cta_url'] ); ?>">
-				<span class="material-symbols-outlined text-[18px]">smart_display</span>
+			<a class="dg-home-instagram-header__cta-link" href="<?php echo esc_url( $header['cta_url'] ); ?>">
+				<span class="material-symbols-outlined cta-icon-primary">smart_display</span>
 				<span><?php echo esc_html( $header['cta_label'] ); ?></span>
-				<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+				<span class="material-symbols-outlined cta-icon-secondary">arrow_forward</span>
 			</a>
 		</div>
 
@@ -74,12 +74,12 @@ $reels  = dg_instagram_reels_cards_data();
 								<?php echo esc_html( $reel['creator'] ); ?>
 							</span>
 							<span class="text-[10px] text-white/70">•</span>
-							<span class="font-label-sm text-[10px] text-white/80 flex items-center gap-1">
-								<span class="material-symbols-outlined text-[11px]">graphic_eq</span>
+							<span class="dg-home-instagram-reel__audio-label">
+								<span class="material-symbols-outlined audio-icon">graphic_eq</span>
 								<?php echo esc_html( $reel['audio'] ); ?>
 							</span>
 						</div>
-						<p class="font-headline-sm text-[16px] text-white leading-snug mt-1 font-normal">
+						<p class="dg-home-instagram-reel__quote">
 							<?php echo esc_html( $reel['quote'] ); ?>
 						</p>
 					</div>
@@ -88,7 +88,7 @@ $reels  = dg_instagram_reels_cards_data();
 					<div class="absolute bottom-4 left-4 right-4">
 						<button class="dg-home-instagram-reel__product-button" type="button">
 							<span class="product-name"><?php echo esc_html( $reel['product_name'] ); ?></span>
-							<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?> • Add</span>
+							<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?></span>
 						</button>
 					</div>
 				</div>

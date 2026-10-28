@@ -257,8 +257,67 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
     --emoji-accent-color: #ffd700;                      /* gold shimmer (optional, for filter) */
 
-    /* ========== Hero Image Hover Effect ========== */
-    /* Component-scoped: product frame image hover (spring physics, shadow glow) */
+    /* ========== Instagram Reel Product Button (Shoppable Card) ========== */
+    /* Component-scoped: product CTA button overlay on reel cards (9/14 aspect ratio) */
+    /* Glassmorphism: semi-transparent surface + backdrop blur */
+    /* Demo uses: Tailwind CSS classes (shadow-lg, tracking-wider, font-bold, py-3 px-4) */
+    /* Mapped to theme tokens from Tailwind config (tailwind-config.php) */
+    --instagram-button-bg-default: rgba(255, 255, 255, 0.9);     /* bg-surface-container-lowest/90 (pure white at 90%) */
+    --instagram-button-bg-hover: rgba(255, 255, 255, 1);         /* hover:bg-surface-container-lowest (pure white opaque) */
+    --instagram-button-backdrop-blur: 12px;                      /* backdrop-blur-md */
+    --instagram-button-padding-y: 0.75rem;                       /* py-3 (Tailwind: 12px) */
+    --instagram-button-padding-x: 1rem;                          /* px-4 (Tailwind: 16px) */
+    --instagram-button-radius: 1rem;                             /* rounded-2xl (16px) */
+    --instagram-button-text-primary: rgb(28, 27, 27);            /* text-on-surface from Tailwind config (#1c1b1b) */
+    --instagram-button-text-secondary: rgb(169, 55, 30);         /* Warm reddish-brown from Tailwind demo (#a9371e) */
+    --instagram-button-text-transform: uppercase;                /* uppercase */
+    --instagram-button-letter-spacing: 0.125em;                  /* tracking-wider (Tailwind) */
+    --instagram-button-font-weight-name: 700;                    /* font-bold (Tailwind) */
+    --instagram-button-font-weight-price: 700;                   /* Bold — inherit from button (no explicit weight in demo) */
+    --instagram-button-font-size: 0.8125rem;                     /* label-md: 13px (demo uses text-label-md) */
+    --instagram-button-shadow-default: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* shadow-lg (Tailwind) */
+    --instagram-button-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);   /* shadow-lg (no change on hover) */
+    --instagram-button-shadow-active: 0 10px 15px -3px rgba(0, 0, 0, 0.1);  /* shadow-lg (no change on active) */
+    --instagram-button-motion-duration: 0.15s;                   /* transition-all (fast) */
+    --instagram-button-motion-easing: ease-in-out;               /* Material motion curve */
+    --instagram-button-hover-lift: 0;                            /* No lift — demo doesn't have translateY */
+
+    /* ========== Instagram Reel Quote Typography ========== */
+    /* Component-scoped: quote text overlay (Playfair Display serif) */
+    /* Luxury caption: creator story/testimonial on reel card */
+    --instagram-reel-quote-font-family: "Playfair Display", Georgia, serif;  /* Serif display font */
+    --instagram-reel-quote-font-size: 1rem;                       /* 16px (text-[16px] from template) */
+    --instagram-reel-quote-line-height: 1.5;                      /* leading-snug (1.5) */
+    --instagram-reel-quote-font-weight: 400;                      /* font-normal (400) */
+    --instagram-reel-quote-color: rgb(255, 255, 255);             /* text-white */
+    --instagram-reel-quote-margin-top: 0.25rem;                   /* mt-1 (Tailwind: 4px) */
+
+    /* ========== Instagram Reel Audio Label ========== */
+    /* Component-scoped: audio source label (icon + text on single line) */
+    /* Layout: flex row, no-wrap, white/80 color, compact spacing */
+    --instagram-reel-audio-label-display: flex;                   /* flex */
+    --instagram-reel-audio-label-align: center;                   /* items-center */
+    --instagram-reel-audio-label-gap: 0.25rem;                    /* gap-1 (4px) */
+    --instagram-reel-audio-label-whitespace: nowrap;              /* NO WRAP — single line */
+    --instagram-reel-audio-label-font-family: "Montserrat", sans-serif; /* label font */
+    --instagram-reel-audio-label-font-size: 0.625rem;             /* text-[10px] */
+    --instagram-reel-audio-label-color: rgba(255, 255, 255, 0.8); /* text-white/80 */
+    --instagram-reel-audio-icon-size: 0.6875rem;                  /* text-[11px] */
+
+    /* ========== Instagram Section Header ========== */
+    /* Component-scoped: section header colors (eyebrow label + CTA link) */
+    /* Brand color: warm reddish-brown accent for Instagram section identity */
+    --instagram-header-text-color: rgb(169, 55, 30);              /* #a9371e (warm reddish-brown) */
+    --instagram-header-eyebrow-font-size: 0.75rem;               /* text-label-md (12px) */
+    --instagram-header-eyebrow-font-weight: 600;                 /* font-semibold */
+    --instagram-header-eyebrow-letter-spacing: 0.2em;             /* tracking-[0.2em] */
+    --instagram-header-cta-font-size: 0.625rem;                  /* text-label-lg (14px) */
+    --instagram-header-cta-font-weight: 600;                     /* font-semibold */
+    --instagram-header-cta-letter-spacing: 0.125em;              /* tracking-wider */
+    --instagram-header-cta-hover-opacity: 0.8;                   /* hover:opacity-80 */
+    --instagram-header-cta-transition: opacity 0.2s ease-in-out; /* transition-opacity */
+    --instagram-header-cta-icon-primary-size: 0.9375rem;         /* 15px (smart_display) */
+    --instagram-header-cta-icon-secondary-size: 1rem;            /* 16px (arrow_forward) */
     /* Enterprise luxury: smooth scale + shadow intensify + subtle overlay tint */
     --hero-image-hover-scale: 1.05;                     /* Scale up on hover (spring physics) */
     --hero-image-hover-shadow-blur: 32px;               /* Shadow blur on hover */
