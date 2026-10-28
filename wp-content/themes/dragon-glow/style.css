@@ -239,7 +239,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --info-card-desc-font-size: 13px;                   /* 13px description (balanced) */
     --info-card-desc-line-height: 1.25;                 /* 1.25 line-height for desc (balanced) */
 
-    /* ========== Glaze Certified Orb Gradient ========== */
+    /* ========== Glaze Certified Orb Gradient & Position ========== */
     /* Component-scoped: decorative floating orb (bottom-right hero frame) */
     /* Gradient: light gold → vibrant coral (matches demo) */
     /* Isolated to prevent affecting other primary-fixed + secondary-container combinations */
@@ -247,6 +247,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --orb-gradient-to: #fd7455;                         /* vibrant coral (demo secondary-container) */
     --orb-gradient: linear-gradient(to bottom right, var(--orb-gradient-from) 0%, var(--orb-gradient-to) 100%);
     --orb-text-color: #ffffff;                          /* white text (on-primary) */
+    --orb-position-bottom: -1.5rem;                     /* distance from bottom (-bottom-6 = -1.5rem) */
+    --orb-position-right: -4.1rem;                      /* shifted right for visual balance (was -right-6 = -1.5rem) */
 
     /* ========== Hero Headline Emoji Accent ========== */
     /* Component-scoped: sparkle emoji icon right of "Dragon Glaze" */
@@ -255,7 +257,16 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
     --emoji-accent-color: #ffd700;                      /* gold shimmer (optional, for filter) */
 
-    /* ========== Shop Filter Component ========== */
+    /* ========== Hero Image Hover Effect ========== */
+    /* Component-scoped: product frame image hover (spring physics, shadow glow) */
+    /* Enterprise luxury: smooth scale + shadow intensify + subtle overlay tint */
+    --hero-image-hover-scale: 1.05;                     /* Scale up on hover (spring physics) */
+    --hero-image-hover-shadow-blur: 32px;               /* Shadow blur on hover */
+    --hero-image-hover-shadow-spread: 0;                /* Shadow spread */
+    --hero-image-hover-shadow-color: rgba(var(--gold-rgb), 0.15); /* Gold-tinted shadow glow */
+    --hero-image-overlay-tint: rgba(var(--warm-coral), 0.08); /* Warm coral overlay (hover) */
+    --hero-image-motion-duration: 0.5;                  /* Motion animation duration (seconds) */
+    --hero-image-motion-ease: easeOut;                  /* Motion easing: smooth deceleration */
     /* Glassmorphism dropdown with gold accents */
     --filter-glass-bg: linear-gradient(135deg, 
                         rgba(var(--gold-rgb), 0.05) 0%, 

@@ -46,6 +46,17 @@ function dg_enqueue_scripts_assets(): void {
         DG_VERSION
     );
 
+    // Home page animations — hero image hover (spring scale + shadow glow)
+    // Loaded only on homepage. ES module (import Motion từ CDN).
+    if ( is_front_page() || is_page_template( 'page-templates/template-home.php' ) ) {
+        wp_enqueue_script_module(
+            'dg-home',
+            DG_URI . '/assets/js/home.js',
+            array(),
+            DG_VERSION
+        );
+    }
+
     // Toast notification system — provides window.DGToast for any feature
     // (account.js WC notice bridge today; cart/wishlist/etc. can reuse it).
     // No deps: pure vanilla, must be ready before any consumer script runs.

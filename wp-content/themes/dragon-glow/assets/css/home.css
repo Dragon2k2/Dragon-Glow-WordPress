@@ -109,6 +109,26 @@
     object-position: center;
     border-radius: 2rem;
     transform: scale(var(--hero-image-default-scale));
+    transition: none; /* Motion JS controls animation, not CSS */
+}
+
+/* Hover overlay layer — animates with Motion */
+.dg-home-hero__product-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    background: var(--hero-image-overlay-tint);
+    opacity: var(--overlay-opacity, 0);
+    pointer-events: none;
+    z-index: 2;
+    transition: none; /* Motion JS controls animation */
+}
+
+/* Product frame hover shadow — animates with Motion */
+.dg-home-hero__product-frame.is-hover {
+    box-shadow: 0 32px 80px -12px var(--hero-image-hover-shadow-color),
+                0 12px 24px -4px rgba(212, 175, 55, 0.12);
 }
 
 /* Floating Stickers — Scoped Component Tokens */
@@ -691,6 +711,8 @@
 /* ========== Glaze Certified Orb ========== */
 .dg-glaze-orb {
     background: var(--orb-gradient);
+    bottom: var(--orb-position-bottom);
+    right: var(--orb-position-right);
 }
 
 .dg-glaze-orb-text {
@@ -713,4 +735,103 @@
 
 .dg-hero-emoji-accent:hover {
     transform: rotate(12deg) scale(1.15);
+}
+
+/* ═══════════════════════════════════════
+   8. INSTAGRAM REELS SECTION
+   Shoppable reel cards with gradient overlay, creator info, quote, product CTA.
+   ═══════════════════════════════════════ */
+
+/* Reel Card Base */
+.dg-home-instagram-reel {
+    /* Token-first styling: all semantic values come from style.css */
+    background: var(--surface-container-lowest);
+    border-radius: 1.5rem; /* 24px — rounded-3xl */
+}
+
+.dg-home-instagram-reel:focus-within {
+    outline: var(--home-focus-ring);
+    outline-offset: 3px;
+}
+
+/* Image Container Aspect Ratio */
+.dg-home-instagram-reel .aspect-\[9\/14\] {
+    /* 9/14 ratio preserved via Tailwind aspect-[9/14] */
+}
+
+/* Image Hover Scale Effect */
+.dg-home-instagram-reel img {
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-home-instagram-reel img,
+    .dg-home-instagram-reel .group-hover\:scale-105 {
+        transition: none !important;
+        transform: none !important;
+    }
+}
+
+/* Product Button — Compact & Elegant */
+.dg-home-instagram-reel__product-button {
+    width: 100%;
+    padding: 0.625rem 0.875rem; /* py-2.5 px-3.5 — compact */
+    border-radius: 1rem; /* 16px — rounded-2xl */
+    background: rgba(248, 249, 250, 0.85); /* semi-transparent white — light background */
+    backdrop-filter: blur(12px);
+    color: rgb(27, 28, 26); /* on-surface dark text */
+    border: none;
+    font-family: var(--font-label-sm, sans-serif);
+    font-size: 0.75rem; /* label-sm: 12px */
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.dg-home-instagram-reel__product-button:hover {
+    background: rgba(248, 249, 250, 0.95); /* more opaque on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.dg-home-instagram-reel__product-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.dg-home-instagram-reel__product-button:focus-visible {
+    outline: var(--home-focus-ring);
+    outline-offset: 2px;
+}
+
+/* Product Name — Truncate */
+.dg-home-instagram-reel__product-button .product-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    color: rgb(27, 28, 26); /* on-surface */
+}
+
+/* Price & CTA — Secondary Color */
+.dg-home-instagram-reel__product-button .product-price {
+    color: rgb(92, 93, 110); /* secondary */
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-weight: 500; /* Semi-bold for price emphasis */
+}
+
+/* Reduced Motion: Disable hover lift */
+@media (prefers-reduced-motion: reduce) {
+    .dg-home-instagram-reel__product-button:hover {
+        transform: none;
+    }
 }

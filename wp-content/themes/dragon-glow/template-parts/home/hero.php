@@ -15,15 +15,15 @@ $badge_text  = get_theme_mod( 'dg_hero_badge_text', __( '2026 Cellular Drop 04',
 $badge_sub   = get_theme_mod( 'dg_hero_badge_sub', __( 'Ultra-Bounce Skin', 'dragon-glow' ) );
 $hero_title  = get_theme_mod( 'dg_hero_title', __( 'Get Your Dragon Glaze', 'dragon-glow' ) );
 $hero_title_highlight = get_theme_mod( 'dg_hero_title_highlight', __( 'Dragon Glaze', 'dragon-glow' ) );
-$hero_sub    = get_theme_mod( 'dg_hero_subtitle', __( 'Hyper-hydrated, mirror-shine glass skin powered by fermented Dragon Superfruit & micro-encapsulated hyaluronic spheres. Zero stickiness. Infinite bounce.', 'dragon-glow' ) );
+$hero_sub    = get_theme_mod( 'dg_hero_subtitle', __( 'An ancient Dragon Superfruit ritual, perfected by clinical skincare. Fermented Hylocereus Bio-C and micro-encapsulated hyaluronic spheres melt into skin for mirror-clear, glass-like luminosity — weightless to wear, endless in glow.', 'dragon-glow' ) );
 
-$cta1_text   = get_theme_mod( 'dg_cta1_text', __( 'Shop The Glaze Drop', 'dragon-glow' ) );
+$cta1_text   = get_theme_mod( 'dg_cta1_text', __( 'Shop The Glaze Ritual', 'dragon-glow' ) );
 $cta1_url    = get_theme_mod( 'dg_cta1_url', dg_is_woocommerce_active() ? get_permalink( wc_get_page_id( 'shop' ) ) : '#' );
 $cta1_icon   = get_theme_mod( 'dg_cta1_icon', 'bolt' );
 
-$cta2_text   = get_theme_mod( 'dg_cta2_text', __( '60-Sec Skin Quiz', 'dragon-glow' ) );
+$cta2_text   = get_theme_mod( 'dg_cta2_text', __( 'Discover Our Story', 'dragon-glow' ) );
 $cta2_url    = get_theme_mod( 'dg_cta2_url', get_permalink( get_page_by_path( 'our-story' ) ) ?: home_url( '/our-story/' ) );
-$cta2_icon   = get_theme_mod( 'dg_cta2_icon', 'psychology_alt' );
+$cta2_icon   = get_theme_mod( 'dg_cta2_icon', 'auto_stories' );
 
 // Stats data
 $stat1_value = get_theme_mod( 'dg_hero_stat1_value', '+98.4%' );
@@ -149,7 +149,8 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
                 <?php if ( $hero_image ) : ?>
                     <img src="<?php echo esc_url( $hero_image ); ?>" 
                          alt="<?php echo esc_attr( $product_title ); ?>"
-                         class="w-full h-full object-cover rounded-[2rem] transform group-hover:scale-102 transition-transform duration-700" />
+                         data-hero-img
+                         class="w-full h-full object-cover rounded-[2rem]" />
                 <?php else : ?>
                     <div class="w-full h-full bg-gradient-to-br from-primary-container via-background to-secondary-container rounded-[2rem]"></div>
                 <?php endif; ?>
@@ -200,7 +201,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
             </div>
 
             <!-- Decorative Floating Holographic Orb -->
-            <div class="dg-glaze-orb dg-home-hero__orb absolute -bottom-6 -right-6 w-24 h-24 rounded-full p-1 shadow-2xl flex items-center justify-center text-center transform rotate-12 animate-bounce cursor-pointer">
+            <div class="dg-glaze-orb dg-home-hero__orb absolute w-24 h-24 rounded-full p-1 shadow-2xl flex items-center justify-center text-center transform rotate-12 animate-bounce cursor-pointer">
                 <span class="dg-glaze-orb-text font-label-sm text-label-sm uppercase font-bold leading-tight">
                     <?php echo esc_html( __( 'Glaze', 'dragon-glow' ) ); ?><br><?php echo esc_html( __( 'Certified', 'dragon-glow' ) ); ?>
                 </span>
