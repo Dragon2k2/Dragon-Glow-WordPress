@@ -177,18 +177,30 @@ Nếu output khác → báo ngay, đừng assume.
   - Loader file ở `inc/` đặt tên theo concern + hậu tố phù hợp (`cart-functions.php`, `approval-handler.php`) hoặc trùng tên concern (`woocommerce.php`, `helpers.php`).
 - 1 concern chỉ có 1 file → **đặt phẳng ở `inc/`**, không tạo folder.
 
-#### 5b. Email HTML templates
-> *"Email body là template, không phải inline HTML."*
+#### 5b. Template Organization — Tách data/logic khỏi markup
+> *"Template phải pure: chỉ nhận data qua hàm, không có logic inline."*
 
-- Email HTML body cho ứng viên / khách (vd careers approval) đặt ở `template-parts/emails/`, **không viết inline `ob_start()` với HTML trong PHP**.
-- Template email nhận context qua biến `$email` (mảng) thay vì extract từng biến → gọn, dễ thêm field.
-- Helper chung `dg_render_email_template( $slug, $context )` wrap `locate_template` + `ob_get_clean`.
-- **Email wrapper** — chuẩn WP: mỗi email có **2-3 file**:
-  - `template-parts/emails/{name}.php` — body chính.
-  - `template-parts/emails/{name}-header.php` (optional) — header (logo, preheader).
-  - `template-parts/emails/{name}-footer.php` (optional) — footer (legal text, unsubscribe).
-- Wrapper là **optional** — dùng khi email có nhiều phần. Cho email đơn giản → chỉ cần 1 file body.
-- **Đặt tên file email** — kebab-case, flat (không tạo folder con).
+**General Pattern (áp dụng tất cả loại template):**
+
+- **Tách data file riêng:** `template-parts/{concern}/data-{name}.php` chứa hàm `dg_{name}_data(): array`.
+- **Template nhận context qua tham số:** `require_once locate_template(...)` + gọi hàm → pass mảng vào template.
+- **Helper chung:** `dg_render_template( $slug, $context ): string` wrap `locate_template` + `ob_get_clean`.
+- **Không có logic inline:** Tất cả `<?php ... ?>` blocks phải là data binding hoặc control flow, KHÔNG business logic.
+
+**Email-Specific Pattern:**
+
+- Email HTML body đặt ở `template-parts/emails/`, **không viết inline `ob_start()` với HTML trong PHP**.
+- **Email wrapper** — mỗi email có **1-3 file** tuỳ độ phức tạp:
+  - `template-parts/emails/{name}.php` — body chính (luôn có).
+  - `template-parts/emails/{name}-header.php` (optional) — header (logo, preheader) khi body > 100 dòng.
+  - `template-parts/emails/{name}-footer.php` (optional) — footer (legal, unsubscribe) khi cần shared footer.
+- **Naming:** kebab-case, flat (không tạo folder con).
+- **Ví dụ:**
+  ```
+  template-parts/emails/data-approval.php → hàm dg_approval_email_data()
+  template-parts/emails/approval.php → nhận context qua $email array
+  template-parts/emails/approval-header.php → nếu header reusable
+  ```
 
 #### 5c. Tiêu chí tách folder con vs. để phẳng
 > *"Tách khi có nhiều file cùng concern + mỗi file > 20 dòng."*
@@ -203,86 +215,135 @@ Nếu output khác → báo ngay, đừng assume.
 | File là data array lớn cho 1 trang | Tách `data-{trang}.php` ở `template-parts/{trang}/` |
 | File là section HTML riêng | Tách `section-{n}.php` ở `template-parts/{trang}/` |
 
-#### 5d. CSS file organization
-> *"1 trang = 1 file CSS cùng tên template. Không nhân đôi token, không split nhỏ."*
+#### 5d. CSS & Asset File Organization
+> *"1 concern = 1 file. Tập trung, không tách nhỏ lại, không duplicate token."*
 
-- **Cấu trúc thư mục** `assets/css/`: tất cả file phẳng, **không có folder con** (trừ khi có font/asset đi kèm).
-- **Đặt tên** `{page-slug}.css` trùng slug của page template:
-  - `page-templates/template-shop.php` → `assets/css/shop.css`
-  - `page-templates/template-our-story.php` → `assets/css/our-story.css`
-- **CSS global** (dùng cho mọi trang): đặt tên theo scope:
-  - `style.css` — theme header + CSS variables (`:root`)
-  - `main.css` — base, typography, layout chung (luôn load)
-  - `responsive.css` — breakpoint overrides
-  - `woocommerce.css` — WC global styles
-- **Không tách nhỏ** 1 page CSS thành nhiều file — gộp hết vào 1 file. Trừ khi file > 1000 dòng.
-- **Token & shared selectors** (`--color-*`, `--wp--custom--spacing--*`) đặt ở `style.css` (`:root`) — **không lặp lại** trong CSS trang.
-- **Cache busting** — bump `DG_VERSION` ở `functions.php` mỗi lần sửa CSS.
-- **Comment header** mỗi file CSS:
+**CSS File Structure (assets/css/):**
 
-  ```css
-  /* =========================================
-     DRAGON GLOW — {PAGE} STYLES
-     {Brief description of layout}
-     ========================================= */
-  ```
+- **Cấu trúc:** Tất cả file phẳng, **không có folder con** (trừ khi có font/import đi kèm).
+- **Global CSS** (load mọi trang):
+  - `style.css` — theme header + CSS token `:root` (single source of truth)
+  - `main.css` — base, typography, layout chung
+  - `responsive.css` — breakpoint media query overrides
+  - `woocommerce.css` — WC global styles (conditional load)
+  
+- **Page-Specific CSS** (load khi trang match):
+  - `{page-slug}.css` — toàn bộ CSS cho 1 page, tên trùng template slug
+  - VD: `page-templates/template-shop.php` → `assets/css/shop.css`
+  - **1 page = 1 file** — không tách nhỏ (trừ khi file > 1000 dòng → discuss trước)
+  - **Comment header:**
+    ```css
+    /* =========================================
+       DRAGON GLOW — {PAGE TITLE} STYLES
+       {Brief: layout structure, unique sections}
+       ========================================= */
+    ```
 
-#### 5e. Không inline style — phải đưa vào file CSS
-> *"Style thuộc về file CSS, không thuộc về HTML — trừ 4 ngoại lệ chuẩn WP."*
+**Token Management (CRITICAL):**
 
-**Nguyên tắc cứng**:
-- 🚫 **Cấm `style="..."` inline** trong template/template-part — **trừ 4 ngoại lệ dưới đây**.
-- 🚫 **Cấm thẻ `<style>...</style>`** trong template/template-part.
+- **All tokens live in `style.css` `:root`** — single source of truth.
+  - `--color-*`, `--spacing-*`, `--shadow-*`, etc. — define once, use everywhere.
+  - **KHÔNG duplicate token ở page CSS files.**
+  - **KHÔNG define token ở page CSS** nếu reuse khác page (move to `style.css`).
+  
+- **Token naming hierarchy:**
+  - **Primitive:** `--gold-500: #c9a24b` (raw color)
+  - **Semantic (global):** `--color-accent: var(--gold-500)` (cross-page)
+  - **Semantic (scoped):** `--hero-gradient: linear-gradient(...)` (single page, defined ở style.css nhưng dùng chỉ trong home.css)
+  - **Component:** Used in CSS via BEM classes
 
-**4 ngoại lệ chuẩn WordPress**:
+**JavaScript File Structure (assets/js/):**
 
-| # | Trường hợp | Ví dụ | Lý do |
-|---|---|---|---|
-| 1 | **CSS variable bind data** | `style="--progress: 60%;"` | Pass data vào CSS |
-| 2 | **Dynamic layout values** | `style="grid-row: span 2;"` | Value từ data runtime |
-| 3 | **SVG inline style** | `<svg style="fill: currentColor;">` | SVG inline không pick up external CSS |
-| 4 | **Email HTML** | Toàn bộ inline style + `<style>` block | Email client không load external CSS |
+- **Cấu trúc:**
+  - **Top-level:** mỗi file = 1 module gắn với 1 feature/page
+  - **`lib/`:** shared modules (reused ≥ 2 pages, hoặc global `window.DG*`)
+  
+- **Naming:**
+  - `{page-slug}.js` trùng slug page template (paired with CSS cùng tên)
+  - `lib/{shared-name}.js` cho shared modules
+  - `main.js` cho global JS (load mọi trang)
+  
+- **Enqueue Strategy:** Mỗi file JS top-level = 1 handle `dg-{slug}`, dependency từ `dg-main`.
 
-**JS runtime style** — được phép cho animation:
-- `el.style.transform = '...'` — Motion API runtime animation.
-- `el.classList.toggle('is-active')` — ưu tiên cách này hơn inline style.
+**Cache Busting:**
 
-**WordPress `wp_add_inline_style`** — chuẩn WP cho customizer runtime CSS:
-- Khai báo trong `inc/enqueue/styles.php`, **không** viết inline trong template.
+- Mỗi lần sửa CSS/JS → bump `DG_VERSION` ở `functions.php`.
+- WP dùng version query param: `.../style.css?ver=1.0.2`
 
-#### 5f. JS file organization
-> *"1 trang = 1 file JS. Module dùng nhiều nơi → `lib/`."*
+#### 5e. Styling Strategy — External CSS files, not Inline styles
+> *"Style thuộc file CSS, không HTML template — trừ 4 ngoại lệ chuẩn WordPress."*
 
-- **Cấu trúc thư mục** `assets/js/`:
-  - **Top-level**: mỗi file là 1 module gắn với 1 page/feature.
-  - **`lib/`**: chỉ chứa **shared modules** (được ≥ 2 file enqueue, hoặc expose global `window.DGXxx`).
-- **Đặt tên** `{page-slug}.js` trùng slug của page template — **đối chiếu 1-1** với CSS cùng tên.
-- **JS global**: `main.js`.
-- **Cách enqueue** — mỗi file JS top-level là 1 handle `dg-{slug}`:
+**Nguyên tắc cứng:**
 
-  ```php
-  // Plain script (IIFE).
-  wp_enqueue_script( 'dg-shop', DG_URI . '/assets/js/shop.js', array( 'dg-main' ), DG_VERSION, true );
+- 🚫 **Cấm `style="..."` inline** trong template/template-part — TRỪ 4 exception dưới.
+- 🚫 **Cấm `<style>` block** trong template.
+- ✅ **Luôn tạo BEM CSS class** ở page-specific CSS file, apply via template class.
 
-  // ES module (dùng Motion).
-  wp_enqueue_script_module( 'dg-shipping-returns', DG_URI . '/assets/js/shipping-returns.js', array(), DG_VERSION );
+**4 Ngoại Lệ Chuẩn WordPress:**
 
-  // Shared module — lib/.
-  wp_enqueue_script( 'dg-cart-api', DG_URI . '/assets/js/lib/cart-api.js', array( 'dg-main' ), DG_VERSION, true );
-  ```
+| # | Use Case | Example | Why Exception |
+|---|----------|---------|---------------|
+| 1 | **CSS variable bind data** | `style="--progress: 60%;"` | Runtime data → CSS variable |
+| 2 | **Dynamic layout values** | `style="grid-column: span 2;"` | Computed runtime value |
+| 3 | **SVG inline style** | `<svg style="fill: currentColor;">` | SVG inline cannot load external CSS |
+| 4 | **Email HTML** | `style="color: #fff;"` in email template | Email clients don't load external CSS |
 
-- **Tiêu chí tách file**: 1 page có logic > 50 dòng → tách file riêng; < 50 dòng → gộp vào `main.js`.
+**Non-Exceptions (NEVER do these):**
 
-#### 5g. Selector phải khớp DOM thật, không assume markup plugin core
-> *"WC có thể render khác DOM default — selector dựa giả định = bug ẩn."*
+- ❌ `style="color: blue;"` — should be `.component { color: var(--color-primary); }`
+- ❌ `style="margin: 10px;"` — should be class + CSS variable token
+- ❌ `style="background: #abc123;"` — hard-coded color, should use token
+- ❌ `<style> .temp { color: red; } </style>` in template — move to page CSS file
 
-**Nguyên tắc cứng**:
+**JavaScript Runtime Styles (ALLOWED for Animation):**
+
+- `el.style.transform = '...'` — Motion API animation
+- `el.classList.toggle('is-active')` — preferred over inline style
+- `el.style.setProperty('--custom', value)` — OK for scoped dynamic style
+
+**WordPress `wp_add_inline_style` (CORRECT for Customizer Runtime CSS):**
+
+- Use within `inc/enqueue/styles.php`, NOT in template.
+- Example: customizer sets brand color → WP injects CSS via `wp_add_inline_style`.
+
+**JavaScript File Organization (moved to §5d above)**
+
+#### 5g. Selectors phải khớp DOM thực tế, không assume hoặc hard-code
+> *"Selector dựa giả định = bug ẩn. Luôn inspect DOM thật, target via theme-controlled class."*
+
+**Nguyên tắc cứng:**
 
 1. **Trước khi viết selector, inspect DOM thật** (F12 → Elements).
-2. **Không assume DOM mặc định của plugin** — theme có thể refactor layout custom.
-3. **Target bằng class theme-controlled** (`dg-{name}`) an toàn nhất.
-4. **Nếu selector dựa trên DOM WC, document ngay trong comment**.
-5. **Visual parity rule**: 2 element cùng vai trò (vd nút "Proceed to Checkout" vs "Place Order") → **đối chiếu visual trước khi commit**.
+   - Không assume DOM mặc định của plugin hoặc library.
+   - Theme có thể refactor layout custom bất kỳ lúc nào.
+   
+2. **Target bằng class theme-controlled** (`dg-{name}`) là an toàn nhất.**
+   - ✅ `.dg-product-card` — theme-controlled, safe
+   - ⚠️ `.product` — might be from WC core, could change
+   - ❌ `div:nth-child(3) > span` — brittle, layout-dependent
+   
+3. **Nếu selector dựa trên DOM từ plugin/library, document ngay trong comment:**
+   ```css
+   /* .wc-block-product__title — from WooCommerce Blocks (v8.0+)
+      Inspect to confirm this selector still exists in current WC version */
+   .wc-block-product__title {
+     color: var(--product-title-color);
+   }
+   ```
+   
+4. **Visual parity rule:** 2 elements cùng vai trò (vd "Proceed to Checkout" vs "Place Order" buttons) →
+   - **đối chiếu visual trước khi commit** (size, color, spacing phải cùng).
+   - **Nếu khác DOM structure:** thêm comment giải thích tại sao.
+   
+5. **Không target chung cho khác loại element:**
+   ```css
+   /* ❌ WRONG — cộng gom */
+   .button, .btn, [role="button"] { color: blue; }
+   
+   /* ✅ CORRECT — explicit, controllable */
+   .dg-button { color: blue; }
+   .dg-card__action { color: var(--action-color); }
+   ```
 
 #### 5h. Đối chiếu tên file CSS / JS ↔ page template
 > *"CSS, JS, data, section — tất cả phải đối chiếu 1-1 qua slug."*
@@ -467,17 +528,271 @@ const cs = getComputedStyle(el);
 console.log('border-color computed:', cs.borderColor); // nếu không khớp token CSS theme → kiểm tra lại nguồn gây đè
 ```
 
-### 9. JavaScript & Animation
-> *"Vanilla + Motion, không React, luôn tôn trọng reduced-motion."*
+#### 8c. Component Style Isolation — LUÔN token riêng, KHÔNG dùng global theme tokens cho component-local styles
+> *"Component-specific style = dedicated token (not global secondary/tertiary/accent/etc.). Prevent accidental style pollution across pages."*
 
-- **Vanilla JS, KHÔNG React.** Animation dùng **Motion vanilla API**:
-  `import { animate, inView, scroll } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";`
-  **Không bao giờ** dùng `motion/react`. Cần animation thì dùng skill **`.claude/skills/motion-animations/`**.
-- Bọc code trong IIFE + `'use strict'`; tách các hàm khởi tạo `initXxx()` và gọi ở cuối file.
-- Đầu file đo `const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches` và **bỏ qua animation** khi `true`.
-- **FOUC guard:** template thêm class `dg-js` lên `<html>`; CSS để `.dg-js [data-sr] { opacity: 0 }` rồi JS animate cho hiện ra.
-- Cấu hình hiệu ứng qua thuộc tính `data-*` (vd `data-sr`, `data-count-to`, `data-magnetic`); chọn DOM bằng `querySelector` / `querySelectorAll`.
-- Không thêm bundler/npm; mọi thư viện nạp qua CDN ES module.
+**Golden Rule:**
+```
+Khi styling component mới:
+  IF: Cần color/spacing/shadow/size riêng cho component này
+  THEN: Tạo token riêng (Primitive → Semantic → Component)
+  NOT: Dùng global theme token (secondary, tertiary, accent, etc.)
+```
+
+**Problem Case — Accidental Pollution (DO NOT DO THIS):**
+
+```
+Cách sai #1: Dùng global Tailwind classes trực tiếp
+  ❌ class="bg-secondary text-secondary-container border-secondary"
+     → Sau này thay đổi secondary theme → component này đổi màu tự động (unexpected!)
+
+Cách sai #2: Dùng global theme tokens trong component CSS
+  ❌ .dg-hero__badge { color: var(--color-secondary); }
+     → Thay đổi --color-secondary ở style.css → badge đổi màu
+     → Tất cả page khác dùng secondary cũng bị ảnh hưởng
+
+Cách sai #3: Hard-code color + dùng global token ngoài context
+  ❌ .dg-hero__title { color: #a9371e; }  /* Hard-code + thừa */
+     .dg-hero__title { color: var(--secondary); } /* Thay global token */
+     → Nếu design thay đổi chỉ riêng hero → không cách nào override dễ dàng
+```
+
+**Professional Solution: Scoped Component Tokens**
+
+**Step 1: Define Primitive Tokens (nếu color không có sẵn ở theme)**
+```css
+/* style.css :root */
+
+/* Primitive — component-specific (NẾU không khớp theme palette) */
+--warm-reddish-brown: #a9371e;  /* Only for warm gradient components */
+--coral-accent: #fd7455;        /* Only for coral highlights */
+```
+
+**Step 2: Define Semantic Tokens (component-specific, layer 2)**
+```css
+/* style.css :root */
+
+/* Semantic — scoped to component concern (NOT for reuse across pages) */
+--hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--coral-accent), var(--warm-gold));
+--hero-underline-color: var(--coral-accent);
+--hero-badge-bg: rgba(var(--gold-rgb), 0.1);
+--hero-badge-text: var(--gold-500);
+
+/* CTA button (hero section only) */
+--cta-primary-gradient: linear-gradient(to right, var(--coral-accent), var(--warm-reddish-brown), var(--gold-dark));
+--cta-primary-text: var(--neutral-0);
+```
+
+**Step 3: Create BEM Component Rules (layer 3, scoped to page CSS)**
+```css
+/* home.css — SCOPED to hero section only */
+
+.dg-home-hero__gradient-text {
+  background-image: var(--hero-gradient);
+  background-size: 100% 100%;
+  background-position: left center;
+}
+
+.dg-home-hero__badge {
+  background: var(--hero-badge-bg);
+  color: var(--hero-badge-text);
+}
+
+.dg-home-hero__cta-primary {
+  background: var(--cta-primary-gradient);
+  color: var(--cta-primary-text);
+}
+```
+
+**Step 4: Use BEM Classes in Template (NOT Tailwind gradient classes)**
+```php
+<!-- ❌ BEFORE — Tailwind classes (fragile) -->
+<span class="bg-gradient-to-r from-secondary via-secondary-container to-primary">
+
+<!-- ✅ AFTER — BEM scoped class (robust) -->
+<span class="dg-home-hero__gradient-text">
+```
+
+---
+
+### **Decision Tree — When to Create Dedicated Token**
+
+```
+Styling new component/section?
+│
+├─ "Will this color/size/shadow be reused in 3+ different pages?"
+│  └─ YES → Define semantic token ở style.css (shared across theme)
+│            Use in multiple component rules (shop.css, account.css, etc.)
+│  └─ NO → Go to next question
+│
+├─ "Could this style accidentally affect OTHER components if I change global token?"
+│  └─ YES (high risk) → Create dedicated token ở style.css
+│           Scoped to this component (e.g., --hero-gradient, --filter-active-bg)
+│           Use ONLY in this page's CSS file
+│  └─ NO → Go to next question
+│
+├─ "Am I using global theme token (secondary, tertiary, accent, error, etc.)?"
+│  └─ YES → Ask yourself: "Does this component MUST follow theme color change?"
+│            └─ YES → OK, use global token (e.g., error message always uses --error)
+│            └─ NO → Create dedicated token instead
+│  └─ NO → Go to next question
+│
+└─ "Is value hard-coded (e.g., #a9371e, rgba(...))?
+   └─ YES → Define primitive token + semantic token ở style.css
+   └─ NO → ✅ You're good
+```
+
+---
+
+### **Token Scope Matrix**
+
+| Token Type | Definition Location | Used In | Scope | Risk If Changed |
+|---|---|---|---|---|
+| **Primitive** | `style.css :root` | Semantic tokens | Theme-level | Global (all pages) |
+| **Semantic** (global) | `style.css :root` | Multiple page CSS files | Cross-page | Global (many pages) |
+| **Semantic** (scoped) | `style.css :root` | Single page CSS file | Component | Local (1 section) |
+| **Component** | `{page}.css` | Template via BEM class | Single component | Local (affects styling only) |
+
+**Example Mapping:**
+```
+Primitive:
+  --gold-500: #c9a24b
+
+Semantic (Global):
+  --color-accent: var(--gold-500)  ← Used in: shop, account, cart, header
+
+Semantic (Scoped):
+  --hero-gradient: linear-gradient(..., var(--warm-coral), ...)  ← Used in: home.css ONLY
+  
+Component:
+  .dg-home-hero__gradient-text { background-image: var(--hero-gradient); }  ← Used in: home.php via BEM class
+```
+
+---
+
+### **Checklist — Before Styling New Component**
+
+- [ ] Did I define token in `style.css` for any new color/size/spacing?
+- [ ] If yes, is token **scoped to this component** (e.g., `--hero-*`, `--shop-filter-*`)?
+- [ ] Did I use global theme token (secondary, tertiary, etc.) instead of component-specific token?
+  - [ ] If yes: Confirmed this is intentional (component MUST follow theme)?
+- [ ] Am I using Tailwind gradient/shadow/color classes that reference global tokens?
+  - [ ] If yes: Replace with BEM class + CSS rule using component token
+- [ ] Will changing this style affect OTHER pages unintentionally?
+  - [ ] If yes: Create dedicated token (don't use global)
+- [ ] Is there hard-coded color/value in my CSS?
+  - [ ] If yes: Extract to token (primitive + semantic)
+
+---
+
+### **Real Example — This Session's Hero Gradient Fix**
+
+**Problem:** Hero headline needed warm gradient (#a9371e → #fd7455 → #d4af37), but theme secondary is cool tones.
+
+**Solution Implemented:**
+
+1. ✅ Created **Primitive tokens** (style.css):
+   ```css
+   --warm-reddish-brown: #a9371e;
+   --warm-coral: #fd7455;
+   --warm-gold: #d4af37;
+   ```
+
+2. ✅ Created **Semantic tokens** (style.css):
+   ```css
+   --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--warm-coral), var(--warm-gold));
+   --hero-gradient-underline: var(--warm-coral);
+   --cta-primary-gradient: linear-gradient(to right, var(--warm-coral), var(--warm-reddish-brown), var(--gold-dark));
+   ```
+
+3. ✅ Created **Component rules** (home.css):
+   ```css
+   .dg-home-hero__gradient-text {
+     background-image: var(--hero-gradient);
+   }
+   .dg-home-hero__cta-primary {
+     background: var(--cta-primary-gradient);
+   }
+   ```
+
+4. ✅ Updated **Markup** (hero.php):
+   ```php
+   <span class="dg-home-hero__gradient-text">...</span>
+   ```
+
+**Result:**
+- ✅ Hero gradient = warm colors (correct)
+- ✅ Secondary/tertiary tokens = unchanged (protect other pages)
+- ✅ ZERO collateral damage across theme
+- ✅ Future gradient changes = update token once
+
+---
+
+### 9. Interactivity & Dynamic Behavior
+> *"Vanilla JS, không framework. Lựa chọn tool dựa trên use case."*
+
+**General Rules:**
+
+- **No framework:** React, Vue, Svelte, hoặc framework khác = KHÔNG dùng. PHP templates + vanilla JS suffices.
+- **Nào cần animation?** → Xử lý tùy từng scenario:
+  - **Scroll reveal, stagger, spring physics** → `Motion vanilla API` (`import { animate, inView } from "motion"`)
+  - **Simple show/hide** → CSS transitions + JS classList toggle
+  - **Form validation, UI interactivity** → Vanilla DOM APIs (`querySelector`, `addEventListener`, etc.)
+  
+- **Bundler/build step:** ❌ KHÔNG. Mọi thư viện nạp qua **CDN ES modules**.
+
+**Motion Animation Pattern (khi cần Motion):**
+
+- Use **Motion vanilla API** ONLY: `import { animate, inView, scroll } from "https://cdn.jsdelivr.net/npm/motion@11/+esm"`
+- **KHÔNG bao giờ** dùng `motion/react`, `<motion.div>`, `whileHover`, `useScroll`.
+- Skill chuyên dụng: `.claude/skills/motion-animations/SKILL.md`
+
+**JavaScript Structure Pattern (tất cả scripts):**
+
+```js
+'use strict';
+
+(function() {
+  // Respect prefers-reduced-motion
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  // Init functions
+  function initComponentA() { /* ... */ }
+  function initComponentB() { /* ... */ }
+  
+  // Enqueue on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!prefersReduced) initComponentA();
+    initComponentB();
+  });
+})();
+```
+
+**Enqueue Strategy (centralized ở inc/enqueue.php):**
+
+```php
+// Plain script (IIFE wrapper)
+wp_enqueue_script( 'dg-shop', DG_URI . '/assets/js/shop.js', array( 'dg-main' ), DG_VERSION, true );
+
+// ES module (dùng import Motion)
+wp_enqueue_script_module( 'dg-product-slider', DG_URI . '/assets/js/product-slider.js', array(), DG_VERSION );
+
+// Shared lib
+wp_enqueue_script( 'dg-cart-api', DG_URI . '/assets/js/lib/cart-api.js', array( 'dg-main' ), DG_VERSION, true );
+```
+
+**FOUC (Flash of Unstyled Content) Guard:**
+
+- Template: `<html class="dg-js">` (add khi JS enabled)
+- CSS: `.dg-js [data-sr] { opacity: 0; }` (hide reveal elements initially)
+- JS: Animate elements visible after load
+
+**Tránh Anti-Patterns:**
+
+- ❌ Inline event handlers: `<button onclick="...">` → Use `addEventListener` thay
+- ❌ Global functions: `window.initStuff = () => {}` → Use IIFE + closure thay
+- ❌ jQuery hoặc library lạc quẻ → Vanilla DOM APIs là sufficient
+- ❌ Modify built-in prototypes: `Array.prototype.custom = ...` → Use utility functions thay
 
 ---
 
@@ -527,6 +842,8 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
+- `2026-10-27b`: refactored sections 5b/5d/5e/5g/9 — Generalized rules (nói chung không nói riêng). §5b (email) → "Template Organization" (tất cả template). §5d CSS + JS organization combined (formerly 5d/5f). §5e inline styles → "Styling Strategy" (general rule). §5g selectors → removed "WC-specific" language, added general principle. §9 → "Interactivity & Dynamic Behavior" (remove Motion-specific focus, added general JS patterns + Motion as option).
+- `2026-10-27a`: thêm §8c — **Component Style Isolation**: rule cứng prevent style pollution across pages (ALL styles, not just gradient). LUÔN tạo token riêng cho component-local styles, KHÔNG dùng global theme tokens. 3-layer token system (Primitive → Semantic → Component), decision tree, scope matrix, comprehensive checklist.
 - `2026-10-02`: thêm §8b — Tailwind Forms plugin override: nguyên nhân specificity tie + source order khi Tailwind nạp qua `<script>`, cách debug bằng console, cách khắc phục bằng tăng specificity qua wrapper class (không dùng `!important`).
 - `2026-09-29`: thêm §8a — Design Token System: quy tắc cứng về token-first approach, cấm hard-code, visual regression workflow, refactor checklist.
 - `2026-08-24`: Refactor toàn bộ để tương thích với `.cursor/skills` ecosystem; thêm skill compatibility matrix; làm rõ project type (classic theme trong full site repo); loại bỏ mâu thuẫn về React/build step.

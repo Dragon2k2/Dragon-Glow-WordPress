@@ -46,156 +46,215 @@
 }
 
 /* ═══════════════════════════════════════
-   2. HERO
+   2. HERO — NEW 2-COLUMN LAYOUT
+   Left: Copy (badge, gradient headline, description, CTAs, stats)
+   Right: Product frame with floating badges & info card
    ═══════════════════════════════════════ */
 
-/* Mobile (<768px): stacked layout. Copy first, photo below it as its own block,
-   so text never competes with the image. From 768px the photo becomes the
-   full-bleed background and the copy overlays it. */
-
-/* Hero section z-index - ensure it stays below navigation (nav z-index: 100, menu z-index: 100000) */
 .dg-home-hero {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
     z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    /* Tailwind grid classes (grid-cols-1 lg:grid-cols-12) handle column setup */
 }
 
-.dg-home-hero__media {
+/* Ensure grid columns span correctly */
+.dg-home-hero > div {
+    min-width: 0; /* Prevent grid children from overflowing */
+}
+
+/* ═══════════════════════════════════════
+   Gradient Headline — Hero
+   Warm luxury gradient: reddish-brown → coral → gold
+   ═══════════════════════════════════════ */
+
+.dg-home-hero__gradient-text {
+    background-image: var(--hero-gradient);
+    background-size: 100% 100%;
+    background-position: left center;
+}
+
+/* Underline SVG — scales with text */
+.dg-home-hero__gradient-underline {
+    color: var(--hero-gradient-underline);
+}
+
+/* ═══════════════════════════════════════
+   CTA Primary Button — Hero
+   Warm luxury gradient with white text
+   ═══════════════════════════════════════ */
+
+.dg-home-hero__cta-primary {
+    background: var(--cta-primary-gradient);
+    color: var(--cta-primary-text);
+}
+
+.dg-home-hero__cta-primary:hover {
+    color: var(--cta-primary-text);
+}
+
+/* Product Frame Styling */
+.dg-home-hero__product-frame {
     position: relative;
-    z-index: 0;
-    order: 2;
-    aspect-ratio: var(--home-hero-media-ratio-mobile);
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--surface-container-lowest) 0%, var(--surface-container-low) 50%, var(--surface-container-lowest) 100%);
+    box-shadow: 0 24px 64px -8px rgba(26, 26, 26, 0.08), 0 12px 24px -4px rgba(212, 175, 55, 0.12);
 }
 
-/* Small tablets only: a 4:5 frame gets too tall here, so cap it.
-   Not applied on phones: a viewport-height cap (svh) shrinks with the browser
-   toolbar on real devices and crops the photo, while DevTools emulation hides it. */
-@media (min-width: 640px) and (max-width: 767px) {
-    .dg-home-hero__media {
-        max-height: var(--home-hero-media-max-height-mobile);
-    }
-}
-
-.dg-home-hero__img {
+.dg-home-hero__product-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 80% 30%;
+    object-position: center;
+    border-radius: 2rem;
+    transform: scale(var(--hero-image-default-scale));
 }
 
-/* Parallax only where the hero is wide enough to benefit from it. */
-@media (min-width: 768px) {
-    .dg-home-hero__img {
-        transform: translateY(var(--scroll-y, 0));
-    }
-}
-
-.dg-home-hero__fallback {
-    width: 100%;
-    height: 100%;
-}
-
-/* Mobile: the photo sits below the copy, so only blend its top edge into the surface colour. */
-.dg-home-hero__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, var(--home-hero-overlay-top-mobile), var(--home-hero-overlay-bottom-mobile) var(--home-hero-overlay-fade-mobile));
-}
-
-.dg-home-hero__inner {
-    position: relative;
+/* Floating Stickers — Scoped Component Tokens */
+.dg-home-hero__sticker {
     z-index: 10;
-    order: 1;
-    padding-top: var(--home-hero-copy-pad-top);
-    padding-bottom: var(--home-hero-copy-pad-bottom);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (min-width: 768px) {
+.dg-home-hero__sticker--1 {
+    /* "100% Juicy Bounce" — Glassmorphism Pill */
+    background: var(--hero-sticker-1-bg);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--hero-sticker-1-shadow);
+}
+
+.dg-home-hero__sticker--1 .w-2\.5 {
+    /* Animated pulse dot */
+    background-color: var(--hero-sticker-1-dot-bg);
+}
+
+.dg-home-hero__sticker--1 span:not(.w-2\.5) {
+    /* Text label */
+    color: var(--hero-sticker-1-text);
+}
+
+.dg-home-hero__sticker--2 {
+    /* "280M+ Reels Views" — Solid Secondary Badge */
+    background-color: var(--hero-sticker-2-bg);
+    color: var(--hero-sticker-2-text);
+    box-shadow: var(--hero-sticker-2-shadow);
+}
+
+.dg-home-hero__sticker--2 .material-symbols-outlined {
+    /* Icon color */
+    color: var(--hero-sticker-2-icon);
+}
+
+.dg-home-hero__sticker--2 span:not(.material-symbols-outlined) {
+    /* Text label */
+    color: var(--hero-sticker-2-text);
+}
+
+/* Hover state for stickers (only on devices with hover) */
+@media (hover: hover) {
+    .dg-home-hero__sticker:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+}
+
+/* Info Card */
+.dg-home-hero__info-card {
+    z-index: 11;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.68) 100%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    animation: slideUpIn 0.6s ease-out 0.3s both;
+    
+    /* Compact, elegant sizing */
+    padding: var(--info-card-padding);
+    gap: var(--info-card-gap);
+}
+
+/* Decorative Orb */
+.dg-home-hero__orb {
+    z-index: 5;
+}
+
+/* Mobile: stacked layout */
+@media (max-width: 1023px) {
     .dg-home-hero {
-        flex-direction: row;
+        grid-template-columns: 1fr;
+    }
+
+    .dg-home-hero__product-frame {
+        margin-top: 2rem;
+        max-width: 100%;
+    }
+
+    .dg-home-hero__sticker {
+        opacity: 0.9;
+    }
+
+    .dg-home-hero__orb {
+        display: none;
+    }
+}
+
+/* Desktop: 2-column grid */
+@media (min-width: 1024px) {
+    /* Tailwind grid-cols-12 and lg:col-span-6 handle the layout */
+    .dg-home-hero {
+        gap: 3rem;
         align-items: center;
-        min-height: max(var(--home-hero-min), var(--home-hero-height));
-        padding-block: var(--home-hero-padding-y);
-    }
-
-    .dg-home-hero__media {
-        position: absolute;
-        inset: 0;
-        order: 0;
-        aspect-ratio: auto;
-        max-height: none;
-    }
-
-    .dg-home-hero__overlay {
-        background: linear-gradient(to right, var(--home-hero-overlay-start), var(--home-hero-overlay-mid), transparent);
-    }
-
-    .dg-home-hero__inner {
-        order: 0;
-        padding-block: 0;
     }
 }
 
-@supports (height: 1svh) {
-    @media (min-width: 768px) {
-        .dg-home-hero {
-            min-height: max(var(--home-hero-min), var(--home-hero-height-small));
-        }
-    }
-}
-
-.dg-home-hero__content {
-    max-width: var(--home-hero-content-max);
-}
-
-.dg-home-hero__title {
-    margin-bottom: clamp(16px, 2vw + 8px, 24px);
-    font-size: var(--home-hero-title-size);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+/* Gradient headline text */
+.dg-home-hero h1 {
     text-wrap: balance;
 }
 
-.dg-home-hero__sub {
-    margin-bottom: clamp(28px, 4vw + 8px, 40px);
-    font-size: clamp(16px, 0.5vw + 14px, 18px);
-    line-height: 1.6;
+.dg-home-hero h1 span {
+    position: relative;
+    display: inline-block;
 }
 
-.dg-home-hero__actions {
-    display: flex;
-    flex-direction: column;
-    gap: var(--home-hero-actions-gap);
+/* SVG underline in heading */
+.dg-home-hero h1 svg {
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    opacity: 0.7;
 }
 
-.dg-home-hero__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--home-tap-size);
-    padding: var(--home-hero-cta-padding);
-    text-align: center;
+/* CTA buttons */
+.dg-home-hero a {
+    text-decoration: none;
 }
 
-@media (min-width: 640px) {
-    .dg-home-hero__actions {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+.dg-home-hero a[class*="gradient-to-r"] {
+    box-shadow: 0 8px 24px -4px rgba(255, 117, 86, 0.35);
+    transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+    .dg-home-hero a[class*="gradient-to-r"]:hover {
+        box-shadow: 0 12px 32px -4px rgba(255, 117, 86, 0.45);
     }
 }
 
-/* Blobs are decoration; keep them from bloating small screens. */
-.dg-home-hero__blob {
-    pointer-events: none;
+/* Stats row divider */
+.dg-home-hero .w-px {
+    background: linear-gradient(to bottom, rgba(127, 118, 99, 0.2), rgba(127, 118, 99, 0));
 }
 
-@media (max-width: 767px) {
-    .dg-home-hero__blob {
-        opacity: 0.6;
+/* Scroll animations (if needed) */
+@keyframes slideUpIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -516,8 +575,31 @@
         transition: none;
     }
 
+    .dg-home-hero__sticker {
+        /* Disable hover scale animation for users who prefer reduced motion */
+        transform: none;
+        transition: none;
+    }
+
+    .dg-home-hero__product-frame {
+        animation: none;
+    }
+
+    .dg-home-hero__product-frame img {
+        transition: none;
+    }
+
+    .dg-home-hero__sticker,
+    .dg-home-hero__info-card,
+    .dg-home-hero__orb {
+        animation: none;
+        transition: none;
+        transform: none;
+    }
+
     .dg-home .animate-pulse,
-    .dg-home .animate-float {
+    .dg-home .animate-float,
+    .dg-home .animate-bounce {
         animation: none;
     }
 
@@ -564,4 +646,71 @@
     .testimonials-grid {
         grid-template-columns: repeat(2, 1fr) !important;
     }
+}
+
+/* =========================================
+   HERO SECTION — COMPONENT-SCOPED STYLES
+   Page-specific token consumers (style.css defines tokens)
+   ========================================= */
+
+/* ========== Badge Vibrant (Water Drop Icon) ========== */
+.dg-badge-vibrant {
+    background: var(--badge-vibrant-gradient);
+    box-shadow: var(--badge-vibrant-shadow);
+    color: var(--badge-icon-color);
+    width: var(--info-card-icon-size);
+    height: var(--info-card-icon-size);
+    flex-shrink: 0;
+}
+
+.dg-badge-vibrant:hover {
+    box-shadow: 0 6px 16px rgba(253, 116, 85, 0.3);
+}
+
+/* ========== Info Card Typography Colors ========== */
+.dg-info-card-price {
+    color: var(--info-card-price-text);
+}
+
+.dg-info-card-restock {
+    color: var(--info-card-restock-text);
+}
+
+/* Compact info card title styling */
+.dg-home-hero__info-card h4 {
+    font-size: var(--info-card-title-font-size) !important;
+    line-height: var(--info-card-title-line-height) !important;
+}
+
+.dg-home-hero__info-card p {
+    font-size: var(--info-card-desc-font-size) !important;
+    line-height: var(--info-card-desc-line-height) !important;
+    margin: 0 !important;
+}
+
+/* ========== Glaze Certified Orb ========== */
+.dg-glaze-orb {
+    background: var(--orb-gradient);
+}
+
+.dg-glaze-orb-text {
+    color: var(--orb-text-color);
+}
+
+/* ========== Hero Headline Gradient Text Wrapper ========== */
+.dg-home-hero__gradient-text-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ========== Hero Headline Emoji Accent ========== */
+.dg-hero-emoji-accent {
+    font-size: var(--emoji-accent-size);
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dg-hero-emoji-accent:hover {
+    transform: rotate(12deg) scale(1.15);
 }

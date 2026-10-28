@@ -90,7 +90,7 @@ tailwind.config = {
         DEFAULT: "0.125rem",
         lg:      "0.25rem",
         xl:      "0.5rem",
-        full:    "0.75rem",
+        full:    "9999px",  /* Pill shape: canonical border-radius for buttons, badges */
       },
       spacing: {
         "unit":                 "8px",

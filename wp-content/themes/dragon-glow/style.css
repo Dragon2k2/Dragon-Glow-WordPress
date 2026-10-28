@@ -52,6 +52,11 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --gold-800: #715509;         /* Darker — headings, deep emphasis */
     --gold-900: #5b4300;         /* Darkest — maximum contrast */
     --gold-rgb: 201, 162, 75;    /* RGB of gold-500 for alpha channels */
+
+    /* ----- NEW: Warm Gradient Palette (Hero Gradient) ----- */
+    --warm-reddish-brown: #a9371e;  /* Warm reddish-brown — gradient start */
+    --warm-coral: #fd7455;          /* Coral/salmon — gradient middle */
+    --warm-gold: #d4af37;           /* Gold — gradient end (same as gold-400) */
     
     /* ----- Secondary (Mauve-Slate) ----- */
     --secondary-700: #5c5d6e;    /* Base secondary */
@@ -176,6 +181,79 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --btn-gold-gradient-end: var(--gold-600);
     --btn-gold-gradient: linear-gradient(135deg, var(--btn-gold-gradient-start) 0%, var(--btn-gold-gradient-end) 100%);
     --btn-gold-text: var(--primary-900);
+
+    /* ========== Hero Gradient Headline ========== */
+    /* Warm luxury gradient: reddish-brown → coral → gold */
+    /* Used for headline.dg-home-hero__gradient-text */
+    --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--warm-coral), var(--warm-gold));
+    --hero-gradient-underline: var(--warm-coral);
+
+    /* ========== CTA Button Gradient (Hero Primary) ========== */
+    /* Warm luxury gradient: coral → reddish-brown → dark-gold */
+    /* Used for primary CTA button in hero section */
+    --cta-primary-gradient: linear-gradient(to right, var(--warm-coral), var(--warm-reddish-brown), var(--gold-dark));
+    --cta-primary-text: var(--neutral-0);
+
+    /* ========== Hero Sticker Badges (Floating Elements) ========== */
+    /* Maps to demo sticker colors from Stitch design system */
+    
+    /* Sticker 1: "100% Juicy Bounce" (Glassmorphism Pill) */
+    /* Demo uses: bg-surface-container-lowest/90 + bg-secondary-container + text-secondary */
+    --hero-sticker-1-bg: rgba(255, 255, 255, 0.9);     /* surface-container-lowest at 90% */
+    --hero-sticker-1-dot-bg: #fd7455;                  /* secondary-container (from demo Tailwind) */
+    --hero-sticker-1-text: #a9371e;                    /* secondary (from demo Tailwind) */
+    --hero-sticker-1-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    
+    /* Sticker 2: "280M+ Reels Views" (Solid Secondary) */
+    /* Demo uses: bg-secondary + text-on-secondary + shadow-xl */
+    --hero-sticker-2-bg: #a9371e;                      /* secondary (from demo Tailwind) */
+    --hero-sticker-2-text: #ffffff;                    /* on-secondary (from demo Tailwind) */
+    --hero-sticker-2-icon: #ffffff;                    /* on-secondary (from demo Tailwind) */
+    --hero-sticker-2-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+    /* ========== Icon Badge — Vibrant Gradient (Hero Info Card) ========== */
+    /* Component-scoped: water_drop icon badge at bottom-left of product frame */
+    /* Gradient: vibrant coral → warm gold (matches demo showcase) */
+    /* Isolated token prevents affecting global secondary-container elsewhere */
+    --badge-vibrant-from: #fd7455;                      /* vibrant coral (demo secondary-container) */
+    --badge-vibrant-to: #d4af37;                        /* warm gold (primary-container) */
+    --badge-vibrant-gradient: linear-gradient(135deg, var(--badge-vibrant-from) 0%, var(--badge-vibrant-to) 100%);
+    --badge-vibrant-shadow: 0 4px 12px rgba(253, 116, 85, 0.2);
+    --badge-icon-color: #ffffff;                        /* white icon for contrast */
+
+    /* ========== Hero Info Card Typography Colors (Scoped) ========== */
+    /* Component-scoped: price + restock label in bottom-left card */
+    /* Demo uses warm secondary (#a9371e) + warm tertiary (#8c4d39) */
+    /* Isolated from global palette to prevent affecting other price displays */
+    --info-card-price-text: #a9371e;                    /* warm reddish-brown (demo secondary) */
+    --info-card-restock-text: #8c4d39;                  /* warm brown (demo tertiary) */
+
+    /* ========== Hero Info Card Sizing & Spacing (Scoped) ========== */
+    /* Component-scoped: compact, elegant info card dimensions */
+    /* Balanced padding and typography for refined appearance */
+    --info-card-padding: 0.625rem;                      /* 10px padding (p-2.5 equivalent, balanced) */
+    --info-card-gap: 0.5rem;                            /* 8px gap between icon and text */
+    --info-card-icon-size: 40px;                        /* 40px icon */
+    --info-card-title-font-size: 15px;                  /* 15px title (balanced between 14-16) */
+    --info-card-title-line-height: 1.25;                /* 1.25 line-height (balanced tightness) */
+    --info-card-desc-font-size: 13px;                   /* 13px description (balanced) */
+    --info-card-desc-line-height: 1.25;                 /* 1.25 line-height for desc (balanced) */
+
+    /* ========== Glaze Certified Orb Gradient ========== */
+    /* Component-scoped: decorative floating orb (bottom-right hero frame) */
+    /* Gradient: light gold → vibrant coral (matches demo) */
+    /* Isolated to prevent affecting other primary-fixed + secondary-container combinations */
+    --orb-gradient-from: #ffe088;                       /* light gold (primary-fixed) */
+    --orb-gradient-to: #fd7455;                         /* vibrant coral (demo secondary-container) */
+    --orb-gradient: linear-gradient(to bottom right, var(--orb-gradient-from) 0%, var(--orb-gradient-to) 100%);
+    --orb-text-color: #ffffff;                          /* white text (on-primary) */
+
+    /* ========== Hero Headline Emoji Accent ========== */
+    /* Component-scoped: sparkle emoji icon right of "Dragon Glaze" */
+    /* Size, color, animation matched to demo showcase */
+    /* Increased to 44px (60% of 72px headline) for visual prominence */
+    --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
+    --emoji-accent-color: #ffd700;                      /* gold shimmer (optional, for filter) */
 
     /* ========== Shop Filter Component ========== */
     /* Glassmorphism dropdown with gold accents */
@@ -1288,4 +1366,24 @@ input:-webkit-autofill:focus {
 ::selection {
     background-color: var(--color-primary-container);
     color: var(--color-on-primary-container);
+}
+
+/* =========================================
+   TYPOGRAPHY UTILITY CLASSES
+   Custom font classes for labels + headlines (not in Tailwind's base)
+   ========================================= */
+
+.font-label-sm,
+.text-label-sm {
+    font-size: 12px;
+    line-height: 1.0;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
+
+.font-headline-sm,
+.text-headline-sm {
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 600;
 }
