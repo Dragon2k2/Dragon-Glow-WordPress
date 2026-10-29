@@ -567,20 +567,34 @@ body.dg-hide-site-chrome #dg-mobile-menu-backdrop {
    FILL axis is controlled exclusively via inline --dg-star-fill on each span.
    The single rule below reads that var; no per-state font-variation-settings
    override is needed, which avoids CSS specificity battles. */
+/* ── Star Rating Component (Unified) ──
+   Uses Material Symbols icons with CSS variable --dg-star-fill to control FILL axis.
+   Works everywhere: product cards, single product page, hero section, cart, wishlist.
+   Color: var(--star-color) — canonical gold (#f1ca50).
+   Size: var(--star-size) — defaults to 16px, overridable via inline style.
+   Gap: var(--star-gap) — 2px gap between stars.
+   
+   States (rendered in PHP via inline --dg-star-fill style):
+   - Full star:   --dg-star-fill:1  (FILL axis = 1, glyph filled)
+   - Empty star:  --dg-star-fill:0  (FILL axis = 0, glyph outlined)
+   - Half star:   .dg-star-half wrapper with two overlaid glyphs (see below)
+*/
 .dg-stars {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-wrap: nowrap;
-    gap: 0.75rem; /* 12px — gap between stars group and review text */
+    gap: var(--star-gap, 0.125rem); /* 2px — gap between stars */
     padding-left: 0;
     margin-left: 0;
 }
 
 .dg-stars .material-symbols-outlined {
-    color: #f1ca50 !important;
-    font-size: 16px;
+    color: var(--star-color, #f1ca50) !important;
+    font-size: var(--star-size, 16px);
     font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24 !important;
+    display: inline-block;
+    line-height: 1;
 }
 
 .dg-star-half {

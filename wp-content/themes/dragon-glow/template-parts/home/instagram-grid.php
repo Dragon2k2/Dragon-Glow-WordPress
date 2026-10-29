@@ -84,13 +84,13 @@ $reels  = dg_instagram_reels_cards_data();
 						</p>
 					</div>
 					
-					<!-- Product Button (bottom) -->
-					<div class="absolute bottom-4 left-4 right-4">
-						<button class="dg-home-instagram-reel__product-button" type="button">
-							<span class="product-name"><?php echo esc_html( $reel['product_name'] ); ?></span>
-							<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?></span>
-						</button>
-					</div>
+				<!-- Product Button Link (bottom) -->
+				<div class="absolute bottom-4 left-4 right-4">
+					<a href="<?php echo esc_url( $reel['product_url'] ); ?>" class="dg-home-instagram-reel__product-button" title="<?php echo esc_attr( $reel['product_name'] ); ?>">
+						<span class="product-name"><?php echo esc_html( $reel['product_name'] ); ?></span>
+						<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?></span>
+					</a>
+				</div>
 				</div>
 			</div>
 			<?php endforeach; ?>

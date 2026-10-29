@@ -12,6 +12,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Render star rating HTML for WooCommerce products (card layout).
  *
+ * @deprecated 1.16.0 Use dg_star_rating() instead — unified star rating system.
+ * This function is no longer called anywhere in the theme. It's kept for
+ * backward compatibility if external code references it.
+ *
  * Uses Material Symbols icons with inline styles.
  * Stars are centered with gap and bottom margin for placement above product name.
  *

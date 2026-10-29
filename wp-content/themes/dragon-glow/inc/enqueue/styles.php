@@ -221,14 +221,14 @@ function dg_enqueue_styles(): void {
     }
 
     // Homepage specific styles
-    if ( is_page_template( 'page-templates/template-home.php' ) || is_front_page() ) {
-        wp_enqueue_style(
-            'dg-home',
-            DG_URI . '/assets/css/home.css',
-            array( 'dg-main' ),
-            DG_VERSION
-        );
-    }
+	if ( is_front_page() ) {
+		wp_enqueue_style(
+			'dg-home',
+			DG_URI . '/assets/css/home.css',
+			array( 'dg-main' ),
+			DG_VERSION
+		);
+	}
 
     // Our Story page specific styles
     if ( is_page_template( 'page-templates/template-our-story.php' ) ) {

@@ -40,13 +40,14 @@ function dg_instagram_reels_header_data(): array {
  * into Instagram Reels section dynamically instead of hard-coding.
  *
  * @param string $product_name Product title to search for.
- * @return array{product_name: string, product_price: string}|array{product_name: string, product_price: string} Array with product_name and product_price, or fallback.
+ * @return array{product_name: string, product_price: string, product_url: string} Array with product details, or fallback.
  */
 function dg_instagram_reels_get_product_by_name( string $product_name ): array {
 	if ( ! function_exists( 'wc_get_products' ) ) {
 		return array(
 			'product_name'  => $product_name,
 			'product_price' => '—',
+			'product_url'   => '#',
 		);
 	}
 
@@ -64,6 +65,7 @@ function dg_instagram_reels_get_product_by_name( string $product_name ): array {
 		return array(
 			'product_name'  => $product_name,
 			'product_price' => '—',
+			'product_url'   => '#',
 		);
 	}
 
@@ -74,6 +76,7 @@ function dg_instagram_reels_get_product_by_name( string $product_name ): array {
 	return array(
 		'product_name'  => $product->get_name(),
 		'product_price' => $currency . number_format( $price, 2 ),
+		'product_url'   => $product->get_permalink(),
 	);
 }
 
@@ -103,6 +106,7 @@ function dg_instagram_reels_cards_data(): array {
 			'quote'        => __( '"My skin literally looks like glazed crystal donut. No foundation needed!"', 'dragon-glow' ),
 			'product_name' => $first_reel_product['product_name'],
 			'product_price' => $first_reel_product['product_price'],
+			'product_url'  => $first_reel_product['product_url'],
 		),
 		array(
 			'image_url'    => get_theme_file_uri( 'assets/images/home/instagram-02.webp' ),
@@ -113,6 +117,7 @@ function dg_instagram_reels_cards_data(): array {
 			'quote'        => __( '"The barrier reset is unmatched. Cleanses SPF completely without feeling tight."', 'dragon-glow' ),
 			'product_name' => $second_reel_product['product_name'],
 			'product_price' => $second_reel_product['product_price'],
+			'product_url'  => $second_reel_product['product_url'],
 		),
 		array(
 			'image_url'    => get_theme_file_uri( 'assets/images/home/instagram-03.webp' ),
@@ -123,6 +128,7 @@ function dg_instagram_reels_cards_data(): array {
 			'quote'        => __( '"Keep this in my bag 24/7. 2 spritzes and my 3 PM slump skin looks instantly renewed!"', 'dragon-glow' ),
 			'product_name' => $third_reel_product['product_name'],
 			'product_price' => $third_reel_product['product_price'],
+			'product_url'  => $third_reel_product['product_url'],
 		),
 		array(
 			'image_url'    => get_theme_file_uri( 'assets/images/home/instagram-04.webp' ),
@@ -133,6 +139,7 @@ function dg_instagram_reels_cards_data(): array {
 			'quote'        => __( '"Golden hour in a bottle! Mix it with my daily moisturizer and get compliments all day."', 'dragon-glow' ),
 			'product_name' => $fourth_reel_product['product_name'],
 			'product_price' => $fourth_reel_product['product_price'],
+			'product_url'  => $fourth_reel_product['product_url'],
 		),
 	);
 

@@ -198,27 +198,22 @@ input[type="range"]::-moz-range-thumb {
 	box-shadow: var(--shop-shadow-luxury);
 }
 
-/* ── Star rating (card layout — matches mock product page) ─────────
-   All stars share color #f1ca50 via .dg-stars-card .material-symbols-outlined.
-   Three visual states:
-     Full star  — single glyph, --dg-star-fill:1 inline.
-     Half star  — .dg-star-half wrapper with two overlaid glyphs:
-                   dg-star-half__fill  : --dg-star-fill:1, clipped left half.
-                   dg-star-half__base  : --dg-star-fill:0 (outline).
-     Empty star — single glyph, --dg-star-fill:0 inline. */
-.dg-stars-card {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 3px;
-	margin-bottom: 6px;
-	font-size: 20px;
-}
+/* ── Star Rating (card layout — uses unified .dg-stars rule from main.css) ─────────
+   Legacy name: .dg-stars-card — kept for backward compatibility
+   New approach: use .dg-stars BEM class (renders in dg_star_rating() PHP function)
+   Styling is now unified in main.css — no duplicates.
+   
+   CSS variable pattern works everywhere:
+   - Filled star:  --dg-star-fill:1 (inline style on span)
+   - Empty star:   --dg-star-fill:0 (inline style on span)
+   - Half star:    .dg-star-half wrapper + overlaid glyphs
+   
+   Override: .dg-stars-card modifier centers stars for product card layout.
+   See main.css .dg-stars for the canonical rule. */
 
-.dg-stars-card .material-symbols-outlined {
-	color: #f1ca50;
-	font-size: 20px;
-	font-variation-settings: 'FILL' var(--dg-star-fill, 0), 'wght' 300, 'GRAD' 0, 'opsz' 24;
+/* Modifier: center stars for card layout (shop product cards) */
+.dg-stars-card {
+	justify-content: center !important;
 }
 
 .dg-star-half {

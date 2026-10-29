@@ -8,6 +8,15 @@
    ========================================= */
 
 /* ═══════════════════════════════════════
+   HOME PAGE BACKGROUND
+   ═══════════════════════════════════════ */
+
+/* Apply semantic token (scoped to front-page only) */
+.dg-home {
+    background-color: var(--home-page-bg);
+}
+
+/* ═══════════════════════════════════════
    1. SHARED CONTAINER & SECTION RHYTHM
    ═══════════════════════════════════════ */
 
@@ -46,11 +55,31 @@
 }
 
 /* ═══════════════════════════════════════
+   1.5. TRUST BADGES — SPACING & LAYOUT
+   ═══════════════════════════════════════ */
+
+.dg-trust-badges {
+    background-color: var(--trust-badges-bg);
+    border-top: 1px solid var(--trust-badges-border);
+    border-bottom: 1px solid var(--trust-badges-border);
+    padding-top: var(--trust-badges-padding-y);
+    padding-bottom: var(--trust-badges-padding-y);
+    margin-bottom: var(--section-spacing-default);
+}
+
+/* ═══════════════════════════════════════
    2. HERO — NEW 2-COLUMN LAYOUT
    Left: Copy (badge, gradient headline, description, CTAs, stats)
    Right: Product frame with floating badges & info card
    ═══════════════════════════════════════ */
 
+/* Full-width wrapper — background extends edge-to-edge */
+.dg-home-hero-wrapper {
+    width: 100%;
+    background-color: var(--hero-section-bg);
+}
+
+/* Inner container (max-width + centered layout) */
 .dg-home-hero {
     position: relative;
     z-index: 1;
@@ -772,7 +801,7 @@
     }
 }
 
-/* Product Button — Compact & Elegant */
+/* Product Button — Compact & Elegant (now semantic <a> link) */
 .dg-home-instagram-reel__product-button {
     width: 100%;
     padding: var(--instagram-button-padding-y) var(--instagram-button-padding-x);
@@ -793,6 +822,8 @@
     gap: 0.5rem;
     transition: all var(--instagram-button-motion-duration) var(--instagram-button-motion-easing);
     cursor: pointer;
+    text-decoration: none;
+    /* Link reset: remove default underline */
 }
 
 .dg-home-instagram-reel__product-button:hover {

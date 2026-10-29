@@ -43,7 +43,10 @@ $sticker1_text = get_theme_mod( 'dg_hero_sticker1_text', __( '100% Juicy Bounce'
 $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views', 'dragon-glow' ) );
 ?>
 
-<section class="dg-home-hero max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-10 pb-16 lg:pb-24">
+<!-- Full-width background wrapper (edge-to-edge color) -->
+<section class="dg-home-hero-wrapper">
+  <!-- Inner container (max-width + centered) -->
+  <div class="dg-home-hero max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-10 pb-0">
         <!-- Left Column: Copy & CTAs -->
         <div class="lg:col-span-6 flex flex-col items-start gap-6 z-10">
             
@@ -127,13 +130,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
                 </div>
                 <div class="w-px h-10 bg-outline-variant/50"></div>
                 <div class="flex flex-col">
-                    <div class="flex items-center text-primary-container">
-                        <span class="material-symbols-outlined text-[18px] fill-current">star</span>
-                        <span class="material-symbols-outlined text-[18px] fill-current">star</span>
-                        <span class="material-symbols-outlined text-[18px] fill-current">star</span>
-                        <span class="material-symbols-outlined text-[18px] fill-current">star</span>
-                        <span class="material-symbols-outlined text-[18px] fill-current">star</span>
-                    </div>
+                    <?php dg_star_rating( 4.9, 18200 ); /* Proof stat: 4.9/5 stars, 18.2K+ reviews */ ?>
                     <span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
                         <?php echo esc_html( __( '4.9/5 (18.2K+ Glaze Addicts)', 'dragon-glow' ) ); ?>
                     </span>
@@ -208,4 +205,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
             </div>
             </div>
         </div>
+  </div>
+  <!-- / Inner container -->
 </section>
+<!-- / Full-width wrapper -->

@@ -31,7 +31,7 @@ $badges = array(
     ),
 );
 ?>
-<section class="bg-surface-container-low py-12 border-y border-outline-variant/10">
+<section class="dg-trust-badges">
     <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-8">
         <?php foreach ( $badges as $index => $badge ) : ?>
         <div class="flex items-center gap-4 reveal" style="transition-delay: <?php echo esc_attr( $index * 100 ); ?>ms;">

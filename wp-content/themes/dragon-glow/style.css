@@ -130,6 +130,11 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --color-on-surface: var(--neutral-700);
     --color-on-surface-variant: var(--neutral-600);
     
+    /* ----- Home Page Background (Semantic) ----- */
+    /* Component-scoped: home page body background — matches section container colors */
+    /* Isolated from global --color-background to prevent affecting cart/account/wishlist pages */
+    --home-page-bg: var(--neutral-100);  /* #f7f4ee — seamless with section containers */
+    
     /* ----- Borders & Dividers ----- */
     --color-outline: var(--neutral-500);
     --color-outline-variant: var(--neutral-400);
@@ -194,6 +199,25 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --cta-primary-gradient: linear-gradient(to right, var(--warm-coral), var(--warm-reddish-brown), var(--gold-dark));
     --cta-primary-text: var(--neutral-0);
 
+    /* ========== Hero Section Background ========== */
+    /* Semantic token (scoped to hero section) — matches surface-container-low for visual harmony */
+    /* Maps to: --color-surface-container-low (used in other landing sections) */
+    --hero-section-bg: var(--color-surface-container-low);
+
+    /* ========== Section Spacing — Gutters Between Sections ========== */
+    /* Semantic tokens for consistent vertical rhythm between page sections */
+    /* Default gutter between hero + trust-badges, trust-badges + next section */
+    --section-spacing-tight: 0;      /* Sections sát nhau (edge-to-edge) */
+    --section-spacing-default: 2rem; /* Default spacing (32px) between sections */
+
+    /* ========== Trust Badges Section (Landing Page) ========== */
+    /* Component-scoped: 4-column badge bar showcasing brand values */
+    /* Semantic token: maps to surface-container-low for visual harmony */
+    /* Isolated to prevent affecting other sections using same surface color */
+    --trust-badges-bg: var(--color-surface-container-low); /* Light neutral background (#f7f4ee) */
+    --trust-badges-border: rgba(212, 194, 194, 0.1);  /* --neutral-400 at 10% opacity (subtle hairline) */
+    --trust-badges-padding-y: 3rem;       /* 48px vertical padding (py-12) */
+
     /* ========== Hero Sticker Badges (Floating Elements) ========== */
     /* Maps to demo sticker colors from Stitch design system */
     
@@ -217,6 +241,15 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Isolated token prevents affecting global secondary-container elsewhere */
     --badge-vibrant-from: #fd7455;                      /* vibrant coral (demo secondary-container) */
     --badge-vibrant-to: #d4af37;                        /* warm gold (primary-container) */
+
+    /* ========== Star Rating Component ========== */
+    /* Unified star rating: Material Symbols icons with FILL variation */
+    /* Applies to: product cards, single product page, hero section, cart, wishlist */
+    /* Color: canonical gold for all filled/empty/half stars (consistency across theme) */
+    --star-color: #f1ca50;                              /* Canonical star gold (matches Material Symbols) */
+    --star-size: 16px;                                  /* Default size for inline ratings */
+    --star-size-large: 20px;                            /* Larger size for card-centric layouts (hero stat) */
+    --star-gap: 0.125rem;                               /* 2px gap between stars (Tailwind gap-0.5 = 0.125rem) */
     --badge-vibrant-gradient: linear-gradient(135deg, var(--badge-vibrant-from) 0%, var(--badge-vibrant-to) 100%);
     --badge-vibrant-shadow: 0 4px 12px rgba(253, 116, 85, 0.2);
     --badge-icon-color: #ffffff;                        /* white icon for contrast */
@@ -274,7 +307,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --instagram-button-letter-spacing: 0.125em;                  /* tracking-wider (Tailwind) */
     --instagram-button-font-weight-name: 700;                    /* font-bold (Tailwind) */
     --instagram-button-font-weight-price: 700;                   /* Bold — inherit from button (no explicit weight in demo) */
-    --instagram-button-font-size: 0.8125rem;                     /* label-md: 13px (demo uses text-label-md) */
+    --instagram-button-font-size: 0.6875rem;                     /* label-md: 13px (demo uses text-label-md) */
     --instagram-button-shadow-default: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* shadow-lg (Tailwind) */
     --instagram-button-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);   /* shadow-lg (no change on hover) */
     --instagram-button-shadow-active: 0 10px 15px -3px rgba(0, 0, 0, 0.1);  /* shadow-lg (no change on active) */
