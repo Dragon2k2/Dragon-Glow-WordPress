@@ -668,3 +668,114 @@
 		animation: none;
 	}
 }
+
+/* =========================================
+   8. ANNOUNCEMENT BAR — auto-scrolling promo marquee above the nav
+   Markup: template-parts/global/announcement-bar.php
+   Data:   template-parts/global/data-announcement-bar.php
+   Tokens: --announcement-bar-* (style.css). Dedicated tokens so
+   nothing else in the theme is affected by changes here.
+   Static strip (not sticky): it scrolls away, the nav stays sticky.
+   Direction: right → left (standard for LTR reading languages).
+   Loop: the track holds two identical groups; translating the track by
+   -50% lands exactly on the start of the second group = seamless loop.
+   ========================================= */
+
+.dg-announcement-bar {
+	width: 100%;
+	overflow: hidden;
+	padding-block: var(--announcement-bar-padding-y);
+	background: var(--announcement-bar-bg);
+	box-shadow: var(--announcement-bar-shadow);
+}
+
+.dg-announcement-bar__track {
+	display: flex;
+	width: max-content;
+	animation: dg-announcement-bar-scroll var(--announcement-bar-duration) linear infinite;
+	will-change: transform;
+}
+
+/* Pause while the visitor reads / interacts */
+.dg-announcement-bar:hover .dg-announcement-bar__track,
+.dg-announcement-bar:focus-within .dg-announcement-bar__track {
+	animation-play-state: paused;
+}
+
+.dg-announcement-bar__group {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.dg-announcement-bar__item {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--announcement-bar-gap);
+	padding-inline: var(--announcement-bar-item-padding-x);
+	white-space: nowrap;
+}
+
+/* Dot divider between messages (decorative, drawn in CSS) */
+.dg-announcement-bar__item::after {
+	content: "";
+	flex-shrink: 0;
+	width: var(--announcement-bar-separator-size);
+	height: var(--announcement-bar-separator-size);
+	margin-inline-start: var(--announcement-bar-item-padding-x);
+	border-radius: 50%;
+	background: var(--announcement-bar-text);
+	opacity: var(--announcement-bar-separator-opacity);
+}
+
+.dg-announcement-bar__icon {
+	flex-shrink: 0;
+	font-size: var(--announcement-bar-icon-size);
+	color: var(--announcement-bar-icon);
+}
+
+.dg-announcement-bar__text {
+	font-family: var(--announcement-bar-font-family);
+	font-size: var(--announcement-bar-font-size);
+	font-weight: var(--announcement-bar-font-weight);
+	line-height: var(--announcement-bar-line-height);
+	letter-spacing: var(--announcement-bar-letter-spacing);
+	text-transform: uppercase;
+	color: var(--announcement-bar-text);
+}
+
+@keyframes dg-announcement-bar-scroll {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-50%); }
+}
+
+/* Reduced motion — stop the marquee, show the first message only, centered */
+@media (prefers-reduced-motion: reduce) {
+	.dg-announcement-bar__track {
+		width: 100%;
+		justify-content: center;
+		animation: none;
+		will-change: auto;
+	}
+
+	.dg-announcement-bar__group--clone,
+	.dg-announcement-bar__item--secondary,
+	.dg-announcement-bar__item::after {
+		display: none;
+	}
+
+	.dg-announcement-bar__item {
+		white-space: normal;
+		text-align: center;
+	}
+}
+
+/* Auth portal (login / register) is a distraction-free screen — hide the strip
+   together with the rest of the site chrome (see main.css §0 + login.css §0a). */
+body.dg-hide-site-chrome .dg-announcement-bar {
+	display: none;
+}

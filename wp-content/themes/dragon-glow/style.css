@@ -52,6 +52,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --gold-800: #715509;         /* Darker — headings, deep emphasis */
     --gold-900: #5b4300;         /* Darkest — maximum contrast */
     --gold-rgb: 201, 162, 75;    /* RGB of gold-500 for alpha channels */
+    --gold-fixed: #ffe088;       /* Light gold for text/icons on dark-gold (--gold-dark) surfaces */
 
     /* ----- NEW: Warm Gradient Palette (Hero Gradient) ----- */
     --warm-reddish-brown: #a9371e;  /* Warm reddish-brown — gradient start */
@@ -217,6 +218,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --trust-badges-bg: var(--color-surface-container-low); /* Light neutral background (#f7f4ee) */
     --trust-badges-border: rgba(212, 194, 194, 0.1);  /* --neutral-400 at 10% opacity (subtle hairline) */
     --trust-badges-padding-y: 3rem;       /* 48px vertical padding (py-12) */
+    --trust-badges-gap: 2rem;             /* 32px gap between badges (grid layout < 1024px) */
+    --trust-badges-gutter: clamp(1.25rem, 4vw, 4rem); /* Side inset from screen edge: 20px mobile → 64px max */
 
     /* ========== Hero Sticker Badges (Floating Elements) ========== */
     /* Maps to demo sticker colors from Stitch design system */
@@ -1188,6 +1191,26 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --main-dropdown-shadow-focus: 0 2px 8px rgba(115, 92, 0, 0.12);
     
     --main-mobile-toggle-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+
+    /* ========== Announcement Bar (global, above header nav) ========== */
+    /* Component-scoped: thin promo strip. Used ONLY by .dg-announcement-bar in header-nav.css. */
+    /* Dedicated tokens so changing the bar never touches nav / buttons / other pages. */
+    --announcement-bar-bg: var(--gold-dark);                      /* Dark-gold strip */
+    --announcement-bar-text: var(--gold-fixed);                   /* Light-gold label */
+    --announcement-bar-icon: var(--announcement-bar-text);        /* Leading icon of each message */
+    --announcement-bar-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);     /* Barely-there lift */
+    --announcement-bar-padding-y: 0.25rem;                        /* 4px */
+    --announcement-bar-gap: 0.5rem;                               /* Icon ↔ text */
+    --announcement-bar-item-padding-x: 1.5rem;                    /* 24px each side of a message (48px between messages) */
+    --announcement-bar-separator-size: 4px;                       /* Dot between messages */
+    --announcement-bar-separator-opacity: 0.5;                    /* Dot is a quiet divider, not a bullet */
+    --announcement-bar-duration: 60s;                             /* One full loop (right → left). Higher = slower */
+    --announcement-bar-font-family: var(--font-body);
+    --announcement-bar-font-size: 10px;
+    --announcement-bar-font-weight: 700;
+    --announcement-bar-line-height: 1.2;                          /* 12px at 10px */
+    --announcement-bar-letter-spacing: 0.1em;
+    --announcement-bar-icon-size: 14px;
     
     /* ========== WooCommerce Global ========== */
     /* Shared WooCommerce elements across pages */

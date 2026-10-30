@@ -18,6 +18,7 @@
     <?php esc_html_e( 'Skip to content', 'dragon-glow' ); ?>
 </a>
 
+<?php get_template_part( 'template-parts/global/announcement-bar' ); ?>
 <?php get_template_part( 'template-parts/global/header-nav' ); ?>
 
 <main id="main-content">

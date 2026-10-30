@@ -63,8 +63,33 @@
     border-top: 1px solid var(--trust-badges-border);
     border-bottom: 1px solid var(--trust-badges-border);
     padding-top: var(--trust-badges-padding-y);
-    padding-bottom: var(--trust-badges-padding-y);
     margin-bottom: var(--section-spacing-default);
+}
+
+/* Full-bleed row: no max-width, so badges reach the screen gutters.
+   < 1024px: 2-col / 4-col grid (text needs the room to avoid cramped wrapping).
+   >= 1024px: first badge sits on the left gutter, last on the right gutter,
+   the rest are distributed evenly between them. */
+.dg-trust-badges__inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--trust-badges-gap);
+    padding-inline: var(--trust-badges-gutter);
+}
+
+@media (min-width: 768px) {
+    .dg-trust-badges__inner {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .dg-trust-badges__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--trust-badges-gap);
+    }
 }
 
 /* ═══════════════════════════════════════
