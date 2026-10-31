@@ -46,6 +46,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --gold-200: #ffe182;         /* Light — borders, dividers */
     --gold-300: #e8d4a8;         /* Pale — soft highlights */
     --gold-400: #d4af37;         /* Medium-light — borders, icons */
+    --gold-400-rgb: 212, 175, 55; /* RGB of gold-400 for alpha channels */
     --gold-500: #c9a24b;         /* Base gold — primary accent (canonical) */
     --gold-600: #a67c1e;         /* Medium-dark — hover states, emphasis */
     --gold-700: #8c6d23;         /* Dark — strong contrast */
@@ -58,6 +59,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --warm-reddish-brown: #a9371e;  /* Warm reddish-brown — gradient start */
     --warm-coral: #fd7455;          /* Coral/salmon — gradient middle */
     --warm-gold: #d4af37;           /* Gold — gradient end (same as gold-400) */
+    --gold-bright: #f1ca50;         /* Bright gold — eyebrow labels (same value as --color-tertiary-container) */
     
     /* ----- Secondary (Mauve-Slate) ----- */
     --secondary-700: #5c5d6e;    /* Base secondary */
@@ -194,6 +196,14 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--warm-coral), var(--warm-gold));
     --hero-gradient-underline: var(--warm-coral);
 
+    /* Hero headline hover sheen — light band sweeping left → right through the glyphs */
+    /* Scoped to .dg-home-hero__gradient-text (home.css) */
+    --hero-sheen-color: rgba(255, 255, 255, 0.85);          /* Peak of the light band */
+    --hero-sheen-gradient: linear-gradient(105deg, transparent 38%, var(--hero-sheen-color) 50%, transparent 62%);
+    --hero-sheen-size: 300% 100%;                           /* Band starts and ends fully outside the text (no residue at edges) */
+    --hero-sheen-duration: 0.8s;                            /* One full sweep (same for hover-in and hover-out) */
+    --hero-sheen-easing: cubic-bezier(0.45, 0.05, 0.55, 0.95); /* Near-sine in-out: band moves evenly through the glyphs */
+
     /* ========== CTA Button Gradient (Hero Primary) ========== */
     /* Warm luxury gradient: coral → reddish-brown → dark-gold */
     /* Used for primary CTA button in hero section */
@@ -209,14 +219,12 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Semantic tokens for consistent vertical rhythm between page sections */
     /* Default gutter between hero + trust-badges, trust-badges + next section */
     --section-spacing-tight: 0;      /* Sections sát nhau (edge-to-edge) */
-    --section-spacing-default: 2rem; /* Default spacing (32px) between sections */
 
     /* ========== Trust Badges Section (Landing Page) ========== */
     /* Component-scoped: 4-column badge bar showcasing brand values */
     /* Semantic token: maps to surface-container-low for visual harmony */
     /* Isolated to prevent affecting other sections using same surface color */
     --trust-badges-bg: var(--color-surface-container-low); /* Light neutral background (#f7f4ee) */
-    --trust-badges-border: rgba(212, 194, 194, 0.1);  /* --neutral-400 at 10% opacity (subtle hairline) */
     --trust-badges-padding-y: 3rem;       /* 48px vertical padding (py-12) */
     --trust-badges-gap: 2rem;             /* 32px gap between badges (grid layout < 1024px) */
     --trust-badges-gutter: clamp(1.25rem, 4vw, 4rem); /* Side inset from screen edge: 20px mobile → 64px max */
@@ -284,7 +292,7 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --orb-gradient: linear-gradient(to bottom right, var(--orb-gradient-from) 0%, var(--orb-gradient-to) 100%);
     --orb-text-color: #ffffff;                          /* white text (on-primary) */
     --orb-position-bottom: -1.5rem;                     /* distance from bottom (-bottom-6 = -1.5rem) */
-    --orb-position-right: -4.1rem;                      /* shifted right for visual balance (was -right-6 = -1.5rem) */
+    --orb-position-right: -4.375rem;                      /* shifted right for visual balance (was -right-6 = -1.5rem) */
 
     /* ========== Hero Headline Emoji Accent ========== */
     /* Component-scoped: sparkle emoji icon right of "Dragon Glaze" */
@@ -292,6 +300,58 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Increased to 44px (60% of 72px headline) for visual prominence */
     --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
     --emoji-accent-color: #ffd700;                      /* gold shimmer (optional, for filter) */
+
+    /* ========== Home — Hero Responsive (mobile + tablet, < 1024px only) ========== */
+    /* Component-scoped: consumed only by the "HERO — RESPONSIVE" block in home.css. Desktop is untouched. */
+    --hero-title-size-compact: clamp(2rem, 8vw, 3.75rem);       /* 32px (≤400px) → 60px (≥750px); desktop keeps 72px via lg:text-[72px] */
+    --hero-title-line-height-compact: 1.1;                      /* Tight display leading */
+    --hero-emoji-size-compact: 0.85em;                          /* Sparkle scales with the headline instead of fixed 72px */
+    --hero-padding-bottom-compact: 2.5rem;                      /* 40px — breathing room under the product frame (desktop keeps pb-0) */
+    --hero-desc-size-mobile: 1rem;                              /* 16px body copy under 640px (desktop 18px) */
+    --hero-cta-min-height: 2.75rem;                             /* 44px minimum touch target */
+    --hero-badge-radius-mobile: 1.25rem;                        /* Pill softens to a rounded card when it wraps to 2 lines */
+    --hero-stats-gap-mobile: 0.625rem;                          /* 10px column gap — 3 stats share one row */
+    --hero-stat-value-size-mobile: 1.125rem;                    /* 18px stat figures (+98.4%, 72 Hrs) */
+    --hero-stat-value-line-height-mobile: 1.2;                  /* Tight figure leading */
+    --hero-stat-label-size-mobile: clamp(0.625rem, 0.125rem + 2.5vw, 0.6875rem); /* 10px @320px → 11px @≥360px: keeps "Glass Reflection" on one line so both captions wrap to exactly 2 lines */
+    --hero-stat-label-line-height-mobile: 1.35;                 /* Caption leading */
+    --hero-stat-caption-size-mobile: 0.625rem;                  /* 10px rating caption "4.9/5 (18.2K+ …)" */
+    --hero-stat-caption-letter-spacing-mobile: 0.02em;          /* Tighter than label-sm 0.1em so the caption fits the column */
+    --hero-stat-star-size-mobile: 0.8125rem;                    /* 13px rating stars (global 16px) */
+    --hero-sticker-font-size-mobile: 0.5rem;                    /* 8px sticker text (desktop 12px) — small enough for both stickers to share one row at 320px */
+    --hero-sticker-line-height-mobile: 1;                       /* Label box = font size, so sticker height comes from padding only */
+    --hero-sticker-padding-mobile: 0.25rem 0.5rem;              /* 4px / 8px compact sticker padding (half of tablet px-4 py-2) */
+    --hero-sticker-inset-mobile: 0.75rem;                       /* Distance of stickers from the frame edge (half of tablet 24px) */
+    --hero-sticker-1-top-mobile: 0.75rem;                       /* Top-right, mirrors tablet top-6 (24px) at half scale */
+    --hero-sticker-2-top-mobile: 1rem;                          /* Top-left, mirrors tablet top-8 (32px) at half scale */
+    --hero-card-inset-mobile: 0.75rem;                          /* Info card inset from the frame edge */
+    --hero-sticker-rotate-mobile: 6deg;                         /* Same ±6deg tilt as tablet/desktop rotate-6 */
+    --hero-sticker-gap-mobile: 0.25rem;                         /* 4px icon/dot ↔ label gap (desktop gap-2) */
+    --hero-sticker-icon-size-mobile: 0.625rem;                  /* 10px movie icon (desktop 18px) */
+    --hero-sticker-dot-size-mobile: 0.25rem;                    /* 4px pulse dot (desktop 10px) */
+    --hero-sticker-letter-spacing-mobile: 0.04em;               /* Tighter than tracking-widest so the pill stays short */
+    --hero-info-padding-mobile: 0.5rem 0.625rem;                /* Info card padding: 8px / 10px */
+    --hero-info-gap-mobile: 0.5rem;                             /* Gap between text column and price column */
+    --hero-info-icon-size-mobile: 1.75rem;                      /* 28px water-drop badge (global 40px) */
+    --hero-info-icon-glyph-mobile: 0.875rem;                    /* 14px glyph inside the badge */
+    --hero-info-text-line-height-mobile: 1.25;                  /* Title/description may wrap to 2 lines — keep them tight */
+    --hero-info-price-size-mobile: 0.875rem;                    /* 14px price */
+    --hero-info-restock-size-mobile: 0.5rem;                    /* 8px restock caption */
+    /* Hero visual + Glaze Certified orb (mobile < 640px only) */
+    --hero-visual-max-width-mobile: 520px;                      /* Same as the frame's max-w-[520px]; orb is anchored to the frame edge, not the wider column */
+    --hero-frame-margin-top-mobile: 0.5rem;                     /* Was 2rem on top of the 2rem grid gap (double spacing) */
+    --hero-orb-size-mobile: 4.5rem;                             /* 72px (desktop 96px) */
+    --hero-orb-top-mobile: 42%;                                 /* Sits between the stickers and the info card, never over either */
+    --hero-orb-right-mobile: -0.5rem;                           /* Straddles the frame edge; stays inside the 20px page gutter (no horizontal scroll) */
+    --hero-orb-padding-mobile: 0.25rem;                         /* Inner padding so "CERTIFIED" never touches the circle edge */
+    --hero-orb-font-size-mobile: 0.5625rem;                     /* 9px */
+    --hero-orb-letter-spacing-mobile: 0.05em;                   /* Tighter than label-sm's 0.1em so the longest word fits */
+    --hero-info-title-size-mobile: 0.8125rem;                   /* 13px info card title (global 15px) */
+    --hero-info-desc-size-mobile: 0.6875rem;                    /* 11px info card description (global 13px) */
+
+    /* Hero visual + Glaze Certified orb (tablet 640–1023px only) */
+    --hero-visual-max-width-tablet: 520px;                      /* Same as the frame's max-w-[520px]; the column hugs the frame so the orb is anchored to the frame edge, not the wider grid column */
+    --hero-orb-right-tablet: -5.3125rem;                           /* Orb overhangs the frame edge by 24px (desktop -4.1rem was measured from the wider column and left it floating off the frame) */
 
     /* ========== Instagram Reel Product Button (Shoppable Card) ========== */
     /* Component-scoped: product CTA button overlay on reel cards (9/14 aspect ratio) */
@@ -317,6 +377,10 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --instagram-button-motion-duration: 0.15s;                   /* transition-all (fast) */
     --instagram-button-motion-easing: ease-in-out;               /* Material motion curve */
     --instagram-button-hover-lift: 0;                            /* No lift — demo doesn't have translateY */
+    --instagram-button-padding-x-compact: 0.625rem;              /* 10px — 1024–1279px narrow 4-col cards */
+    --instagram-button-gap-compact: 0.375rem;                    /* 6px name ↔ price gap — 1024–1279px */
+    --instagram-button-letter-spacing-compact: 0.05em;           /* Tighter tracking — 1024–1279px */
+    --instagram-reel-overlay-gap: 1.5rem;                        /* 24px quote → button spacing (matches former bottom-20 / bottom-4 offsets) */
 
     /* ========== Instagram Reel Quote Typography ========== */
     /* Component-scoped: quote text overlay (Playfair Display serif) */
@@ -340,10 +404,27 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --instagram-reel-audio-label-color: rgba(255, 255, 255, 0.8); /* text-white/80 */
     --instagram-reel-audio-icon-size: 0.6875rem;                  /* text-[11px] */
 
+    /* ========== Home — Brand Story ========== */
+    /* Component-scoped: used only by .dg-home-story__eyebrow in home.css */
+    --home-story-eyebrow-color: var(--gold-bright);               /* #f1ca50 — "Our Philosophy" label */
+    --home-story-icon-bg: rgba(var(--gold-400-rgb), 0.3);         /* #d4af37 at 30% — shared by all 3 feature icon tiles */
+    --home-story-icon-color: var(--gold-dark);                    /* #735c00 — shared by all 3 feature glyphs */
+
+    /* ========== Home — Testimonials ========== */
+    /* Component-scoped: star size/gap fed into the shared .dg-stars component (color stays --star-color) */
+    --home-testimonial-star-size: 0.875rem;                       /* 14px (was Tailwind text-sm) */
+    --home-testimonial-star-gap: 0.25rem;                         /* 4px (was Tailwind gap-1) */
+
+    /* ========== Instagram Section ========== */
+    /* Component-scoped: used only by .dg-home-instagram in home.css */
+    --instagram-section-padding-top: 3.375rem;                    /* 54px — top spacing of the Instagram Reels section */
+
     /* ========== Instagram Section Header ========== */
     /* Component-scoped: section header colors (eyebrow label + CTA link) */
     /* Brand color: warm reddish-brown accent for Instagram section identity */
     --instagram-header-text-color: rgb(169, 55, 30);              /* #a9371e (warm reddish-brown) */
+    --instagram-header-headline-color: var(--gold-dark);          /* #735c00 — "Featured on Instagram Reels" headline */
+    --instagram-header-eyebrow-color: var(--gold-bright);         /* #f1ca50 — "Curated on Instagram" label + icon */
     --instagram-header-eyebrow-font-size: 0.75rem;               /* text-label-md (12px) */
     --instagram-header-eyebrow-font-weight: 600;                 /* font-semibold */
     --instagram-header-eyebrow-letter-spacing: 0.2em;             /* tracking-[0.2em] */

@@ -51,12 +51,12 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
         <div class="lg:col-span-6 flex flex-col items-start gap-6 z-10">
             
             <!-- Badge Pill -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary-container/30 backdrop-blur-md shadow-sm">
+            <div class="dg-home-hero__badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary-container/30 backdrop-blur-md shadow-sm">
                 <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-secondary animate-ping"></span>
                 <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-tertiary-container font-semibold">
                     <?php echo esc_html( $badge_text ); ?>
                 </span>
-                <span class="text-tertiary">•</span>
+                <span class="dg-home-hero__badge-sep text-tertiary">•</span>
                 <span class="font-label-sm text-label-sm text-on-tertiary-container font-medium">
                     <?php echo esc_html( $badge_sub ); ?>
                 </span>
@@ -64,7 +64,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
 
             <!-- Gradient Headline with SVG Underline -->
             <div class="space-y-2">
-                <h1 class="font-display-xl text-display-xl lg:text-[72px] lg:leading-[80px] text-on-surface tracking-tight">
+                <h1 class="dg-home-hero__title font-display-xl text-display-xl lg:text-[72px] lg:leading-[80px] text-on-surface tracking-tight">
                     <?php 
                     // Parse title and wrap highlight in gradient span
                     $title_parts = str_replace( $hero_title_highlight, '[HIGHLIGHT]' . $hero_title_highlight . '[/HIGHLIGHT]', $hero_title );
@@ -91,7 +91,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
             </div>
 
             <!-- Description -->
-            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed">
+            <p class="dg-home-hero__desc font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed">
                 <?php echo esc_html( $hero_sub ); ?>
             </p>
 
@@ -103,35 +103,33 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
                     <span class="material-symbols-outlined text-[18px] flex-shrink-0"><?php echo esc_attr( $cta1_icon ); ?></span>
                 </a>
                 <a href="<?php echo esc_url( $cta2_url ); ?>" 
-                   class="w-full sm:w-auto px-5 py-3 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-surface-container-low shadow-sm hover:scale-105 active:scale-95 transition-all text-center inline-flex items-center justify-center gap-2">
+                   class="dg-home-hero__cta-secondary w-full sm:w-auto px-5 py-3 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-surface-container-low shadow-sm hover:scale-105 active:scale-95 transition-all text-center inline-flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-secondary text-[18px] flex-shrink-0"><?php echo esc_attr( $cta2_icon ); ?></span>
                     <span><?php echo esc_html( $cta2_text ); ?></span>
                 </a>
             </div>
 
             <!-- Proof Stats Row -->
-            <div class="pt-6 w-full flex items-center gap-6 sm:gap-10">
-                <div class="flex flex-col">
-                    <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">
+            <div class="dg-home-hero__stats pt-6 w-full flex items-center gap-6 sm:gap-10">
+                <div class="dg-home-hero__stat flex flex-col">
+                    <span class="dg-home-hero__stat-value font-headline-sm text-headline-sm text-on-surface tracking-tight">
                         <?php echo esc_html( $stat1_value ); ?>
                     </span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">
+                    <span class="dg-home-hero__stat-label font-body-sm text-body-sm text-on-surface-variant">
                         <?php echo esc_html( $stat1_label ); ?>
                     </span>
                 </div>
-                <div class="w-px h-10 bg-outline-variant/50"></div>
-                <div class="flex flex-col">
-                    <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">
+                <div class="dg-home-hero__stat flex flex-col">
+                    <span class="dg-home-hero__stat-value font-headline-sm text-headline-sm text-on-surface tracking-tight">
                         <?php echo esc_html( $stat2_value ); ?>
                     </span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">
+                    <span class="dg-home-hero__stat-label font-body-sm text-body-sm text-on-surface-variant">
                         <?php echo esc_html( $stat2_label ); ?>
                     </span>
                 </div>
-                <div class="w-px h-10 bg-outline-variant/50"></div>
-                <div class="flex flex-col">
+                <div class="dg-home-hero__stat dg-home-hero__stat--rating flex flex-col">
                     <?php dg_star_rating( 4.9, 18200 ); /* Proof stat: 4.9/5 stars, 18.2K+ reviews */ ?>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                    <span class="dg-home-hero__stat-caption font-label-sm text-label-sm text-on-surface-variant mt-0.5">
                         <?php echo esc_html( __( '4.9/5 (18.2K+ Glaze Addicts)', 'dragon-glow' ) ); ?>
                     </span>
                 </div>
@@ -139,7 +137,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
         </div>
 
         <!-- Right Column: Product Frame with Floating Elements -->
-        <div class="lg:col-span-6 relative flex justify-center items-center">
+        <div class="dg-home-hero__visual lg:col-span-6 relative flex justify-center items-center">
             <!-- Main Hero Product Frame -->
             <div class="dg-home-hero__product-frame relative w-full max-w-[520px] aspect-[4/5] rounded-[2.5rem] p-3 bg-gradient-to-tr from-surface-container-lowest via-surface-container-low to-surface-container-lowest shadow-2xl overflow-hidden group">
                 
@@ -173,11 +171,11 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
 
                 <!-- Floating Card: Product Info (Bottom) -->
                 <div class="dg-home-hero__info-card absolute bottom-6 left-6 right-6 rounded-2xl backdrop-blur-xl shadow-xl flex items-center justify-between">
-                    <div class="flex items-center">
+                    <div class="dg-home-hero__info-main flex items-center">
                         <div class="dg-badge-vibrant rounded-xl p-0.5 flex items-center justify-center">
                             <span class="material-symbols-outlined text-[20px]">water_drop</span>
                         </div>
-                        <div style="margin-left: var(--info-card-gap);">
+                        <div class="dg-home-hero__info-text" style="margin-left: var(--info-card-gap);">
                             <h4 class="font-semibold">
                                 <?php echo esc_html( $product_title ); ?>
                             </h4>
@@ -186,7 +184,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
                             </p>
                         </div>
                     </div>
-                    <div class="flex flex-col items-end">
+                    <div class="dg-home-hero__info-meta flex flex-col items-end">
                         <span class="dg-info-card-price font-label-lg text-label-lg font-bold">
                             <?php echo esc_html( $product_price ); ?>
                         </span>

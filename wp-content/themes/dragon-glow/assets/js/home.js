@@ -24,11 +24,15 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 
 	/**
 	 * Initialize hero image hover animations
-	 * Triggers on mouseenter/mouseleave of .dg-home-hero__product-frame
+	 * Animates .dg-home-hero__product-frame, triggered by mouseenter/mouseleave
+	 * of the whole .dg-home-hero__visual column so it runs together with the
+	 * CSS sticker hover effects.
 	 */
 	function initHeroImageHover() {
 		const productFrame = document.querySelector('.dg-home-hero__product-frame');
 		if (!productFrame) return;
+
+		const trigger = productFrame.closest('.dg-home-hero__visual') || productFrame;
 
 		const image = productFrame.querySelector('[data-hero-img]');
 		const overlay = productFrame; // ::after pseudo-element on frame
@@ -37,7 +41,7 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 		/**
 		 * On mouseenter: scale up image + intensify shadow + add overlay tint
 		 */
-		productFrame.addEventListener('mouseenter', () => {
+		trigger.addEventListener('mouseenter', () => {
 			if (prefersReduced) {
 				// Instant state: add hover class, no animation
 				productFrame.classList.add('is-hover');
@@ -78,7 +82,7 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 		/**
 		 * On mouseleave: scale back down + reduce shadow + remove overlay
 		 */
-		productFrame.addEventListener('mouseleave', () => {
+		trigger.addEventListener('mouseleave', () => {
 			if (prefersReduced) {
 				// Instant state: remove hover class
 				productFrame.classList.remove('is-hover');

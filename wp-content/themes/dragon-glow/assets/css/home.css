@@ -60,10 +60,7 @@
 
 .dg-trust-badges {
     background-color: var(--trust-badges-bg);
-    border-top: 1px solid var(--trust-badges-border);
-    border-bottom: 1px solid var(--trust-badges-border);
     padding-top: var(--trust-badges-padding-y);
-    margin-bottom: var(--section-spacing-default);
 }
 
 /* Full-bleed row: no max-width, so badges reach the screen gutters.
@@ -124,9 +121,38 @@
    ═══════════════════════════════════════ */
 
 .dg-home-hero__gradient-text {
-    background-image: var(--hero-gradient);
-    background-size: 100% 100%;
-    background-position: left center;
+    /* Layer 1 = light band (sheen), layer 2 = warm gradient. Both are clipped
+       to the glyphs by Tailwind's `bg-clip-text` on the element. */
+    background-image: var(--hero-sheen-gradient), var(--hero-gradient);
+    background-repeat: no-repeat;
+    background-size: var(--hero-sheen-size), 100% 100%;
+    /* Resting state: band parked off the left edge of the text. */
+    background-position: 100% 0, left center;
+    /* Declared on the base state so it applies in BOTH directions:
+       hover-in sweeps left → right, hover-out sweeps back right → left.
+       Releasing mid-sweep reverses from the current position (no jump). */
+    transition: background-position var(--hero-sheen-duration) var(--hero-sheen-easing);
+}
+
+/* Hover: band glides left → right and exits past the right edge.
+   The trigger is the shared wrapper (text + emoji), so hovering either one
+   plays the text sheen and the emoji accent at the same time.
+   Gated to real hover devices so touch screens never get a stuck sheen. */
+@media (hover: hover) {
+    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text {
+        background-position: 0 0, left center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-home-hero__gradient-text {
+        /* No motion: keep the static warm gradient, skip the sweep. */
+        transition: none;
+    }
+
+    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text {
+        background-position: 100% 0, left center;
+    }
 }
 
 /* Underline SVG — scales with text */
@@ -225,9 +251,11 @@
     color: var(--hero-sticker-2-text);
 }
 
-/* Hover state for stickers (only on devices with hover) */
+/* Hover state for stickers (only on devices with hover).
+   Triggered by the whole visual column, so hovering the product frame, a
+   sticker or the orb plays every hover effect (image zoom + stickers) together. */
 @media (hover: hover) {
-    .dg-home-hero__sticker:hover {
+    .dg-home-hero__visual:hover .dg-home-hero__sticker {
         transform: rotate(0deg) scale(1.05);
     }
 }
@@ -313,11 +341,6 @@
     .dg-home-hero a[class*="gradient-to-r"]:hover {
         box-shadow: 0 12px 32px -4px rgba(255, 117, 86, 0.45);
     }
-}
-
-/* Stats row divider */
-.dg-home-hero .w-px {
-    background: linear-gradient(to bottom, rgba(127, 118, 99, 0.2), rgba(127, 118, 99, 0));
 }
 
 /* Scroll animations (if needed) */
@@ -589,6 +612,20 @@
     width: min(80%, var(--home-story-frame-max));
 }
 
+/* Brand Story — Eyebrow Label ("Our Philosophy") */
+.dg-home-story__eyebrow {
+    color: var(--home-story-eyebrow-color);
+}
+
+/* Brand Story — Feature icon tile + glyph (same colors for all three features) */
+.dg-home-story__icon {
+    background-color: var(--home-story-icon-bg);
+}
+
+.dg-home-story__icon-glyph {
+    color: var(--home-story-icon-color);
+}
+
 /* ═══════════════════════════════════════
    7. TESTIMONIALS
    One column up to 1023px (capped for line length), three from 1024px.
@@ -607,6 +644,13 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         max-width: none;
     }
+}
+
+/* Testimonial star rating — reuses .dg-stars (main.css) for color + FILL axis;
+   only size and gap are overridden here via the component's own variables. */
+.dg-home-testimonial__stars {
+    --star-size: var(--home-testimonial-star-size);
+    --star-gap: var(--home-testimonial-star-gap);
 }
 
 .dg-home-testimonial {
@@ -649,7 +693,8 @@
         transition: none;
     }
 
-    .dg-home-hero__sticker {
+    .dg-home-hero__sticker,
+    .dg-home-hero__visual:hover .dg-home-hero__sticker {
         /* Disable hover scale animation for users who prefer reduced motion */
         transform: none;
         transition: none;
@@ -787,14 +832,275 @@
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.dg-hero-emoji-accent:hover {
-    transform: rotate(12deg) scale(1.15);
+/* Triggered by the wrapper so it fires together with the text sheen. */
+@media (hover: hover) {
+    .dg-home-hero__gradient-text-wrapper:hover .dg-hero-emoji-accent {
+        transform: rotate(12deg) scale(1.15);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-hero-emoji-accent {
+        transition: none;
+    }
+
+    .dg-home-hero__gradient-text-wrapper:hover .dg-hero-emoji-accent {
+        transform: none;
+    }
+}
+
+/* ═══════════════════════════════════════
+   HERO — RESPONSIVE (mobile + tablet only)
+   Everything below sits inside max-width media queries, so the desktop
+   layout (>= 1024px) is untouched. Selectors use `.dg-home-hero .dg-*` (two
+   classes) so they beat the Tailwind CDN utilities, which are injected at
+   runtime after this file (see CLAUDE.md §8b).
+   ═══════════════════════════════════════ */
+
+/* Mobile + tablet (< 1024px): headline, emoji, description, bottom spacing */
+@media (max-width: 1023px) {
+    /* Two classes: must beat the template's Tailwind `pb-0` utility */
+    .dg-home-hero-wrapper .dg-home-hero {
+        padding-bottom: var(--hero-padding-bottom-compact);
+    }
+
+    /* `text-display-xl` is not defined in the Tailwind config, so without this
+       the headline falls back to the browser default and looks tiny. */
+    .dg-home-hero .dg-home-hero__title {
+        font-size: var(--hero-title-size-compact);
+        line-height: var(--hero-title-line-height-compact);
+    }
+
+    .dg-home-hero .dg-hero-emoji-accent {
+        font-size: var(--hero-emoji-size-compact);
+    }
+
+    .dg-home-hero .dg-home-hero__cta-primary,
+    .dg-home-hero .dg-home-hero__cta-secondary {
+        min-height: var(--hero-cta-min-height);
+    }
+}
+
+/* Mobile (< 640px): badge, description, stats grid, stickers, info card */
+@media (max-width: 639px) {
+    .dg-home-hero .dg-home-hero__badge {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: fit-content;
+        max-width: 100%;
+        row-gap: 0.25rem;
+        border-radius: var(--hero-badge-radius-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__badge-sep {
+        display: none;
+    }
+
+    .dg-home-hero .dg-home-hero__desc {
+        font-size: var(--hero-desc-size-mobile);
+    }
+
+    /* Stats: one compact row — 3 shrinkable columns.
+       `min-width: 0` lets captions wrap inside their column instead of
+       pushing the row wider than the viewport. */
+    .dg-home-hero .dg-home-hero__stats {
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: var(--hero-stats-gap-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__stat {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .dg-home-hero .dg-home-hero__stat-value {
+        font-size: var(--hero-stat-value-size-mobile);
+        line-height: var(--hero-stat-value-line-height-mobile);
+        white-space: nowrap;
+    }
+
+    .dg-home-hero .dg-home-hero__stat-label {
+        font-size: var(--hero-stat-label-size-mobile);
+        line-height: var(--hero-stat-label-line-height-mobile);
+    }
+
+    /* Rating column: smaller stars; raw review count is dropped because the
+       caption below already states it ("18.2K+"). */
+    .dg-home-hero .dg-home-hero__stat--rating .dg-stars {
+        --star-size: var(--hero-stat-star-size-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__stat--rating .dg-star-half {
+        font-size: var(--hero-stat-star-size-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__stat--rating .dg-stars__count {
+        display: none;
+    }
+
+    .dg-home-hero .dg-home-hero__stat-caption {
+        font-size: var(--hero-stat-caption-size-mobile);
+        line-height: var(--hero-stat-label-line-height-mobile);
+        letter-spacing: var(--hero-stat-caption-letter-spacing-mobile);
+    }
+
+    /* Stickers: compact, single line, same row/tilt as tablet (sticker 2 top-left, sticker 1 top-right) */
+    .dg-home-hero .dg-home-hero__sticker {
+        padding: var(--hero-sticker-padding-mobile);
+        gap: var(--hero-sticker-gap-mobile);
+        white-space: nowrap;
+    }
+
+    .dg-home-hero .dg-home-hero__sticker span:not(.material-symbols-outlined) {
+        font-size: var(--hero-sticker-font-size-mobile);
+        line-height: var(--hero-sticker-line-height-mobile);
+        letter-spacing: var(--hero-sticker-letter-spacing-mobile);
+    }
+
+    /* Tilt is driven by Tailwind's `rotate-6` / `-rotate-6` through --tw-rotate */
+    .dg-home-hero .dg-home-hero__sticker--1 {
+        top: var(--hero-sticker-1-top-mobile);
+        right: var(--hero-sticker-inset-mobile);
+        --tw-rotate: var(--hero-sticker-rotate-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__sticker--2 {
+        top: var(--hero-sticker-2-top-mobile);
+        left: var(--hero-sticker-inset-mobile);
+        --tw-rotate: calc(var(--hero-sticker-rotate-mobile) * -1);
+    }
+
+    .dg-home-hero .dg-home-hero__sticker--1 .w-2\.5 {
+        width: var(--hero-sticker-dot-size-mobile);
+        height: var(--hero-sticker-dot-size-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__sticker--2 .material-symbols-outlined {
+        font-size: var(--hero-sticker-icon-size-mobile);
+        line-height: var(--hero-sticker-line-height-mobile);
+    }
+
+    /* Info card: compact, smaller type so the full text always shows (no
+       ellipsis). Title/description may wrap; the price column stays narrow. */
+    .dg-home-hero .dg-home-hero__info-card {
+        bottom: var(--hero-card-inset-mobile);
+        left: var(--hero-card-inset-mobile);
+        right: var(--hero-card-inset-mobile);
+        padding: var(--hero-info-padding-mobile);
+        gap: var(--hero-info-gap-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__info-main,
+    .dg-home-hero .dg-home-hero__info-text {
+        min-width: 0;
+    }
+
+    .dg-home-hero .dg-home-hero__info-main {
+        flex: 1 1 auto;
+    }
+
+    .dg-home-hero .dg-badge-vibrant {
+        width: var(--hero-info-icon-size-mobile);
+        height: var(--hero-info-icon-size-mobile);
+    }
+
+    .dg-home-hero .dg-badge-vibrant .material-symbols-outlined {
+        font-size: var(--hero-info-icon-glyph-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__info-meta {
+        flex-shrink: 0;
+        text-align: right;
+    }
+
+    .dg-home-hero .dg-info-card-price {
+        font-size: var(--hero-info-price-size-mobile);
+        line-height: 1.2;
+    }
+
+    .dg-home-hero .dg-info-card-restock {
+        /* min-content = width of the longest word, so "Restocked 4h ago"
+           breaks into 2 short lines and never overflows its column. */
+        width: min-content;
+        font-size: var(--hero-info-restock-size-mobile);
+        line-height: 1.2;
+    }
+
+    /* `!important` is required here only to beat the global `!important`
+       font-size / line-height rules on `.dg-home-hero__info-card h4 / p` (section above). */
+    .dg-home-hero .dg-home-hero__info-card h4 {
+        font-size: var(--hero-info-title-size-mobile) !important;
+        line-height: var(--hero-info-text-line-height-mobile) !important;
+        margin: 0;
+    }
+
+    .dg-home-hero .dg-home-hero__info-card p {
+        font-size: var(--hero-info-desc-size-mobile) !important;
+        line-height: var(--hero-info-text-line-height-mobile) !important;
+    }
+
+    /* Visual column: capped to the frame width and centred, so the orb is
+       anchored to the frame edge instead of the (wider) grid column. */
+    .dg-home-hero .dg-home-hero__visual {
+        width: 100%;
+        max-width: var(--hero-visual-max-width-mobile);
+        margin-inline: auto;
+    }
+
+    .dg-home-hero .dg-home-hero__product-frame {
+        margin-top: var(--hero-frame-margin-top-mobile);
+    }
+
+    /* Glaze Certified orb.
+       The legacy `.dg-home-hero__orb { display: none }` (< 1024px) is overridden
+       by Tailwind's `.flex`, which loads later, so the orb was always visible and
+       pushed 4.1rem past the viewport. Here it is sized down and kept in bounds. */
+    .dg-home-hero .dg-home-hero__orb {
+        display: flex;
+        top: var(--hero-orb-top-mobile);
+        right: var(--hero-orb-right-mobile);
+        bottom: auto;
+        width: var(--hero-orb-size-mobile);
+        height: var(--hero-orb-size-mobile);
+        padding: var(--hero-orb-padding-mobile);
+    }
+
+    .dg-home-hero .dg-glaze-orb-text {
+        font-size: var(--hero-orb-font-size-mobile);
+        letter-spacing: var(--hero-orb-letter-spacing-mobile);
+        line-height: 1.2;
+    }
+}
+
+/* Tablet (640–1023px): Glaze Certified orb pulled left onto the frame edge.
+   The visual column is wider than the 520px frame here, so the desktop
+   `right: -4.1rem` (measured from the column) left the orb floating beside the
+   frame and past the viewport edge. Capping the column to the frame width makes
+   `right` relative to the frame, exactly like the mobile block above.
+   Mobile (< 640px) and desktop (>= 1024px) are untouched. */
+@media (min-width: 640px) and (max-width: 1023px) {
+    .dg-home-hero .dg-home-hero__visual {
+        width: 100%;
+        max-width: var(--hero-visual-max-width-tablet);
+        margin-inline: auto;
+    }
+
+    .dg-home-hero .dg-home-hero__orb {
+        right: var(--hero-orb-right-tablet);
+    }
 }
 
 /* ═══════════════════════════════════════
    8. INSTAGRAM REELS SECTION
    Shoppable reel cards with gradient overlay, creator info, quote, product CTA.
    ═══════════════════════════════════════ */
+
+/* Section wrapper — top spacing (bottom spacing stays on Tailwind pb-16 / lg:pb-24 in the template) */
+.dg-home-instagram {
+    padding-top: var(--instagram-section-padding-top);
+}
 
 /* Reel Card Base */
 .dg-home-instagram-reel {
@@ -867,15 +1173,33 @@
     outline-offset: 2px;
 }
 
-/* Product Name — Truncate (inherit button color) */
+/* Bottom overlay — quote block + product button in one flex column, so a
+   wrapped (taller) button pushes the quote up instead of overlapping it. */
+.dg-home-instagram-reel__overlay {
+    display: flex;
+    flex-direction: column;
+    gap: var(--instagram-reel-overlay-gap);
+}
+
+/* Product Name — single line, never truncated (inherit button color).
+   Fits because the data file supplies a short `product_label` per reel. */
 .dg-home-instagram-reel__product-button .product-name {
     flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
     text-align: left;
     font-weight: var(--instagram-button-font-weight-name);
     /* color: inherit from button (text-primary) */
+}
+
+/* 1024–1279px: 4 columns but narrowest cards (~206px) — tighten the button
+   so labels like "Radiance Serum" stay on one line next to the price. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+    .dg-home-instagram-reel__product-button {
+        padding-left: var(--instagram-button-padding-x-compact);
+        padding-right: var(--instagram-button-padding-x-compact);
+        gap: var(--instagram-button-gap-compact);
+        letter-spacing: var(--instagram-button-letter-spacing-compact);
+    }
 }
 
 /* Price & CTA — Secondary Color (Bold) */
@@ -919,12 +1243,17 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--instagram-header-text-color);
+    color: var(--instagram-header-eyebrow-color);
     font-size: var(--instagram-header-eyebrow-font-size);
     font-weight: var(--instagram-header-eyebrow-font-weight);
     letter-spacing: var(--instagram-header-eyebrow-letter-spacing);
     text-transform: uppercase;
     margin-bottom: 0.5rem;
+}
+
+/* Instagram Section Header — Headline */
+.dg-home-instagram-header__headline {
+    color: var(--instagram-header-headline-color);
 }
 
 /* Instagram Section Header — CTA Link */

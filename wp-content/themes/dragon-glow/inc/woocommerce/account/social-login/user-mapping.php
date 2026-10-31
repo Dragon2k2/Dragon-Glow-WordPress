@@ -153,7 +153,7 @@ function dg_social_login_fail( string $message ): void {
 	if ( function_exists( 'wc_add_notice' ) ) {
 		wc_add_notice( $message, 'error' );
 	}
-	wp_safe_redirect( dg_account_endpoint_url( '' ) );
+	wp_safe_redirect( dg_login_url() );
 	exit;
 }
 

@@ -77,7 +77,7 @@ function dg_star_rating( float $rating = 5.0, int $count = 0, string $extra_clas
 			<?php endif; ?>
 		<?php endfor; ?>
 		<?php if ( $count ) : ?>
-			<span class="text-[12px] text-on-surface-variant ml-1">(<?php echo esc_html( $count ); ?>)</span>
+			<span class="dg-stars__count text-[12px] text-on-surface-variant ml-1">(<?php echo esc_html( $count ); ?>)</span>
 		<?php endif; ?>
 	</div>
 	<?php

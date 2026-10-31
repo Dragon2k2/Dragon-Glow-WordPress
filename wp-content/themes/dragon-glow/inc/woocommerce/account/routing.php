@@ -109,9 +109,11 @@ function dg_account_safe_redirect_target(): string {
 	// session expired, so redirect back there after re-auth is correct UX).
 	$account_base = untrailingslashit( dg_account_endpoint_url( '' ) );
 	$register_url = untrailingslashit( dg_account_endpoint_url( 'register' ) );
+	$register_new = untrailingslashit( dg_register_url() );
+	$login_url    = untrailingslashit( dg_login_url() );
 	$target_clean = untrailingslashit( $target );
 
-	if ( $target_clean === $account_base || $target_clean === $register_url ) {
+	if ( $target_clean === $account_base || $target_clean === $register_url || $target_clean === $register_new || $target_clean === $login_url ) {
 		return $fallback;
 	}
 
@@ -136,10 +138,18 @@ function dg_auth_gate_url_with_return( string $endpoint = '', string $current_ur
 		$current_url = home_url( add_query_arg( null, null ) );
 	}
 
-	$base = dg_account_endpoint_url( $endpoint );
+	if ( '' === $endpoint ) {
+		$base = dg_login_url();
+	} elseif ( 'register' === $endpoint ) {
+		$base = dg_register_url();
+	} else {
+		$base = dg_account_endpoint_url( $endpoint );
+	}
 
 	// Don't add redirect_to if we're already pointing back at the auth gate.
-	if ( '' === $current_url || untrailingslashit( $current_url ) === untrailingslashit( dg_account_endpoint_url( '' ) ) ) {
+	if ( '' === $current_url
+		|| untrailingslashit( $current_url ) === untrailingslashit( dg_account_endpoint_url( '' ) )
+		|| untrailingslashit( $current_url ) === untrailingslashit( dg_login_url() ) ) {
 		return $base;
 	}
 

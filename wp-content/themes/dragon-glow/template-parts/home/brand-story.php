@@ -27,14 +27,14 @@ $brand_image = get_theme_file_uri( 'assets/images/home/brand-image.webp' );
 
         <!-- Content -->
         <div class="reveal">
-            <span class="font-label-sm text-label-sm text-tertiary tracking-[0.2em] uppercase mb-4 block"><?php esc_html_e( 'Our Philosophy', 'dragon-glow' ); ?></span>
+            <span class="dg-home-story__eyebrow font-label-sm text-label-sm tracking-[0.2em] uppercase mb-4 block"><?php esc_html_e( 'Our Philosophy', 'dragon-glow' ); ?></span>
             <h2 class="font-headline text-headline-lg text-primary mb-8"><?php esc_html_e( 'Why Dragon Glow', 'dragon-glow' ); ?></h2>
 
             <div class="space-y-8">
                 <!-- Feature 1 -->
                 <div class="flex gap-6">
-                    <div class="bg-primary-container/30 p-4 rounded-2xl h-fit flex-shrink-0">
-                        <span class="material-symbols-outlined text-primary text-3xl">science</span>
+                    <div class="dg-home-story__icon p-4 rounded-2xl h-fit flex-shrink-0">
+                        <span class="dg-home-story__icon-glyph material-symbols-outlined text-3xl">science</span>
                     </div>
                     <div>
                         <h4 class="font-bold text-xl mb-2"><?php esc_html_e( 'Scientific Efficacy', 'dragon-glow' ); ?></h4>
@@ -44,8 +44,8 @@ $brand_image = get_theme_file_uri( 'assets/images/home/brand-image.webp' );
 
                 <!-- Feature 2 -->
                 <div class="flex gap-6">
-                    <div class="bg-secondary-container/30 p-4 rounded-2xl h-fit flex-shrink-0">
-                        <span class="material-symbols-outlined text-secondary text-3xl">psychology_alt</span>
+                    <div class="dg-home-story__icon p-4 rounded-2xl h-fit flex-shrink-0">
+                        <span class="dg-home-story__icon-glyph material-symbols-outlined text-3xl">psychology_alt</span>
                     </div>
                     <div>
                         <h4 class="font-bold text-xl mb-2"><?php esc_html_e( 'Ritualistic Care', 'dragon-glow' ); ?></h4>
@@ -55,8 +55,8 @@ $brand_image = get_theme_file_uri( 'assets/images/home/brand-image.webp' );
 
                 <!-- Feature 3 -->
                 <div class="flex gap-6">
-                    <div class="bg-tertiary-container/30 p-4 rounded-2xl h-fit flex-shrink-0">
-                        <span class="material-symbols-outlined text-tertiary text-3xl">self_improvement</span>
+                    <div class="dg-home-story__icon p-4 rounded-2xl h-fit flex-shrink-0">
+                        <span class="dg-home-story__icon-glyph material-symbols-outlined text-3xl">self_improvement</span>
                     </div>
                     <div>
                         <h4 class="font-bold text-xl mb-2"><?php esc_html_e( 'Clean Conscience', 'dragon-glow' ); ?></h4>

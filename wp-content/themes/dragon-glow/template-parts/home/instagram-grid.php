@@ -17,7 +17,7 @@ $header = dg_instagram_reels_header_data();
 $reels  = dg_instagram_reels_cards_data();
 ?>
 
-<section class="w-full bg-surface-container-low py-16 lg:py-24">
+<section class="dg-home-instagram w-full bg-surface-container-low pb-16 lg:pb-24">
 	<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
 		
 		<!-- Header with Hashtag and Feed Link -->
@@ -27,7 +27,7 @@ $reels  = dg_instagram_reels_cards_data();
 					<span class="material-symbols-outlined text-sm">photo_camera</span>
 					<span><?php echo esc_html( $header['eyebrow'] ); ?></span>
 				</div>
-				<h2 class="font-headline-lg text-headline-lg text-on-surface font-medium">
+				<h2 class="dg-home-instagram-header__headline font-headline-lg text-headline-lg font-medium">
 					<?php echo esc_html( $header['headline'] ); ?>
 				</h2>
 				<p class="font-body-md text-body-md text-on-surface-variant mt-1">
@@ -67,30 +67,31 @@ $reels  = dg_instagram_reels_cards_data();
 						<span class="material-symbols-outlined text-[18px]">play_arrow</span>
 					</div>
 					
-					<!-- Creator Info + Quote (bottom-middle) -->
-					<div class="absolute bottom-20 left-4 right-4">
-						<div class="flex items-center gap-1.5">
-							<span class="font-label-sm text-[11px] text-primary-fixed uppercase tracking-wider font-semibold">
-								<?php echo esc_html( $reel['creator'] ); ?>
-							</span>
-							<span class="text-[10px] text-white/70">•</span>
-							<span class="dg-home-instagram-reel__audio-label">
-								<span class="material-symbols-outlined audio-icon">graphic_eq</span>
-								<?php echo esc_html( $reel['audio'] ); ?>
-							</span>
+					<!-- Bottom overlay: creator info + quote stacked above the product button,
+					     so a wrapped (taller) product name pushes the quote up instead of overlapping it. -->
+					<div class="dg-home-instagram-reel__overlay absolute bottom-4 left-4 right-4">
+						<div>
+							<div class="flex items-center gap-1.5">
+								<span class="font-label-sm text-[11px] text-primary-fixed uppercase tracking-wider font-semibold">
+									<?php echo esc_html( $reel['creator'] ); ?>
+								</span>
+								<span class="text-[10px] text-white/70">•</span>
+								<span class="dg-home-instagram-reel__audio-label">
+									<span class="material-symbols-outlined audio-icon">graphic_eq</span>
+									<?php echo esc_html( $reel['audio'] ); ?>
+								</span>
+							</div>
+							<p class="dg-home-instagram-reel__quote">
+								<?php echo esc_html( $reel['quote'] ); ?>
+							</p>
 						</div>
-						<p class="dg-home-instagram-reel__quote">
-							<?php echo esc_html( $reel['quote'] ); ?>
-						</p>
+
+						<!-- Product Button Link -->
+						<a href="<?php echo esc_url( $reel['product_url'] ); ?>" class="dg-home-instagram-reel__product-button" title="<?php echo esc_attr( $reel['product_name'] ); ?>">
+							<span class="product-name"><?php echo esc_html( $reel['product_label'] ); ?></span>
+							<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?></span>
+						</a>
 					</div>
-					
-				<!-- Product Button Link (bottom) -->
-				<div class="absolute bottom-4 left-4 right-4">
-					<a href="<?php echo esc_url( $reel['product_url'] ); ?>" class="dg-home-instagram-reel__product-button" title="<?php echo esc_attr( $reel['product_name'] ); ?>">
-						<span class="product-name"><?php echo esc_html( $reel['product_name'] ); ?></span>
-						<span class="product-price"><?php echo esc_html( $reel['product_price'] ); ?></span>
-					</a>
-				</div>
 				</div>
 			</div>
 			<?php endforeach; ?>

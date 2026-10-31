@@ -234,7 +234,7 @@ function dg_render_account_register_page(): void {
 							</div>
 
 							<!-- Registration form -->
-							<form method="post" class="dg-register-form" action="<?php echo esc_url( dg_account_endpoint_url( 'register' ) ); ?>" novalidate>
+							<form method="post" class="dg-register-form" action="<?php echo esc_url( dg_register_url() ); ?>" novalidate>
 
 								<?php do_action( 'woocommerce_register_form_start' ); ?>
 
@@ -477,7 +477,7 @@ function dg_render_account_register_page(): void {
 						<!-- Existing member sign-in prompt -->
 						<p class="dg-register-form__signin-prompt">
 							<?php esc_html_e( 'Already have an account?', 'dragon-glow' ); ?>
-							<a href="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" class="dg-register-form__signin-link">
+							<a href="<?php echo esc_url( dg_login_url() ); ?>" class="dg-register-form__signin-link">
 								<?php esc_html_e( 'Sign In', 'dragon-glow' ); ?>
 							</a>
 						</p>

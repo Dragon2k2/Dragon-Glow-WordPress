@@ -103,11 +103,11 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 		<?php else : ?>
 		<!-- Auth Buttons: Log In / Sign Up (visible on all breakpoints when logged out) -->
 		<div class="dg-nav-auth-group">
-			<a href="<?php echo esc_url( home_url( '/my-account/' ) ); ?>"
+			<a href="<?php echo esc_url( dg_login_url() ); ?>"
 			   class="dg-nav-auth-btn dg-nav-auth-btn--login">
 				<?php esc_html_e( 'Log in', 'dragon-glow' ); ?>
 			</a>
-			<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"
+			<a href="<?php echo esc_url( dg_register_url() ); ?>"
 			   class="dg-nav-auth-btn dg-nav-auth-btn--signup">
 				<?php esc_html_e( 'Sign up', 'dragon-glow' ); ?>
 			</a>
@@ -164,12 +164,12 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 	<?php else : ?>
 	<!-- Auth Buttons: Log In / Sign Up — Logged-Out Users Only -->
 	<div class="dg-mobile-menu__auth-group">
-		<a href="<?php echo esc_url( home_url( '/my-account/' ) ); ?>"
+		<a href="<?php echo esc_url( dg_login_url() ); ?>"
 		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--login">
 			<span class="material-symbols-outlined">login</span>
 			<span class="font-body text-body-md"><?php esc_html_e( 'Log in', 'dragon-glow' ); ?></span>
 		</a>
-		<a href="<?php echo esc_url( home_url( '/my-account/register/' ) ); ?>"
+		<a href="<?php echo esc_url( dg_register_url() ); ?>"
 		   class="dg-mobile-menu__auth-btn dg-mobile-menu__auth-btn--signup">
 			<span class="material-symbols-outlined">person_add</span>
 			<span class="font-body text-body-md"><?php esc_html_e( 'Sign up', 'dragon-glow' ); ?></span>

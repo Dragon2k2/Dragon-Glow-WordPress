@@ -11,8 +11,12 @@
  *
  *   - routing.php                URL helpers, endpoint detection, template_include
  *                                swap, document title filter, body class.
+ *   - login-route.php            Clean `/login/` URL for the signed-out auth gate
+ *                                (rewrite rule, canonical redirects, login_url filter).
  *   - register-endpoint.php      Registers the `register` WC rewrite endpoint +
  *                                admin flush-permalinks notice.
+ *   - register-route.php         Clean `/register/` URL for the register page
+ *                                (rewrite rule, canonical redirects).
  *   - register-validation.php    Server-side validation of every register-form
  *                                field; collects all errors in one pass.
  *   - register-handler.php       Processes the registration form submission.
@@ -32,7 +36,7 @@
  *                                list panel (billing + shipping cards).
  *   - edit-account.php           `/my-account/edit-account/` edit form panel.
  *   - login.php                  "Heritage Atelier" auth gate (signed-out users).
- *   - register.php               Full `/my-account/register/` page.
+ *   - register.php               Full `/register/` page (endpoint `/my-account/register/`).
  *   - social-login.php           Google / Apple Sign-In (OAuth) — loader for
  *                                inc/woocommerce/account/social-login/*.
  *
@@ -51,7 +55,9 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/routing.php';
+require_once __DIR__ . '/login-route.php';
 require_once __DIR__ . '/register-endpoint.php';
+require_once __DIR__ . '/register-route.php';
 require_once __DIR__ . '/register-validation.php';
 require_once __DIR__ . '/register-handler.php';
 require_once __DIR__ . '/account-details-endpoint.php';

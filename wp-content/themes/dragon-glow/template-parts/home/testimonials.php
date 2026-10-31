@@ -43,9 +43,9 @@ $testimonials = array(
             <?php foreach ( $testimonials as $index => $testimonial ) : ?>
             <div class="glass-card p-10 rounded-[2rem] reveal" style="transition-delay: <?php echo esc_attr( $index * 100 ); ?>ms;">
                 <!-- Star Rating -->
-                <div class="flex gap-1 text-tertiary mb-6">
+                <div class="dg-stars dg-home-testimonial__stars mb-6">
                     <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span class="material-symbols-outlined" style="--dg-star-fill:1;">star</span>
                     <?php endfor; ?>
                 </div>
 

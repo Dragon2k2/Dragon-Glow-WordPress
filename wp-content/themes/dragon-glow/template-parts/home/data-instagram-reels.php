@@ -95,6 +95,11 @@ function dg_instagram_reels_cards_data(): array {
 	$third_reel_product  = dg_instagram_reels_get_product_by_name( 'Enzyme Essence Mist' );
 	$fourth_reel_product = dg_instagram_reels_get_product_by_name( 'Golden Eye Repair' );
 
+	/*
+	 * `product_label` is a short display name for the reel CTA button: it must fit one
+	 * line in the narrowest 4-column card (~206px @1024px). Full product names stay in
+	 * `product_name` (WooCommerce title) and on the linked product page.
+	 */
 	$reels = array(
 		// First card: Radiance Awakening Serum (pulled dynamically from shop)
 		array(
@@ -105,6 +110,7 @@ function dg_instagram_reels_cards_data(): array {
 			'audio'        => __( 'Original audio', 'dragon-glow' ),
 			'quote'        => __( '"My skin literally looks like glazed crystal donut. No foundation needed!"', 'dragon-glow' ),
 			'product_name' => $first_reel_product['product_name'],
+			'product_label' => __( 'Radiance Serum', 'dragon-glow' ),
 			'product_price' => $first_reel_product['product_price'],
 			'product_url'  => $first_reel_product['product_url'],
 		),
@@ -116,6 +122,7 @@ function dg_instagram_reels_cards_data(): array {
 			'audio'        => __( 'Original audio', 'dragon-glow' ),
 			'quote'        => __( '"The barrier reset is unmatched. Cleanses SPF completely without feeling tight."', 'dragon-glow' ),
 			'product_name' => $second_reel_product['product_name'],
+			'product_label' => __( 'Rescue Cream', 'dragon-glow' ),
 			'product_price' => $second_reel_product['product_price'],
 			'product_url'  => $second_reel_product['product_url'],
 		),
@@ -127,6 +134,7 @@ function dg_instagram_reels_cards_data(): array {
 			'audio'        => __( 'Original audio', 'dragon-glow' ),
 			'quote'        => __( '"Keep this in my bag 24/7. 2 spritzes and my 3 PM slump skin looks instantly renewed!"', 'dragon-glow' ),
 			'product_name' => $third_reel_product['product_name'],
+			'product_label' => __( 'Essence Mist', 'dragon-glow' ),
 			'product_price' => $third_reel_product['product_price'],
 			'product_url'  => $third_reel_product['product_url'],
 		),
@@ -138,6 +146,7 @@ function dg_instagram_reels_cards_data(): array {
 			'audio'        => __( 'Original audio', 'dragon-glow' ),
 			'quote'        => __( '"Golden hour in a bottle! Mix it with my daily moisturizer and get compliments all day."', 'dragon-glow' ),
 			'product_name' => $fourth_reel_product['product_name'],
+			'product_label' => __( 'Eye Repair', 'dragon-glow' ),
 			'product_price' => $fourth_reel_product['product_price'],
 			'product_url'  => $fourth_reel_product['product_url'],
 		),
@@ -149,5 +158,16 @@ function dg_instagram_reels_cards_data(): array {
 	 * @param array[] $reels Array of reel cards.
 	 * @return array[]
 	 */
-	return (array) apply_filters( 'dg_instagram_reels_cards_data', $reels );
+	$reels = (array) apply_filters( 'dg_instagram_reels_cards_data', $reels );
+
+	// Never render an empty CTA: fall back to the full product name when a card
+	// (or a filter callback) supplies no short label.
+	foreach ( $reels as &$reel ) {
+		if ( empty( $reel['product_label'] ) ) {
+			$reel['product_label'] = $reel['product_name'] ?? '';
+		}
+	}
+	unset( $reel );
+
+	return $reels;
 }

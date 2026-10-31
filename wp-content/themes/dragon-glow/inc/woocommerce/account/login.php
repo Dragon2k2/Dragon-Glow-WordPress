@@ -156,7 +156,7 @@ function dg_render_account_signed_out(): void {
 
 					<?php wc_print_notices(); ?>
 
-					<form method="post" class="dg-account-form" action="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" novalidate>
+					<form method="post" class="dg-account-form" action="<?php echo esc_url( dg_login_url() ); ?>" novalidate>
 
 						<?php do_action( 'woocommerce_login_form_start' ); ?>
 
@@ -280,8 +280,8 @@ function dg_render_account_signed_out(): void {
 					// "intended URL" pattern — if user came from /shop/ to login, and
 					// clicks "Create Account", they should land back on /shop/
 					// after registering, not on the dashboard).
-					$register_url = dg_account_endpoint_url( 'register' );
-					if ( '' !== $redirect_to && $redirect_to !== dg_account_endpoint_url( '' ) ) {
+					$register_url = dg_register_url();
+					if ( '' !== $redirect_to && $redirect_to !== dg_account_endpoint_url( '' ) && $redirect_to !== dg_login_url() ) {
 						$register_url = add_query_arg( 'redirect_to', rawurlencode( $redirect_to ), $register_url );
 					}
 					?>
@@ -303,7 +303,7 @@ function dg_render_account_signed_out(): void {
 								<?php esc_html_e( 'Track orders, save your favourites, and unlock exclusive offers from Dragon Glow.', 'dragon-glow' ); ?>
 							</p>
 
-							<form method="post" class="dg-account-form" action="<?php echo esc_url( dg_account_endpoint_url( '' ) ); ?>" novalidate>
+							<form method="post" class="dg-account-form" action="<?php echo esc_url( dg_login_url() ); ?>" novalidate>
 
 								<?php do_action( 'woocommerce_register_form_start' ); ?>
 
