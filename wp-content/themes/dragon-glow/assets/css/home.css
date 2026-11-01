@@ -74,9 +74,93 @@
     padding-inline: var(--trust-badges-gutter);
 }
 
+/* Mobile only (< 640px): compact 2x2 grid. Title and description each stay on
+   one line and are never truncated; fit is controlled by the fluid font-size
+   tokens (--trust-badges-*-size-mobile). The 2-col grid from the base rule is kept.
+   Selectors use `.dg-trust-badges__inner` as a parent to outrank the Tailwind
+   utilities (text-3xl, text-sm, gap-4) that the CDN injects after this file. */
+@media (max-width: 639px) {
+    .dg-trust-badges {
+        padding-top: var(--trust-badges-padding-y-mobile);
+    }
+
+    .dg-trust-badges__inner {
+        gap: var(--trust-badges-row-gap-mobile) var(--trust-badges-col-gap-mobile);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__item {
+        gap: var(--trust-badges-item-gap-mobile);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__icon {
+        flex-shrink: 0;
+        font-size: var(--trust-badges-icon-size-mobile);
+        line-height: 1;
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__text {
+        min-width: 0;
+        line-height: var(--trust-badges-text-leading-mobile);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__title,
+    .dg-trust-badges__inner .dg-trust-badges__desc {
+        white-space: nowrap;
+        line-height: inherit;
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__title {
+        font-size: var(--trust-badges-title-size-mobile);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__desc {
+        font-size: var(--trust-badges-desc-size-mobile);
+    }
+}
+
 @media (min-width: 768px) {
     .dg-trust-badges__inner {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Tablet 4-col row (768–1023px): keep the 4-col layout but stop titles and
+   descriptions from wrapping ("Expert Tested" / "Dermatologist approved").
+   Tighter column gap + icon free up width; fluid font-size tokens
+   (--trust-badges-*-size-tablet) shrink text only as much as the column needs.
+   640–767px (2-col) already fits on one line, so it is left untouched. */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .dg-trust-badges__inner {
+        column-gap: var(--trust-badges-col-gap-tablet);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__item {
+        gap: var(--trust-badges-item-gap-tablet);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__icon {
+        flex-shrink: 0;
+        font-size: var(--trust-badges-icon-size-tablet);
+        line-height: 1;
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__text {
+        min-width: 0;
+        line-height: var(--trust-badges-text-leading-tablet);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__title,
+    .dg-trust-badges__inner .dg-trust-badges__desc {
+        white-space: nowrap;
+        line-height: inherit;
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__title {
+        font-size: var(--trust-badges-title-size-tablet);
+    }
+
+    .dg-trust-badges__inner .dg-trust-badges__desc {
+        font-size: var(--trust-badges-desc-size-tablet);
     }
 }
 
@@ -881,20 +965,52 @@
     }
 }
 
+/* ═══════════════════════════════════════
+   Hero Badge Separator Alignment
+   ═══════════════════════════════════════ */
+
+/* Nudge separator bullet (•) slightly upward to align optically with uppercase label baseline.
+   Uses `display: inline-block` to enable transform, and relative positioning for fine-tuning. */
+.dg-home-hero__badge-sep {
+    display: inline-block;
+    transform: translateY(var(--hero-badge-sep-offset));
+}
+
 /* Mobile (< 640px): badge, description, stats grid, stickers, info card */
 @media (max-width: 639px) {
     .dg-home-hero .dg-home-hero__badge {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;              /* Changed from 'wrap' — keep badge content in one row */
         align-items: center;
+        gap: var(--hero-badge-gap-mobile);
+        padding: var(--hero-badge-padding-mobile);
         width: fit-content;
-        max-width: 100%;
-        row-gap: 0.25rem;
+        max-width: calc(100vw - 2.5rem);  /* Tighter constraint: allow 1.25rem margin each side */
         border-radius: var(--hero-badge-radius-mobile);
+        font-size: var(--hero-badge-font-size-mobile);
+        letter-spacing: 0.02em;         /* Ultra-tight tracking for ultra-compact mobile */
     }
 
+    /* Ping indicator: scale down for mobile */
+    .dg-home-hero .dg-home-hero__badge .animate-ping {
+        width: 5px;                     /* Ultra-compact: 5px (reduced from 8px) */
+        height: 5px;
+        flex-shrink: 0;
+    }
+
+    /* Separator: keep visible on mobile (was previously hidden) */
     .dg-home-hero .dg-home-hero__badge-sep {
-        display: none;
+        display: inline-block;          /* Changed from 'none' — show separator on mobile */
+        flex-shrink: 0;                 /* Prevent separator from shrinking */
+        transform: translateY(var(--hero-badge-sep-offset-mobile));
+        opacity: 0.6;                   /* Subtle separator on mobile */
+    }
+
+    /* Badge text: prevent wrapping, inherit compact font-size */
+    .dg-home-hero .dg-home-hero__badge > span {
+        white-space: nowrap;            /* Keep text in one line */
+        flex-shrink: 0;                 /* Don't shrink text (rely on container max-width instead) */
+        font-size: inherit;             /* Inherit mobile font-size from parent */
     }
 
     .dg-home-hero .dg-home-hero__desc {
@@ -1291,6 +1407,23 @@
     font-size: var(--instagram-header-cta-icon-secondary-size);
     flex-shrink: 0;
     line-height: 1;
+}
+
+/* Tablet only: Tighten spacing between text and arrow icon (768-1023px) */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+    .dg-home-instagram-header__cta-link {
+        gap: 0;
+    }
+
+    /* Preserve spacing after play icon */
+    .dg-home-instagram-header__cta-link .cta-icon-primary {
+        margin-right: 0.5rem; /* 8px gap after play icon */
+    }
+
+    /* Preserve spacing after text, before arrow icon */
+    .dg-home-instagram-header__cta-link > span:nth-child(2) {
+        margin-right: -4.75rem; /* 4px gap — tighter spacing */
+    }
 }
 
 /* Reduced Motion: Disable hover lift */
