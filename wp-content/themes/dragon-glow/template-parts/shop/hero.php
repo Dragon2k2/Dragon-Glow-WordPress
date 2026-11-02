@@ -34,8 +34,8 @@ $hero_btn2_url  = get_theme_mod( 'dg_shop_hero_btn2_url', home_url( '/our-story/
 		<?php endif; ?>
 		<div class="absolute inset-0 bg-gradient-to-r from-background/40 to-transparent"></div>
 	</div>
-	<div class="relative z-10 px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto w-full">
-		<div class="max-w-2xl reveal-on-scroll active">
+	<div class="dg-shop-hero__content relative z-10 px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto w-full">
+		<div class="dg-shop-hero__copy max-w-2xl reveal-on-scroll active">
 			<span class="font-label-sm text-label-sm text-primary tracking-[0.2em] mb-4 block" style="font-family: 'Geist', sans-serif">
 				<?php echo esc_html( $hero_eyebrow ); ?>
 			</span>

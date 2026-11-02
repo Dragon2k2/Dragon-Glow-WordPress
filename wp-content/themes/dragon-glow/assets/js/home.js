@@ -120,10 +120,41 @@ import { animate } from 'https://cdn.jsdelivr.net/npm/motion@11/+esm';
 		});
 	}
 
+	/**
+	 * Play the hero headline sheen once after the page enters.
+	 * CSS remains the source of truth for the hover effect; this class only
+	 * reuses that visual state and is removed before the real hover state can stick.
+	 *
+	 * @return void
+	 */
+	function initHeroHeadlineIntro() {
+		const wrapper = document.querySelector('.dg-home-hero__gradient-text-wrapper');
+		if (!wrapper || prefersReduced) return;
+
+		const playIntro = () => {
+			if (wrapper.dataset.introPlayed === 'true') return;
+			wrapper.dataset.introPlayed = 'true';
+			wrapper.classList.add('is-intro-hover');
+
+			window.setTimeout(() => {
+				wrapper.classList.remove('is-intro-hover');
+			}, 800);
+		};
+
+		window.requestAnimationFrame(() => {
+			window.setTimeout(playIntro, 150);
+		});
+	}
+
 	/* ── Initialize on DOM ready ─────────────── */
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initHeroImageHover);
-	} else {
+	function initHomeAnimations() {
 		initHeroImageHover();
+		initHeroHeadlineIntro();
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initHomeAnimations);
+	} else {
+		initHomeAnimations();
 	}
 })();

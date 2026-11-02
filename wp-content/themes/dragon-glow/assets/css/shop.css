@@ -8,6 +8,21 @@
 	--luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Mobile hero sizing — allow the editorial copy and CTAs to define the height.
+   Desktop and tablet retain the original 90vh composition. */
+@media (max-width: 640px) {
+	#dg-shop-hero {
+		height: auto;
+		min-height: 90vh;
+		align-items: flex-start;
+	}
+
+	#dg-shop-hero .dg-shop-hero__content {
+		padding-top: var(--shop-hero-mobile-padding-top);
+		padding-bottom: var(--shop-hero-mobile-padding-bottom);
+	}
+}
+
 /* Material symbols base */
 .material-symbols-outlined {
 	font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
@@ -985,14 +1000,21 @@ a.dg-product-stretched-link {
 	transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Arrow icon */
+/* Arrow icon — use a neutral inline-flex wrapper so the Unicode glyph shares
+   the same flex-center alignment as the label (without icon-font metrics). */
 .dg-pager-btn__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: inherit;
 	font-size: 14px;
-	line-height: 1;
 	font-style: normal;
+	line-height: 1;
+	vertical-align: middle;
 }
 .dg-pager-btn__arrow {
-	display: inline-block;
+	display: block;
+	line-height: 1;
 	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

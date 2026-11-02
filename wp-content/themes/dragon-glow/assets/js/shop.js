@@ -46,6 +46,7 @@
         var filterDropdown = document.getElementById('dg-filter-dropdown');
         var applyBtn = document.getElementById('dg-filter-apply');
         var resetBtn = document.getElementById('dg-filter-reset');
+        var shopUrl = resetBtn ? resetBtn.getAttribute('data-shop-url') : '';
 
         function openFilterDropdown() {
             if (!filterDropdown || !filterTrigger) return;
@@ -343,6 +344,13 @@
                 if (priceMaxLabel) priceMaxLabel.textContent = '200';
             }
             if (navigate) {
+                // A product-category archive keeps its taxonomy constraint in the URL path.
+                // Reset must return to the canonical Shop URL, not the current category URL.
+                if (shopUrl) {
+                    window.location.assign(shopUrl);
+                    return;
+                }
+
                 var url = new URL(window.location.href);
                 ['ingredient', 'rating', 'min_price', 'max_price', 'product_cat', 'paged', 'page'].forEach(function (p) {
                     url.searchParams.delete(p);

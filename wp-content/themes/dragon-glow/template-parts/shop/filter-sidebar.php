@@ -136,7 +136,8 @@ if ( dg_is_woocommerce_active() ) {
 	<div class="dg-filter-glass-actions">
 		<button type="button"
 				id="dg-filter-reset"
-				class="dg-filter-glass-btn dg-filter-glass-btn--secondary">
+				class="dg-filter-glass-btn dg-filter-glass-btn--secondary"
+				data-shop-url="<?php echo esc_attr( esc_url( $shop_url ) ); ?>">
 			<?php esc_html_e( 'Reset', 'dragon-glow' ); ?>
 		</button>
 		<button type="button"

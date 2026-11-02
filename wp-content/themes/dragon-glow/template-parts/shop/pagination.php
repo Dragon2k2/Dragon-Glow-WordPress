@@ -48,16 +48,16 @@ $base_url = remove_query_arg( 'paged' );
 			<a class="dg-pager-btn dg-pager-btn--prev"
 			   href="<?php echo esc_url( get_pagenum_link( $current - 1 ) ); ?>"
 			   aria-label="<?php esc_attr_e( 'Previous page', 'dragon-glow' ); ?>">
-				<span class="dg-pager-btn__icon material-symbols-outlined" aria-hidden="true">
-					<span class="dg-pager-btn__arrow">→</span>
+				<span class="dg-pager-btn__icon" aria-hidden="true">
+					<span class="dg-pager-btn__arrow">←</span>
 				</span>
 				<span class="dg-pager-btn__label"><?php esc_html_e( 'Prev', 'dragon-glow' ); ?></span>
 				<span class="dg-pager-btn__glow" aria-hidden="true"></span>
 			</a>
 		<?php else : ?>
 			<span class="dg-pager-btn dg-pager-btn--prev dg-pager-btn--disabled" aria-disabled="true">
-				<span class="dg-pager-btn__icon material-symbols-outlined" aria-hidden="true">
-					<span class="dg-pager-btn__arrow">→</span>
+				<span class="dg-pager-btn__icon" aria-hidden="true">
+					<span class="dg-pager-btn__arrow">←</span>
 				</span>
 				<span class="dg-pager-btn__label"><?php esc_html_e( 'Prev', 'dragon-glow' ); ?></span>
 			</span>
@@ -87,16 +87,16 @@ $base_url = remove_query_arg( 'paged' );
 			   href="<?php echo esc_url( get_pagenum_link( $current + 1 ) ); ?>"
 			   aria-label="<?php esc_attr_e( 'Next page', 'dragon-glow' ); ?>">
 				<span class="dg-pager-btn__label"><?php esc_html_e( 'Next', 'dragon-glow' ); ?></span>
-				<span class="dg-pager-btn__icon material-symbols-outlined" aria-hidden="true">
-					<span class="dg-pager-btn__arrow">←</span>
+				<span class="dg-pager-btn__icon" aria-hidden="true">
+					<span class="dg-pager-btn__arrow">→</span>
 				</span>
 				<span class="dg-pager-btn__glow" aria-hidden="true"></span>
 			</a>
 		<?php else : ?>
 			<span class="dg-pager-btn dg-pager-btn--next dg-pager-btn--disabled" aria-disabled="true">
 				<span class="dg-pager-btn__label"><?php esc_html_e( 'Next', 'dragon-glow' ); ?></span>
-				<span class="dg-pager-btn__icon material-symbols-outlined" aria-hidden="true">
-					<span class="dg-pager-btn__arrow">←</span>
+				<span class="dg-pager-btn__icon" aria-hidden="true">
+					<span class="dg-pager-btn__arrow">→</span>
 				</span>
 			</span>
 		<?php endif; ?>

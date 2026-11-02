@@ -218,12 +218,18 @@
     transition: background-position var(--hero-sheen-duration) var(--hero-sheen-easing);
 }
 
+/* One-time intro sweep — JS adds the class once after the hero is visible. */
+.dg-home-hero__gradient-text-wrapper.is-intro-hover .dg-home-hero__gradient-text {
+    background-position: 0 0, left center;
+}
+
 /* Hover: band glides left → right and exits past the right edge.
    The trigger is the shared wrapper (text + emoji), so hovering either one
    plays the text sheen and the emoji accent at the same time.
    Gated to real hover devices so touch screens never get a stuck sheen. */
 @media (hover: hover) {
-    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text {
+    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text,
+    .dg-home-hero__gradient-text-wrapper.is-intro-hover .dg-home-hero__gradient-text {
         background-position: 0 0, left center;
     }
 }
@@ -234,7 +240,8 @@
         transition: none;
     }
 
-    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text {
+    .dg-home-hero__gradient-text-wrapper:hover .dg-home-hero__gradient-text,
+    .dg-home-hero__gradient-text-wrapper.is-intro-hover .dg-home-hero__gradient-text {
         background-position: 100% 0, left center;
     }
 }
@@ -917,8 +924,13 @@
 }
 
 /* Triggered by the wrapper so it fires together with the text sheen. */
+.dg-home-hero__gradient-text-wrapper.is-intro-hover .dg-hero-emoji-accent {
+    transform: rotate(12deg) scale(1.15);
+}
+
 @media (hover: hover) {
-    .dg-home-hero__gradient-text-wrapper:hover .dg-hero-emoji-accent {
+    .dg-home-hero__gradient-text-wrapper:hover .dg-hero-emoji-accent,
+    .dg-home-hero__gradient-text-wrapper.is-intro-hover .dg-hero-emoji-accent {
         transform: rotate(12deg) scale(1.15);
     }
 }

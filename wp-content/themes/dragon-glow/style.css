@@ -1103,6 +1103,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     /* ========== Shop Component ========== */
     /* Shop page — filters, product grid, pagination */
+    --shop-hero-mobile-padding-top: 2.5rem;
+    --shop-hero-mobile-padding-bottom: 3.5rem;
     --shop-scrollbar-thumb: rgba(115, 92, 0, 0.2);
     --shop-scrollbar-thumb-hover: rgba(115, 92, 0, 0.4);
     
