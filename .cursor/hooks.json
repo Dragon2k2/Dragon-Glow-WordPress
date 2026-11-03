@@ -1,0 +1,1 @@
+﻿{"version":1,"hooks":{"sessionStart":[{"command":".cursor/hooks/superpowers-session-start.ps1","timeout":10}]}}

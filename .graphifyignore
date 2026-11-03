@@ -1,0 +1,16 @@
+# graphify corpus boundary — chỉ index code của theme Dragon Glow.
+# Agent skill bundles, design mockups, tooling và tài liệu không phải code dự án.
+
+.claude/
+.cursor/
+.agents/
+node_modules/
+graphify-out/
+test-results/
+scripts/
+stitch_dragon_glow_auth_portal/
+stitch_dragon_glow_cosmetics_showcase/
+
+# Docs + manifest: graphify parse markdown/YAML thành heading node, không phải code.
+CLAUDE.md
+package.json

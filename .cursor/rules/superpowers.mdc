@@ -1,0 +1,75 @@
+---
+description: superpowers skills bootstrap - invoke the right skill before acting
+alwaysApply: true
+---
+
+Dự án này có **superpowers** — bộ 15 process skills (brainstorming, TDD, debugging, planning, review) cài tại `.cursor/skills/`.
+
+## Bootstrap — 2 lớp
+
+1. **Hook `sessionStart`** (`.cursor/hooks.json` → `.cursor/hooks/superpowers-session-start.ps1`): inject vào system context mỗi khi tạo conversation mới. Gồm 3 phần:
+   - **Nội dung bootstrap** superpowers (quy tắc + adaptation dự án)
+   - **Catalog động 34 skill** — quét `.cursor/skills/*/SKILL.md`, đọc frontmatter `description` (cắt 95 ký tự). Tự cập nhật khi thêm/bớt skill, không hard-code.
+   - **Con trỏ knowledge graph** — đọc `graphify-out/graph.json`, in số nodes/edges/communities + cảnh báo graph **stale** nếu commit khác `HEAD`.
+   - **Drift detector** — đối chiếu claim ghi cứng trong `CLAUDE.md` / rules (số nodes, số communities, danh sách skill, `DG_VERSION`, đường dẫn file theme) với thực tế repo. **Chỉ in khi lệch**; khớp thì im lặng, tốn 0 token.
+
+   ⚠️ Hook **KHÔNG chép lại** `CLAUDE.md` hay `.cursor/rules/*.mdc` — Cursor đã tự nạp sẵn chúng (`CLAUDE.md` as instructions + rules `alwaysApply: true`, tổng ~14.300 tokens). Inject lại sẽ là nhân đôi vô ích.
+2. **Rule này** (always-on): bản đầy đủ + lý do + red-flags. Có tác dụng cả trong session đang chạy.
+
+Hook chạy ~0.9s (timeout 10s), **fail-open** — graph hỏng hay thiếu file thì bỏ section đó, không chặn phiên. Hook chỉ chạy khi **tạo conversation mới**; sửa hook xong phải mở chat mới mới thấy tác dụng.
+
+## Fallback — khi hook KHÔNG chạy
+
+Hook là fire-and-forget và chỉ chạy lúc tạo conversation mới. Nó **sẽ không chạy** trong các trường hợp: chat đang dở, sau `/compact`, lượt đầu sau restart Cursor, hoặc cloud agent.
+
+**Dấu hiệu nhận biết:** hook luôn bắt đầu context bằng sentinel `[DG-SESSION-BOOTSTRAP v3]`. Nếu bạn **không thấy** chuỗi đó ở đầu context phiên này, hook đã không chạy.
+
+**Khi đó, tự đọc:** `.cursor/hooks/BOOTSTRAP.md` (cùng nội dung canonical mà hook inject). Đọc một lần, đừng đọc lại mỗi lượt.
+
+## Quy tắc
+
+**Invoke skill liên quan TRƯỚC khi trả lời hoặc hành động** — kể cả trước khi hỏi lại, đọc code, hay grep. Nếu nghi ngờ dù chỉ 1% là có skill áp dụng, đọc skill đó.
+
+Cách đọc: `.cursor/skills/<name>/SKILL.md` (bản mirror ở `.claude/skills/` và `.agents/skills/`).
+Tham chiếu dạng `superpowers:<name>` trong skill = đọc `.cursor/skills/<name>/SKILL.md`.
+
+Sau khi chọn skill, thông báo một dòng: "Dùng skill [name] để [mục đích]" rồi làm đúng theo skill. Nếu skill có checklist → tạo todo cho từng mục.
+
+**Thứ tự ưu tiên:** process skill trước (brainstorming, systematic-debugging), rồi skill implementation (design, motion-animations, wp-*).
+
+- "Làm tính năng X" → `brainstorming` trước, rồi skill implementation.
+- "Sửa bug này" → `systematic-debugging` trước, rồi skill domain.
+
+## Red flags — đây là lý do bạn đang lách luật
+
+| Suy nghĩ | Thực tế |
+|---|---|
+| "Chỉ là câu hỏi đơn giản" | Câu hỏi cũng là task. Check skill. |
+| "Cần thêm context đã" | Check skill TRƯỚC khi hỏi/khám phá. |
+| "Để tôi xem code nhanh đã" | Skill chỉ cách khám phá. Check trước. |
+| "Việc này không cần skill hình thức" | Có skill thì dùng. |
+
+## Workflow chuẩn của dự án này
+
+1. `brainstorming` → chốt yêu cầu, viết design doc (`docs/superpowers/specs/`).
+2. `writing-plans` → chia task 2-5 phút (`docs/superpowers/plans/`).
+3. `executing-plans` (inline) hoặc `subagent-driven-development` (subagent mỗi task).
+4. `verification-before-completion` → chạy kiểm chứng thật rồi mới báo xong.
+5. `finishing-a-development-branch` → merge/PR/giữ nhánh.
+
+## Adaptation cho Dragon Glow — ĐỌC KỸ
+
+Superpowers viết cho repo có test suite. **Dragon Glow không có** (không jest/vitest/phpunit, không `npm test`).
+
+- **TDD (`test-driven-development`)**: không bịa test framework. Thay "watch it fail" bằng kiểm chứng quan sát được theo `CLAUDE.md` §F: `php -l` cho cú pháp PHP, Playwright (có ở gốc repo) cho render/responsive 640/768/1024px, bật/tắt WooCommerce, `prefers-reduced-motion`. Xác nhận hành vi SAI trước khi sửa, rồi xác nhận ĐÚNG sau khi sửa — đó là RED→GREEN của dự án này.
+- **Đừng chạy `npm test`** — script đó không tồn tại. `package.json` chỉ có playwright + sharp (dev tooling, không phải dependency theme).
+- **Script đi kèm** (`scripts/sdd-workspace`, `task-brief`, `review-package`, `executing-plans/scripts/*`, `brainstorming/scripts/*.sh`) là bash → chạy qua Git Bash: `bash .cursor/skills/<skill>/scripts/<tên>`. Không có `bash` trên PATH mặc định của PowerShell.
+- **`using-git-worktrees`**: chỉ tạo worktree khi được đồng ý; repo này làm việc trực tiếp trên nhánh hiện tại.
+- **Ràng buộc dự án thắng skill**: không React, không build step, PHP template + vanilla JS, token-first CSS, BEM `dg-`. Skill nào khuyên dùng thứ viện/build step → bỏ qua phần đó, giữ nguyên process.
+
+## Giới hạn đã biết
+
+- Rule + hook đều là **hướng dẫn**, không phải cổng chặn. Không có cơ chế nào ép buộc — agent vẫn có thể bỏ qua skill nếu tự thấy không phù hợp.
+- Hook `sessionStart` chỉ chạy khi **tạo conversation mới**. Trong một session đang chạy, chỉ rule always-on là có tác dụng.
+- `graphify` CLI **không có trên PATH**. Gọi bằng đường dẫn đầy đủ: `& "$env:USERPROFILE\.local\bin\graphify.exe" query "..."` hoặc `uv tool run graphify ...`.
+- CSS **không** được graphify parse → câu hỏi về style vẫn phải grep.

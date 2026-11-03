@@ -54,6 +54,8 @@ Hướng dẫn cho Claude khi làm việc trong dự án này. Đọc kỹ trư�
 | `.cursor/skills/wp-wpcli-and-ops/` | WP-CLI operations | Maintenance tasks |
 | `.cursor/skills/wp-rest-api/` | Custom REST endpoints | Nếu cần API riêng |
 | `.cursor/skills/wp-phpstan/` | Static analysis | Code quality |
+| `.cursor/skills/graphify/` | Knowledge graph của theme (query/path/explain) | Đọc graph trước khi grep; xem §C.1 |
+| `.cursor/skills/{brainstorming,writing-plans,executing-plans,…}` | Process skills của **superpowers** (15 skill) | Đã adapt cho repo không có test suite; xem §C.2 |
 
 ### ❌ Incompatible Skills (KHÔNG invoke cho Dragon Glow)
 
@@ -98,6 +100,102 @@ Expected output:
 ```
 
 Nếu output khác → báo ngay, đừng assume.
+
+---
+
+## C.1 Graphify — knowledge graph của theme
+
+Skill: `.cursor/skills/graphify/` (bản mirror của `.agents/skills/graphify/`, cài bằng `graphify install --project --platform agents`).
+
+**Output:** `graphify-out/graph.json` (raw graph), `graphify-out/GRAPH_REPORT.md` (god nodes, communities, surprising connections), `graphify-out/graph.html` (visual, mở bằng browser). `graphify-out/` đã nằm trong `.gitignore` — **không commit**, rebuild khi cần.
+
+**Khi nào dùng:** câu hỏi về kiến trúc / "hàm này được gọi ở đâu" / "X nối với Y thế nào" / file nào thuộc concern nào. Grep chỉ thấy chuỗi ký tự; graph thấy quan hệ `calls` / `imports` / `contains` xuyên file.
+
+```bash
+graphify query "<câu hỏi>"        # subgraph quanh các node khớp keyword (BFS, mặc định)
+graphify query "<câu hỏi>" --dfs --budget 1500
+graphify path "A" "B"             # đường đi ngắn nhất; --undirected khi 2 chiều
+graphify explain "dg_has_active_selection"
+graphify god-nodes --top 20       # các hub kiến trúc
+```
+
+**Khi nào KHÔNG dùng:** tra một định nghĩa cụ thể ("hàm này ở file nào") → grep/Read nhanh hơn và miễn phí; hoặc khi `graphify-out/graph.json` chưa tồn tại.
+
+**Rebuild sau khi sửa code (AST-only, không tốn token LLM):**
+
+```bash
+graphify update .        # incremental, chỉ file đổi
+```
+
+Rebuild toàn bộ (khi graph lệch nhiều hoặc đổi `.graphifyignore`):
+
+```bash
+graphify extract . --code-only        # AST PHP/JS, bỏ qua docs/images
+graphify cluster-only . --no-label    # sinh lại report + html, giữ label đã curate
+```
+
+**Phạm vi corpus:** `.graphifyignore` ở gốc repo loại `.claude/`, `.cursor/`, `.agents/`, `node_modules/`, `graphify-out/`, `test-results/`, `scripts/`, `stitch_dragon_glow_*/`, `CLAUDE.md`, `package.json`. Chỉ code theme được index. CSS **không** được parse (graphify hỗ trợ ~40 ngôn ngữ lập trình, không có CSS) → câu hỏi về style vẫn phải grep.
+
+**Community labels:** `cluster-only --no-label` giữ placeholder "Community N". Tên đã curate nằm ở `scripts/graphify/curated-labels.json`, khoá theo **anchor node id** (không theo cid, vì cid đổi mỗi lần re-cluster). Quy trình sau khi rebuild:
+
+```bash
+graphify cluster-only . --no-label
+python scripts/graphify/apply-labels.py     # dùng python của venv graphify
+graphify cluster-only . --no-label          # report + html lấy tên mới
+```
+
+**Giới hạn đã biết:** PHP template thuần (không khai báo hàm/class) yield 0 symbol — graphify bỏ qua các file như `404.php`, `footer.php`. Graph chỉ phản ánh `inc/` + `assets/js/` + `template-parts/*/data-*.php`.
+
+**Số liệu hiện tại:** 1130 nodes · 1594 edges · 236 communities · 84% EXTRACTED / 16% INFERRED. God node lớn nhất: `dg_is_woocommerce_active()` (41 edges) — mọi nhánh WooCommerce đều đi qua guard này.
+
+---
+
+## C.2 Superpowers — process skills
+
+**Nguồn:** https://github.com/obra/superpowers — release `v7.0.1` (commit `2ce8aa1`), MIT license. Cài thủ công (copy) vào `.cursor/skills/`, mirror sang `.claude/skills/` + `.agents/skills/` — cùng pattern với `graphify`.
+
+**Bootstrap (2 lớp):**
+
+1. `.cursor/hooks.json` → hook `sessionStart` chạy `.cursor/hooks/superpowers-session-start.ps1`, inject vào system context mỗi conversation mới: (a) nội dung bootstrap superpowers, (b) **catalog động 34 skill** quét từ `.cursor/skills/*/SKILL.md` frontmatter, (c) **con trỏ knowledge graph** từ `graphify-out/graph.json` kèm số nodes/edges/communities + cảnh báo stale, (d) **drift detector** đối chiếu claim trong CLAUDE.md/rules với thực tế repo — chỉ in khi lệch. Hook fail-open, ~0.9s.
+2. `.cursor/rules/superpowers.mdc` (always-on) — bản đầy đủ, có tác dụng cả trong session đang chạy.
+
+⚠️ Hook **không** chép lại `CLAUDE.md` hay rules: Cursor đã tự nạp sẵn (~14.300 tokens/phiên). Inject lại là nhân đôi vô ích.
+
+Hook chỉ chạy khi **tạo conversation mới**. Sửa hook xong phải mở chat mới mới thấy tác dụng.
+
+### 15 skills đã cài
+
+| Nhóm | Skill | Khi nào dùng |
+|------|-------|--------------|
+| Collaboration | `brainstorming` | Trước mọi creative work: tính năng, component, sửa behavior, plan mới |
+| | `writing-plans` | Có spec/yêu cầu multi-step, trước khi chạm code |
+| | `executing-plans` | Thực thi plan inline trong session hiện tại (1 context + 1 review cuối) |
+| | `subagent-driven-development` | Thực thi plan bằng subagent mỗi task + review 2 tầng mỗi task |
+| | `dispatching-parallel-agents` | 2+ task độc lập, không shared state |
+| | `using-git-worktrees` | Cần workspace tách biệt khỏi nhánh hiện tại |
+| | `finishing-a-development-branch` | Xong việc, cần quyết merge/PR/giữ nhánh |
+| Review | `requesting-code-review` | Xong task/feature lớn, trước merge |
+| | `receiving-code-review` | Nhận feedback review — verify trước khi implement |
+| Debug | `systematic-debugging` | Mọi bug, test fail, hành vi lạ — tìm root cause trước khi sửa |
+| | `verification-before-completion` | Chuẩn bị claim "xong/fixed/passing" |
+| Testing | `test-driven-development` | Implement feature/bugfix, trước khi viết code |
+| Meta | `using-superpowers` | Điểm vào của hệ thống skill |
+| | `writing-skills` | Tạo/sửa skill mới |
+| | `diagnosing-superpowers` | Session đi sai — truy nguyên bằng transcript |
+
+### Adaptation cho Dragon Glow — QUAN TRỌNG
+
+Superpowers giả định repo có test suite. **Repo này không có** (`package.json` chỉ có playwright + sharp; không jest/vitest/phpunit, không `npm test`).
+
+| Superpowers nói | Áp dụng ở đây |
+|---|---|
+| `npm test`, RED→GREEN tự động | `php -l` cho cú pháp + Playwright cho render/responsive + bật/tắt WooCommerce. Xác nhận hành vi sai trước, đúng sau = RED→GREEN |
+| Chạy plan → worktree mới | Làm trực tiếp trên nhánh hiện tại trừ khi được đồng ý tạo worktree |
+| Script bash (`sdd-workspace`, `task-brief`, `review-package`, `start-server.sh`) | Chạy qua Git Bash: `bash .cursor/skills/<skill>/scripts/<tên>` |
+| Dispatch subagent mặc định | Chỉ dùng subagent khi user yêu cầu rõ |
+| `docs/superpowers/specs/` và `docs/superpowers/plans/` | Giữ nguyên path này khi có design doc/plan |
+
+**Ràng buộc dự án luôn thắng skill:** không React, không build step, PHP template thuần + vanilla JS, token-first CSS, BEM `dg-`. Skill nào khuyên thêm thư viện/build step → bỏ phần đó, giữ process.
 
 ---
 
@@ -824,6 +922,7 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 - **Custom REST endpoint** → `.cursor/skills/wp-rest-api/`
 - **PHPStan static analysis** → `.cursor/skills/wp-phpstan/`
 - **Companion plugin cần tạo** → `.cursor/skills/wp-plugin-development/`
+- **Câu hỏi kiến trúc / quan hệ giữa các file** → `.cursor/skills/graphify/` (xem §C.1)
 
 **KHÔNG invoke:**
 
@@ -842,6 +941,11 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
+- `2026-11-02e`: hook `sessionStart` thêm **drift detector** — đối chiếu number nodes/edges/communities trong CLAUDE.md, danh sách skill bảng §C.2, `DG_VERSION`, và đường dẫn file theme với thực tế repo; **chỉ inject khi lệch** (khớp thì im lặng, 0 token). Quyết định **không** chép lại CLAUDE.md/rules vào hook vì Cursor đã tự nạp sẵn (~14.300 tokens/phiên) — inject lại là nhân đôi vô ích. Sửa false positive: check skill count ban đầu đếm cả 34 thư mục (15 superpowers + 19 WordPress) thay vì chỉ danh sách được nêu trong CLAUDE.md.
+- `2026-11-02d`: mở rộng hook `sessionStart` — ngoài bootstrap superpowers, hook giờ tự quét `.cursor/skills/*/SKILL.md` để inject **catalog 34 skill** (cắt description 95 ký tự) và đọc `graphify-out/graph.json` để inject **con trỏ knowledge graph** kèm số nodes/edges/communities + cảnh báo stale (so `built_at_commit` với `HEAD`). Fail-open từng section. Sửa 2 bug phát hiện khi test: (1) backtick trong here-string bị PowerShell escape → mất ký tự (`assets/js` thành `ssets/js`), (2) mojibake `â€"` do PS 5.1 đọc file không BOM theo ANSI → script nay thuần ASCII + transliterate output.
+- `2026-11-02c`: thêm hook `sessionStart` (`.cursor/hooks.json` + `.cursor/hooks/superpowers-session-start.ps1`) để inject bootstrap superpowers vào system context mỗi conversation mới — bám sát cơ chế của upstream thay vì chỉ dựa vào rule always-on. Sửa lại ghi chú sai trước đó ("Cursor không có hook SessionStart").
+- `2026-11-02b`: thêm §C.2 — **superpowers** (obra/superpowers v7.0.1, MIT). Copy 15 process skills vào `.cursor/skills/` (mirror `.claude/` + `.agents/`), thêm rule always-on `.cursor/rules/superpowers.mdc` (thay hook `sessionStart` của upstream). Ghi rõ adaptation: repo không có test suite → kiểm chứng bằng `php -l` + Playwright thay cho `npm test`.
+- `2026-11-02`: thêm §C.1 — **graphify knowledge graph**. Cài `graphifyy` 0.9.100 qua uv tool, đăng ký skill vào `.agents/skills/graphify/` (mirror sang `.cursor/skills/` + `.claude/skills/`), thêm rule always-on `.cursor/rules/graphify.mdc`, `.graphifyignore` giới hạn corpus vào code theme, script `scripts/graphify/apply-labels.py` + `curated-labels.json` để giữ tên community qua mỗi lần re-cluster. Graph: 1130 nodes / 1594 edges / 236 communities.
 - `2026-10-27b`: refactored sections 5b/5d/5e/5g/9 — Generalized rules (nói chung không nói riêng). §5b (email) → "Template Organization" (tất cả template). §5d CSS + JS organization combined (formerly 5d/5f). §5e inline styles → "Styling Strategy" (general rule). §5g selectors → removed "WC-specific" language, added general principle. §9 → "Interactivity & Dynamic Behavior" (remove Motion-specific focus, added general JS patterns + Motion as option).
 - `2026-10-27a`: thêm §8c — **Component Style Isolation**: rule cứng prevent style pollution across pages (ALL styles, not just gradient). LUÔN tạo token riêng cho component-local styles, KHÔNG dùng global theme tokens. 3-layer token system (Primitive → Semantic → Component), decision tree, scope matrix, comprehensive checklist.
 - `2026-10-02`: thêm §8b — Tailwind Forms plugin override: nguyên nhân specificity tie + source order khi Tailwind nạp qua `<script>`, cách debug bằng console, cách khắc phục bằng tăng specificity qua wrapper class (không dùng `!important`).

@@ -1,0 +1,833 @@
+{
+  "_comment": "Anchored community names for graphify. Key = display name, value = node ids that identify the community.",
+  "labels": {
+    "Wishlist Page Interactions": [
+      "wp_content_themes_dragon_glow_assets_js_wishlist",
+      "wp_content_themes_dragon_glow_assets_js_wishlist_bulkaddtobag",
+      "wp_content_themes_dragon_glow_assets_js_wishlist_toast"
+    ],
+    "Cart Page Interactions": [
+      "wp_content_themes_dragon_glow_assets_js_cart",
+      "wp_content_themes_dragon_glow_assets_js_cart_bulkremove",
+      "wp_content_themes_dragon_glow_assets_js_cart_clearcart"
+    ],
+    "Account Dashboard JS": [
+      "wp_content_themes_dragon_glow_assets_js_account",
+      "wp_content_themes_dragon_glow_assets_js_account_loadpanel",
+      "wp_content_themes_dragon_glow_assets_js_account_init"
+    ],
+    "Social Login (Apple & Google)": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_social_login_apple_dg_apple_login_callback",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_social_login_jwt_helpers",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_social_login_google_dg_google_login_callback"
+    ],
+    "Careers Forms & Brevo Email": [
+      "wp_content_themes_dragon_glow_inc_ajax_careers_dg_ajax_submit_application",
+      "wp_content_themes_dragon_glow_inc_ajax_careers",
+      "wp_content_themes_dragon_glow_inc_careers_approval_decision_dg_approval_process_decision"
+    ],
+    "Footer & Nav Customizer Helpers": [
+      "wp_content_themes_dragon_glow_inc_helpers_utilities",
+      "wp_content_themes_dragon_glow_inc_footer_customizer_dg_footer_customize_register",
+      "wp_content_themes_dragon_glow_inc_shop_customizer_dg_register_customizer_settings"
+    ],
+    "Order Modal UI": [
+      "wp_content_themes_dragon_glow_assets_js_order_modal",
+      "wp_content_themes_dragon_glow_assets_js_order_modal_openmodal",
+      "wp_content_themes_dragon_glow_assets_js_order_modal_escapehtml"
+    ],
+    "Wishlist AJAX & Storage": [
+      "wp_content_themes_dragon_glow_inc_helpers_wishlist",
+      "wp_content_themes_dragon_glow_inc_helpers_wishlist_dg_get_wishlist",
+      "wp_content_themes_dragon_glow_inc_ajax_wishlist"
+    ],
+    "Cart AJAX Endpoints": [
+      "wp_content_themes_dragon_glow_inc_helpers_woocommerce_dg_is_woocommerce_active",
+      "wp_content_themes_dragon_glow_inc_ajax_cart",
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_selection_dg_clear_session_selection"
+    ],
+    "Wishlist Toggle Badge": [
+      "wp_content_themes_dragon_glow_assets_js_lib_wishlist_toggle",
+      "wp_content_themes_dragon_glow_assets_js_lib_wishlist_toggle_sendsync",
+      "wp_content_themes_dragon_glow_assets_js_lib_wishlist_toggle_onheartclick"
+    ],
+    "Account Datepicker": [
+      "wp_content_themes_dragon_glow_assets_js_account_datepicker_initwheel",
+      "wp_content_themes_dragon_glow_assets_js_account_datepicker",
+      "wp_content_themes_dragon_glow_assets_js_account_datepicker_initwheel_synchiddeninput"
+    ],
+    "Buy Now Button JS": [
+      "wp_content_themes_dragon_glow_assets_js_buy_now",
+      "wp_content_themes_dragon_glow_assets_js_buy_now_handlebuynowclick",
+      "wp_content_themes_dragon_glow_assets_js_buy_now_handleaddtobagclick"
+    ],
+    "Gift Cards Page": [
+      "wp_content_themes_dragon_glow_assets_js_gift_cards",
+      "wp_content_themes_dragon_glow_assets_js_gift_cards_initsubmit",
+      "wp_content_themes_dragon_glow_assets_js_gift_cards_setfeedback"
+    ],
+    "WooCommerce Analytics Sync": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_health_check",
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_sync_tool_dg_analytics_sync_orders_tool",
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_realtime_sync_dg_analytics_import_pending_records"
+    ],
+    "Buy Now Checkout Flow": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_buy_now",
+      "wp_content_themes_dragon_glow_inc_woocommerce_buy_now_dg_restore_regular_items",
+      "wp_content_themes_dragon_glow_inc_woocommerce_buy_now_dg_restore_regular_items_on_wp_action"
+    ],
+    "Shop Filters JS": [
+      "wp_content_themes_dragon_glow_assets_js_shop",
+      "wp_content_themes_dragon_glow_assets_js_shop_updateactivetags",
+      "wp_content_themes_dragon_glow_assets_js_shop_applyfilters"
+    ],
+    "UI Component Helpers": [
+      "wp_content_themes_dragon_glow_inc_helpers_ui_components",
+      "wp_content_themes_dragon_glow_inc_cart_url_dg_get_cart_url",
+      "wp_content_themes_dragon_glow_inc_ajax_cart_dg_ajax_add_to_cart"
+    ],
+    "Cart Selection Checkout": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_selection",
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_selection_dg_has_active_selection",
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_selection_dg_is_cart_item_selected"
+    ],
+    "Asset Enqueue & Cart Count": [
+      "wp_content_themes_dragon_glow_inc_enqueue",
+      "wp_content_themes_dragon_glow_inc_cart_identifiers_dg_get_cart_item_count",
+      "wp_content_themes_dragon_glow_inc_cart_identifiers"
+    ],
+    "Quick Add To Cart": [
+      "wp_content_themes_dragon_glow_assets_js_quick_add_to_cart",
+      "wp_content_themes_dragon_glow_assets_js_quick_add_to_cart_handleaddtocart",
+      "wp_content_themes_dragon_glow_assets_js_quick_add_to_cart_handleremovefromcart"
+    ],
+    "Cart API Client": [
+      "wp_content_themes_dragon_glow_assets_js_lib_cart_api",
+      "wp_content_themes_dragon_glow_assets_js_lib_cart_api_post",
+      "wp_content_themes_dragon_glow_assets_js_lib_cart_api_buildformdata"
+    ],
+    "Wishlist Sort Dropdown": [
+      "wp_content_themes_dragon_glow_assets_js_wishlist_initsortdropdown",
+      "wp_content_themes_dragon_glow_assets_js_wishlist_initsortdropdown_selectoption",
+      "wp_content_themes_dragon_glow_assets_js_wishlist_initsortdropdown_indexofvalue"
+    ],
+    "Login Validation": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_login_validation",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_login_validation_dg_login_messages",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_login_validation_dg_login_error_store"
+    ],
+    "Account Register JS": [
+      "wp_content_themes_dragon_glow_assets_js_account_register",
+      "wp_content_themes_dragon_glow_assets_js_account_register_initformsubmission",
+      "wp_content_themes_dragon_glow_assets_js_account_register_init"
+    ],
+    "Careers Page JS": [
+      "wp_content_themes_dragon_glow_assets_js_careers_initapplymodal",
+      "wp_content_themes_dragon_glow_assets_js_careers",
+      "wp_content_themes_dragon_glow_assets_js_careers_initapplymodal_onkeydown"
+    ],
+    "FAQ Accordion JS": [
+      "wp_content_themes_dragon_glow_assets_js_faq",
+      "wp_content_themes_dragon_glow_assets_js_faq_initaccordion",
+      "wp_content_themes_dragon_glow_assets_js_faq_closeall"
+    ],
+    "Order Modal AJAX": [
+      "wp_content_themes_dragon_glow_inc_ajax_order_modal",
+      "wp_content_themes_dragon_glow_inc_ajax_order_modal_php_wc_order",
+      "wp_content_themes_dragon_glow_inc_ajax_order_modal_dg_ajax_get_order_details"
+    ],
+    "Checkout Page JS": [
+      "wp_content_themes_dragon_glow_assets_js_checkout",
+      "wp_content_themes_dragon_glow_assets_js_checkout_bindwoocommerceevents",
+      "wp_content_themes_dragon_glow_assets_js_checkout_bindvalidation"
+    ],
+    "BACS QR Code": [
+      "wp_content_themes_dragon_glow_assets_js_checkout_bacs_qr",
+      "wp_content_themes_dragon_glow_assets_js_checkout_bacs_qr_buildemvcopayload",
+      "wp_content_themes_dragon_glow_assets_js_checkout_bacs_qr_initpanel"
+    ],
+    "Help Center JS": [
+      "wp_content_themes_dragon_glow_assets_js_help_center",
+      "wp_content_themes_dragon_glow_assets_js_help_center_closecard",
+      "wp_content_themes_dragon_glow_assets_js_help_center_initaccordion"
+    ],
+    "Login Page JS": [
+      "wp_content_themes_dragon_glow_assets_js_login",
+      "wp_content_themes_dragon_glow_assets_js_login_initvalidation",
+      "wp_content_themes_dragon_glow_assets_js_login_clearfielderror"
+    ],
+    "Careers Page Data": [
+      "wp_content_themes_dragon_glow_template_parts_careers_data_careers",
+      "wp_content_themes_dragon_glow_template_parts_careers_data_careers_dg_careers_hero_data",
+      "wp_content_themes_dragon_glow_template_parts_careers_data_careers_dg_careers_roles_data"
+    ],
+    "WooCommerce Helpers": [
+      "wp_content_themes_dragon_glow_inc_helpers_woocommerce",
+      "wp_content_themes_dragon_glow_template_parts_wishlist_data_wishlist_dg_wishlist_page_data",
+      "wp_content_themes_dragon_glow_inc_helpers_woocommerce_dg_format_price"
+    ],
+    "Page Loader Lib": [
+      "wp_content_themes_dragon_glow_assets_js_lib_loading",
+      "wp_content_themes_dragon_glow_assets_js_lib_loading_track",
+      "wp_content_themes_dragon_glow_assets_js_lib_loading_stop"
+    ],
+    "Checkout Locale & States": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_checkout_locale",
+      "wp_content_themes_dragon_glow_inc_data_country_states_dg_get_country_states_data",
+      "wp_content_themes_dragon_glow_inc_woocommerce_checkout_locale_dg_get_states_for_country"
+    ],
+    "WooCommerce Global Hooks": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_general",
+      "wp_content_themes_dragon_glow_inc_woocommerce_general_closure_1",
+      "wp_content_themes_dragon_glow_inc_woocommerce_general_dg_dequeue_styles"
+    ],
+    "Shop Loop Customization": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_shop",
+      "wp_content_themes_dragon_glow_inc_woocommerce_shop_dg_apply_dropdown_filters_to_shop_query",
+      "wp_query"
+    ],
+    "Cart Item Size Persistence": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart",
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_dg_save_cart_item_size_to_order",
+      "wp_content_themes_dragon_glow_inc_woocommerce_cart_dg_cart_count_fragment"
+    ],
+    "SEO Meta Description": [
+      "wp_content_themes_dragon_glow_inc_seo",
+      "wp_content_themes_dragon_glow_inc_seo_dg_get_meta_description",
+      "wp_content_themes_dragon_glow_inc_seo_dg_get_post_summary"
+    ],
+    "About Widget": [
+      "wp_content_themes_dragon_glow_inc_widgets_class_dg_about_widget_dg_about_widget",
+      "wp_widget",
+      "wp_content_themes_dragon_glow_inc_widgets_class_dg_about_widget"
+    ],
+    "Accessibility Page Data": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_data_accessibility_statement",
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_data_accessibility_statement_dg_accessibility_hero_data",
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_data_accessibility_statement_dg_accessibility_tech_data"
+    ],
+    "Single Product Hooks": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_single_product",
+      "wp_content_themes_dragon_glow_inc_woocommerce_single_product_closure_1",
+      "wp_content_themes_dragon_glow_inc_woocommerce_single_product_dg_add_buy_now_button"
+    ],
+    "Toast Lib": [
+      "wp_content_themes_dragon_glow_assets_js_lib_toast",
+      "wp_content_themes_dragon_glow_assets_js_lib_toast_show",
+      "wp_content_themes_dragon_glow_assets_js_lib_toast_dismiss"
+    ],
+    "Thank You Page JS": [
+      "wp_content_themes_dragon_glow_assets_js_thankyou",
+      "wp_content_themes_dragon_glow_assets_js_thankyou_init",
+      "wp_content_themes_dragon_glow_assets_js_thankyou_paintfromdataisland"
+    ],
+    "Account Details Endpoint": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_account_details_endpoint",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_account_details_endpoint_dg_add_account_details_query_var",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_account_details_endpoint_dg_register_account_details_endpoint"
+    ],
+    "Address Details Endpoint": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_address_details_endpoint",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_address_details_endpoint_dg_add_address_details_query_var",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_address_details_endpoint_dg_register_address_details_endpoint"
+    ],
+    "Register Endpoint": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_register_endpoint",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_register_endpoint_dg_add_register_query_var",
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_register_endpoint_dg_mark_permalinks_flushed"
+    ],
+    "Checkout Template": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_checkout",
+      "wp_content_themes_dragon_glow_inc_woocommerce_checkout_dg_render_wc_checkout",
+      "wp_content_themes_dragon_glow_inc_woocommerce_checkout_dg_use_wc_checkout_template"
+    ],
+    "Cookie Policy Data": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_data_cookie_policy",
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_data_cookie_policy_dg_cookies_table_data",
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_data_cookie_policy_dg_cookie_categories_data"
+    ],
+    "Our Story Data": [
+      "wp_content_themes_dragon_glow_template_parts_our_story_data_our_story",
+      "wp_content_themes_dragon_glow_template_parts_our_story_data_our_story_dg_our_story_hero_data",
+      "wp_content_themes_dragon_glow_template_parts_our_story_data_our_story_dg_our_story_alchemy_data"
+    ],
+    "Terms Of Service Data": [
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_data_terms_of_service",
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_data_terms_of_service_closure_1",
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_data_terms_of_service_closure_2"
+    ],
+    "Login Animations": [
+      "wp_content_themes_dragon_glow_assets_js_account_login_animations_playshine",
+      "wp_content_themes_dragon_glow_assets_js_account_login_animations_initbrandshine",
+      "wp_content_themes_dragon_glow_assets_js_account_login_animations"
+    ],
+    "Footer Nav JS": [
+      "wp_content_themes_dragon_glow_assets_js_footer",
+      "wp_content_themes_dragon_glow_assets_js_footer_initfooteractivestate",
+      "wp_content_themes_dragon_glow_assets_js_footer_handlefooterlinkclick"
+    ],
+    "Product Page JS": [
+      "wp_content_themes_dragon_glow_assets_js_product",
+      "wp_content_themes_dragon_glow_assets_js_product_highlightstars",
+      "wp_content_themes_dragon_glow_assets_js_product_dgupdatezoomimage"
+    ],
+    "Thank You Handler": [
+      "wp_content_themes_dragon_glow_inc_checkout_class_dg_thankyou_dg_thankyou",
+      "wp_content_themes_dragon_glow_inc_checkout_class_dg_thankyou",
+      "wp_content_themes_dragon_glow_inc_checkout_class_dg_thankyou_dg_thankyou_init"
+    ],
+    "Help Center Data": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_data_help_center",
+      "wp_content_themes_dragon_glow_template_parts_help_center_data_help_center_dg_hc_data",
+      "wp_content_themes_dragon_glow_template_parts_help_center_data_help_center_dg_hc_orders_url"
+    ],
+    "Instagram Reels Data": [
+      "wp_content_themes_dragon_glow_template_parts_home_data_instagram_reels",
+      "wp_content_themes_dragon_glow_template_parts_home_data_instagram_reels_dg_instagram_reels_cards_data",
+      "wp_content_themes_dragon_glow_template_parts_home_data_instagram_reels_dg_instagram_reels_get_product_by_name"
+    ],
+    "Privacy Policy Data": [
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_data_privacy_policy",
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_data_privacy_policy_closure_1",
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_data_privacy_policy_dg_privacy_policy_hero_data"
+    ],
+    "account-register-animations.js": [
+      "wp_content_themes_dragon_glow_assets_js_account_register_animations",
+      "wp_content_themes_dragon_glow_assets_js_account_register_animations_playshine",
+      "wp_content_themes_dragon_glow_assets_js_account_register_animations_initbrandshine"
+    ],
+    "contact.js": [
+      "wp_content_themes_dragon_glow_assets_js_contact",
+      "wp_content_themes_dragon_glow_assets_js_contact_resetcharcount",
+      "wp_content_themes_dragon_glow_assets_js_contact_updatecharcount"
+    ],
+    "returns.php": [
+      "wp_content_themes_dragon_glow_inc_ajax_returns",
+      "wp_content_themes_dragon_glow_inc_ajax_returns_dg_get_client_ip",
+      "wp_content_themes_dragon_glow_inc_ajax_returns_dg_ajax_submit_return_request"
+    ],
+    "widgets.php": [
+      "wp_content_themes_dragon_glow_inc_widgets",
+      "wp_content_themes_dragon_glow_inc_widgets_dg_register_widgets",
+      "wp_content_themes_dragon_glow_inc_widgets_dg_register_custom_widgets"
+    ],
+    "gateways.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_gateways",
+      "wp_content_themes_dragon_glow_inc_woocommerce_gateways_dg_hide_front_end_gateways",
+      "wp_content_themes_dragon_glow_inc_woocommerce_gateways_dg_hidden_front_end_gateway_ids"
+    ],
+    "data-config.php": [
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_data_config",
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_data_config_dg_gift_cards_data",
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_data_config_dg_gift_cards_format_price"
+    ],
+    "data-shipping-returns.php": [
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_data_shipping_returns",
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_data_shipping_returns_dg_sr_orders_url",
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_data_shipping_returns_dg_shipping_returns_data"
+    ],
+    "cart-feedback.js": [
+      "wp_content_themes_dragon_glow_assets_js_lib_cart_feedback",
+      "wp_content_themes_dragon_glow_assets_js_lib_cart_feedback_updatecartcount"
+    ],
+    "main.js": [
+      "wp_content_themes_dragon_glow_assets_js_main",
+      "wp_content_themes_dragon_glow_assets_js_main_revealonscroll"
+    ],
+    "contact.php": [
+      "wp_content_themes_dragon_glow_inc_ajax_contact",
+      "wp_content_themes_dragon_glow_inc_ajax_contact_dg_handle_contact"
+    ],
+    "newsletter.php": [
+      "wp_content_themes_dragon_glow_inc_ajax_newsletter",
+      "wp_content_themes_dragon_glow_inc_ajax_newsletter_dg_handle_newsletter"
+    ],
+    "approval-ics.php": [
+      "wp_content_themes_dragon_glow_inc_careers_approval_ics",
+      "wp_content_themes_dragon_glow_inc_careers_approval_ics_dg_careers_build_ics"
+    ],
+    "excluded-statuses.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_excluded_statuses",
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_excluded_statuses_dg_analytics_excluded_statuses"
+    ],
+    "data-faq.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_data_faq",
+      "wp_content_themes_dragon_glow_template_parts_faq_data_faq_dg_faq_data"
+    ],
+    "data-announcement-bar.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_data_announcement_bar",
+      "wp_content_themes_dragon_glow_template_parts_global_data_announcement_bar_dg_announcement_bar_data"
+    ],
+    "data-our-ingredients.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_data_our_ingredients",
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_data_our_ingredients_dg_our_ingredients_data"
+    ],
+    "product-tabs.php": [
+      "wp_content_themes_dragon_glow_template_parts_product_product_tabs",
+      "wp_content_themes_dragon_glow_template_parts_product_product_tabs_updatestars"
+    ],
+    "data-sustainability.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_data_sustainability",
+      "wp_content_themes_dragon_glow_template_parts_sustainability_data_sustainability_dg_sustainability_data"
+    ],
+    "404.php": [
+      "wp_content_themes_dragon_glow_404"
+    ],
+    "inject-custom-states.js": [
+      "wp_content_themes_dragon_glow_assets_js_inject_custom_states"
+    ],
+    "newsletter.js": [
+      "wp_content_themes_dragon_glow_assets_js_lib_newsletter"
+    ],
+    "our-story.js": [
+      "wp_content_themes_dragon_glow_assets_js_our_story"
+    ],
+    "footer.php": [
+      "wp_content_themes_dragon_glow_footer"
+    ],
+    "front-page.php": [
+      "wp_content_themes_dragon_glow_front_page"
+    ],
+    "functions.php": [
+      "wp_content_themes_dragon_glow_functions"
+    ],
+    "header.php": [
+      "wp_content_themes_dragon_glow_header"
+    ],
+    "ajax-handlers.php": [
+      "wp_content_themes_dragon_glow_inc_ajax_handlers"
+    ],
+    "approval-handler.php": [
+      "wp_content_themes_dragon_glow_inc_approval_handler"
+    ],
+    "cart-functions.php": [
+      "wp_content_themes_dragon_glow_inc_cart_functions"
+    ],
+    "inc/checkout.php": [
+      "wp_content_themes_dragon_glow_inc_checkout"
+    ],
+    "helpers.php": [
+      "wp_content_themes_dragon_glow_inc_helpers"
+    ],
+    "inc/woocommerce.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce"
+    ],
+    "account/loader.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_loader"
+    ],
+    "social-login.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_account_social_login"
+    ],
+    "analytics/loader.php": [
+      "wp_content_themes_dragon_glow_inc_woocommerce_analytics_loader"
+    ],
+    "index.php": [
+      "wp_content_themes_dragon_glow_index"
+    ],
+    "template-accessibility-statement.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_accessibility_statement"
+    ],
+    "template-careers.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_careers"
+    ],
+    "template-contact.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_contact"
+    ],
+    "template-cookie-policy.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_cookie_policy"
+    ],
+    "template-faq.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_faq"
+    ],
+    "template-gift-cards.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_gift_cards"
+    ],
+    "template-help-center.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_help_center"
+    ],
+    "template-our-ingredients.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_our_ingredients"
+    ],
+    "template-our-story.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_our_story"
+    ],
+    "template-privacy-policy.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_privacy_policy"
+    ],
+    "template-shipping-returns.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_shipping_returns"
+    ],
+    "template-shop.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_shop"
+    ],
+    "template-sustainability.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_sustainability"
+    ],
+    "template-terms-of-service.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_terms_of_service"
+    ],
+    "template-wc-account.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_wc_account"
+    ],
+    "template-wc-cart.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_wc_cart"
+    ],
+    "template-wc-checkout.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_wc_checkout"
+    ],
+    "template-wc-thankyou.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_wc_thankyou"
+    ],
+    "template-wishlist.php": [
+      "wp_content_themes_dragon_glow_page_templates_template_wishlist"
+    ],
+    "section-assessment.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_assessment"
+    ],
+    "section-conformance.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_conformance"
+    ],
+    "section-enforcement.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_enforcement"
+    ],
+    "section-evaluation.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_evaluation"
+    ],
+    "section-feedback.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_feedback"
+    ],
+    "accessibility-statement/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_hero"
+    ],
+    "section-limitations.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_limitations"
+    ],
+    "section-measures.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_measures"
+    ],
+    "section-revision-history.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_revision_history"
+    ],
+    "section-technical.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_technical"
+    ],
+    "section-third-party.php": [
+      "wp_content_themes_dragon_glow_template_parts_accessibility_statement_section_third_party"
+    ],
+    "approval-page.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_approval_page"
+    ],
+    "section-apply-modal.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_apply_modal"
+    ],
+    "section-closing-cta.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_closing_cta"
+    ],
+    "section-equal-opportunity.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_equal_opportunity"
+    ],
+    "careers/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_hero"
+    ],
+    "section-how-we-hire.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_how_we_hire"
+    ],
+    "section-life-here.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_life_here"
+    ],
+    "section-mission.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_mission"
+    ],
+    "section-open-roles.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_open_roles"
+    ],
+    "section-what-we-offer.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_what_we_offer"
+    ],
+    "section-why-join.php": [
+      "wp_content_themes_dragon_glow_template_parts_careers_section_why_join"
+    ],
+    "cookie-policy/section-categories.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_categories"
+    ],
+    "section-cookies-table.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_cookies_table"
+    ],
+    "cookie-policy/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_hero"
+    ],
+    "section-management.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_management"
+    ],
+    "cookie-policy/section-section.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_section"
+    ],
+    "cookie-policy/section-toc.php": [
+      "wp_content_themes_dragon_glow_template_parts_cookie_policy_section_toc"
+    ],
+    "approval-accept.php": [
+      "wp_content_themes_dragon_glow_template_parts_emails_approval_accept"
+    ],
+    "approval-reject.php": [
+      "wp_content_themes_dragon_glow_template_parts_emails_approval_reject"
+    ],
+    "accordion.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_accordion"
+    ],
+    "faq/section-categories.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_section_categories"
+    ],
+    "section-cta.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_section_cta"
+    ],
+    "faq/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_section_hero"
+    ],
+    "faq/section-search.php": [
+      "wp_content_themes_dragon_glow_template_parts_faq_section_search"
+    ],
+    "section-bento.php": [
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_section_bento"
+    ],
+    "section-config.php": [
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_section_config"
+    ],
+    "gift-cards/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_gift_cards_section_hero"
+    ],
+    "announcement-bar.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_announcement_bar"
+    ],
+    "breadcrumb.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_breadcrumb"
+    ],
+    "global/empty-state.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_empty_state"
+    ],
+    "footer-main.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_footer_main"
+    ],
+    "header-nav.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_header_nav"
+    ],
+    "newsletter-bar.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_newsletter_bar"
+    ],
+    "page-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_global_page_hero"
+    ],
+    "section-account.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_account"
+    ],
+    "help-center/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_hero"
+    ],
+    "help-center/section-ingredients.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_ingredients"
+    ],
+    "section-orders.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_orders"
+    ],
+    "section-ritual.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_ritual"
+    ],
+    "help-center/section-search.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_search"
+    ],
+    "section-sustainability.php": [
+      "wp_content_themes_dragon_glow_template_parts_help_center_section_sustainability"
+    ],
+    "best-sellers.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_best_sellers"
+    ],
+    "brand-story.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_brand_story"
+    ],
+    "featured-categories.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_featured_categories"
+    ],
+    "home/hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_hero"
+    ],
+    "instagram-grid.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_instagram_grid"
+    ],
+    "testimonials.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_testimonials"
+    ],
+    "trust-badges.php": [
+      "wp_content_themes_dragon_glow_template_parts_home_trust_badges"
+    ],
+    "our-ingredients/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_hero"
+    ],
+    "our-ingredients/section-ingredients.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_ingredients"
+    ],
+    "section-outro.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_outro"
+    ],
+    "section-signature.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_signature"
+    ],
+    "section-traceable.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_traceable"
+    ],
+    "section-what-we-leave-out.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_ingredients_section_what_we_leave_out"
+    ],
+    "section-alchemy.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_story_section_alchemy"
+    ],
+    "section-commitment.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_story_section_commitment"
+    ],
+    "our-story/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_story_section_hero"
+    ],
+    "section-philosophy.php": [
+      "wp_content_themes_dragon_glow_template_parts_our_story_section_philosophy"
+    ],
+    "privacy-policy/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_section_hero"
+    ],
+    "privacy-policy/section-section.php": [
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_section_section"
+    ],
+    "privacy-policy/section-toc.php": [
+      "wp_content_themes_dragon_glow_template_parts_privacy_policy_section_toc"
+    ],
+    "product-badges.php": [
+      "wp_content_themes_dragon_glow_template_parts_product_product_badges"
+    ],
+    "shipping-returns/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_section_hero"
+    ],
+    "section-return-modal.php": [
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_section_return_modal"
+    ],
+    "section-returns-faqs.php": [
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_section_returns_faqs"
+    ],
+    "section-shipping-philosophy.php": [
+      "wp_content_themes_dragon_glow_template_parts_shipping_returns_section_shipping_philosophy"
+    ],
+    "active-filters.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_active_filters"
+    ],
+    "filter-sidebar.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_filter_sidebar"
+    ],
+    "shop/hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_hero"
+    ],
+    "pagination.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_pagination"
+    ],
+    "philosophy.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_philosophy"
+    ],
+    "product-card.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_product_card"
+    ],
+    "rituals.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_rituals"
+    ],
+    "section-header.php": [
+      "wp_content_themes_dragon_glow_template_parts_shop_section_header"
+    ],
+    "section-accountability.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_accountability"
+    ],
+    "section-carbon.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_carbon"
+    ],
+    "section-closing.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_closing"
+    ],
+    "section-commitments.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_commitments"
+    ],
+    "sustainability/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_hero"
+    ],
+    "section-intro.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_intro"
+    ],
+    "section-numbers.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_numbers"
+    ],
+    "section-packaging.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_packaging"
+    ],
+    "section-refill.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_refill"
+    ],
+    "section-sourcing.php": [
+      "wp_content_themes_dragon_glow_template_parts_sustainability_section_sourcing"
+    ],
+    "terms-of-service/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_section_hero"
+    ],
+    "terms-of-service/section-section.php": [
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_section_section"
+    ],
+    "terms-of-service/section-toc.php": [
+      "wp_content_themes_dragon_glow_template_parts_terms_of_service_section_toc"
+    ],
+    "confirm-modal.php": [
+      "wp_content_themes_dragon_glow_template_parts_wishlist_confirm_modal"
+    ],
+    "wishlist/empty-state.php": [
+      "wp_content_themes_dragon_glow_template_parts_wishlist_empty_state"
+    ],
+    "wishlist/section-hero.php": [
+      "wp_content_themes_dragon_glow_template_parts_wishlist_section_hero"
+    ],
+    "section-toolbar.php": [
+      "wp_content_themes_dragon_glow_template_parts_wishlist_section_toolbar"
+    ],
+    "share-modal.php": [
+      "wp_content_themes_dragon_glow_template_parts_wishlist_share_modal"
+    ],
+    "archive-product.php": [
+      "wp_content_themes_dragon_glow_woocommerce_archive_product"
+    ],
+    "cart/cart.php": [
+      "wp_content_themes_dragon_glow_woocommerce_cart_cart"
+    ],
+    "cart-empty.php": [
+      "wp_content_themes_dragon_glow_woocommerce_cart_cart_empty"
+    ],
+    "payment-method.php": [
+      "wp_content_themes_dragon_glow_woocommerce_checkout_payment_method"
+    ],
+    "review-order.php": [
+      "wp_content_themes_dragon_glow_woocommerce_checkout_review_order"
+    ],
+    "thankyou.php": [
+      "wp_content_themes_dragon_glow_woocommerce_checkout_thankyou"
+    ],
+    "content-product.php": [
+      "wp_content_themes_dragon_glow_woocommerce_content_product"
+    ],
+    "content-single-product.php": [
+      "wp_content_themes_dragon_glow_woocommerce_content_single_product"
+    ],
+    "quantity-input.php": [
+      "wp_content_themes_dragon_glow_woocommerce_global_quantity_input"
+    ],
+    "form-edit-account.php": [
+      "wp_content_themes_dragon_glow_woocommerce_myaccount_form_edit_account"
+    ],
+    "form-edit-address.php": [
+      "wp_content_themes_dragon_glow_woocommerce_myaccount_form_edit_address"
+    ],
+    "myaccount/orders.php": [
+      "wp_content_themes_dragon_glow_woocommerce_myaccount_orders"
+    ],
+    "dragon-glow/woocommerce/single-product.php": [
+      "wp_content_themes_dragon_glow_woocommerce_single_product"
+    ]
+  }
+}
