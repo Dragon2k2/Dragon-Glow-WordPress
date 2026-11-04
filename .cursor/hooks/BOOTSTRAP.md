@@ -68,6 +68,35 @@ node_modules, graphify-out, scripts, and stitch_dragon_glow_* folders. Plain
 PHP templates with no function declarations yield no symbols, so files like
 404.php and footer.php are absent by design.
 
+## Chrome DevTools MCP
+
+Sentinel: `[DG-CHROME-DEVTOOLS v1]`. It leads the chrome-devtools section of
+the system context and is emitted by its own `sessionStart` entry in
+`.cursor/hooks.json`. Variant `[DG-CHROME-DEVTOOLS v1 | NOT VENDORED]` still
+means the hook ran but `vendor/chrome-devtools-mcp` is missing.
+
+Seeing the sentinel proves the HOOK ran. It does NOT prove the MCP server is
+alive - check the next lines for `MCP server: registered ...` and
+`Tools exposed right now: <n>`. Grep `tools/list` yourself before claiming a
+tool exists.
+
+Facts that are easy to get wrong:
+
+- The server exposes 32 tools by default. The current `.cursor/mcp.json` turns
+  on six flags (memoryDebugging, categoryExtensions,
+  categoryExperimentalThirdParty, categoryExperimentalWebmcp, categoryPwa,
+  experimentalVision) for 59 tools, which is everything npm `1.12.0` has.
+- GitHub `main` documents 61 tools (`set_logpoints`, `configure_webauthn`),
+  but npm `latest` is still `1.12.0`. Docs run ahead of releases: verify with
+  `npm view chrome-devtools-mcp dist-tags` instead of trusting a doc count.
+- On Windows the launch MUST be wrapped as `command: cmd`,
+  `args: ["/c","npx",...]`. Cursor spawns stdio servers without a shell, so a
+  bare `npx` sits at "disconnected" forever with no error in the UI.
+- Read `vendor/chrome-devtools-mcp/docs/configuration.md` before adding a flag,
+  and `docs/tool-reference.md` before calling an unfamiliar tool. `--slim`
+  reduces the surface to 3 tools if that is ever what you want.
+- This only inspects a browser. It does not relax any constraint above.
+
 ## Docs are already loaded
 
 `CLAUDE.md` and `.cursor/rules/*.mdc` are auto-loaded by Cursor. Do not

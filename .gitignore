@@ -11,3 +11,10 @@ wp-config.php
 *.swp
 *.swo
 *~
+
+# Vendored reference source (docs + skills) for the chrome-devtools MCP server.
+# Re-create with: powershell -ExecutionPolicy Bypass -File scripts/setup-chrome-devtools-mcp.ps1
+vendor/
+
+# sessionStart hook cache (regenerated on demand, machine-specific)
+.cursor/hooks/.chrome-devtools-tools-cache.json

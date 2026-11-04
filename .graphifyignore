@@ -14,3 +14,6 @@ stitch_dragon_glow_cosmetics_showcase/
 # Docs + manifest: graphify parse markdown/YAML thành heading node, không phải code.
 CLAUDE.md
 package.json
+
+# Vendored third-party reference source - not Dragon Glow project code.
+vendor/
