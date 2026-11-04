@@ -40,6 +40,7 @@ $faqs    = $data['faqs'];
 					aria-controls="<?php echo esc_attr( $panel_id ); ?>"
 				>
 					<span class="dg-sr-faq-question"><?php echo esc_html( $faq['question'] ); ?></span>
+					<span class="dg-sr-faq-icon material-symbols-outlined" aria-hidden="true">expand_more</span>
 				</button>
 				<div
 					class="dg-sr-faq-panel"

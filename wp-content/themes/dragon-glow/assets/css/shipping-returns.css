@@ -27,6 +27,17 @@
 	--sr-card-padding: 2rem;
 	--sr-card-gap: 1.5rem;
 
+	/* FAQ accordion chevron — shared by all breakpoints (desktop baseline,
+	   mobile + tablet inherit, no per-breakpoint override needed).
+	   Colour is NOT tokenised on purpose: the chevron inherits `currentColor`
+	   from the question text so both always render in the exact same hue
+	   (--gold-400 via [data-page="shipping-returns"]). Open/closed state is
+	   conveyed by rotation, not by colour. */
+	--sr-faq-icon-size: 1.5rem;                    /* 24px glyph box */
+	--sr-faq-icon-gap: 1rem;                       /* question → chevron breathing room */
+	--sr-faq-icon-duration: 320ms;
+	--sr-faq-icon-ease: cubic-bezier(0.2, 0, 0, 1);
+
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* All color tokens now reference :root — single source of truth */
 	/* OLD tokens removed: --sr-bg, --sr-on-bg, --sr-on-surface, --sr-on-surface-variant, */
@@ -41,7 +52,6 @@
 	font-weight: 200;
 	line-height: 1.1;
 	letter-spacing: -0.04em;
-	color: var(--color-primary);  /* was --sr-primary */
 	margin: 0 0 1.5rem;
 }
 
@@ -51,7 +61,7 @@
 	font-weight: 300;
 	line-height: 1.6;
 	letter-spacing: 0.01em;
-	color: var(--color-on-surface);  /* was --sr-secondary */
+	color: var(--neutral-0);  /* Pure white — subtitle on the dark macro-texture hero */
 	max-width: 65ch;
 	margin: 0 auto;
 }
@@ -425,13 +435,15 @@
 	width: 100%;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
+	gap: var(--sr-faq-icon-gap);
 	padding: 1.5rem 0;
 	background: transparent;
 	border: 0;
 	text-align: left;
 	font: inherit;
 	color: inherit;
-	cursor: default;
+	cursor: pointer;
 }
 
 .dg-sr-faq-question {
@@ -439,6 +451,27 @@
 	font-size: 15px;
 	font-weight: 400;
 	line-height: 1.5;
+	min-width: 0;   /* let long questions wrap instead of pushing the chevron out */
+}
+
+/* Chevron affordance — signals "this row expands". Rotates 180° when open.
+   Colour and rotation live on the wrapper so the glyph keeps its own
+   font-variation-settings untouched. `currentColor` makes the chevron match
+   `.dg-sr-faq-question` exactly at every breakpoint. */
+.dg-sr-faq-icon {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--sr-faq-icon-size);
+	height: var(--sr-faq-icon-size);
+	font-size: var(--sr-faq-icon-size);
+	color: inherit;
+	transition: transform var(--sr-faq-icon-duration) var(--sr-faq-icon-ease);
+}
+
+.dg-sr-faq-item.is-open .dg-sr-faq-icon {
+	transform: rotate(180deg);
 }
 
 .dg-sr-faq-panel {
@@ -508,6 +541,7 @@
 	.dg-glass-card,
 	.dg-sr-btn,
 	.dg-sr-faq-trigger,
+	.dg-sr-faq-icon,
 	.dg-sr-faq-panel {
 		transition: none !important;
 	}

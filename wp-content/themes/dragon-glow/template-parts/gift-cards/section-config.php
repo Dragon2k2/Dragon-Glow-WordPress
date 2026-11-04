@@ -43,7 +43,7 @@ $default_amount = $values[1]['amount']; // $100 (giống reference)
 	</div>
 
 	<!-- Format Selection -->
-	<fieldset class="dg-gift-field">
+	<fieldset class="dg-gift-field dg-gift-field--format">
 		<legend class="dg-gift-label"><?php echo esc_html( $form['format_label'] ); ?></legend>
 		<div class="dg-gift-format-grid" role="radiogroup" aria-label="<?php echo esc_attr( $form['format_label'] ); ?>">
 			<?php foreach ( $formats as $index => $format ) :
@@ -64,7 +64,7 @@ $default_amount = $values[1]['amount']; // $100 (giống reference)
 	</fieldset>
 
 	<!-- Value Selection -->
-	<fieldset class="dg-gift-field">
+	<fieldset class="dg-gift-field dg-gift-field--value">
 		<legend class="dg-gift-label"><?php echo esc_html( $form['value_label'] ); ?></legend>
 		<div class="dg-gift-value-row" role="radiogroup" aria-label="<?php echo esc_attr( $form['value_label'] ); ?>">
 			<?php foreach ( $values as $index => $value ) :

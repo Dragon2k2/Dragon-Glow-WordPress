@@ -704,9 +704,27 @@
    MOBILE TWEAKS
    ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
+	/* Mobile reading order: secondary visuals first, main card second.
+	   Pure visual reorder via `order` — the DOM stays preview → row so the
+	   desktop/tablet layout (and any future non-CSS consumer) is unaffected.
+	   Nothing inside either block is focusable, so tab order is unchanged. */
 	.dg-gift-bento-row {
-		grid-template-columns: 1fr 1fr;
+		order: 1;
+		grid-template-columns: 1fr;
 		gap: 0.75rem;
+	}
+
+	.dg-gift-card-preview {
+		order: 2;
+	}
+
+	/* Full-bleed stack: both tiles span the row width so every block in the
+	   bento lines up with the main card above. `min-width: 0` overrides the
+	   `auto` minimum grid items get by default — without it the tile's
+	   min-content (icon + "Digital Delivery", ~260px) refuses to shrink and
+	   squeezes the envelope to a sliver. */
+	.dg-gift-bento-row > * {
+		min-width: 0;
 	}
 
 	.dg-gift-config {

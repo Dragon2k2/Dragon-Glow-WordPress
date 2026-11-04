@@ -153,85 +153,28 @@ graphify cluster-only . --no-label          # report + html lấy tên mới
 
 ## C.1b Chrome DevTools MCP — điều khiển browser thật
 
-**Nguồn:** https://github.com/ChromeDevTools/chrome-devtools-mcp — release `1.12.0`. Đây là **MCP server** (stdio, chạy qua `npx`), **không phải thư viện** và không phải dependency của theme.
+**Nguồn:** https://github.com/ChromeDevTools/chrome-devtools-mcp — release `1.12.0`. Là **MCP server** (stdio, chạy qua `npx`), **không phải thư viện**, không phải dependency của theme.
+
+**Không có hook báo cáo.** Script `chrome-devtools-mcp-session-start.ps1` và cache của nó **đã bị xoá** — không có gì inject vào context mỗi phiên, không có sentinel. Muốn biết server có sống không thì gọi thử một tool (vd `list_pages`); trả kết quả = sống, lỗi = server chưa start.
 
 **Vị trí:**
 
 | Thứ | Đường dẫn | Commit? |
 |---|---|---|
 | MCP config | `.cursor/mcp.json` | ✅ có |
-| Hook bootstrap | `.cursor/hooks/chrome-devtools-mcp-session-start.ps1` | ✅ có |
 | Script tải lại | `scripts/setup-chrome-devtools-mcp.ps1` | ✅ có |
 | Source tham khảo (docs + skills) | `vendor/chrome-devtools-mcp/` | ❌ gitignore |
 
-**Cài lại / bump version:**
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/setup-chrome-devtools-mcp.ps1
-```
-
-Script đọc version từ `.cursor/mcp.json` và fetch tag `chrome-devtools-mcp-v<version>` → docs luôn khớp server đang chạy. Đổi version thì sửa `args` trong `.cursor/mcp.json` rồi chạy lại script.
-
-**⚠️ Windows: phải bọc `cmd /c`.** Cursor spawn MCP stdio **không qua shell**. Trên Windows, `npx` là `.cmd` shim — Node ≥20 từ chối spawn `.cmd` khi không có shell (CVE-2024-27980), còn `npx` trần thì không phải file thực thi. Kết quả: server hiện trong danh sách nhưng kẹt `disconnected` vĩnh viễn, **không có lỗi nào trong UI**. Đúng dạng này:
+**Cài lại / bump:** chạy `powershell -ExecutionPolicy Bypass -File scripts/setup-chrome-devtools-mcp.ps1`. Script đọc version từ `.cursor/mcp.json` rồi fetch tag `chrome-devtools-mcp-v<version>`, nên docs luôn khớp server. Đổi version thì sửa `args` trong `mcp.json` rồi chạy lại.
+**⚠️ Windows: phải bọc `cmd /c`.** Cursor spawn MCP stdio **không qua shell**; `npx` trên Windows là `.cmd` shim mà Node ≥20 từ chối spawn (CVE-2024-27980), còn `npx` trần không phải file thực thi. Kết quả: server hiện trong danh sách nhưng kẹt `disconnected` vĩnh viễn, **không lỗi nào trong UI**. Đúng dạng:
 
 ```json
 { "command": "cmd", "args": ["/c", "npx", "-y", "chrome-devtools-mcp@1.12.0"] }
 ```
 
-Hook tự phát hiện và in `WARNING` nếu `command` không phải `cmd`.
+**Tools:** mặc định **32**. `.cursor/mcp.json` bật 6 flag (`memoryDebugging`, `categoryExtensions`, `categoryExperimentalThirdParty`, `categoryExperimentalWebmcp`, `categoryPwa`, `experimentalVision`) → **59**, tức toàn bộ tool của npm `1.12.0`. Nhánh `main` tài liệu hoá **61** (`set_logpoints`, `configure_webauthn`) nhưng npm chưa ship — `--categoryWebauthn=true` bị **bỏ qua âm thầm**, nên luôn đối chiếu `npm view chrome-devtools-mcp dist-tags` thay vì tin con số trong docs. Đọc `docs/configuration.md` trước khi thêm flag, `docs/tool-reference.md` trước khi gọi tool lạ. `--slim` rút còn 3 tool.
 
-**Hook inject gì:** version, trạng thái đăng ký MCP + Chrome + cảnh báo thiếu wrapper, **danh sách tool thật** (probe `tools/list` **replay đúng flag trong `.cursor/mcp.json`**, cache theo version + args), 7 skill đi kèm, đường dẫn docs. Toàn bộ derive từ disk/server lúc chạy — bump vendor hay đổi flag là output tự theo.
-
-### Cách kiểm tra hook đã chạy chưa (trong chat mới)
-
-Hook chỉ chạy khi **tạo conversation mới** — reload window **không** kích hoạt. Để biết nó có chạy, tìm **sentinel** ở đầu system context:
-
-| Hook | Sentinel | Nếu KHÔNG thấy |
-|---|---|---|
-| superpowers | `[DG-SESSION-BOOTSTRAP v3]` | đọc `.cursor/hooks/BOOTSTRAP.md` |
-| chrome-devtools | `[DG-CHROME-DEVTOOLS v1]` | đọc `.cursor/hooks/BOOTSTRAP.md` |
-
-Prompt kiểm tra nhanh (dán vào chat mới):
-
-```
-Kiểm tra đầu context có [DG-CHROME-DEVTOOLS v1] không.
-Nếu không có → hook sessionStart chrome-devtools không chạy
-→ đọc .cursor/hooks/BOOTSTRAP.md rồi hãy làm.
-```
-
-`BOOTSTRAP.md` có sẵn mục **Chrome DevTools MCP** (sentinel, cách phân biệt hook chết vs server chết, danh sách flag, bẫy Windows `cmd /c`) nên agent tự lấy lại được đủ context mà không cần đọc file này.
-
-Sentinel luôn là **dòng đầu tiên** của section, kể cả khi vendor thiếu:
-
-```
-[DG-CHROME-DEVTOOLS v1]                     ← bình thường
-[DG-CHROME-DEVTOOLS v1 | NOT VENDORED]      ← vendor chưa clone
-```
-
-Có sentinel = hook chạy. Dòng ngay sau cho biết server đăng ký hay chưa, vài dòng sau là `Tools exposed right now: <số> (live|cached)`.
-
-**Đừng nhầm:** sentinel chứng minh **hook** chạy, không chứng minh **MCP server** sống. MCP sống hay không thì xem dòng `MCP server: registered...` + `Tools exposed right now: N`. Nếu hook chạy mà N = 0 hoặc probe fail → server chưa start, thử `list_pages` để kiểm tra thật.
-
-**Điều quan trọng:** docs liệt kê số tool khác nhau tuỳ phiên bản — server mặc định chỉ expose **32**. 5 nhóm còn lại (Memory, Extensions, Third-party, WebMCP, PWA) cộng thêm `click_at` phải bật bằng flag. Config hiện tại bật **đủ 59** (toàn bộ tool của bản npm `1.12.0` đang pin):
-
-| Flag | Thêm | Nhóm |
-|---|---|---|
-| `--memoryDebugging=true` | +13 | Memory (14 tool heapsnapshot) |
-| `--categoryExtensions=true` | +5 | Extensions |
-| `--categoryExperimentalThirdParty=true` | +2 | Third-party |
-| `--categoryExperimentalWebmcp=true` | +2 | WebMCP (cần Chrome 150+ + `--enable-features=WebMCP`) |
-| `--categoryPwa=true` | +4 | Progressive Web Apps (chỉ hoạt động với pipe connection) |
-| `--experimentalVision=true` | +1 | `click_at` (coordinate-based) |
-
-> ⚠️ **Chênh lệch docs ↔ npm.** Nhánh `main` trên GitHub đã tài liệu hoá **61 tool** (thêm `set_logpoints` ở Debugging và `configure_webauthn` ở nhóm mới WebAuthn qua `--categoryWebauthn`), nhưng `1.12.0` vẫn là bản mới nhất trên npm và chỉ có 59. Truyền `--categoryWebauthn=true` cho `1.12.0` bị **bỏ qua âm thầm**. Đừng tin con số trong docs upstream; luôn đối chiếu `npm view chrome-devtools-mcp dist-tags`. Khi npm phát hành bản mới có 2 tool đó thì bump version + thêm flag, hook tự probe lại.
-
-Đã probe thật từng flag để lấy bảng này — không suy từ docs. Bớt flag nào thì nhóm đó biến mất khỏi `tools/list`.
-
-Lưu ý: `take_screenshot` đôi khi timeout lần đầu (Chrome cold start) — gọi lại là được.
-
-Khi cần **thêm** flag khác, **đọc `docs/configuration.md` trước**, đừng đoán tên.
-
-**Ranh giới:** tool này chỉ soi browser. Nó không miễn trừ bất kỳ ràng buộc nào ở §A (không React, không build step, PHP template + vanilla JS). Dùng nó để verify render/responsive/console/network — đúng tinh thần §F.
+**Ranh giới:** chỉ soi browser. Không miễn trừ ràng buộc nào ở §A — dùng để verify render/responsive/console/network, đúng tinh thần §F.
 
 ---
 
@@ -341,50 +284,36 @@ Superpowers giả định repo có test suite. **Repo này không có** (`packag
 #### 5a. Folder loader pattern (khi 1 concern có nhiều file con)
 > *"1 concern = 1 folder + 1 loader PHP cùng tên."*
 
-- Khi 1 chức năng có **≥ 2 file PHP cùng concern**, gom vào folder con dưới `inc/` và tạo **file loader** ở `inc/` với cùng tên — loader chỉ `require_once` các file con, **không chứa logic**.
-- Folder loader hiện có:
+Chức năng có **≥ 2 file PHP cùng concern** → gom vào folder con dưới `inc/`, tạo **loader** ở `inc/` chỉ `require_once` các file con (không logic). `functions.php` require **loader**, không require từng file con.
 
-  ```
-  inc/cart-functions.php       → inc/cart/{page-setup,url,operations,identifiers,template-redirect}.php
-  inc/approval-handler.php     → inc/careers/{approval-route,approval-emails,approval-ics,approval-decision}.php
-  inc/woocommerce.php          → inc/woocommerce/{general,shop,single-product,cart,checkout,…}.php
-  inc/ajax-handlers.php        → inc/ajax/{brevo,careers,cart,contact,newsletter,returns,reviews,wishlist,…}.php
-  inc/widgets.php              → inc/widgets/class-dg-{name}.php
-  inc/enqueue.php              → inc/enqueue/{tailwind-config,styles,scripts}.php
-  inc/helpers.php              → inc/helpers/{woocommerce,ui-components,utilities}.php
-  ```
+```
+inc/cart-functions.php   -> inc/cart/{page-setup,url,operations,identifiers,template-redirect}.php
+inc/approval-handler.php -> inc/careers/{approval-route,approval-emails,approval-ics,approval-decision}.php
+inc/woocommerce.php      -> inc/woocommerce/{general,shop,single-product,cart,checkout,...}.php
+inc/ajax-handlers.php    -> inc/ajax/{brevo,careers,cart,contact,newsletter,returns,reviews,wishlist,...}.php
+inc/widgets.php          -> inc/widgets/class-dg-{name}.php
+inc/enqueue.php          -> inc/enqueue/{tailwind-config,styles,scripts}.php
+inc/helpers.php          -> inc/helpers/{woocommerce,ui-components,utilities}.php
+```
 
-- Trong `functions.php`, `require_once` **loader**, không require từng file con.
-- Quy tắc đặt tên:
-  - Folder con đặt tên theo concern (số ít, kebab-case): `inc/cart/`, `inc/careers/`, `inc/ajax/`, `inc/checkout/`, `inc/products/`, `inc/widgets/`.
-  - Loader file ở `inc/` đặt tên theo concern + hậu tố phù hợp (`cart-functions.php`, `approval-handler.php`) hoặc trùng tên concern (`woocommerce.php`, `helpers.php`).
-- 1 concern chỉ có 1 file → **đặt phẳng ở `inc/`**, không tạo folder.
+- Folder con: concern số ít, kebab-case (`inc/cart/`, `inc/careers/`, `inc/ajax/`, `inc/widgets/`).
+- Loader: concern + hậu tố (`cart-functions.php`, `approval-handler.php`) hoặc trùng tên concern (`woocommerce.php`, `helpers.php`).
+- 1 concern chỉ 1 file -> đặt phẳng ở `inc/`, không tạo folder.
+#### 5b. Template Organization — tách data/logic khỏi markup
+> *"Template phải pure: nhận data qua hàm, không logic inline."*
 
-#### 5b. Template Organization — Tách data/logic khỏi markup
-> *"Template phải pure: chỉ nhận data qua hàm, không có logic inline."*
+- **Data file riêng:** `template-parts/{concern}/data-{name}.php` chứa `dg_{name}_data(): array` (kèm `apply_filters` để mở rộng). `require_once locate_template(...)` file data **trước** khi render, rồi gọi hàm trong template-part.
+- **Helper chung:** `dg_render_template( $slug, $context ): string` — wrap `locate_template` + `ob_get_clean`.
+- **Không logic inline:** block `<?php ... ?>` chỉ là data binding hoặc control flow, KHÔNG business logic.
 
-**General Pattern (áp dụng tất cả loại template):**
+**Email:** body HTML ở `template-parts/emails/`, **không** `ob_start()` với HTML nhúng trong PHP. Mỗi email 1-3 file, kebab-case, flat:
 
-- **Tách data file riêng:** `template-parts/{concern}/data-{name}.php` chứa hàm `dg_{name}_data(): array`.
-- **Template nhận context qua tham số:** `require_once locate_template(...)` + gọi hàm → pass mảng vào template.
-- **Helper chung:** `dg_render_template( $slug, $context ): string` wrap `locate_template` + `ob_get_clean`.
-- **Không có logic inline:** Tất cả `<?php ... ?>` blocks phải là data binding hoặc control flow, KHÔNG business logic.
-
-**Email-Specific Pattern:**
-
-- Email HTML body đặt ở `template-parts/emails/`, **không viết inline `ob_start()` với HTML trong PHP**.
-- **Email wrapper** — mỗi email có **1-3 file** tuỳ độ phức tạp:
-  - `template-parts/emails/{name}.php` — body chính (luôn có).
-  - `template-parts/emails/{name}-header.php` (optional) — header (logo, preheader) khi body > 100 dòng.
-  - `template-parts/emails/{name}-footer.php` (optional) — footer (legal, unsubscribe) khi cần shared footer.
-- **Naming:** kebab-case, flat (không tạo folder con).
-- **Ví dụ:**
-  ```
-  template-parts/emails/data-approval.php → hàm dg_approval_email_data()
-  template-parts/emails/approval.php → nhận context qua $email array
-  template-parts/emails/approval-header.php → nếu header reusable
-  ```
-
+```
+template-parts/emails/approval.php          <- body chinh (luon co)
+template-parts/emails/approval-header.php   <- header, khi body > 100 dong
+template-parts/emails/approval-footer.php   <- footer (legal, unsubscribe)
+template-parts/emails/data-approval.php     <- dg_approval_email_data()
+```
 #### 5c. Tiêu chí tách folder con vs. để phẳng
 > *"Tách khi có nhiều file cùng concern + mỗi file > 20 dòng."*
 
@@ -399,98 +328,46 @@ Superpowers giả định repo có test suite. **Repo này không có** (`packag
 | File là section HTML riêng | Tách `section-{n}.php` ở `template-parts/{trang}/` |
 
 #### 5d. CSS & Asset File Organization
-> *"1 concern = 1 file. Tập trung, không tách nhỏ lại, không duplicate token."*
+> *"1 concern = 1 file. Không tách nhỏ, không duplicate token."*
 
-**CSS File Structure (assets/css/):**
+**CSS** — phẳng trong `assets/css/`, không folder con:
 
-- **Cấu trúc:** Tất cả file phẳng, **không có folder con** (trừ khi có font/import đi kèm).
-- **Global CSS** (load mọi trang):
-  - `style.css` — theme header + CSS token `:root` (single source of truth)
-  - `main.css` — base, typography, layout chung
-  - `responsive.css` — breakpoint media query overrides
-  - `woocommerce.css` — WC global styles (conditional load)
-  
-- **Page-Specific CSS** (load khi trang match):
-  - `{page-slug}.css` — toàn bộ CSS cho 1 page, tên trùng template slug
-  - VD: `page-templates/template-shop.php` → `assets/css/shop.css`
-  - **1 page = 1 file** — không tách nhỏ (trừ khi file > 1000 dòng → discuss trước)
-  - **Comment header:**
-    ```css
-    /* =========================================
-       DRAGON GLOW — {PAGE TITLE} STYLES
-       {Brief: layout structure, unique sections}
-       ========================================= */
-    ```
+- Global: `style.css` (token `:root` — **single source of truth**), `main.css` (base/typography/layout), `responsive.css` (breakpoint), `woocommerce.css` (conditional).
+- Page-specific: `{page-slug}.css` trùng slug template (`template-shop.php` -> `shop.css`). **1 page = 1 file**; > 1000 dòng thì bàn trước.
+- Header comment: `/* ==== DRAGON GLOW — {PAGE} STYLES ==== */`.
 
-**Token Management (CRITICAL):**
+**Token** (chi tiết ở §8a, §8c):
 
-- **All tokens live in `style.css` `:root`** — single source of truth.
-  - `--color-*`, `--spacing-*`, `--shadow-*`, etc. — define once, use everywhere.
-  - **KHÔNG duplicate token ở page CSS files.**
-  - **KHÔNG define token ở page CSS** nếu reuse khác page (move to `style.css`).
-  
-- **Token naming hierarchy:**
-  - **Primitive:** `--gold-500: #c9a24b` (raw color)
-  - **Semantic (global):** `--color-accent: var(--gold-500)` (cross-page)
-  - **Semantic (scoped):** `--hero-gradient: linear-gradient(...)` (single page, defined ở style.css nhưng dùng chỉ trong home.css)
-  - **Component:** Used in CSS via BEM classes
+- Tất cả token ở `style.css` `:root`. **KHÔNG** duplicate ở page CSS.
+- Dùng ở nhiều trang -> primitive + semantic global. Một trang -> semantic scoped.
 
-**JavaScript File Structure (assets/js/):**
+**JS** — `assets/js/`, mỗi file 1 module gắn 1 feature/page:
 
-- **Cấu trúc:**
-  - **Top-level:** mỗi file = 1 module gắn với 1 feature/page
-  - **`lib/`:** shared modules (reused ≥ 2 pages, hoặc global `window.DG*`)
-  
-- **Naming:**
-  - `{page-slug}.js` trùng slug page template (paired with CSS cùng tên)
-  - `lib/{shared-name}.js` cho shared modules
-  - `main.js` cho global JS (load mọi trang)
-  
-- **Enqueue Strategy:** Mỗi file JS top-level = 1 handle `dg-{slug}`, dependency từ `dg-main`.
+- Top-level: `{page-slug}.js` (cặp với CSS cùng tên), `main.js` (global).
+- `lib/` cho module shared (dùng ≥ 2 trang) hoặc global `window.DG*`.
+- Enqueue: mỗi file top-level 1 handle `dg-{slug}`, dependency `dg-main`.
 
-**Cache Busting:**
+**Cache busting:** sửa CSS/JS -> bump `DG_VERSION` (`functions.php`). WP nối `?ver=`.
+#### 5e. Styling Strategy — CSS file, không inline (trừ 4 ngoại lệ)
+> *"Style thuộc file CSS, không HTML template."*
 
-- Mỗi lần sửa CSS/JS → bump `DG_VERSION` ở `functions.php`.
-- WP dùng version query param: `.../style.css?ver=1.0.2`
+- 🚫 Cấm `style="..."` và `<style>` block trong template.
+- ✅ Luôn tạo class BEM ở page CSS, apply qua class.
 
-#### 5e. Styling Strategy — External CSS files, not Inline styles
-> *"Style thuộc file CSS, không HTML template — trừ 4 ngoại lệ chuẩn WordPress."*
+**4 ngoại lệ hợp lệ:**
 
-**Nguyên tắc cứng:**
+| # | Use case | Ví dụ |
+|---|---|---|
+| 1 | CSS variable bind runtime data | `style="--progress: 60%;"` |
+| 2 | Dynamic layout value | `style="grid-column: span 2;"` |
+| 3 | SVG inline (không load được CSS ngoài) | `<svg style="fill: currentColor;">` |
+| 4 | Email HTML (client không load CSS ngoài) | `style="color:#fff;"` trong email |
 
-- 🚫 **Cấm `style="..."` inline** trong template/template-part — TRỪ 4 exception dưới.
-- 🚫 **Cấm `<style>` block** trong template.
-- ✅ **Luôn tạo BEM CSS class** ở page-specific CSS file, apply via template class.
+**Không phải ngoại lệ:** `style="color: blue;"`, `style="margin: 10px;"`, hard-code màu, `<style>` block — tất cả phải thành class + token.
 
-**4 Ngoại Lệ Chuẩn WordPress:**
+**JS runtime style (được phép):** `el.style.transform` (animation), `el.classList.toggle("is-active")` (ưu tiên hơn inline), `el.style.setProperty("--custom", v)` (scoped dynamic).
 
-| # | Use Case | Example | Why Exception |
-|---|----------|---------|---------------|
-| 1 | **CSS variable bind data** | `style="--progress: 60%;"` | Runtime data → CSS variable |
-| 2 | **Dynamic layout values** | `style="grid-column: span 2;"` | Computed runtime value |
-| 3 | **SVG inline style** | `<svg style="fill: currentColor;">` | SVG inline cannot load external CSS |
-| 4 | **Email HTML** | `style="color: #fff;"` in email template | Email clients don't load external CSS |
-
-**Non-Exceptions (NEVER do these):**
-
-- ❌ `style="color: blue;"` — should be `.component { color: var(--color-primary); }`
-- ❌ `style="margin: 10px;"` — should be class + CSS variable token
-- ❌ `style="background: #abc123;"` — hard-coded color, should use token
-- ❌ `<style> .temp { color: red; } </style>` in template — move to page CSS file
-
-**JavaScript Runtime Styles (ALLOWED for Animation):**
-
-- `el.style.transform = '...'` — Motion API animation
-- `el.classList.toggle('is-active')` — preferred over inline style
-- `el.style.setProperty('--custom', value)` — OK for scoped dynamic style
-
-**WordPress `wp_add_inline_style` (CORRECT for Customizer Runtime CSS):**
-
-- Use within `inc/enqueue/styles.php`, NOT in template.
-- Example: customizer sets brand color → WP injects CSS via `wp_add_inline_style`.
-
-**JavaScript File Organization (moved to §5d above)**
-
+**Customizer runtime CSS:** dùng `wp_add_inline_style` trong `inc/enqueue/styles.php`, **không** trong template.
 #### 5g. Selectors phải khớp DOM thực tế, không assume hoặc hard-code
 > *"Selector dựa giả định = bug ẩn. Luôn inspect DOM thật, target via theme-controlled class."*
 
@@ -564,353 +441,126 @@ Xem bảng mapping đầy đủ trong phiên bản cũ của `CLAUDE.md` (dòng 
 - Comment phân khu theo style sẵn có (dải `═══` cho SECTION lớn).
 
 #### 8a. Design Token System — LUÔN dùng CSS variables, KHÔNG hard-code
-> *"Token-first approach: define once, use everywhere. Hard-code = tech debt."*
+> *"Define once, use everywhere. Hard-code = tech debt."*
 
-**Nguyên tắc cứng:**
-
-1. **🚫 CẤM hard-code giá trị màu/spacing/typography trong CSS component**
-   ```css
-   /* ❌ SAI — Hard-code */
-   .dg-filter-item--active {
-     background: rgba(201, 162, 75, 0.25);
-     color: rgb(115, 92, 0);
-     font-weight: 600;
-   }
-   
-   /* ✅ ĐÚNG — Dùng token */
-   .dg-filter-item--active {
-     background: var(--filter-item-bg-active);
-     color: var(--filter-item-text-active);
-     font-weight: var(--filter-item-font-weight-active);
-   }
-   ```
-
-2. **✅ Token hierarchy: Primitive → Semantic → Component**
-   ```css
-   /* style.css — :root */
-   
-   /* Layer 1: Primitive tokens (base colors) */
-   --color-accent-gold: #C9A24B;
-   --gold-rgb: 201, 162, 75;
-   
-   /* Layer 2: Semantic tokens (purpose-driven) */
-   --filter-item-text-active: var(--color-accent-gold);
-   --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);
-   
-   /* Layer 3: Component tokens (specific states) */
-   --filter-item-count-active: var(--filter-item-text-active);
-   --filter-item-font-weight-active: 600;
-   ```
-
-3. **📋 Token checklist khi tạo component mới:**
-   - [ ] Có bao nhiêu states? (default, hover, active, disabled, focus)
-   - [ ] Mỗi state cần token gì? (bg, text, border, shadow, font-weight, opacity)
-   - [ ] Token này dùng lại được cho component khác không?
-   - [ ] Có child element cần token riêng không? (count badge, icon, label)
-
-4. **🔍 Visual regression workflow:**
-   ```
-   Trước khi commit → so sánh với design/demo:
-   1. Screenshot component ở tất cả states
-   2. Đo giá trị bằng DevTools (Computed styles)
-   3. Đối chiếu: màu hex, opacity %, font-weight, spacing px
-   4. Nếu sai lệch → sửa TOKEN trước, component sau
-   ```
-
-5. **⚠️ Khi nào được phép hard-code:**
-   - **KHÔNG BAO GIỜ** trong production code
-   - Chỉ trong prototype/demo tạm thời (phải có comment `/* TODO: tokenize */`)
-
-6. **🛠️ Quy trình refactor hard-code → token:**
-   ```
-   Step 1: Tìm tất cả hard-code values (grep rgba/rgb/px/#[0-9a-f])
-   Step 2: Group theo concern (filter, button, card, etc.)
-   Step 3: Define tokens ở style.css (với comment mô tả mục đích)
-   Step 4: Replace tất cả occurrences bằng var(--token-name)
-   Step 5: Visual regression test
-   Step 6: Bump DG_VERSION
-   ```
-
-**Ví dụ thực tế (filter active state):**
+**Ba lớp token** (Primitive → Semantic → Component), tất cả sống ở `style.css` `:root`:
 
 ```css
-/* ===== style.css ===== */
-:root {
-  /* Filter item tokens — active state */
-  --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);           /* 10% gold tint */
-  --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);    /* 15% on hover */
-  --filter-item-text-active: var(--color-accent-gold);           /* Gold text */
-  --filter-item-count-active: var(--color-accent-gold);          /* Count badge color */
-  --filter-item-font-weight-active: 600;                         /* Semi-bold */
-  --filter-item-border: transparent;
-  --filter-item-border-hover: rgba(var(--gold-rgb), 0.2);
-}
+/* Layer 1 — Primitive: raw values only */
+--color-accent-gold: #C9A24B;
+--gold-rgb: 201, 162, 75;
 
-/* ===== shop.css ===== */
-.dg-filter-item--active {
-  background: var(--filter-item-bg-active) !important;
-  color: var(--filter-item-text-active) !important;
-  font-weight: var(--filter-item-font-weight-active) !important;
-  border: 1px solid var(--filter-item-border) !important;
-}
+/* Layer 2 — Semantic: purpose-driven, cross-page */
+--filter-item-text-active: var(--color-accent-gold);
+--filter-item-bg-active: rgba(var(--gold-rgb), 0.1);
 
-.dg-filter-item--active:hover {
-  background: var(--filter-item-bg-active-hover) !important;
-  border-color: var(--filter-item-border-hover) !important;
-}
-
-.dg-filter-item--active .dg-filter-item-count {
-  color: var(--filter-item-count-active);
-  opacity: 1; /* Remove default dimming */
-  font-weight: var(--filter-item-font-weight-active);
-}
+/* Layer 3 — Component: state-specific */
+--filter-item-font-weight-active: 600;
 ```
 
-**Benefits:**
-- ✅ Single source of truth
-- ✅ Easy to maintain/update
-- ✅ Theme-able (có thể override qua customizer)
-- ✅ Consistent across components
-- ✅ Self-documenting (token names mô tả mục đích)
+**Quy tắc cứng:**
 
+- Component CSS chỉ dùng `var(--token)`. Không `#hex`, không `rgb()`, không `px` cho spacing/typography.
+- Token dùng ≥ 3 trang → semantic ở `style.css`. Chỉ một component → token riêng (§8c).
+- Hard-code **không bao giờ** trong production. Prototype thì phải có `/* TODO: tokenize */`.
+- Đổi style: sửa **token trước**, component sau. Rồi bump `DG_VERSION`.
+
+**Refactor hard-code → token:** grep `rgba|rgb|#[0-9a-f]` → group theo concern → define token ở `style.css` → replace bằng `var()` → visual regression → bump `DG_VERSION`.
 #### 8b. KHÔNG dùng Tailwind Forms plugin — tự viết reset trong CSS theme
-> *"Theo chuẩn thực tế: bỏ `plugins=forms` là lựa chọn đúng của coder lâu năm."*
+> *"Xoá root cause tốt hơn tăng specificity ở từng input."*
 
-**Nguyên tắc cứng (áp dụng cho code mới từ nay):**
+**Quy tắc (áp dụng cho code mới):**
 
-- 🚫 **CẤM** thêm `?plugins=forms` (hoặc bất kỳ Tailwind CDN plugin nào) vào URL `cdn.tailwindcss.com` ở `inc/enqueue/scripts.php`. Theme hiện tại nạp Tailwind **không kèm** `plugins=forms`.
-- 🚫 **CẤM** style input/select/textarea mới bằng Tailwind utility class trực tiếp trên markup (`border-0 border-b ... focus:ring-0`) rồi dựa vào reset mặc định của `@tailwindcss/forms`. Luôn viết CSS riêng theo BEM (`dg-{page}__input`) trong file CSS trang tương ứng.
-- ✅ Khi cần reset native style của input/select (`appearance: none`, border, background...), **tự viết trong CSS theme** — đây là cách phần lớn theme đã làm (`account.css`, `shop.css`, `cart.css`, `account-register.css`, v.v. đều tự có `appearance: none` riêng, không phụ thuộc Tailwind Forms).
+- 🚫 **CẤM** thêm `?plugins=forms` (hay Tailwind CDN plugin nào) vào URL `cdn.tailwindcss.com` ở `inc/enqueue/scripts.php`.
+- 🚫 **CẤM** style input/select/textarea mới bằng Tailwind utility trực tiếp (`border-0 border-b ... focus:ring-0`) rồi dựa vào reset của `@tailwindcss/forms`.
+- ✅ **Tự viết** reset trong CSS trang theo BEM (`dg-{page}__input`) — theme vốn đã làm vậy ở `account.css`, `shop.css`, `cart.css`.
 
-  ```css
-  /* ✅ ĐÚNG — tự viết reset trong CSS trang, không phụ thuộc Tailwind Forms */
-  .dg-contact-form__select {
-      appearance: none;
-      -webkit-appearance: none;
-      border: 1px solid var(--token-border);
-      background-color: var(--token-surface);
-  }
-
-  .dg-contact-form__select:focus {
-      border-color: var(--token-border-focus);
-  }
-  ```
-
-**Lý do bỏ `plugins=forms` là lựa chọn đúng:**
-
-- Tailwind nạp qua `<script>` CDN (`inc/enqueue/scripts.php`), tự inject `<style>` vào `<head>` **tại runtime**, nên luôn nằm **sau** mọi CSS theme đã enqueue → source order luôn thắng khi specificity hoà (`[type="text"]` = 0,1,0, bằng 1 class `.dg-*__input` = 0,1,0). Giữ plugin này nghĩa là chấp nhận rủi ro đè `border`/`background` của **mọi** input mới trong theme, trừ khi coder nhớ tăng specificity qua wrapper mỗi lần — dễ quên, khó maintain lâu dài.
-- Giải pháp bền hơn là loại bỏ nguồn gây xung đột (gỡ `plugins=forms`) thay vì xử lý triệu chứng (tăng specificity từng input). Coder lâu năm ưu tiên **xoá root cause** hơn là thêm quy tắc phòng ngự lặp lại ở mọi nơi.
-- Theme đã tự viết `appearance: none` và reset input riêng ở hầu hết CSS trang — chứng tỏ theme **không thực sự cần** Tailwind Forms để hoạt động đúng.
-- `template-contact.php` hiện tại vẫn dùng Tailwind utility class trực tiếp và phụ thuộc reset của `@tailwindcss/forms` — đây là **sơ xuất cũ, giữ nguyên hiện trạng, không sửa**. Quy tắc này chỉ áp dụng cho input/select/textarea **mới** tạo từ nay về sau.
-
-**Cách phát hiện nếu nghi ngờ input mới bị ảnh hưởng (debug nhanh bằng console):**
-
-```js
-const el = document.querySelector('.dg-contact-form__input');
-const cs = getComputedStyle(el);
-console.log('border-color computed:', cs.borderColor); // nếu không khớp token CSS theme → kiểm tra lại nguồn gây đè
-```
-
-#### 8c. Component Style Isolation — LUÔN token riêng, KHÔNG dùng global theme tokens cho component-local styles
-> *"Component-specific style = dedicated token (not global secondary/tertiary/accent/etc.). Prevent accidental style pollution across pages."*
-
-**Golden Rule:**
-```
-Khi styling component mới:
-  IF: Cần color/spacing/shadow/size riêng cho component này
-  THEN: Tạo token riêng (Primitive → Semantic → Component)
-  NOT: Dùng global theme token (secondary, tertiary, accent, etc.)
-```
-
-**Problem Case — Accidental Pollution (DO NOT DO THIS):**
-
-```
-Cách sai #1: Dùng global Tailwind classes trực tiếp
-  ❌ class="bg-secondary text-secondary-container border-secondary"
-     → Sau này thay đổi secondary theme → component này đổi màu tự động (unexpected!)
-
-Cách sai #2: Dùng global theme tokens trong component CSS
-  ❌ .dg-hero__badge { color: var(--color-secondary); }
-     → Thay đổi --color-secondary ở style.css → badge đổi màu
-     → Tất cả page khác dùng secondary cũng bị ảnh hưởng
-
-Cách sai #3: Hard-code color + dùng global token ngoài context
-  ❌ .dg-hero__title { color: #a9371e; }  /* Hard-code + thừa */
-     .dg-hero__title { color: var(--secondary); } /* Thay global token */
-     → Nếu design thay đổi chỉ riêng hero → không cách nào override dễ dàng
-```
-
-**Professional Solution: Scoped Component Tokens**
-
-**Step 1: Define Primitive Tokens (nếu color không có sẵn ở theme)**
 ```css
-/* style.css :root */
-
-/* Primitive — component-specific (NẾU không khớp theme palette) */
---warm-reddish-brown: #a9371e;  /* Only for warm gradient components */
---coral-accent: #fd7455;        /* Only for coral highlights */
+/* ✅ tự viết reset, không phụ thuộc Tailwind Forms */
+.dg-contact-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--token-border);
+  background-color: var(--token-surface);
+}
+.dg-contact-form__select:focus { border-color: var(--token-border-focus); }
 ```
 
-**Step 2: Define Semantic Tokens (component-specific, layer 2)**
-```css
-/* style.css :root */
+**Lý do:** Tailwind nạp qua `<script>` CDN, tự inject `<style>` vào `<head>` **lúc runtime** → luôn đứng sau CSS theme, thắng khi specificity hoà (`[type="text"]` = `.dg-*__input` = 0,1,0). Giữ `plugins=forms` là chấp nhận rủi ro đè `border`/`background` của mọi input mới.
 
-/* Semantic — scoped to component concern (NOT for reuse across pages) */
+**Ngoại lệ giữ nguyên:** `template-contact.php` vẫn dùng Tailwind utility trực tiếp — sơ xuất cũ, không sửa. Quy tắc này chỉ áp dụng cho input/select/textarea **mới**.
+#### 8c. Component Style Isolation — token riêng cho component, KHÔNG mượn token global
+> *"Mượn token global = sửa theme chỗ khác, component này đổi theo bất ngờ."*
+
+**Quy tắc:** cần style riêng cho một component → tạo token riêng. **KHÔNG** dùng `--color-secondary`, `--color-tertiary`, `--color-accent` cho style cục bộ.
+
+**Ba cách sai** (đều dẫn tới style pollution):
+
+```php
+<!-- sai 1: Tailwind class trỏ token global -->
+<div class="bg-secondary text-secondary-container">
+
+<!-- sai 2: component CSS mượn token global -->
+.dg-hero__badge { color: var(--color-secondary); }
+```
+
+```css
+/* sai 3: hard-code rồi tưởng là đã tách */
+.dg-hero__title { color: #a9371e; }
+```
+
+**Cách đúng — 3 lớp:**
+
+```css
+/* style.css :root — Primitive (chỉ khi theme chưa có màu này) */
+--warm-reddish-brown: #a9371e;
+--coral-accent: #fd7455;
+
+/* style.css :root — Semantic, scoped cho hero (KHÔNG tái dùng trang khác) */
 --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--coral-accent), var(--warm-gold));
---hero-underline-color: var(--coral-accent);
 --hero-badge-bg: rgba(var(--gold-rgb), 0.1);
 --hero-badge-text: var(--gold-500);
-
-/* CTA button (hero section only) */
---cta-primary-gradient: linear-gradient(to right, var(--coral-accent), var(--warm-reddish-brown), var(--gold-dark));
---cta-primary-text: var(--neutral-0);
 ```
 
-**Step 3: Create BEM Component Rules (layer 3, scoped to page CSS)**
 ```css
-/* home.css — SCOPED to hero section only */
-
-.dg-home-hero__gradient-text {
-  background-image: var(--hero-gradient);
-  background-size: 100% 100%;
-  background-position: left center;
-}
-
-.dg-home-hero__badge {
-  background: var(--hero-badge-bg);
-  color: var(--hero-badge-text);
-}
-
-.dg-home-hero__cta-primary {
-  background: var(--cta-primary-gradient);
-  color: var(--cta-primary-text);
-}
+/* home.css — component rule, dùng token scoped */
+.dg-home-hero__gradient-text { background-image: var(--hero-gradient); }
+.dg-home-hero__badge { background: var(--hero-badge-bg); color: var(--hero-badge-text); }
 ```
 
-**Step 4: Use BEM Classes in Template (NOT Tailwind gradient classes)**
 ```php
-<!-- ❌ BEFORE — Tailwind classes (fragile) -->
-<span class="bg-gradient-to-r from-secondary via-secondary-container to-primary">
-
-<!-- ✅ AFTER — BEM scoped class (robust) -->
+<!-- template dùng class BEM, KHÔNG dùng Tailwind gradient -->
 <span class="dg-home-hero__gradient-text">
 ```
+### Chọn lớp token — 4 câu hỏi
 
----
+Hỏi lần lượt, dừng ở câu đầu tiên trả lời YES:
 
-### **Decision Tree — When to Create Dedicated Token**
+| # | Câu hỏi | YES → |
+|---|---|---|
+| 1 | Dùng ở **≥ 3 trang**? | Semantic ở `style.css`, dùng chung (vd `--color-accent`) |
+| 2 | Đổi token global có **ảnh hưởng component khác**? | Token scoped ở `style.css` (vd `--hero-gradient`), chỉ dùng trong CSS trang đó |
+| 3 | Đang dùng token global (`secondary`, `tertiary`, `accent`) mà component **phải** theo theme? | Giữ token global — hợp lý (vd error message luôn dùng `--error`) |
+| 4 | Giá trị đang **hard-code** (`#a9371e`, `rgba()`, `px`)? | Tạo primitive + semantic token ở `style.css` |
 
-```
-Styling new component/section?
-│
-├─ "Will this color/size/shadow be reused in 3+ different pages?"
-│  └─ YES → Define semantic token ở style.css (shared across theme)
-│            Use in multiple component rules (shop.css, account.css, etc.)
-│  └─ NO → Go to next question
-│
-├─ "Could this style accidentally affect OTHER components if I change global token?"
-│  └─ YES (high risk) → Create dedicated token ở style.css
-│           Scoped to this component (e.g., --hero-gradient, --filter-active-bg)
-│           Use ONLY in this page's CSS file
-│  └─ NO → Go to next question
-│
-├─ "Am I using global theme token (secondary, tertiary, accent, error, etc.)?"
-│  └─ YES → Ask yourself: "Does this component MUST follow theme color change?"
-│            └─ YES → OK, use global token (e.g., error message always uses --error)
-│            └─ NO → Create dedicated token instead
-│  └─ NO → Go to next question
-│
-└─ "Is value hard-coded (e.g., #a9371e, rgba(...))?
-   └─ YES → Define primitive token + semantic token ở style.css
-   └─ NO → ✅ You're good
-```
+Không YES câu nào → đã đúng.
 
----
+**Token sống ở đâu:**
 
-### **Token Scope Matrix**
+| Loại | Định nghĩa | Dùng trong | Đổi thì ảnh hưởng |
+|---|---|---|---|
+| Primitive | `style.css :root` | Semantic token | Toàn theme |
+| Semantic (global) | `style.css :root` | Nhiều file CSS trang | Nhiều trang |
+| Semantic (scoped) | `style.css :root` | Một file CSS trang | Một section |
+| Component | `{page}.css` | Template qua class BEM | Chỉ styling component đó |
 
-| Token Type | Definition Location | Used In | Scope | Risk If Changed |
-|---|---|---|---|---|
-| **Primitive** | `style.css :root` | Semantic tokens | Theme-level | Global (all pages) |
-| **Semantic** (global) | `style.css :root` | Multiple page CSS files | Cross-page | Global (many pages) |
-| **Semantic** (scoped) | `style.css :root` | Single page CSS file | Component | Local (1 section) |
-| **Component** | `{page}.css` | Template via BEM class | Single component | Local (affects styling only) |
+**Checklist trước khi style component mới:**
 
-**Example Mapping:**
-```
-Primitive:
-  --gold-500: #c9a24b
-
-Semantic (Global):
-  --color-accent: var(--gold-500)  ← Used in: shop, account, cart, header
-
-Semantic (Scoped):
-  --hero-gradient: linear-gradient(..., var(--warm-coral), ...)  ← Used in: home.css ONLY
-  
-Component:
-  .dg-home-hero__gradient-text { background-image: var(--hero-gradient); }  ← Used in: home.php via BEM class
-```
-
----
-
-### **Checklist — Before Styling New Component**
-
-- [ ] Did I define token in `style.css` for any new color/size/spacing?
-- [ ] If yes, is token **scoped to this component** (e.g., `--hero-*`, `--shop-filter-*`)?
-- [ ] Did I use global theme token (secondary, tertiary, etc.) instead of component-specific token?
-  - [ ] If yes: Confirmed this is intentional (component MUST follow theme)?
-- [ ] Am I using Tailwind gradient/shadow/color classes that reference global tokens?
-  - [ ] If yes: Replace with BEM class + CSS rule using component token
-- [ ] Will changing this style affect OTHER pages unintentionally?
-  - [ ] If yes: Create dedicated token (don't use global)
-- [ ] Is there hard-coded color/value in my CSS?
-  - [ ] If yes: Extract to token (primitive + semantic)
-
----
-
-### **Real Example — This Session's Hero Gradient Fix**
-
-**Problem:** Hero headline needed warm gradient (#a9371e → #fd7455 → #d4af37), but theme secondary is cool tones.
-
-**Solution Implemented:**
-
-1. ✅ Created **Primitive tokens** (style.css):
-   ```css
-   --warm-reddish-brown: #a9371e;
-   --warm-coral: #fd7455;
-   --warm-gold: #d4af37;
-   ```
-
-2. ✅ Created **Semantic tokens** (style.css):
-   ```css
-   --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--warm-coral), var(--warm-gold));
-   --hero-gradient-underline: var(--warm-coral);
-   --cta-primary-gradient: linear-gradient(to right, var(--warm-coral), var(--warm-reddish-brown), var(--gold-dark));
-   ```
-
-3. ✅ Created **Component rules** (home.css):
-   ```css
-   .dg-home-hero__gradient-text {
-     background-image: var(--hero-gradient);
-   }
-   .dg-home-hero__cta-primary {
-     background: var(--cta-primary-gradient);
-   }
-   ```
-
-4. ✅ Updated **Markup** (hero.php):
-   ```php
-   <span class="dg-home-hero__gradient-text">...</span>
-   ```
-
-**Result:**
-- ✅ Hero gradient = warm colors (correct)
-- ✅ Secondary/tertiary tokens = unchanged (protect other pages)
-- ✅ ZERO collateral damage across theme
-- ✅ Future gradient changes = update token once
-
----
-
+- [ ] Màu / size / spacing mới đã có token trong `style.css` chưa?
+- [ ] Token đó scoped đúng chưa (`--hero-*`, `--shop-filter-*`)?
+- [ ] Có dùng Tailwind class tham chiếu token global không? → thay bằng class BEM + rule dùng component token
+- [ ] Đổi style này có ảnh hưởng trang khác không? → nếu có, tách token riêng
+- [ ] Còn giá trị hard-code nào không? → extract thành token
 ### 9. Interactivity & Dynamic Behavior
 > *"Vanilla JS, không framework. Lựa chọn tool dựa trên use case."*
 
@@ -1026,22 +676,11 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
-- `2026-11-04d`: phát hiện **docs upstream lệch npm** — nhánh `main` trên GitHub đã tài liệu hoá **61 tool** (thêm `set_logpoints` và `configure_webauthn` qua `--categoryWebauthn`), nhưng `npm view chrome-devtools-mcp dist-tags` vẫn là `1.12.0` với **59 tool**. Probe xác nhận `1.12.0` **bỏ qua âm thầm** `--categoryWebauthn=true` (không lỗi, không thêm tool). Ghi cảnh báo vào §C.1b: đừng tin số tool trong docs, đối chiếu dist-tags.
+> Đầy đủ (16 entry từ 2026-08-09) ở `docs/CHANGELOG.md`. Dưới đây chỉ là mốc gần nhất — lịch sử không cần nạp mỗi phiên.
 
-- `2026-11-04c`: mở **đủ 59 tool** chrome-devtools-mcp (mặc định chỉ 32) bằng 6 flag — `--memoryDebugging`, `--categoryExtensions`, `--categoryExperimentalThirdParty`, `--categoryExperimentalWebmcp`, `--categoryPwa`, `--experimentalVision`. Mỗi flag đã probe riêng để xác định đúng số tool nó thêm (13/5/2/2/4/1 = 26), không suy từ docs. Hook `sessionStart` giờ **replay flag từ `.cursor/mcp.json`** khi probe `tools/list` thay vì chỉ truyền version — bật/tắt nhóm trong config là output tự theo. Sửa 2 bug phát hiện khi test: (1) probe đọc file args do `Set-Content -Encoding UTF8` của PS 5.1 ghi kèm BOM → `JSON.parse` chết, hook âm thầm rơi về danh sách docs; fix bằng strip `\uFEFF`; (2) patch tự động để lại dòng `if` trùng → PowerShell báo thiếu `}`, hook không xuất JSON.
-
-- `2026-11-04b`: tích hợp **Chrome DevTools MCP** — clone `vendor/chrome-devtools-mcp` (gitignore, tải lại bằng `scripts/setup-chrome-devtools-mcp.ps1`), thêm `.cursor/mcp.json` đăng ký server `chrome-devtools` (npx, pin `1.12.0`), thêm hook `sessionStart` **riêng** `.cursor/hooks/chrome-devtools-mcp-session-start.ps1` (entry thứ 2 trong `hooks.json`, độc lập với superpowers). Hook probe `tools/list` thật thay vì tin docs — phát hiện docs liệt kê ~60 tool nhưng server mặc định chỉ expose **32**; nhóm Memory/Extensions/WebPWA/WebAuthn cần flag riêng. Cache tool list ở `.cursor/hooks/.chrome-devtools-tools-cache.json` (gitignore) để cold start 3.4s, warm 0.5s. 3 nhánh fail-open đã kiểm chứng: thiếu vendor / chưa đăng ký MCP / probe fail. Thêm §C.1b. **Bug quan trọng phát hiện sau khi user reload window:** server register nhưng kẹt `disconnected` — nguyên nhân là Cursor spawn stdio không qua shell, `npx` trên Windows là `.cmd` nên Node ≥20 từ chối spawn (CVE-2024-27980). Fix: bọc `cmd /c` trong `.cursor/mcp.json`; hook giờ tự cảnh báo nếu thiếu wrapper.
-
-- `2026-11-04`: rebuild knowledge graph về đúng `HEAD` (`0914c9c`) — `graphify update .` báo "no code-graph topology changes" nên không ghi lại output, phải chạy `graphify extract . --code-only` (thay 50 node, prune 1) rồi `cluster-only --no-label` + `apply-labels.py` + `cluster-only --no-label` để giữ tên community đã curate. Số liệu sau rebuild: xem `graphify-out/GRAPH_REPORT.md` §Summary (không chép lại vào đây). Đồng thời bỏ hẳn số liệu hard-code khỏi §C.1 — hook `sessionStart` đã in "Graph status" mỗi phiên từ `graph.json`, nên không cần cập nhật tay nữa (drift Check 1 tự no-op khi §C.1 không còn claim). Ghi chú: `apply-labels.py` phải chạy bằng python của venv uv (`%APPDATA%\uv\tools\graphifyy\Scripts\python.exe`), vì `python` hệ thống (3.14) thiếu module `graphify`.
-- `2026-11-02e`: hook `sessionStart` thêm **drift detector** — đối chiếu number nodes/edges/communities trong CLAUDE.md, danh sách skill bảng §C.2, `DG_VERSION`, và đường dẫn file theme với thực tế repo; **chỉ inject khi lệch** (khớp thì im lặng, 0 token). Quyết định **không** chép lại CLAUDE.md/rules vào hook vì Cursor đã tự nạp sẵn (~14.300 tokens/phiên) — inject lại là nhân đôi vô ích. Sửa false positive: check skill count ban đầu đếm cả 34 thư mục (15 superpowers + 19 WordPress) thay vì chỉ danh sách được nêu trong CLAUDE.md.
-- `2026-11-02d`: mở rộng hook `sessionStart` — ngoài bootstrap superpowers, hook giờ tự quét `.cursor/skills/*/SKILL.md` để inject **catalog 34 skill** (cắt description 95 ký tự) và đọc `graphify-out/graph.json` để inject **con trỏ knowledge graph** kèm số nodes/edges/communities + cảnh báo stale (so `built_at_commit` với `HEAD`). Fail-open từng section. Sửa 2 bug phát hiện khi test: (1) backtick trong here-string bị PowerShell escape → mất ký tự (`assets/js` thành `ssets/js`), (2) mojibake `â€"` do PS 5.1 đọc file không BOM theo ANSI → script nay thuần ASCII + transliterate output.
-- `2026-11-02c`: thêm hook `sessionStart` (`.cursor/hooks.json` + `.cursor/hooks/superpowers-session-start.ps1`) để inject bootstrap superpowers vào system context mỗi conversation mới — bám sát cơ chế của upstream thay vì chỉ dựa vào rule always-on. Sửa lại ghi chú sai trước đó ("Cursor không có hook SessionStart").
-- `2026-11-02b`: thêm §C.2 — **superpowers** (obra/superpowers v7.0.1, MIT). Copy 15 process skills vào `.cursor/skills/` (mirror `.claude/` + `.agents/`), thêm rule always-on `.cursor/rules/superpowers.mdc` (thay hook `sessionStart` của upstream). Ghi rõ adaptation: repo không có test suite → kiểm chứng bằng `php -l` + Playwright thay cho `npm test`.
-- `2026-11-02`: thêm §C.1 — **graphify knowledge graph**. Cài `graphifyy` 0.9.100 qua uv tool, đăng ký skill vào `.agents/skills/graphify/` (mirror sang `.cursor/skills/` + `.claude/skills/`), thêm rule always-on `.cursor/rules/graphify.mdc`, `.graphifyignore` giới hạn corpus vào code theme, script `scripts/graphify/apply-labels.py` + `curated-labels.json` để giữ tên community qua mỗi lần re-cluster.
-- `2026-10-27b`: refactored sections 5b/5d/5e/5g/9 — Generalized rules (nói chung không nói riêng). §5b (email) → "Template Organization" (tất cả template). §5d CSS + JS organization combined (formerly 5d/5f). §5e inline styles → "Styling Strategy" (general rule). §5g selectors → removed "WC-specific" language, added general principle. §9 → "Interactivity & Dynamic Behavior" (remove Motion-specific focus, added general JS patterns + Motion as option).
-- `2026-10-27a`: thêm §8c — **Component Style Isolation**: rule cứng prevent style pollution across pages (ALL styles, not just gradient). LUÔN tạo token riêng cho component-local styles, KHÔNG dùng global theme tokens. 3-layer token system (Primitive → Semantic → Component), decision tree, scope matrix, comprehensive checklist.
-- `2026-10-02`: thêm §8b — Tailwind Forms plugin override: nguyên nhân specificity tie + source order khi Tailwind nạp qua `<script>`, cách debug bằng console, cách khắc phục bằng tăng specificity qua wrapper class (không dùng `!important`).
-- `2026-09-29`: thêm §8a — Design Token System: quy tắc cứng về token-first approach, cấm hard-code, visual regression workflow, refactor checklist.
-- `2026-08-24`: Refactor toàn bộ để tương thích với `.cursor/skills` ecosystem; thêm skill compatibility matrix; làm rõ project type (classic theme trong full site repo); loại bỏ mâu thuẫn về React/build step.
-- `2026-08-10`: thêm §5g — selector phải khớp DOM thật; visual parity rule.
-- `2026-08-09`: refactor — tách cart helpers, approval handler, legal pages.
+- `2026-11-04f`: **xoá hẳn** hook báo cáo chrome-devtools (`chrome-devtools-mcp-session-start.ps1` + `.chrome-devtools-tools-cache.json`) — không còn sentinel, không còn inject mỗi phiên. MCP server trong `.cursor/mcp.json` giữ nguyên, tool vẫn dùng được.
+- `2026-11-04e`: tắt hook chrome-devtools mặc định (-985 tok/phiên), xoá sentinel, tách changelog sang `docs/CHANGELOG.md`, nén §5/§8. `CLAUDE.md` 60.365 -> 39.120 chars.
+- `2026-11-04d`: docs upstream (61 tool) lệch npm `1.12.0` (59 tool) — `--categoryWebauthn=true` bị bỏ qua âm thầm. Luôn đối chiếu `npm dist-tags`.
+- `2026-11-04c`: mở đủ 59 tool bằng 6 flag, probe riêng từng flag (13/5/2/2/4/1). Hook replay flag từ `mcp.json`.
+- `2026-11-04b`: tích hợp Chrome DevTools MCP; bug Windows `npx` `.cmd` -> phải bọc `cmd /c`.
+- `2026-11-04`: rebuild graph về `HEAD`; bỏ số liệu hard-code khỏi §C.1.

@@ -5,9 +5,8 @@
 .DESCRIPTION
     vendor/ is gitignored, so a fresh clone starts without it. Run this once
     after cloning, or after bumping the version pinned in .cursor/mcp.json.
-    The sessionStart hook (.cursor/hooks/chrome-devtools-mcp-session-start.ps1)
-    derives the version, skill catalog and live tool list at run time, so
-    nothing else needs updating after a bump.
+    Nothing else needs updating after a bump: the MCP server reads its args
+    from .cursor/mcp.json at launch (there is no sessionStart hook).
 
     The MCP server itself runs from npm via npx. The vendored copy is reference
     material (docs + skills), not a dependency of the theme.

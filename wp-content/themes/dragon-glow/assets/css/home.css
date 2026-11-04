@@ -128,8 +128,13 @@
    descriptions from wrapping ("Expert Tested" / "Dermatologist approved").
    Tighter column gap + icon free up width; fluid font-size tokens
    (--trust-badges-*-size-tablet) shrink text only as much as the column needs.
+   Vertical padding is tightened here as well (--trust-badges-padding-y-tablet).
    640–767px (2-col) already fits on one line, so it is left untouched. */
 @media (min-width: 768px) and (max-width: 1023px) {
+    .dg-trust-badges {
+        padding-top: var(--trust-badges-padding-y-tablet);
+    }
+
     .dg-trust-badges__inner {
         column-gap: var(--trust-badges-col-gap-tablet);
     }

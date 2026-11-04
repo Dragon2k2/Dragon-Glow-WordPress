@@ -32,6 +32,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	initFormatToggle();
 	initValueChips();
 	initSubmit();
+	initFieldOrder();
 
 	/* ── Reveal: stagger các phần tử data-sr ───────────────────────────────── */
 	function initReveal() {
@@ -300,6 +301,52 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	function enableSubmit(btn) {
 		if (btn) {
 			btn.disabled = false;
+		}
+	}
+
+	/* ── Mobile field order: Value above Format ──────────────────────────────
+	   Reorders the real DOM instead of using CSS `order`. Both fieldsets hold
+	   focusable radio buttons, so a CSS-only swap would leave the Tab sequence
+	   on Format (now below) while the eye reads Value first — a WCAG 2.4.3
+	   focus-order failure. Moving nodes keeps tab order identical to what is
+	   rendered. Runs only below the 640px mobile breakpoint and restores the
+	   original Format → Value order when the viewport grows. */
+	function initFieldOrder() {
+		const form = root.querySelector('.dg-gift-config');
+		if (!form) {
+			return;
+		}
+
+		const formatField = form.querySelector('.dg-gift-field--format');
+		const valueField = form.querySelector('.dg-gift-field--value');
+		if (!formatField || !valueField) {
+			return;
+		}
+
+		const mq = window.matchMedia('(max-width: 640px)');
+		let swapped = false;
+
+		function apply() {
+			const shouldSwap = mq.matches;
+			if (shouldSwap === swapped) {
+				return;
+			}
+			if (shouldSwap) {
+				// Value before Format on mobile.
+				valueField.parentNode.insertBefore(valueField, formatField);
+			} else {
+				// Restore source order: Format before Value.
+				formatField.parentNode.insertBefore(formatField, valueField);
+			}
+			swapped = shouldSwap;
+		}
+
+		apply();
+
+		if (typeof mq.addEventListener === 'function') {
+			mq.addEventListener('change', apply);
+		} else if (typeof mq.addListener === 'function') {
+			mq.addListener(apply); // Safari < 14
 		}
 	}
 

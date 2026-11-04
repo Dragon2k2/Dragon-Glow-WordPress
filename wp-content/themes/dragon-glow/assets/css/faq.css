@@ -30,6 +30,14 @@
 	--faq-card-shadow-open: 0 4px 20px rgba(var(--gold-rgb), 0.1);
 	--faq-q-color-open: var(--color-primary, var(--gold-dark));
 
+	/* ── CTA button: mobile one-line lockup ──
+	   Desktop/tablet keep the roomy 2rem side padding and 0.18em tracking.
+	   Below 640px the same label no longer fits next to the arrow, so the
+	   horizontal padding and tracking tighten to keep "Contact Concierge →"
+	   on a single row without shrinking the type. */
+	--faq-cta-btn-pad-x-mobile: 1rem;
+	--faq-cta-btn-tracking-mobile: 0.1em;
+
 	color: var(--faq-ink);
 	background: var(--faq-surface);
 	padding-bottom: clamp(4rem, 10vw, 7rem);
@@ -534,6 +542,18 @@
 .dg-faq-cta-button:focus-visible {
 	outline: 2px solid var(--faq-gold);
 	outline-offset: 4px;
+}
+
+/* Mobile only (≤639px): keep "Contact Concierge →" on one row.
+   Desktop and tablet are untouched — the query caps at 639px so the
+   768/1024 layouts keep their original padding and tracking. */
+@media (max-width: 639px) {
+	.dg-faq-cta-button {
+		white-space: nowrap;
+		padding-left: var(--faq-cta-btn-pad-x-mobile);
+		padding-right: var(--faq-cta-btn-pad-x-mobile);
+		letter-spacing: var(--faq-cta-btn-tracking-mobile);
+	}
 }
 
 /* ═══════════════════════════════════════════

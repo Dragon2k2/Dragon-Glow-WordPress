@@ -26,7 +26,6 @@ Hook là fire-and-forget và chỉ chạy lúc tạo conversation mới. Nó **s
 
 **Khi đó, tự đọc:** `.cursor/hooks/BOOTSTRAP.md` (cùng nội dung canonical mà hook inject). Đọc một lần, đừng đọc lại mỗi lượt.
 
-Hook `chrome-devtools` là entry **độc lập** trong `hooks.json`, có sentinel riêng: `[DG-CHROME-DEVTOOLS v1]` (hoặc `[DG-CHROME-DEVTOOLS v1 | NOT VENDORED]` khi thiếu vendor). Không thấy sentinel đó → đọc `.cursor/hooks/BOOTSTRAP.md` mục **Chrome DevTools MCP**. Thấy nó = hook chạy. Dòng `MCP server: registered...` + `Tools exposed right now: N` ngay sau đó là tình trạng server thật. Sentinel chứng minh **hook** chạy, không chứng minh **MCP server** sống.
 
 ## Quy tắc
 
