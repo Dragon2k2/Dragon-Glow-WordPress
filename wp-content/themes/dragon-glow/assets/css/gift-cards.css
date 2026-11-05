@@ -28,35 +28,6 @@
 }
 
 .dg-gift {
-	--gift-bg: var(--color-background);
-	--gift-surface: var(--color-surface);
-	--gift-surface-low: var(--color-surface-container-low);
-	--gift-surface-container: var(--color-surface-container);
-	--gift-ink: var(--color-on-surface);
-	--gift-muted: var(--color-on-surface-variant);
-	--gift-line: var(--color-outline-variant);
-	--gift-line-soft: rgba(229, 226, 225, 0.5);
-
-	--gift-pink: var(--color-secondary);
-	--gift-pink-soft: rgba(185, 7, 96, 0.06);
-	--gift-pink-glow: rgba(185, 7, 96, 0.08);
-
-	--gift-gold: var(--color-primary);
-	--gift-gold-soft-bg: var(--color-primary-container);
-	--gift-gold-soft-ink: var(--color-on-primary-container);
-
-	--gift-glass-bg-strong: rgba(255, 255, 255, 0.8);   /* input focus */
-	--gift-glass-bg-filled: rgba(255, 255, 255, 0.72);  /* input has-value */
-	--gift-error-glow: rgba(186, 26, 26, 0.08);          /* error ring */
-
-	--gift-radius-sm: 0.25rem;
-	--gift-radius-md: 0.5rem;
-	--gift-radius-lg: 0.75rem;
-	--gift-radius-full: 9999px;
-
-	--gift-easing: cubic-bezier(0.22, 1, 0.36, 1);
-	--gift-duration: 500ms;
-
 	color: var(--gift-ink);
 	background: var(--gift-bg);
 	padding-bottom: clamp(4rem, 10vw, 7rem);
@@ -707,15 +678,14 @@
 	/* Mobile reading order: secondary visuals first, main card second.
 	   Pure visual reorder via `order` — the DOM stays preview → row so the
 	   desktop/tablet layout (and any future non-CSS consumer) is unaffected.
-	   Nothing inside either block is focusable, so tab order is unchanged. */
+	   Nothing inside either block is focusable, so tab order is unchanged.
+	   Lưu ý: trên mobile, thẻ card preview được JS di chuyển ra khỏi visual
+	   column và đặt ngay dưới fieldset "Value" (xem gift-cards-card-preview.js),
+	   nên `order` ở đây chỉ còn tác dụng cho 2 tile phụ. */
 	.dg-gift-bento-row {
 		order: 1;
 		grid-template-columns: 1fr;
 		gap: 0.75rem;
-	}
-
-	.dg-gift-card-preview {
-		order: 2;
 	}
 
 	/* Full-bleed stack: both tiles span the row width so every block in the
@@ -731,8 +701,74 @@
 		padding: 1.25rem;
 	}
 
+	/* ── Badge trên ảnh card — bản mobile ──────────────────────────────────
+	   Ở mobile card preview nằm ngay dưới fieldset Value nên badge ở góc
+	   không còn là "overlay trên ảnh lớn" mà là một nhãn nhỏ cần tinh tế hơn:
+	    - Kính mờ (glass) + viền gold mảnh thay cho pill hồng đặc → nhẹ hơn
+	      trên nền ảnh, đồng bộ với design system "Luminous Ethereal".
+	    - Nhỏ gọn: font 10px, letter-spacing 0.12em, padding ngang 0.5rem.
+	    - Thu gọn về mép card hơn (0.75rem) để không tranh chỗ với nội dung.
+	   Tablet (641–1023px) giữ nguyên kích thước badge như desktop — badge
+	   chỉ thu nhỏ khi card preview bị đưa vào form trên màn hình hẹp. */
+	.dg-gift-card-tag {
+		top: 0.75rem;
+		left: 0.75rem;
+		padding: 0.1875rem 0.5rem;
+		font-size: 0.625rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		background: var(--gift-tag-bg);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		border: 1px solid var(--gift-tag-border);
+		color: var(--gift-tag-ink);
+		box-shadow: 0 1px 6px var(--gift-shadow-xs);
+	}
+
 	.dg-gift-format {
 		padding: 1rem 0.5rem;
+	}
+
+	/* Value chips — 4 mức giá phải nằm trên MỘT hàng ở mọi độ rộng phone.
+	   Dùng grid `repeat(4, minmax(0, 1fr))` thay cho flex-wrap: grid không bao giờ
+	   wrap, nên "1 hàng" là bảo đảm chứ không phải may mắn. `minmax(0, 1fr)` cho
+	   phép cột co lại dưới min-content (nếu dùng `1fr` mặc định, min-width:auto sẽ
+	   chặn cột và đẩy nội dung tràn ra ngoài). Font fluid + padding ngang nhỏ lại
+	   để "$500" không bị vỡ dòng trong chip trên máy hẹp (320px). */
+	.dg-gift-value-row {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.375rem;
+	}
+
+	.dg-gift-value {
+		min-width: 0;
+		padding: 0.625rem 0.25rem;
+		font-size: clamp(0.875rem, 3.2vw, 1rem);
+		white-space: nowrap;
+		/* Graceful degradation: nếu locale sinh nhãn dài hơn (vd "500.000 ₫"),
+		   cắt bằng ellipsis thay vì để text tràn đè lên chip kế bên. */
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Giữ bù 1px border cho trạng thái active (như rule desktop). */
+	.dg-gift-value.is-active {
+		padding: calc(0.625rem - 1px) calc(0.25rem - 1px);
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SINGLE-COLUMN LAYOUT — mobile + tablet (≤ 1023px)
+   Ở vùng này `.dg-gift-layout` chỉ có 1 cột, và card preview được JS chuyển
+   vào form (ngay dưới fieldset "Value") — xem gift-cards-card-preview.js.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+	/* Card preview nằm trong form (sau fieldset Value).
+	   `margin: 0` vì `.dg-gift-config` là flex column với gap 1.75rem —
+	   gap đã đảm bảo khoảng cách, thêm margin sẽ thừa. */
+	.dg-gift-config > .dg-gift-card-preview {
+		margin: 0;
 	}
 }
 

@@ -11,11 +11,6 @@
 }
 
 .dg-privacy {
-	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	--priv-radius: 0.25rem;
-	--priv-sidebar-width: 280px;
-	--priv-content-width: 720px;
-	--priv-gutter: 40px;
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --priv-bg, --priv-surface, --priv-surface-low, */

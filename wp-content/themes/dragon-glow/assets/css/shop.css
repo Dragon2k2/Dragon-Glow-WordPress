@@ -5,7 +5,6 @@
 
 /* Local custom properties for shop */
 :root {
-	--luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Mobile hero sizing — allow the editorial copy and CTAs to define the height.
@@ -203,7 +202,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* =====================================================
    Product card — luxury redesign
-   (moved from inline <style> in template-shop.php)
+   (moved from inline \3c style> in template-shop.php)
    ===================================================== */
 .dg-product-card {
 	cursor: pointer;

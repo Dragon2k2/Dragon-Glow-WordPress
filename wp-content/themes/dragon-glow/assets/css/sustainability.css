@@ -22,13 +22,6 @@
 	background: var(--neutral-warm-100);  /* was #faf9f5 */
 	-webkit-font-smoothing: antialiased;
 
-	/* ========== COMPONENT-SPECIFIC TOKENS (Spacing & Layout) ========== */
-	--sus-margin-mobile: 24px;
-	--sus-margin-desktop: 64px;
-	--sus-gutter: 24px;
-	--sus-section-gap: 120px;
-	--sus-container-max: 1440px;
-
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --sus-bg, --sus-on-bg, --sus-primary, --sus-on-primary, */
 	/* --sus-on-surface, --sus-on-surface-variant, --sus-secondary, --sus-tertiary, */

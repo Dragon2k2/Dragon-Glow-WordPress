@@ -12,13 +12,6 @@
 
 .dg-careers {
 	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	/* Keep these — they are truly scoped to this component */
-	--c-radius:       0;             /* Sharp */
-	--c-section-gap:  clamp(5rem, 12vw, 10rem);
-	--c-margin-desk:  80px;
-	--c-margin-mob:   20px;
-	--c-gutter:       24px;
-	--c-page-max:     1280px;
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* All color tokens now reference :root — single source of truth */
@@ -958,20 +951,6 @@
    Đặt ngoài scope .dg-careers; token riêng để dialog không phụ thuộc Geist.
    ═══════════════════════════════════════════ */
 .dg-apply {
-	--a-bg:           var(--neutral-0);
-	--a-ink:          var(--color-on-surface);
-	--a-ink-variant:  var(--color-on-surface-variant);
-	--a-tertiary:     var(--gold-600);
-	--a-surface-low:  var(--neutral-warm-100);
-	--a-surface-high: var(--neutral-200);
-	--a-outline:      var(--neutral-400);
-	--a-outline-strong: var(--neutral-500);
-	--a-radius:       8px;
-	--a-pad-x:        clamp(24px, 5vw, 40px);
-	--a-pad-y:        clamp(32px, 6vw, 48px);
-	--a-shadow:       0 24px 64px rgba(28, 27, 27, 0.18),
-	                  0 8px 24px rgba(28, 27, 27, 0.12);
-	--a-backdrop:     rgba(28, 27, 27, 0.55);
 
 	position: fixed;
 	inset: 0;

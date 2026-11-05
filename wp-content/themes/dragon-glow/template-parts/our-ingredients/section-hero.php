@@ -43,10 +43,10 @@ $hero = $data['hero'];
 				?>
 			</p>
 
-			<a href="<?php echo esc_url( $hero['cta_url'] ); ?>"
-			   class="dg-oi-btn">
-				<?php echo esc_html( $hero['cta_text'] ); ?>
-			</a>
+		<a href="<?php echo esc_url( $hero['cta_url'] ); ?>"
+		   class="dg-oi-btn">
+			<span class="dg-oi-btn__label"><?php echo esc_html( $hero['cta_text'] ); ?></span>
+		</a>
 		</div>
 	</div>
 

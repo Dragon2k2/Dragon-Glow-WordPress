@@ -20,12 +20,8 @@
 	line-height: 1.6;
 	color: var(--color-on-surface);  /* was #1c1b1b */
 	background: var(--neutral-warm-50);  /* was #fcf9f8 */
-
-	/* ========== COMPONENT-SPECIFIC TOKENS (Spacing & Layout) ========== */
-	--oi-margin-mobile: 20px;
-	--oi-margin-desktop: 64px;
-	--oi-gutter: 24px;
-	--oi-section-gap: 120px;
+	/* Chỉ giữ token layout riêng của trang. Token màu của component (nút CTA)
+	   đã chuyển về style.css :root — xem --oi-btn-* ở Layer 3 (Component Tokens). */
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --oi-bg, --oi-on-bg, --oi-on-surface, */
@@ -217,29 +213,83 @@
 }
 
 /* ── Button ────────────────────────────────────────────────── */
+/* Không set `align-self` để giữ nguyên hành vi chiều rộng như trước:
+   - Trong `.dg-oi-hero-content` (flex column, mặc định `align-items: stretch`)
+     nút giãn hết chiều ngang của cột — 554px ở desktop.
+   - Trong `.dg-oi-outro-inner` (`align-items: center`) nút ôm chữ — 216px.
+   Ghi đè bằng `align-self` sẽ làm lệch 1 trong 2 vị trí này. */
 [data-page="our-ingredients"] .dg-oi-btn {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 2rem;
-	border: 1px solid var(--oi-on-surface);
-	color: var(--oi-bg);
-	background: var(--oi-on-surface);
+	border: 1px solid var(--oi-btn-border);
+	border-radius: 9999px;
+	color: var(--oi-btn-ink);
+	background: var(--oi-btn-bg);
+	box-shadow: var(--oi-btn-shadow);
 	font-family: inherit;
 	font-size: 12px;
-	font-weight: 500;
+	font-weight: 600;
 	line-height: 1;
-	letter-spacing: 0.1em;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	text-decoration: none;
 	cursor: pointer;
 	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
-		color 400ms cubic-bezier(0.2, 0, 0, 1);
+		box-shadow 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Label bọc text — là MỐC NEO cho mũi tên.
+   Nhờ có span này, mũi tên có thể đặt ngay sát sau text bằng
+   `left: 100%` của label, thay vì neo theo mép phải của nút.
+   Span là `inline-block` → `left: 100%` = mép phải của text. */
+[data-page="our-ingredients"] .dg-oi-btn__label {
+	position: relative;
+	display: inline-block;
+}
+
+/* Mũi tên là pseudo-element ABSOLUTE neo vào label — tách khỏi flex flow
+   để không bao giờ chiếm chỗ và đẩy text lệch. Text luôn căn giữa tuyệt
+   đối trong nút, trước và sau khi hover, còn mũi tên nằm sát ngay sau
+   text (đúng như bản flex `gap` trước đây).
+   - `translate: 0 -50%` canh giữa theo chiều dọc (dùng property `translate`
+     riêng để `transform` bên dưới chỉ lo chiều ngang, và để nhánh
+     reduced-motion tắt `transform` không làm mũi tên lệch dọc).
+   - `margin-left` dùng token `--oi-btn-arrow-gap` (khai ở style.css). */
+[data-page="our-ingredients"] .dg-oi-btn__label::after {
+	content: "→";
+	position: absolute;
+	left: 100%;
+	top: 50%;
+	translate: 0 -50%;
+	margin-left: var(--oi-btn-arrow-gap);
+	font-size: 14px;
+	line-height: 1;
+	letter-spacing: 0;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(-0.35rem);
+	transition: opacity 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 [data-page="our-ingredients"] .dg-oi-btn:hover {
-	background: var(--color-inverse-surface);  /* was --oi-inverse-surface: #313030 */
-	color: var(--color-inverse-on-surface);  /* was --oi-inverse-on-surface: #f3f0ef */
+	background: var(--oi-btn-bg-hover);
+	box-shadow: var(--oi-btn-shadow-hover);
+	transform: translateY(-2px);
+}
+
+[data-page="our-ingredients"] .dg-oi-btn:hover .dg-oi-btn__label::after {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+/* Trạng thái active (nhấn) — trả về vị trí gốc, tránh "dính" nút xuống. */
+[data-page="our-ingredients"] .dg-oi-btn:active {
+	transform: translateY(0);
 }
 
 /* ══════════════════════════════════════════════
@@ -661,13 +711,27 @@
 	.dg-oi-btn {
 		transition: none !important;
 	}
+
+	/* Tắt cả nâng nút và trượt mũi tên — transform phải về 0, không phải
+	   chỉ bỏ transition (transition:none vẫn để transform áp dụng ngay). */
+	[data-page="our-ingredients"] .dg-oi-btn:hover {
+		transform: none !important;
+	}
+
+	[data-page="our-ingredients"] .dg-oi-btn:hover .dg-oi-btn__label::after {
+		transform: none !important;
+		opacity: 0 !important;
+	}
 }
 
 /* ══════════════════════════════════════════════
    FOCUS STATES
    ══════════════════════════════════════════════ */
+/* `--oi-primary` đã bị xoá khỏi theme → outline không resolve nên focus ring
+   biến mất hoàn toàn. Dùng token thật: --gold-dark (màu thương hiệu) cho
+   vòng focus trên nền sáng. */
 [data-page="our-ingredients"] :focus-visible {
-	outline: 2px solid var(--oi-primary);
+	outline: 2px solid var(--gold-dark);
 	outline-offset: 4px;
 	border-radius: 2px;
 }

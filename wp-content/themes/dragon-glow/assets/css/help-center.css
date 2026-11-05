@@ -19,14 +19,6 @@
 	color: var(--color-on-surface);  /* was --hc-on-surface: #1c1b1b */
 	background: var(--color-background-warm);  /* was --hc-bg: #fcf9f8 */
 
-	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	--hc-radius-sm: 0.25rem;
-	--hc-radius-md: 0.5rem;
-	--hc-shadow-hover: 0 20px 40px rgba(45, 45, 45, 0.03);
-	--hc-shadow-icon: 0 10px 20px rgba(45, 45, 45, 0.02);
-	--hc-gutter: 32px;
-	--hc-ease: cubic-bezier(0.2, 0, 0, 1);
-
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --hc-bg, --hc-on-surface, --hc-on-surface-variant, */
 	/* --hc-primary, --hc-on-primary, --hc-secondary, --hc-outline, --hc-outline-variant, */

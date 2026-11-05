@@ -17,15 +17,6 @@
 	background: var(--color-background-warm);  /* was #fcf9f8 */
 
 	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	/* Keep these — they are truly scoped to this component */
-	--sr-radius: 6px;
-	--sr-section-gap: clamp(4rem, 10vw, 8rem);
-	--sr-margin-desk: 80px;
-	--sr-margin-mob: 20px;
-	--sr-shadow: rgba(28, 27, 27, 0.08);
-	--sr-icon-size: 2rem;
-	--sr-card-padding: 2rem;
-	--sr-card-gap: 1.5rem;
 
 	/* FAQ accordion chevron — shared by all breakpoints (desktop baseline,
 	   mobile + tablet inherit, no per-breakpoint override needed).
@@ -33,10 +24,6 @@
 	   from the question text so both always render in the exact same hue
 	   (--gold-400 via [data-page="shipping-returns"]). Open/closed state is
 	   conveyed by rotation, not by colour. */
-	--sr-faq-icon-size: 1.5rem;                    /* 24px glyph box */
-	--sr-faq-icon-gap: 1rem;                       /* question → chevron breathing room */
-	--sr-faq-icon-duration: 320ms;
-	--sr-faq-icon-ease: cubic-bezier(0.2, 0, 0, 1);
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* All color tokens now reference :root — single source of truth */

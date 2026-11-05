@@ -190,6 +190,21 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --btn-gold-gradient: linear-gradient(135deg, var(--btn-gold-gradient-start) 0%, var(--btn-gold-gradient-end) 100%);
     --btn-gold-text: var(--primary-900);
 
+    /* ========== Our Ingredients — Editorial CTA Button (.dg-oi-btn) ========== */
+    /* Component-scoped: used by .dg-oi-btn in our-ingredients.css (hero + outro).
+       Gradient gold "Luminous Ethereal": sáng ở góc trên-trái, đậm dần xuống.
+       Chữ dùng --primary-900 (nâu-đen) để đạt tỷ lệ tương phản ≥ 7:1 trên cả
+       hai đầu gradient → vượt WCAG 2.1 AAA (7:1), không chỉ AA (4.5:1) cho
+       text 12px. Gradient hover đậm hơn một bậc nhưng vẫn giữ ≥ 4.5:1 (AA). */
+    --oi-btn-bg: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+    --oi-btn-bg-hover: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    --oi-btn-ink: var(--primary-900);
+    --oi-btn-border: rgba(var(--gold-dark-rgb), 0.28);
+    --oi-btn-shadow: 0 10px 24px -10px rgba(var(--gold-dark-rgb), 0.45);
+    --oi-btn-shadow-hover: 0 16px 32px -12px rgba(var(--gold-dark-rgb), 0.55);
+    /* Khoảng cách giữa text và mũi tên "→" (pseudo-element .dg-oi-btn__label::after) */
+    --oi-btn-arrow-gap: 0.5rem;
+
     /* ========== Hero Gradient Headline ========== */
     /* Warm luxury gradient: reddish-brown → coral → gold */
     /* Used for headline.dg-home-hero__gradient-text */
@@ -1227,6 +1242,16 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --checkout-select-border: var(--gold-dark);
     
+    /* ========== Payment Method Palette (checkout + thank-you BACS QR) ========== */
+    /* Component-scoped: nguồn duy nhất cho cả checkout-payment.css và
+       thankyou.css — trước đây 2 file khai trùng nhau, sửa 1 chỗ không
+       sync được chỗ còn lại. Giá trị giống hệt, nên gom về đây an toàn. */
+    --color-payment-primary: var(--gold-dark);
+    --color-payment-primary-rgb: 115, 92, 0;
+    --color-payment-accent: var(--gold-400);
+    --color-payment-accent-rgb: 212, 175, 55;
+    --color-payment-on-primary: #ffffff;
+    
     /* ========== Order Modal Component ========== */
     /* Order review modal — items, totals, payment methods */
     --order-modal-border: rgba(201, 162, 75, 0.3);
@@ -1462,6 +1487,192 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* ========== Other Components ========== */
     /* Contact, FAQ, Legal pages, etc. */
     /* (Placeholder — 15 files còn lại có ~200 hard-coded values cần tokenize) */
+
+    /* ============================================================
+       COMPONENT TOKENS - MIGRATED FROM assets/css/*.css
+       Single source of truth: moi design token cua theme nam trong
+       :root nay. File CSS trang chi TIEU THU token bang var().
+       ============================================================ */
+
+    /* ========== Accessibility Statement Component ========== */
+    /* Token chuyển từ assets/css/accessibility-statement.css → style.css :root (single source of truth). */
+    --a11y-radius: 0.25rem;
+    --a11y-sidebar-w: 280px;
+    --a11y-content-w: 720px;
+    --a11y-gutter: 40px;
+
+    /* ========== Careers Component ========== */
+    /* Token chuyển từ assets/css/careers.css → style.css :root (single source of truth). */
+    --c-radius: 0; /* Sharp */
+    --c-section-gap: clamp(5rem, 12vw, 10rem);
+    --c-margin-desk: 80px;
+    --c-margin-mob: 20px;
+    --c-gutter: 24px;
+    --c-page-max: 1280px;
+    --a-bg: var(--neutral-0);
+    --a-ink: var(--color-on-surface);
+    --a-ink-variant: var(--color-on-surface-variant);
+    --a-tertiary: var(--gold-600);
+    --a-surface-low: var(--neutral-warm-100);
+    --a-surface-high: var(--neutral-200);
+    --a-outline: var(--neutral-400);
+    --a-outline-strong: var(--neutral-500);
+    --a-radius: 8px;
+    --a-pad-x: clamp(24px, 5vw, 40px);
+    --a-pad-y: clamp(32px, 6vw, 48px);
+    --a-shadow: 0 24px 64px rgba(28, 27, 27, 0.18),
+	                  0 8px 24px rgba(28, 27, 27, 0.12);
+    --a-backdrop: rgba(28, 27, 27, 0.55);
+
+    /* ========== Cookie Policy Component ========== */
+    /* Token chuyển từ assets/css/cookie-policy.css → style.css :root (single source of truth). */
+    --cookie-radius: 0.25rem;
+    --cookie-sidebar-w: 280px;
+    --cookie-content-w: 720px;
+    --cookie-gutter: 40px;
+
+    /* ========== FAQ Component ========== */
+    /* Token chuyển từ assets/css/faq.css → style.css :root (single source of truth). */
+    --faq-surface: var(--color-surface, #fbf9f5);
+    --faq-ink: var(--color-on-surface, #1b1c1a);
+    --faq-muted: var(--color-on-surface-variant, #504444);
+    --faq-line: var(--color-outline-variant, #d4c2c2);
+    --faq-gold: var(--color-tertiary, var(--gold-dark));
+    --faq-radius: 0.75rem; /* ── Alpha / opacity variants (derive từ --color-tertiary-container / --color-surface) ── */
+    --faq-line-soft: rgba(212, 194, 194, 0.5); /* --color-outline-variant @50% */
+    --faq-gold-bright: var(--gold-400); /* brand gold accent, không có trong :root */
+    --faq-glass: rgba(251, 249, 245, 0.8); /* --color-surface @80% */
+    --faq-card-border-left-hover: rgba(var(--gold-rgb), 0.4); /* --color-accent-gold @40% */
+    --faq-card-bg-open: linear-gradient(90deg, rgba(var(--gold-rgb), 0.06) 0%, var(--faq-surface) 40%);
+    --faq-card-shadow-open: 0 4px 20px rgba(var(--gold-rgb), 0.1);
+    --faq-q-color-open: var(--color-primary, var(--gold-dark));
+    --faq-cta-btn-pad-x-mobile: 1rem;
+    --faq-cta-btn-tracking-mobile: 0.1em;
+
+    /* ========== Gift Cards Component ========== */
+    /* Token chuyển từ assets/css/gift-cards.css → style.css :root (single source of truth). */
+    --gift-bg: var(--color-background);
+    --gift-surface: var(--color-surface);
+    --gift-surface-low: var(--color-surface-container-low);
+    --gift-surface-container: var(--color-surface-container);
+    --gift-ink: var(--color-on-surface);
+    --gift-muted: var(--color-on-surface-variant);
+    --gift-line: var(--color-outline-variant);
+    --gift-line-soft: rgba(229, 226, 225, 0.5);
+    --gift-pink: var(--color-secondary);
+    --gift-pink-soft: rgba(185, 7, 96, 0.06);
+    --gift-pink-glow: rgba(185, 7, 96, 0.08);
+    --gift-gold: var(--color-primary);
+    --gift-gold-soft-bg: var(--color-primary-container);
+    --gift-gold-soft-ink: var(--color-on-primary-container);
+    --gift-tag-bg: rgba(255, 255, 255, 0.82);
+    --gift-tag-border: rgba(var(--gold-rgb), 0.4);
+    --gift-tag-ink: var(--gift-gold-soft-ink);
+    --gift-glass-bg-strong: rgba(255, 255, 255, 0.8); /* input focus */
+    --gift-glass-bg-filled: rgba(255, 255, 255, 0.72); /* input has-value */
+    --gift-error-glow: rgba(186, 26, 26, 0.08); /* error ring */
+    --gift-radius-sm: 0.25rem;
+    --gift-radius-md: 0.5rem;
+    --gift-radius-lg: 0.75rem;
+    --gift-radius-full: 9999px;
+    --gift-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --gift-duration: 500ms;
+
+    /* ========== Help Center Component ========== */
+    /* Token chuyển từ assets/css/help-center.css → style.css :root (single source of truth). */
+    --hc-radius-sm: 0.25rem;
+    --hc-radius-md: 0.5rem;
+    --hc-shadow-hover: 0 20px 40px rgba(45, 45, 45, 0.03);
+    --hc-shadow-icon: 0 10px 20px rgba(45, 45, 45, 0.02);
+    --hc-gutter: 32px;
+    --hc-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* ========== Our Ingredients Component ========== */
+    /* Token chuyển từ assets/css/our-ingredients.css → style.css :root (single source of truth). */
+    --oi-margin-mobile: 20px;
+    --oi-margin-desktop: 64px;
+    --oi-gutter: 24px;
+    --oi-section-gap: 120px;
+
+    /* ========== Privacy Policy Component ========== */
+    /* Token chuyển từ assets/css/privacy-policy.css → style.css :root (single source of truth). */
+    --priv-radius: 0.25rem;
+    --priv-sidebar-width: 280px;
+    --priv-content-width: 720px;
+    --priv-gutter: 40px;
+
+    /* ========== Shipping & Returns Component ========== */
+    /* Token chuyển từ assets/css/shipping-returns.css → style.css :root (single source of truth). */
+    --sr-radius: 6px;
+    --sr-section-gap: clamp(4rem, 10vw, 8rem);
+    --sr-margin-desk: 80px;
+    --sr-margin-mob: 20px;
+    --sr-shadow: rgba(28, 27, 27, 0.08);
+    --sr-icon-size: 2rem;
+    --sr-card-padding: 2rem;
+    --sr-card-gap: 1.5rem;
+    --sr-faq-icon-size: 1.5rem; /* 24px glyph box */
+    --sr-faq-icon-gap: 1rem; /* question → chevron breathing room */
+    --sr-faq-icon-duration: 320ms;
+    --sr-faq-icon-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* ========== Shop Component ========== */
+    /* Token chuyển từ assets/css/shop.css → style.css :root (single source of truth). */
+    --luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ========== Sustainability Component ========== */
+    /* Token chuyển từ assets/css/sustainability.css → style.css :root (single source of truth). */
+    --sus-margin-mobile: 24px;
+    --sus-margin-desktop: 64px;
+    --sus-gutter: 24px;
+    --sus-section-gap: 120px;
+    --sus-container-max: 1440px;
+
+    /* ========== Terms of Service Component ========== */
+    /* Token chuyển từ assets/css/terms-of-service.css → style.css :root (single source of truth). */
+    --terms-radius: 0.25rem;
+    --terms-sidebar-width: 280px;
+    --terms-content-width: 720px;
+    --terms-gutter: 40px;
+
+    /* ========== Thank You Component ========== */
+    /* Token chuyển từ assets/css/thankyou.css → style.css :root (single source of truth). */
+    --dg-bacs-qr-accent: var(--color-payment-accent);
+    --dg-bacs-qr-accent-rgb: var(--color-payment-accent-rgb);
+    --dg-bacs-qr-primary-rgb: var(--color-payment-primary-rgb);
+
+    /* ========== Wishlist Component ========== */
+    /* Token chuyển từ assets/css/wishlist.css → style.css :root (single source of truth). */
+    --wl-bg: var(--color-background);
+    --wl-surface: var(--color-surface);
+    --wl-ink: var(--color-on-surface);
+    --wl-muted: var(--color-on-surface-variant);
+    --wl-line: var(--color-outline-variant);
+    --wl-error: var(--color-error);
+    --wl-primary: var(--color-primary);
+    --wl-on-primary: var(--color-on-primary);
+    --wl-primary-container: var(--color-primary-container);
+    --wl-on-primary-container: var(--color-on-primary-container);
+    --wl-gold: var(--color-gold);
+    --wl-surface-container: var(--color-surface-container); /* Component tokens — checkbox (toolbar + card share the same palette). */
+    --wl-checkbox-bg: #fff; /* unchecked fill */
+    --wl-checkbox-border: rgba(115, 92, 0, 0.40); /* unchecked border */
+    --wl-checkbox-mark-color: var(--wl-on-primary, #fff); /* check glyph ink */
+    --wl-checkbox-mark-font: system-ui, 'Segoe UI Symbol', 'Apple Symbols', sans-serif; /* pinned so the glyph renders identically in toolbar + card */
+    --wl-checkbox-size: 18px; /* input box edge, also the toolbar mark box */
+    --wl-checkbox-dash-width: 10px; /* indeterminate bar length */
+    --wl-checkbox-dash-height: 2px; /* indeterminate bar thickness */
+    --wl-focus-ring: rgba(201, 162, 75, 0.35); /* keyboard focus ring */
+    --wl-glass-bg: rgba(255, 255, 255, 0.55);
+    --wl-glass-bg-strong: rgba(255, 255, 255, 0.78);
+    --wl-glass-border: rgba(255, 255, 255, 0.55);
+    --wl-radius-sm: 12px;
+    --wl-radius-md: 18px;
+    --wl-radius-lg: 24px;
+    --wl-radius-xl: 32px;
+    --wl-radius-full: 9999px;
+    --wl-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --wl-duration: 400ms;
 }
 
 /* =========================================

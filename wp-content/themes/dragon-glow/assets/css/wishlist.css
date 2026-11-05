@@ -27,43 +27,8 @@
 }
 
 .dg-wishlist {
-	--wl-bg: var(--color-background);
-	--wl-surface: var(--color-surface);
-	--wl-ink: var(--color-on-surface);
-	--wl-muted: var(--color-on-surface-variant);
-	--wl-line: var(--color-outline-variant);
-	--wl-error: var(--color-error);
-
-	--wl-primary: var(--color-primary);
-	--wl-on-primary: var(--color-on-primary);
-	--wl-primary-container: var(--color-primary-container);
-	--wl-on-primary-container: var(--color-on-primary-container);
-	--wl-gold: var(--color-gold);
-	--wl-surface-container: var(--color-surface-container);
-
-	/* Component tokens — checkbox (toolbar + card share the same palette). */
-	--wl-checkbox-bg: #fff;                              /* unchecked fill */
-	--wl-checkbox-border: rgba(115, 92, 0, 0.40);        /* unchecked border */
-	--wl-checkbox-mark-color: var(--wl-on-primary, #fff);/* check glyph ink */
-	--wl-checkbox-mark-font: system-ui, 'Segoe UI Symbol', 'Apple Symbols', sans-serif; /* pinned so the glyph renders identically in toolbar + card */
-	--wl-checkbox-size: 18px;                            /* input box edge, also the toolbar mark box */
-	--wl-checkbox-dash-width: 10px;                      /* indeterminate bar length */
-	--wl-checkbox-dash-height: 2px;                      /* indeterminate bar thickness */
-	--wl-focus-ring: rgba(201, 162, 75, 0.35);           /* keyboard focus ring */
-
-	--wl-glass-bg: rgba(255, 255, 255, 0.55);
-	--wl-glass-bg-strong: rgba(255, 255, 255, 0.78);
-	--wl-glass-border: rgba(255, 255, 255, 0.55);
-	--wl-glass-shadow: var(--account-shadow);
-
-	--wl-radius-sm: 12px;
-	--wl-radius-md: 18px;
-	--wl-radius-lg: 24px;
-	--wl-radius-xl: 32px;
-	--wl-radius-full: 9999px;
-
-	--wl-ease: cubic-bezier(0.22, 1, 0.36, 1);
-	--wl-duration: 400ms;
+	/* --wl-glass-shadow: khai sẵn trong style.css :root (Wishlist Component) —
+	   không khai lại ở đây để tránh 2 nguồn cho cùng một giá trị. */
 
 	background:
 		radial-gradient(1100px 600px at 0% 0%, rgba(212, 175, 55, 0.08), transparent 60%),

@@ -12,11 +12,6 @@
 }
 
 .dg-accessibility {
-	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	--a11y-radius:       0.25rem;
-	--a11y-sidebar-w:    280px;
-	--a11y-content-w:    720px;
-	--a11y-gutter:       40px;
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --a11y-bg, --a11y-surface-low, --a11y-ink, */

@@ -10,19 +10,10 @@
 /* ═══════════════════════════════════════════════════════════════════════
    PAYMENT METHODS COLOR OVERRIDE (Golden Yellow Theme)
    ═══════════════════════════════════════════════════════════════════════ */
-
-.dg-review-payment-methods,
-.dg-payment-method,
-.dg-payment-card {
-	/* Override primary color to match mockup design tokens.
-	   The BACS QR panel uses these tokens directly, so we define
-	   them at the wrapper level here so all child components inherit. */
-	--color-payment-primary: var(--gold-dark);
-	--color-payment-primary-rgb: 115, 92, 0;
-	--color-payment-accent: var(--gold-400);
-	--color-payment-accent-rgb: 212, 175, 55;
-	--color-payment-on-primary: #ffffff;
-}
+/* Token màu (--color-payment-*) đã chuyển về style.css :root — xem
+   "Payment Method Palette" trong Layer 3 (Component Tokens). Trước đây
+   thankyou.css khai trùng bộ token này cho .dg-bacs-qr, gây lệch khi
+   sửa một chỗ. */
 
 /* ═══════════════════════════════════════════════════════════════════════
    PAYMENT METHODS LIST

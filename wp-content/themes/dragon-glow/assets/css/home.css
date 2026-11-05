@@ -743,7 +743,9 @@
 }
 
 /* Testimonial star rating — reuses .dg-stars (main.css) for color + FILL axis;
-   only size and gap are overridden here via the component's own variables. */
+   only size and gap are overridden here via the component's own variables.
+   Ghi đè có chủ đích trên scope component (--star-size/--star-gap khai ở
+   style.css :root là giá trị mặc định 16px / 2px cho toàn theme). */
 .dg-home-testimonial__stars {
     --star-size: var(--home-testimonial-star-size);
     --star-gap: var(--home-testimonial-star-gap);
@@ -1060,7 +1062,9 @@
     }
 
     /* Rating column: smaller stars; raw review count is dropped because the
-       caption below already states it ("18.2K+"). */
+       caption below already states it ("18.2K+").
+       Ghi đè có chủ đích trên scope component — --star-size mặc định ở
+       style.css :root là 16px, hero dùng biến thể nhỏ hơn cho mobile. */
     .dg-home-hero .dg-home-hero__stat--rating .dg-stars {
         --star-size: var(--hero-stat-star-size-mobile);
     }

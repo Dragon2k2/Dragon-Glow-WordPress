@@ -698,6 +698,15 @@ function dg_enqueue_scripts_assets(): void {
             array( 'dg-main', 'dg-geist' ),
             DG_VERSION
         );
+        // Mobile placement của card preview — classic script, không phụ thuộc Motion
+        // (nếu CDN Motion chặn/chậm thì ES module gift-cards.js bị skip toàn bộ).
+        wp_enqueue_script(
+            'dg-gift-cards-card-preview',
+            DG_URI . '/assets/js/gift-cards-card-preview.js',
+            array(),
+            DG_VERSION,
+            true
+        );
         wp_enqueue_script_module(
             'dg-gift-cards',
             DG_URI . '/assets/js/gift-cards.js',

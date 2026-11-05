@@ -11,11 +11,6 @@
 }
 
 .dg-terms {
-	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	--terms-radius: 0.25rem;
-	--terms-sidebar-width: 280px;
-	--terms-content-width: 720px;
-	--terms-gutter: 40px;
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --terms-bg, --terms-surface, --terms-surface-low, */

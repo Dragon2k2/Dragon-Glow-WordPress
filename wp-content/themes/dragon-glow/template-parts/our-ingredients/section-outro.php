@@ -26,7 +26,7 @@ $outro  = $data['outro'];
 			class="dg-oi-btn"
 			data-sr
 		>
-			<?php echo esc_html( $outro['cta_text'] ); ?>
+			<span class="dg-oi-btn__label"><?php echo esc_html( $outro['cta_text'] ); ?></span>
 		</a>
 	</div>
 </section>

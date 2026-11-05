@@ -497,14 +497,10 @@ a.dg-thankyou-contact-value:focus-visible {
    ═══════════════════════════════════════════════════════════════════════ */
 
 .dg-bacs-qr {
-	--color-payment-primary: var(--gold-dark);
-	--color-payment-primary-rgb: 115, 92, 0;
-	--color-payment-accent: var(--gold-400);
-	--color-payment-accent-rgb: 212, 175, 55;
-	--color-payment-on-primary: #ffffff;
-	--dg-bacs-qr-accent: var(--color-payment-accent);
-	--dg-bacs-qr-accent-rgb: var(--color-payment-accent-rgb);
-	--dg-bacs-qr-primary-rgb: var(--color-payment-primary-rgb);
+	/* Token màu (--color-payment-*) đã chuyển về style.css :root — xem
+	   "Payment Method Palette" trong Layer 3 (Component Tokens). Trước đây
+	   checkout-payment.css khai trùng bộ token này, gây lệch khi sửa
+	   một chỗ. */
 	position: relative;
 	margin-top: 1.25rem;
 	padding: 1.25rem;

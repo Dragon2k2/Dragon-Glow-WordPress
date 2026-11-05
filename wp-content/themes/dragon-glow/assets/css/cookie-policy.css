@@ -11,11 +11,6 @@
 }
 
 .dg-cookie {
-	/* ========== COMPONENT-SPECIFIC TOKENS (Layout & Spacing) ========== */
-	--cookie-radius:       0.25rem;
-	--cookie-sidebar-w:    280px;
-	--cookie-content-w:    720px;
-	--cookie-gutter:       40px;
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --cookie-bg, --cookie-surface-low, --cookie-table-header, */
