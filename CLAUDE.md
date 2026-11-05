@@ -332,7 +332,7 @@ template-parts/emails/data-approval.php     <- dg_approval_email_data()
 
 **CSS** — phẳng trong `assets/css/`, không folder con:
 
-- Global: `style.css` (token `:root` — **single source of truth**), `main.css` (base/typography/layout), `responsive.css` (breakpoint), `woocommerce.css` (conditional).
+- Global: `style.css` (token `:root` — **single source of truth**), `main.css` (base/typography/layout), `woocommerce.css` (conditional). Không có file `responsive.css` — breakpoint nằm **cùng file chủ sở hữu** của component (vd `header-nav.css` §4b, `home.css` §RESPONSIVE, `cart.css` §640px) để tránh rule mồ côi không ai enqueue.
 - Page-specific: `{page-slug}.css` trùng slug template (`template-shop.php` -> `shop.css`). **1 page = 1 file**; > 1000 dòng thì bàn trước.
 - Header comment: `/* ==== DRAGON GLOW — {PAGE} STYLES ==== */`.
 

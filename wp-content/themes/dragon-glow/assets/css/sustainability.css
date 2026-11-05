@@ -222,13 +222,15 @@
 	width: 100%;
 	height: 50vh;
 	overflow: hidden;
-	order: 2;
+	/* Mobile-first: ảnh nằm TRƯỚC nội dung (ảnh trên, chữ dưới).
+	   Ở ≥768px grid 2 cột (5fr 6fr) → ảnh cột trái, nội dung cột phải —
+	   cùng thứ tự nên không cần khai báo order lần nữa. */
+	order: 1;
 }
 
 @media (min-width: 768px) {
 	.dg-sus-hero-image {
 		height: clamp(420px, 65vh, 680px);
-		order: 1;
 	}
 }
 
@@ -244,12 +246,11 @@
 	flex-direction: column;
 	justify-content: center;
 	padding: 1rem 0;
-	order: 1;
+	order: 2;
 }
 
 @media (min-width: 768px) {
 	.dg-sus-hero-content {
-		order: 2;
 		padding: 0;
 		padding-left: 0;
 	}
