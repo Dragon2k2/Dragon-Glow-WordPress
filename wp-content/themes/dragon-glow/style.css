@@ -168,27 +168,49 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --btn-gold-gradient: linear-gradient(135deg, var(--btn-gold-gradient-start) 0%, var(--btn-gold-gradient-end) 100%);
     --btn-gold-text: var(--primary-900);
 
-    /* ========== Our Ingredients — Editorial CTA Button (.dg-oi-btn) ========== */
-    /* Component-scoped: used by .dg-oi-btn in our-ingredients.css (hero + outro).
-       Gradient gold "Luminous Ethereal": sáng ở góc trên-trái, đậm dần xuống.
-       Chữ dùng --primary-900 (nâu-đen) để đạt tỷ lệ tương phản ≥ 7:1 trên cả
-       hai đầu gradient → vượt WCAG 2.1 AAA (7:1), không chỉ AA (4.5:1) cho
-       text 12px.
-       Hover ĐI SÁNG HƠN (không đậm lại): --gold-bright → --gold-400, min
-       contrast 8.17:1 — vẫn AAA, cao hơn cả base (7.16:1). Đây là hướng
-       "luminance lift" của design system Luminous Ethereal: hover làm nút
-       nổi lên, không làm nút chìm xuống. Gradient trước đây dùng
-       gold-500 → gold-600 (đậm hơn, min 4.52:1 = chỉ AA) — đã bỏ.
+    /* ========== Editorial CTA Button — hệ nút gold-pill dùng chung ========== */
+    /* Canonical cho hệ nút CTA editorial kiểu "Luminous Ethereal":
+       gradient gold sáng ở góc trên-trái, đậm dần xuống, bo góc pill,
+       mũi tên "→" trượt ra khi hover, shadow gold nổi, hover NÂNG + SÁNG HƠN.
+
+       ► Dùng chung cho 3 trang (một hệ nút CTA duy nhất của theme):
+         - Our Ingredients  `.dg-oi-btn`            (hero + outro)
+         - Careers          `.dg-careers-btn--secondary` (hero)
+         - Sustainability   `.dg-sus-btn`           (hero + closing)
+
+       Màu chữ: TRẮNG (--neutral-0) theo yêu cầu chủ design — giữ nguyên
+       nền gradient gold và hướng hover "luminance lift" sáng hơn.
+
+       ⚠ LƯU Ý ACCESSIBILITY: chữ trắng trên gradient gold hiện tại chỉ đạt
+       ~2.40:1 → THẤP HƠN WCAG 2.1 AA (4.5:1) cho text 12px (nút dùng
+       font-size 12px, uppercase = "small text", bắt buộc ≥ 4.5:1). Đây là
+       quyết định thiết kế có chủ đích; nếu cần tuân thủ AA/AAA thì phải
+       đổi nền sang gold-700 → gold-800 (AA 4.85–6.99:1) hoặc tối hơn,
+       hoặc giữ chữ --primary-900 như bản AAA trước đó.
+       Bản AAA trước đó: chữ --primary-900 → contrast ≥ 7.16:1 trên cả hai
+       đầu gradient.
+
+       Hover ĐI SÁNG HƠN (không đậm lại): --gold-bright → --gold-400. Đây
+       là hướng "luminance lift" của design system Luminous Ethereal: hover
+       làm nút nổi lên, không làm nút chìm xuống. Gradient trước đây dùng
+       gold-500 → gold-600 (đậm hơn) — đã bỏ.
        --gold-200 (#ffe182) dành cho gold-bright; --gold-400 (#d4af37) là
-       base nên hover dừng ở đây để không nhảy quá xa, giữ cảm giác "1 bước". */
-    --oi-btn-bg: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-    --oi-btn-bg-hover: linear-gradient(135deg, var(--gold-bright), var(--gold-400));
-    --oi-btn-ink: var(--primary-900);
-    --oi-btn-border: rgba(var(--gold-dark-rgb), 0.28);
-    --oi-btn-shadow: 0 10px 24px -10px rgba(var(--gold-dark-rgb), 0.45);
-    --oi-btn-shadow-hover: 0 16px 32px -12px rgba(var(--gold-dark-rgb), 0.55);
-    /* Khoảng cách giữa text và mũi tên "→" (pseudo-element .dg-oi-btn__label::after) */
-    --oi-btn-arrow-gap: 0.5rem;
+       base nên hover dừng ở đây để không nhảy quá xa, giữ cảm giác "1 bước".
+
+       Tên token theo VAI TRÒ (`--cta-gold-*`) chứ không theo tên trang, vì
+       dùng chung ≥ 3 trang → theo §8a "Define once, use everywhere". */
+    --cta-gold-bg: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+    --cta-gold-bg-hover: linear-gradient(135deg, var(--gold-bright), var(--gold-400));
+    --cta-gold-ink: var(--neutral-0);
+    --cta-gold-border: rgba(var(--gold-dark-rgb), 0.28);
+    --cta-gold-shadow: 0 10px 24px -10px rgba(var(--gold-dark-rgb), 0.45);
+    --cta-gold-shadow-hover: 0 16px 32px -12px rgba(var(--gold-dark-rgb), 0.55);
+    /* Khoảng cách giữa text và mũi tên "→" (pseudo-element ::after của label) */
+    --cta-gold-arrow-gap: 0.5rem;
+    /* Bo góc pill */
+    --cta-gold-radius: 9999px;
+    /* Khoảng cách letter-spacing của label nút */
+    --cta-gold-tracking: 0.12em;
 
     /* ========== Hero Gradient Headline ========== */
     /* Warm luxury gradient: reddish-brown → coral → gold */
@@ -514,14 +536,11 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
     
     /* ========== Sustainability Page CTA Button ========== */
-    /* Primary call-to-action with luxury gold gradient */
-    --sus-btn-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
-    --sus-btn-bg-hover: linear-gradient(135deg, var(--gold-600) 0%, var(--gold-700) 100%);
-    --sus-btn-text: var(--neutral-0);
-    --sus-btn-border: rgba(var(--gold-rgb), 0.3);
-    --sus-btn-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.25);
-    --sus-btn-shadow-hover: 0 4px 16px rgba(var(--gold-rgb), 0.35);
-    
+    /* Nút CTA của trang Sustainability (.dg-sus-btn) nay dùng CHUNG bộ token
+       --cta-gold-* (hệ nút editorial gold-pill) với Our Ingredients và
+       Careers → 1 hệ nút CTA duy nhất cho toàn theme. Xem --cta-gold-* ở
+       Layer 3 phía trên. */
+
     /* ========== Mobile Navigation Menu Component ========== */
     /* Responsive drawer with icon + text layout, glassmorphism accents */
     
@@ -1358,6 +1377,29 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --sus-gutter: 24px;
     --sus-section-gap: 120px;
     --sus-container-max: 1440px;
+    /* Padding-top riêng cho hero trên MOBILE (<768px).
+       Hero là khối đầu tiên của trang nên không cần dồn khoảng trắng section-gap
+       phía trên như các section sau — trước đây dùng chung calc(--sus-section-gap
+       * 0.75) = 90px, gây khoảng hở lớn giữa header và ảnh hero trên màn
+       hình nhỏ. Giảm còn 32px, khớp với nhịp 8px của design system.
+       Tablet/desktop KHÔNG dùng token này (hero-inner tại ≥768px giữ padding
+       dọc của --sus-section-gap như trước). */
+    --sus-hero-pad-top-mobile: 32px;
+    /* Numbers strip (Sustainability) — tham số riêng cho MOBILE.
+       Ở <768px strip chuyển sang lưới 5 cột [stat]•[stat]•[stat] để dot
+       separator nằm NGANG đúng vai trò như ở ≥768px (4 stat 16px cần 787px
+       > bề rộng màn hình → không thể 1 hàng ngang ở 4 stat; ở mobile chỉ
+       hiển thị 3 stat, stat thứ 4 + dot thứ 3 bị ẩn bằng display:none —
+       xem .dg-sus-numbers-item:nth-child(7) trong
+       assets/css/sustainability.css).
+       - font: 16px → 12px để 3 stat + 2 dot vừa 1 hàng từ 320px trở lên
+         mà không cuộn ngang (đã đo: không tràn ở 320/360/390/430px).
+       - letter-spacing 0.05em → 0.04em, line-height 1.0 → 1.25 để chữ 2-3
+         dòng vẫn dễ đọc. */
+    --sus-numbers-font-mobile: 12px;
+    --sus-numbers-tracking-mobile: 0.04em;
+    --sus-numbers-gap-mobile: 1.25rem;
+    --sus-numbers-dot-gap-mobile: 0.5rem;
 
     /* ========== Terms of Service Component ========== */
     /* Token chuyển từ assets/css/terms-of-service.css → style.css :root (single source of truth). */

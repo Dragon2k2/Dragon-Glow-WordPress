@@ -136,7 +136,7 @@
 .dg-wishlist-hero__title {
 	font-family: 'Playfair Display', serif;
 	font-weight: 600;
-	font-size: clamp(34px, 5vw, 56px);
+	font-size: clamp(42px, 5vw, 56px);
 	line-height: 1.08;
 	margin: 0 0 12px;
 	color: #fff;
@@ -155,6 +155,27 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px;
+}
+
+/* MOBILE (< 640px): 2 nút CTA xếp dọc, mỗi nút chiếm đúng bề ngang của
+   khối stats phía trên (.dg-wishlist-hero__stats).
+   - Hero inner là grid 1 cột ở mobile → __copy và __stats cùng full width,
+     nên cho 2 nút `width: 100%` là khớp CHÍNH XÁC bề ngang stats.
+   - `flex-direction: column` thay cho `flex-wrap: wrap` để nút luôn xếp
+     dọc, không phụ thuộc độ dài chữ (chữ "Share wishlist" ngắn hơn
+     "Continue shopping" nên wrap ngang sẽ lệch bề rộng).
+   - `justify-content: center` giữ icon + chữ luôn căn giữa trong nút.
+   Desktop/tablet (≥ 640px) giữ nguyên: 2 nút nằm cạnh nhau, ôm chữ. */
+@media (max-width: 639px) {
+	.dg-wishlist-hero__actions {
+		flex-direction: column;
+		flex-wrap: nowrap;
+	}
+
+	.dg-wishlist-hero__actions .dg-wishlist-btn {
+		width: 100%;
+		justify-content: center;
+	}
 }
 
 .dg-wishlist-hero__actions .dg-wishlist-btn--ghost {
@@ -214,12 +235,58 @@
 	margin-bottom: 6px;
 }
 
+/* MOBILE (< 640px): label 1 dòng.
+   Ở mobile stats là grid 2 cột → mỗi card chỉ ~141px (content box ~109px),
+   trong khi "SAVED ITEMS" ở font 11px + letter-spacing 0.10em rộng ~107px
+   → chỉ dư 2px, dễ rớt xuống 2 dòng khi font metrics lệch nhẹ.
+
+   → Block @media tương ứng nằm SAU rule base `.dg-wishlist-hero__stat-label--stacked`
+     (xem phía dưới) để bảo đảm thứ tự specificity. */
+
 .dg-wishlist-hero__stat-label--stacked > span {
 	display: block;
 }
 
 .dg-wishlist-hero__stat-label--stacked > span + span {
 	margin-top: 2px;
+}
+
+/* MOBILE (< 640px): label 1 dòng.
+   Ở mobile stats là grid 2 cột → mỗi card chỉ ~141px (content box ~109px),
+   trong khi "SAVED ITEMS" ở font 11px + letter-spacing 0.10em rộng ~107px
+   → chỉ dư 2px, dễ rớt xuống 2 dòng khi font metrics lệch nhẹ.
+
+   Cách sửa: giảm letter-spacing + padding ngang của card để TẠO HEADROOM
+   thật, rồi mới ép `white-space: nowrap` — nhờ vậy chữ luôn nằm gọn 1 dòng
+   mà vẫn nằm trọn trong card (không tràn ra ngoài).
+   KHÔNG dùng `text-overflow: ellipsis` — cắt chữ "Saved items" thành
+   "Saved i…" làm mất nghĩa, không phải giải pháp.
+
+   Đặt SAU các rule base ở trên: cùng specificity → thứ khai sau mới thắng,
+   nhờ vậy 2 span của label "On sale" chuyển từ block sang inline ở mobile.
+
+   Nhãn "On sale" (2 span) ở mobile cũng về 1 dòng: 2 span thành inline +
+   `margin-left` tạo khoảng trắng giữa 2 từ (vì markup không có whitespace
+   giữa các span → nếu chỉ đổi display thành inline sẽ ra "Onsale"). */
+@media (max-width: 639px) {
+	.dg-wishlist-hero__stat {
+		padding: 18px 12px;
+	}
+
+	.dg-wishlist-hero__stat-label {
+		letter-spacing: 0.06em;
+		white-space: nowrap;
+	}
+
+	/* 2 từ "On sale" nằm cùng 1 dòng. */
+	.dg-wishlist-hero__stat-label--stacked > span {
+		display: inline;
+	}
+
+	.dg-wishlist-hero__stat-label--stacked > span + span {
+		margin-top: 0;
+		margin-left: 0.35em;
+	}
 }
 
 .dg-wishlist-hero__stat-value {

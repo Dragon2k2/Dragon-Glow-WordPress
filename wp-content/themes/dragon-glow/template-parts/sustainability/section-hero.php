@@ -38,7 +38,7 @@ $hero = $data['hero'];
 				?>
 			</p>
 			<a href="<?php echo esc_url( $hero['cta_url'] ); ?>" class="dg-sus-btn">
-				<?php echo esc_html( $hero['cta_text'] ); ?>
+				<span class="dg-sus-btn__label"><?php echo esc_html( $hero['cta_text'] ); ?></span>
 			</a>
 		</div>
 	</div>

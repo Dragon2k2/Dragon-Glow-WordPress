@@ -21,7 +21,7 @@
 	color: var(--color-on-surface);  /* was #1c1b1b */
 	background: var(--neutral-warm-50);  /* was #fcf9f8 */
 	/* Chỉ giữ token layout riêng của trang. Token màu của component (nút CTA)
-	   đã chuyển về style.css :root — xem --oi-btn-* ở Layer 3 (Component Tokens). */
+	   đã chuyển về style.css :root — xem --cta-gold-* ở Layer 3 (Component Tokens). */
 
 	/* ========== MIGRATED TO GLOBAL TOKENS ========== */
 	/* OLD tokens removed: --oi-bg, --oi-on-bg, --oi-on-surface, */
@@ -224,11 +224,11 @@
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 2rem;
-	border: 1px solid var(--oi-btn-border);
-	border-radius: 9999px;
-	color: var(--oi-btn-ink);
-	background: var(--oi-btn-bg);
-	box-shadow: var(--oi-btn-shadow);
+	border: 1px solid var(--cta-gold-border);
+	border-radius: var(--cta-gold-radius);
+	color: var(--cta-gold-ink);
+	background: var(--cta-gold-bg);
+	box-shadow: var(--cta-gold-shadow);
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 600;
@@ -258,14 +258,14 @@
    - `translate: 0 -50%` canh giữa theo chiều dọc (dùng property `translate`
      riêng để `transform` bên dưới chỉ lo chiều ngang, và để nhánh
      reduced-motion tắt `transform` không làm mũi tên lệch dọc).
-   - `margin-left` dùng token `--oi-btn-arrow-gap` (khai ở style.css). */
+   - `margin-left` dùng token `--cta-gold-arrow-gap` (khai ở style.css). */
 [data-page="our-ingredients"] .dg-oi-btn__label::after {
 	content: "→";
 	position: absolute;
 	left: 100%;
 	top: 50%;
 	translate: 0 -50%;
-	margin-left: var(--oi-btn-arrow-gap);
+	margin-left: var(--cta-gold-arrow-gap);
 	font-size: 14px;
 	line-height: 1;
 	letter-spacing: 0;
@@ -277,8 +277,8 @@
 }
 
 [data-page="our-ingredients"] .dg-oi-btn:hover {
-	background: var(--oi-btn-bg-hover);
-	box-shadow: var(--oi-btn-shadow-hover);
+	background: var(--cta-gold-bg-hover);
+	box-shadow: var(--cta-gold-shadow-hover);
 	transform: translateY(-2px);
 }
 

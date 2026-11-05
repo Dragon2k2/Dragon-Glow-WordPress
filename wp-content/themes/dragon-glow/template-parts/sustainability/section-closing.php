@@ -15,7 +15,7 @@ $closing = $data['closing'];
 	<div class="dg-sus-closing-inner" data-sr>
 		<p class="dg-sus-closing-headline"><?php echo esc_html( $closing['headline'] ); ?></p>
 		<a href="<?php echo esc_url( $closing['cta_url'] ); ?>" class="dg-sus-btn">
-			<?php echo esc_html( $closing['cta_text'] ); ?>
+			<span class="dg-sus-btn__label"><?php echo esc_html( $closing['cta_text'] ); ?></span>
 		</a>
 	</div>
 </section>

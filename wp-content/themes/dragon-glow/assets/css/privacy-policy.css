@@ -19,6 +19,9 @@
 
 	color: var(--color-on-surface);  /* was --priv-ink: #1a1c1a */
 	background: var(--neutral-warm-100);  /* was --priv-bg: #faf9f6 */
+	/* Khoảng đệm dưới để nội dung không dính sát footer — cùng convention
+	   với .dg-faq và .dg-gift (page-level <main> của theme). */
+	padding-bottom: clamp(4rem, 10vw, 7rem);
 }
 
 /* FOUC guard: ẩn phần tử sẽ reveal cho tới khi JS chạy */

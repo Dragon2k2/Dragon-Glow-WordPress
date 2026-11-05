@@ -25,6 +25,8 @@ $hero = dg_careers_hero_data();
 		<p class="dg-careers-hero-eyebrow"><?php echo esc_html( $hero['eyebrow'] ); ?></p>
 		<h1 class="dg-careers-hero-title dg-careers-hero-title--emphasis"><?php echo esc_html( $hero['title'] ); ?></h1>
 		<p class="dg-careers-hero-intro"><?php echo esc_html( $hero['intro'] ); ?></p>
-		<a class="dg-careers-btn dg-careers-btn--secondary" href="#open-roles"><?php echo esc_html( $hero['cta_label'] ); ?></a>
+        <a class="dg-careers-btn dg-careers-btn--secondary" href="#open-roles">
+			<span class="dg-careers-btn__label"><?php echo esc_html( $hero['cta_label'] ); ?></span>
+		</a>
 	</div>
 </section>

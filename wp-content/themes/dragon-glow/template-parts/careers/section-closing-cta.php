@@ -19,6 +19,8 @@ $closing = dg_careers_closing_data();
 		data-apply-trigger
 		data-allow-custom-role="1"
 		data-role="<?php echo esc_attr( $closing['default_role'] ?? __( 'General Application', 'dragon-glow' ) ); ?>"
-	><?php echo esc_html( $closing['cta_label'] ); ?></button>
+	>
+		<span class="dg-careers-btn__label"><?php echo esc_html( $closing['cta_label'] ); ?></span>
+	</button>
 	<p class="dg-careers-closing-email"><?php echo esc_html( $closing['email'] ); ?></p>
 </section>

@@ -120,23 +120,106 @@
 	outline-offset: 3px;
 }
 
-/* Hero CTA parity with "See the sources" button on Our Ingredients */
-.dg-careers-hero .dg-careers-btn--secondary {
-	background: var(--color-on-surface);  /* was --c-ink */
-	color: var(--color-background-warm);  /* was --c-bg */
-	border-color: var(--color-on-surface);
-	font-size: 12px;
-	font-weight: 500;
-	line-height: 1;
-	letter-spacing: 0.1em;
+/* Hero CTA — mirror hệ nút editorial gold-pill của trang Our Ingredients
+   (.dg-oi-btn) và Sustainability (.dg-sus-btn): cùng gradient, cùng bo góc
+   pill, cùng chữ trắng, cùng font/letter-spacing, cùng shadow + hover
+   nâng/sáng, cùng mũi tên "→" trượt ra khi hover.
+   Token: --cta-gold-* khai ở style.css :root (dùng chung nhiều trang).
+
+   ► Rule nhóm bên dưới áp dụng cho HAI vị trí trong trang Careers:
+     - Hero      `.dg-careers-btn--secondary` (nút "See open roles")
+     - Closing   `.dg-careers-btn--primary`   (nút "Write to us" mở modal)
+     Cùng một component → dùng selector list để 2 nút KHÔNG THỂ lệch style
+     về sau (thay vì copy-paste 2 bản rule riêng). */
+.dg-careers-hero .dg-careers-btn--secondary,
+.dg-careers-closing .dg-careers-btn--primary {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	padding: 1rem 2rem;
-	transition: background-color 400ms cubic-bezier(0.2, 0, 0, 1),
-		color 400ms cubic-bezier(0.2, 0, 0, 1);
+	border: 1px solid var(--cta-gold-border);
+	border-radius: var(--cta-gold-radius);
+	background: var(--cta-gold-bg);
+	color: var(--cta-gold-ink);
+	box-shadow: var(--cta-gold-shadow);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: var(--cta-gold-tracking);
+	text-transform: uppercase;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
+		box-shadow 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.dg-careers-hero .dg-careers-btn--secondary:hover {
-	background: var(--color-inverse-surface);      /* was --c-inverse-surface */
-	color: var(--color-inverse-on-surface);        /* was --c-inverse-on-surface */
+/* Chỉ nút HERO giãn hết chiều rộng cột (`align-self: stretch`) → nút giãn
+   HẾT chiều ngang của cột, y hệt .dg-oi-btn trong hero Our Ingredients
+   (flex column, mặc định align-items: stretch).
+   Base class .dg-careers-btn--secondary set `align-self: flex-start` (ôm
+   chữ) cho các nút secondary khác — phải ghi đè ở đây để 2 nút hero có
+   cùng chiều rộng.
+   Nút closing là con của block container (text-align: center) → giữ ôm
+   chữ, khớp với .dg-sus-btn trong section closing của trang Sustainability. */
+.dg-careers-hero .dg-careers-btn--secondary {
+	align-self: stretch;
+}
+
+/* Mũi tên "→" — pseudo-element absolute neo vào mép phải TEXT.
+   Mirror .dg-oi-btn__label::after: span label là `inline-block` → `left: 100%`
+   = mép phải text (không phải mép phải nút) → mũi tên nằm sát ngay sau
+   chữ, không bao giờ lọt ra ngoài pill. Absolute nên không chiếm chỗ trong
+   flex flow → text luôn căn giữa tuyệt đối trong nút, trước và sau hover. */
+.dg-careers-hero .dg-careers-btn__label,
+.dg-careers-closing .dg-careers-btn__label {
+	position: relative;
+	display: inline-block;
+}
+
+.dg-careers-hero .dg-careers-btn__label::after,
+.dg-careers-closing .dg-careers-btn__label::after {
+	content: "→";
+	position: absolute;
+	left: 100%;
+	top: 50%;
+	translate: 0 -50%;
+	margin-left: var(--cta-gold-arrow-gap);
+	font-size: 14px;
+	line-height: 1;
+	letter-spacing: 0;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(-0.35rem);
+	transition: opacity 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dg-careers-hero .dg-careers-btn--secondary:hover,
+.dg-careers-closing .dg-careers-btn--primary:hover {
+	background: var(--cta-gold-bg-hover);
+	box-shadow: var(--cta-gold-shadow-hover);
+	transform: translateY(-2px);
+}
+
+.dg-careers-hero .dg-careers-btn--secondary:hover .dg-careers-btn__label::after,
+.dg-careers-closing .dg-careers-btn--primary:hover .dg-careers-btn__label::after {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+/* Trạng thái active (nhấn) — trả về vị trí gốc, tránh "dính" nút xuống. */
+.dg-careers-hero .dg-careers-btn--secondary:active,
+.dg-careers-closing .dg-careers-btn--primary:active {
+	transform: translateY(0);
+}
+
+.dg-careers-hero .dg-careers-btn--secondary:focus-visible,
+.dg-careers-closing .dg-careers-btn--primary:focus-visible {
+	outline: 2px solid var(--gold-dark);
+	outline-offset: 4px;
 }
 
 /* ═══════════════════════════════════════════
@@ -890,24 +973,12 @@
 	margin: 0 0 1.5rem;
 }
 
+/* Nút "Write to us" (closing CTA) dùng CHUNG rule gold-pill với nút hero —
+   xem rule nhóm ở phần Buttons (`.dg-careers-hero .dg-careers-btn--secondary,
+   .dg-careers-closing .dg-careers-btn--primary`). Ở đây chỉ giữ phần
+   layout riêng của section closing. */
 .dg-careers-closing .dg-careers-btn--primary {
 	margin-bottom: 1rem;
-	background: var(--color-on-surface);  /* was --c-ink */
-	color: var(--color-background-warm);  /* was --c-bg */
-	border-color: var(--color-on-surface);  /* was --c-ink */
-	font-size: 12px;
-	font-weight: 500;
-	line-height: 1;
-	letter-spacing: 0.1em;
-	padding: 1rem 2rem;
-	transition: background-color 400ms cubic-bezier(0.2, 0, 0, 1),
-		color 400ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.dg-careers-closing .dg-careers-btn--primary:hover {
-	background: var(--color-inverse-surface);      /* was --c-inverse-surface */
-	color: var(--color-inverse-on-surface);        /* was --c-inverse-on-surface */
-	border-color: var(--color-inverse-surface);
 }
 
 .dg-careers-closing-email {
@@ -933,6 +1004,36 @@
 	.dg-careers-role-row,
 	.dg-careers-role-apply-link {
 		transition: none !important;
+	}
+
+	/* Nút hero dùng transform + mũi tên trượt — tắt cả hai khi user yêu cầu
+	   giảm chuyển động (mirror với .dg-oi-btn trong our-ingredients.css).
+	   transition:none vẫn để transform áp dụng ngay → phải ép transform về 0. */
+	.dg-careers-hero .dg-careers-btn--secondary {
+		transform: none !important;
+	}
+
+	.dg-careers-hero .dg-careers-btn--secondary:hover {
+		transform: none !important;
+	}
+
+	.dg-careers-hero .dg-careers-btn__label::after {
+		transform: none !important;
+		opacity: 0 !important;
+	}
+
+	/* Nút closing (gold-pill) cũng dùng transform + mũi tên trượt. */
+	.dg-careers-closing .dg-careers-btn--primary {
+		transform: none !important;
+	}
+
+	.dg-careers-closing .dg-careers-btn--primary:hover {
+		transform: none !important;
+	}
+
+	.dg-careers-closing .dg-careers-btn__label::after {
+		transform: none !important;
+		opacity: 0 !important;
 	}
 
 	.dg-apply,

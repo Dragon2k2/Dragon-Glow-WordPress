@@ -151,41 +151,84 @@
 }
 
 /* ── Button ────────────────────────────────────────────────── */
+/* Hệ nút CTA editorial gold-pill — dùng CHUNG token --cta-gold-* với
+   Our Ingredients (.dg-oi-btn) và Careers (.dg-careers-btn--secondary) để
+   toàn theme chỉ có MỘT kiểu nút CTA: gradient gold, bo góc pill, chữ trắng,
+   mũi tên "→" trượt ra khi hover, shadow gold, hover nâng + sáng hơn.
+   → 1 nguồn sự thật cho style, không lệch màu/bo góc/hover giữa 3 trang. */
 [data-page="sustainability"] .dg-sus-btn {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 2rem;
-	border: 1px solid var(--sus-btn-border);
-	color: var(--sus-btn-text);
-	background: var(--sus-btn-bg);
+	border: 1px solid var(--cta-gold-border);
+	border-radius: var(--cta-gold-radius);
+	color: var(--cta-gold-ink);
+	background: var(--cta-gold-bg);
+	box-shadow: var(--cta-gold-shadow);
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 600;
-	line-height: 1.0;
-	letter-spacing: 0.1em;
+	line-height: 1;
+	letter-spacing: var(--cta-gold-tracking);
 	text-transform: uppercase;
 	text-decoration: none;
 	cursor: pointer;
-	box-shadow: var(--sus-btn-shadow);
 	transition: background 400ms cubic-bezier(0.2, 0, 0, 1),
 		box-shadow 400ms cubic-bezier(0.2, 0, 0, 1),
-		transform 300ms cubic-bezier(0.2, 0, 0, 1);
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Label bọc text — là MỐC NEO cho mũi tên.
+   Nhờ có span này, mũi tên đặt ngay sát sau text bằng `left: 100%` của
+   label (không phải mép phải nút) → mũi tên không bao giờ lọt ra ngoài
+   pill, và không chiếm chỗ trong flex flow nên text luôn căn giữa tuyệt đối
+   trong nút, trước và sau khi hover. */
+[data-page="sustainability"] .dg-sus-btn__label {
+	position: relative;
+	display: inline-block;
+}
+
+/* Mũi tên "→" — pseudo-element ABSOLUTE neo vào label.
+   `translate: 0 -50%` canh giữa theo chiều dọc (dùng property `translate`
+   riêng để `transform` bên dưới chỉ lo chiều ngang, và để nhánh
+   reduced-motion tắt `transform` không làm mũi tên lệch dọc). */
+[data-page="sustainability"] .dg-sus-btn__label::after {
+	content: "→";
+	position: absolute;
+	left: 100%;
+	top: 50%;
+	translate: 0 -50%;
+	margin-left: var(--cta-gold-arrow-gap);
+	font-size: 14px;
+	line-height: 1;
+	letter-spacing: 0;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(-0.35rem);
+	transition: opacity 400ms cubic-bezier(0.2, 0, 0, 1),
+		transform 400ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 [data-page="sustainability"] .dg-sus-btn:hover {
-	background: var(--sus-btn-bg-hover);
-	box-shadow: var(--sus-btn-shadow-hover);
+	background: var(--cta-gold-bg-hover);
+	box-shadow: var(--cta-gold-shadow-hover);
 	transform: translateY(-2px);
+}
+
+[data-page="sustainability"] .dg-sus-btn:hover .dg-sus-btn__label::after {
+	opacity: 1;
+	transform: translateX(0);
 }
 
 [data-page="sustainability"] .dg-sus-btn:active {
 	transform: translateY(0);
-	box-shadow: var(--sus-btn-shadow);
+	box-shadow: var(--cta-gold-shadow);
 }
 
 [data-page="sustainability"] .dg-sus-btn:focus-visible {
-	outline: 2px solid var(--gold-600);
+	outline: 2px solid var(--gold-dark);
 	outline-offset: 4px;
 }
 
@@ -198,7 +241,10 @@
 	grid-template-columns: 1fr;
 	gap: var(--sus-gutter);
 	align-items: center;
-	padding: calc(var(--sus-section-gap) * 0.75) var(--sus-margin-mobile) var(--sus-section-gap);
+	/* Mobile: padding-top riêng (--sus-hero-pad-top-mobile) vì hero là khối
+	   đầu tiên của trang — không cần khoảng trắng section-gap phía trên.
+	   Tablet/desktop dùng lại --sus-section-gap như các section khác. */
+	padding: var(--sus-hero-pad-top-mobile) var(--sus-margin-mobile) var(--sus-section-gap);
 	max-width: var(--sus-container-max);
 	margin: 0 auto;
 }
@@ -206,6 +252,7 @@
 @media (min-width: 768px) {
 	.dg-sus-hero-inner {
 		grid-template-columns: 5fr 6fr;
+		padding-top: calc(var(--sus-section-gap) * 0.75);
 		padding-left: var(--sus-margin-desktop);
 		padding-right: var(--sus-margin-desktop);
 		column-gap: calc(var(--sus-gutter) * 2);
@@ -641,6 +688,37 @@
 	text-align: center;
 }
 
+/* ── MOBILE: 3 stat xếp NGANG 1 hàng, dot separator nằm ngang ──
+   Ở ≥768px strip là flex row chứa đủ 4 stat + 3 dot.
+   Ở <768px 4 stat ở 16px cần ~787px > bề rộng màn hình → không thể 1 hàng
+   ngang, và nếu giữ flex column thì dot rơi xuống DƯỚI mỗi stat (separator
+   dọc) — không đúng vai trò như desktop.
+   → Chuyển sang lưới 5 cột [stat]•[stat]•[stat] (3 stat + 2 dot), chi tiết
+   thu nhỏ 16px → 12px để vừa 1 hàng từ 320px trở lên, không cuộn ngang.
+   Stat thứ 4 và dot thứ 3 bị ẩn ở mobile (chỉ ở mobile — ≥768px hiện đủ). */
+@media (max-width: 767px) {
+	.dg-sus-numbers-inner {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+		gap: var(--sus-numbers-gap-mobile) var(--sus-numbers-dot-gap-mobile);
+		align-items: center;
+		justify-items: center;
+	}
+
+	[data-page="sustainability"] .dg-sus-numbers-item {
+		font-size: var(--sus-numbers-font-mobile);
+		line-height: 1.25;
+		letter-spacing: var(--sus-numbers-tracking-mobile);
+		text-align: center;
+	}
+
+	/* Ẩn stat thứ 4 + dot thứ 3 (chỉ mobile) */
+	[data-page="sustainability"] .dg-sus-numbers-item:nth-child(7),
+	[data-page="sustainability"] .dg-sus-numbers-dot:nth-child(6) {
+		display: none;
+	}
+}
+
 @media (min-width: 768px) {
 	.dg-sus-numbers-inner {
 		padding-left: var(--sus-margin-desktop);
@@ -652,18 +730,16 @@
 	}
 }
 
+/* Dot separator giữa các stat.
+   Hiện ở MỌI breakpoint. Ở ≥768px là separator ngang giữa các stat trên
+   cùng hàng; ở <768px lưới 5 cột đặt dot vào cột `auto` nên vẫn là
+   separator ngang — cùng vai trò, chỉ khác số lượng stat hiển thị. */
 .dg-sus-numbers-dot {
-	display: none;
+	display: block;
 	width: 4px;
 	height: 4px;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.3);
-}
-
-@media (min-width: 768px) {
-	.dg-sus-numbers-dot {
-		display: block;
-	}
 }
 
 /* ══════════════════════════════════════════════
@@ -729,6 +805,13 @@
 	[data-page="sustainability"] .dg-sus-btn {
 		transition: none !important;
 		transform: none !important;
+	}
+
+	/* Mũi tên "→" dùng `transform` để trượt — tắt hẳn để không có chuyển
+	   động đột ngột (không transition) khi hover. */
+	[data-page="sustainability"] .dg-sus-btn__label::after {
+		transform: none !important;
+		opacity: 0 !important;
 	}
 }
 

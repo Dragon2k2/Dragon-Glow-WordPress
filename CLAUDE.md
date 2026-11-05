@@ -676,8 +676,13 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 ## H. Changelog
 
-> Đầy đủ (16 entry từ 2026-08-09) ở `docs/CHANGELOG.md`. Dưới đây chỉ là mốc gần nhất — lịch sử không cần nạp mỗi phiên.
+> Đầy đủ ở `docs/CHANGELOG.md`. Dưới đây chỉ là mốc gần nhất — lịch sử không cần nạp mỗi phiên.
 
+- `2026-11-05l`: thêm `padding-bottom: clamp(4rem, 10vw, 7rem)` cho `.dg-cookie`, `.dg-terms`, `.dg-accessibility` (đệm dưới các trang pháp lý còn lại). `DG_VERSION` → `1.15.91`.
+- `2026-11-05k`: thêm `padding-bottom: clamp(4rem, 10vw, 7rem)` cho `.dg-privacy` (đệm dưới trang Privacy Policy, đúng convention `.dg-faq`/`.dg-gift`). `DG_VERSION` → `1.15.90`.
+- `2026-11-05j`: nút "Write to us" (Careers closing) dùng chung hệ gold-pill với `.dg-sus-btn` — gộp rule thành selector list để 2 nút trong trang không lệch style. `DG_VERSION` → `1.15.89`.
+- `2026-11-05i`: chữ trắng cho cả 3 nút CTA gold-pill (token `--cta-gold-ink` → `--neutral-0`); contrast 1.58:1 (dưới AA, quyết định thiết kế có chủ đích). `DG_VERSION` → `1.15.88`.
+- `2026-11-05h`: nút CTA Sustainability (`.dg-sus-btn`) dùng chung hệ editorial gold-pill với OI + Careers; gom token `--oi-btn-*` → `--cta-gold-*` (theo vai trò). `DG_VERSION` → `1.15.87`.
 - `2026-11-04f`: **xoá hẳn** hook báo cáo chrome-devtools (`chrome-devtools-mcp-session-start.ps1` + `.chrome-devtools-tools-cache.json`) — không còn sentinel, không còn inject mỗi phiên. MCP server trong `.cursor/mcp.json` giữ nguyên, tool vẫn dùng được.
 - `2026-11-04e`: tắt hook chrome-devtools mặc định (-985 tok/phiên), xoá sentinel, tách changelog sang `docs/CHANGELOG.md`, nén §5/§8. `CLAUDE.md` 60.365 -> 39.120 chars.
 - `2026-11-04d`: docs upstream (61 tool) lệch npm `1.12.0` (59 tool) — `--categoryWebauthn=true` bị bỏ qua âm thầm. Luôn đối chiếu `npm dist-tags`.
