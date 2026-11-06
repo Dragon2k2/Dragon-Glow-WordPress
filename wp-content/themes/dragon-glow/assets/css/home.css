@@ -997,6 +997,46 @@
 
 /* Mobile (< 640px): badge, description, stats grid, stickers, info card */
 @media (max-width: 639px) {
+    /* ── Stacked order: badge → product frame → copy body ──────────────
+       Desktop keeps the two-column layout (copy left, visual right), so the
+       badge has to live inside the copy column in the DOM. On a 1-column
+       phone layout the product frame leads the fold, but the badge must stay
+       ABOVE it — and the badge is not a sibling of the frame, so a plain
+       `order` swap cannot express "badge, frame, then the rest of the copy".
+
+       `display: contents` dissolves the copy column's box on mobile: its
+       children (badge, headline, description, CTAs, stats) become grid items
+       of the hero grid, so each can be ordered independently. The DOM is
+       untouched, so screen readers and SEO still announce the copy first.
+
+       Two classes on the wrapper: must beat the Tailwind CDN `gap-8` utility,
+       which is injected at runtime after this file (CLAUDE.md §8b). */
+    .dg-home-hero-wrapper .dg-home-hero {
+        row-gap: var(--hero-stack-gap-mobile);
+    }
+
+    .dg-home-hero .dg-home-hero__copy {
+        display: contents;
+    }
+
+    /* Grid items need `min-width: 0` to be allowed to shrink inside the
+       single column (previously guaranteed by `.dg-home-hero > div`).
+       `justify-self: start` reproduces the flex `items-start` behaviour of the
+       original copy column: each block shrinks to its content instead of
+       stretching to the full column width. Blocks that declare their own
+       width (e.g. the stats row `w-full`) keep it. */
+    .dg-home-hero .dg-home-hero__copy > * {
+        min-width: 0;
+        order: 0;
+        justify-self: start;
+    }
+
+    /* Badge: first — above the product frame.
+       Three classes so it clearly beats the `order: 0` reset above. */
+    .dg-home-hero .dg-home-hero__copy > .dg-home-hero__badge {
+        order: -2;
+    }
+
     .dg-home-hero .dg-home-hero__badge {
         display: flex;
         flex-wrap: nowrap;              /* Changed from 'wrap' — keep badge content in one row */
@@ -1185,22 +1225,24 @@
         max-width: var(--hero-visual-max-width-mobile);
         margin-inline: auto;
 
-        /* Mobile: product frame FIRST, copy column SECOND.
+        /* Mobile: product frame SECOND — the badge pill leads the fold, then
+           the product shot, then the headline copy underneath.
            DOM order is copy → visual (desktop reads left-to-right), but on a
-           1-column phone layout the product shot should lead the fold and the
-           headline follow underneath. `order` reorders grid items without
-           touching the DOM, so screen readers and SEO keep the original
-           (semantic) order: copy is still the first thing announced.
-           The copy column has no theme class, but it needs no rule — grid items
-           default to `order: 0`, so pulling the visual to `-1` is enough. */
+           1-column phone layout the eye should hit the pill, then the image.
+           `order` reorders grid items without touching the DOM, so screen
+           readers and SEO keep the original (semantic) order: copy is still
+           the first thing announced.
+           The copy column is dissolved with `display: contents` above, so the
+           badge is a grid item of its own and can sit above the frame. */
         order: -1;
     }
 
     .dg-home-hero .dg-home-hero__product-frame {
-        /* The frame is now the FIRST row of the grid, so the old top margin
-           (added when it followed the copy block) would only push the whole
-           hero down. The 2rem grid gap handles the visual → copy spacing. */
+        /* The frame is no longer the first row of the grid, so the old top
+           margin (added when it followed the copy block) would only push the
+           whole hero down. The grid row-gap handles the spacing instead. */
         margin-top: 0;
+        margin-bottom: var(--hero-frame-bottom-gap-mobile);
     }
 
     /* Glaze Certified orb.
@@ -1235,10 +1277,61 @@
         width: 100%;
         max-width: var(--hero-visual-max-width-tablet);
         margin-inline: auto;
+
+        /* Tablet: product frame SECOND — the badge pill leads the fold, then
+           the product shot, then the headline copy underneath. Same stacking
+           as the mobile block above, for the same reason: the badge lives
+           inside the copy column in the DOM, so it needs `display: contents`
+           to become an independent grid item. */
+        order: -1;
     }
 
     .dg-home-hero .dg-home-hero__orb {
         right: var(--hero-orb-right-tablet);
+    }
+
+    /* ── Stacked order: badge → product frame → copy body ──────────────
+       Same technique as the mobile block, scoped to tablet only.
+
+       `display: contents` dissolves the copy column's box: its children
+       (badge, headline, description, CTAs, stats) become grid items of the
+       hero grid, so each can be ordered independently. The DOM is untouched,
+       so screen readers and SEO still announce the copy first.
+
+       Two classes on the wrapper: must beat the Tailwind CDN `gap-8`
+       utility, injected at runtime after this file (CLAUDE.md §8b). */
+    .dg-home-hero-wrapper .dg-home-hero {
+        row-gap: var(--hero-stack-gap-tablet);
+    }
+
+    .dg-home-hero .dg-home-hero__copy {
+        display: contents;
+    }
+
+    /* Grid items need `min-width: 0` to be allowed to shrink inside the
+       single column (previously guaranteed by `.dg-home-hero > div`).
+       `justify-self: start` reproduces the flex `items-start` behaviour of the
+       original copy column: each block shrinks to its content instead of
+       stretching to the full column width. Blocks that declare their own
+       width (e.g. the stats row `w-full`) keep it. */
+    .dg-home-hero .dg-home-hero__copy > * {
+        min-width: 0;
+        order: 0;
+        justify-self: start;
+    }
+
+    /* Badge: first — above the product frame.
+       Three classes so it clearly beats the `order: 0` reset above. */
+    .dg-home-hero .dg-home-hero__copy > .dg-home-hero__badge {
+        order: -2;
+    }
+
+    .dg-home-hero .dg-home-hero__product-frame {
+        /* The frame is no longer the first row of the grid, so the old top
+           margin (added when it followed the copy block) would only push the
+           whole hero down. The grid row-gap handles the spacing instead. */
+        margin-top: 0;
+        margin-bottom: var(--hero-frame-bottom-gap-tablet);
     }
 }
 

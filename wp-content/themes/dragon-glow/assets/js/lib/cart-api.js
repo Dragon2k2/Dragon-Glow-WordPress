@@ -207,6 +207,10 @@
         return post('dg_ajax_get_cart_count', {}).then(function (data) {
             if (!data.success) return;
             var count = data.data && data.data.count;
+            if (window.DGCartBadge) {
+                window.DGCartBadge.paint(count);
+                return;
+            }
             document.querySelectorAll('.dg-cart-count').forEach(function (el) {
                 el.textContent = count;
                 el.classList.toggle('hidden', count === 0);

@@ -355,6 +355,48 @@ input[type="range"]::-moz-range-thumb {
 	transition: left 0.65s ease;
 }
 
+/* ── Quick-add CTA — MOBILE + TABLET (< 1024px) ──────────────────────
+   Vấn đề gốc:
+   - `.dg-add-to-cart` mặc định `opacity: 0` + `translateY(16px)` (ẩn), chỉ
+     hiện khi `.dg-product-card:hover` — thiết kế cho chuột.
+   - Touch device không có hover → nút không bao giờ hiện, không tappable.
+   - Tablet có chuột nhưng người dùng vẫn hay dùng chạm → hover không đáng tin.
+
+   Theme đã có tiền lệ ở `home.css` (§ best-sellers) và `main.css` (§ carousel)
+   dùng `@media (hover: none)`. Ở đây dùng **chiều rộng** thay vì `hover: none`
+   vì yêu cầu là "mobile + tablet luôn hiện" — tablet có chuột vẫn phải hiện.
+
+   Breakpoint 1024px = mốc theme chuyển sang layout 2 cột (lg:grid-cols-12 /
+   lg:grid-cols-3). Dưới mốc này là 1–2 cột, card nhỏ hơn → nút cần luôn hiện.
+
+   Desktop (>= 1024px) giữ nguyên hành vi hover-reveal. */
+@media (max-width: 1023px) {
+	.dg-add-to-cart {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Nút luôn hiện → sheen phải chạy ngay, không đợi hover card.
+	   `::before` dịch sang ngoài khung ngay lập tức để không để lại vệt sáng
+	   đọng trên nút. */
+	.dg-add-to-cart::before {
+		left: 160%;
+		transition: none;
+	}
+
+	/* `:hover` trên touch vẫn kích hoạt sau khi tap → nền đổi + nhấc nút
+	   dù nút đã hiện sẵn. Đặt lại transform gốc cho nhất quán với base rule
+	   (base rule dùng `translateX(-50%)`, override ở trên dùng pill inset). */
+	.dg-add-to-cart:hover {
+		transform: translateY(-2px);
+	}
+
+	/* Nút "added" giữ trạng thái vĩnh viễn (rule base ở § Quick-Add toggle). */
+	.dg-add-to-cart.dg-quick-add--added:hover {
+		transform: translateY(-2px);
+	}
+}
+
 /* Checkmark icon turns golden when button is in "added" state */
 .dg-quick-add--added .material-symbols-outlined {
 	color: var(--color-tertiary, #f1ca50);

@@ -297,6 +297,34 @@ function dg_mobile_menu_item_icon_classes( array $classes, $item, $args, int $de
 add_filter( 'nav_menu_css_class', 'dg_mobile_menu_item_icon_classes', 10, 4 );
 
 /**
+ * Render the combined counter badge for the mobile/tablet menu toggle.
+ *
+ * The desktop heart and bag icons are `hidden lg:block`, so below 1024px the
+ * menu toggle is the only element on screen that can surface either counter.
+ * The toggle is a 40×40px button and can only carry ONE pill, so it shows the
+ * combined total (bag + wishlist) instead of two overlapping numbers.
+ *
+ * The pill carries its own class (`.dg-nav-badge`) rather than reusing
+ * `.dg-cart-count` on purpose: `DGCartBadge.paint()` writes the *cart* count
+ * into every `.dg-cart-count` element, which would overwrite the combined
+ * value. `assets/js/lib/nav-badge.js` owns this badge and keeps it in sync.
+ *
+ * @param int $cart_count     Cart item count.
+ * @param int $wishlist_count Wishlist item count.
+ * @return string
+ */
+function dg_render_nav_count_badge( int $cart_count, int $wishlist_count ): string {
+	$total = max( 0, $cart_count ) + max( 0, $wishlist_count );
+
+	$classes = 'dg-nav-badge absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center';
+	if ( 0 === $total ) {
+		$classes .= ' hidden';
+	}
+
+	return '<span class="' . esc_attr( $classes ) . '">' . esc_html( $total ) . '</span>';
+}
+
+/**
  * Inject mobile menu items (Account, Wishlist, Cart) into the primary menu
  * 
  * This function uses wp_nav_menu_items filter to append items directly
@@ -347,20 +375,78 @@ function dg_inject_mobile_menu_items( string $items, object $args ): string {
 		esc_html__( 'Account', 'dragon-glow' )
 	);
 
+	// Wishlist item — carries the saved-item count as a badge on the right of
+	// the label. The drawer is the only place below 1024px where a
+	// "Wishlist" entry is visible, so this is where a shopper expects to see
+	// how many items they saved.
+	//
+	// The badge reuses `dg_render_wishlist_count_badge()` so the markup, the
+	// `hidden` state and the `.dg-wishlist-count` class stay identical to the
+	// desktop badge — the wishlist badge painter updates all of them.
+	//
+	// `data-dg-label` keeps the base label so `wishlist-toggle.js` can rebuild
+	// a screen-reader friendly aria-label ("Wishlist, 3 saved items") whenever
+	// the count changes. The anchor's explicit aria-label wins over the
+	// descendant text, so the digit is never announced twice. The label is
+	// rendered server-side too, so the very first paint is already correct.
+	$wishlist_count = dg_get_wishlist_count();
+	$wishlist_label = esc_attr__( 'Wishlist', 'dragon-glow' );
+	if ( $wishlist_count > 0 ) {
+		$wishlist_label = sprintf(
+			'%s, %s',
+			$wishlist_label,
+			esc_attr(
+				1 === $wishlist_count
+					? __( '1 saved item', 'dragon-glow' )
+					: sprintf( __( '%d saved items', 'dragon-glow' ), $wishlist_count )
+			)
+		);
+	}
 	$wishlist = sprintf(
-		'<li class="menu-item dg-mobile-menu-item--wishlist%s"><a href="%s"%s><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		'<li class="menu-item dg-mobile-menu-item--wishlist%s"><a href="%s"%s data-dg-label="%s" aria-label="%s"><span class="font-body text-body-md text-on-surface">%s</span>%s</a></li>',
 		$is_wishlist ? ' current-menu-item' : '',
 		esc_url( get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' ) ),
 		$is_wishlist ? ' aria-current="page"' : '',
-		esc_html__( 'Wishlist', 'dragon-glow' )
+		esc_attr__( 'Wishlist', 'dragon-glow' ),
+		$wishlist_label,
+		esc_html__( 'Wishlist', 'dragon-glow' ),
+		dg_render_wishlist_count_badge( $wishlist_count )
 	);
 
+	// Cart item — carries the live item count as a badge on the right of the
+	// label. The drawer is the only place below 1024px where a "Cart" entry
+	// is visible, so this is where a shopper expects to see the bag size.
+	// The badge reuses `dg_render_cart_count_badge()` so the markup, the
+	// `hidden` state and the `.dg-cart-count` class stay identical to the
+	// other two cart badges — `DGCartBadge.paint()` updates all of them.
+	//
+	// `data-dg-label` keeps the base label so `cart-badge.js` can rebuild a
+	// screen-reader friendly aria-label ("Cart, 3 items in bag") whenever
+	// the count changes. The anchor's explicit aria-label wins over the
+	// descendant text, so the digit is never announced twice. The label is
+	// rendered server-side too, so the very first paint is already correct.
+	$cart_count = dg_get_cart_item_count();
+	$cart_label = esc_attr__( 'Cart', 'dragon-glow' );
+	if ( $cart_count > 0 ) {
+		$cart_label = sprintf(
+			'%s, %s',
+			$cart_label,
+			esc_attr(
+				1 === $cart_count
+					? __( '1 item in bag', 'dragon-glow' )
+					: sprintf( __( '%d items in bag', 'dragon-glow' ), $cart_count )
+			)
+		);
+	}
 	$cart = sprintf(
-		'<li class="menu-item dg-mobile-menu-item--cart%s"><a href="%s"%s><span class="font-body text-body-md text-on-surface">%s</span></a></li>',
+		'<li class="menu-item dg-mobile-menu-item--cart%s"><a href="%s"%s data-dg-label="%s" aria-label="%s"><span class="font-body text-body-md text-on-surface">%s</span>%s</a></li>',
 		$is_cart ? ' current-menu-item' : '',
 		esc_url( dg_get_cart_url() ),
 		$is_cart ? ' aria-current="page"' : '',
-		esc_html__( 'Cart', 'dragon-glow' )
+		esc_attr__( 'Cart', 'dragon-glow' ),
+		$cart_label,
+		esc_html__( 'Cart', 'dragon-glow' ),
+		dg_render_cart_count_badge( $cart_count )
 	);
 
 	// Append injected items to existing menu items

@@ -112,6 +112,10 @@ function dg_set_wishlist( int $user_id, array $ids ): void {
 	do_action( 'dg_wishlist_before_save', $user_id, $ids );
 
 	update_user_meta( $user_id, dg_wishlist_meta_key(), $ids );
+
+	// Invalidate the memoised wishlist count so a same-request read after
+	// the mutation returns the fresh value.
+	unset( $GLOBALS['dg_wishlist_count_cache'] );
 }
 
 /**
@@ -185,10 +189,23 @@ function dg_wishlist_remove_many( int $user_id, array $product_ids ): array {
  *
  * Safe to call from anywhere — returns 0 when no user is logged in.
  *
+ * The result is memoised for the current request: the count is read several
+ * times per page render (desktop heart badge, drawer "Wishlist" item, the
+ * combined nav badge) and each read walks the stored product IDs. The cache
+ * is invalidated by `dg_set_wishlist()` so a same-request mutation is
+ * always reflected.
+ *
  * @return int
  */
 function dg_get_wishlist_count(): int {
-	return count( dg_get_wishlist( null ) );
+	if ( isset( $GLOBALS['dg_wishlist_count_cache'] ) ) {
+		return (int) $GLOBALS['dg_wishlist_count_cache'];
+	}
+
+	$count = count( dg_get_wishlist( null ) );
+	$GLOBALS['dg_wishlist_count_cache'] = $count;
+
+	return $count;
 }
 
 /**
@@ -210,13 +227,16 @@ function dg_is_product_in_wishlist( int $product_id ): bool {
  * Mirrors dg_render_cart_count_badge() so visual parity holds across
  * cart + wishlist. Hidden when count is 0, hidden entirely for guests.
  *
+ * @param int|null $count Pre-computed count. Pass it when the caller
+ *                         already resolved the count, so the (potentially
+ *                         costly) wishlist lookup is not repeated.
  * @return string
  */
-function dg_render_wishlist_count_badge(): string {
+function dg_render_wishlist_count_badge( ?int $count = null ): string {
 	if ( ! is_user_logged_in() ) {
 		return '';
 	}
-	$count = (int) dg_get_wishlist_count();
+	$count = null === $count ? (int) dg_get_wishlist_count() : max( 0, $count );
 	$classes = 'dg-wishlist-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center';
 	if ( 0 === $count ) {
 		$classes .= ' hidden';

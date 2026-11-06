@@ -1,0 +1,77 @@
+<!DOCTYPE html><html class="dg-js"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/style.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/main.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/header-nav.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/woocommerce.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="tailwind-config.js"></script>
+</head>
+<body style="margin:0; background:#f7f4ef;">
+  <nav class="glass-nav header-nav header-nav--logged-in sticky top-0 z-[100] w-full">
+    <div class="dg-nav-container flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max-width mx-auto">
+      <div class="dg-nav-brand-group flex items-center lg:gap-3">
+        <a href="#" class="dg-nav-logo"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="dg-nav-brand__mark" alt=""></a>
+        <span class="dg-nav-brand-name font-headline text-headline-md font-bold tracking-tight text-primary">Dragon Glow</span>
+      </div>
+      <div class="hidden lg:flex gap-6"><ul><li><a href="#">Home</a></li></ul></div>
+      <div class="dg-nav-actions flex items-center gap-3">
+        <a href="#" class="hidden lg:block p-2 relative" aria-label="Wishlist">
+          <span class="material-symbols-outlined">favorite</span>
+          <span class="dg-wishlist-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center">1</span>
+        </a>
+        <a href="#" class="hidden lg:block relative p-2" aria-label="Cart">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          <span class="dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">3</span>
+        </a>
+        <button class="dg-nav-toggle lg:hidden p-2 text-primary relative" id="dg-mobile-menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="dg-mobile-menu" data-dg-label="Menu">
+          <span class="material-symbols-outlined">menu</span>
+          <span class="dg-nav-badge absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center">4</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div class="lg:hidden" id="dg-mobile-menu" style="display:block; position:relative;">
+    <ul class="dg-mobile-menu__list flex flex-col gap-4" style="max-width:420px; margin:0 auto; padding:16px;">
+      <li class="menu-item dg-mobile-menu-item--wishlist">
+        <a href="#" data-dg-label="Wishlist"><span class="font-body text-body-md text-on-surface">Wishlist</span><span class="dg-wishlist-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center">1</span></a>
+      </li>
+      <li class="menu-item dg-mobile-menu-item--cart">
+        <a href="#" data-dg-label="Cart"><span class="font-body text-body-md text-on-surface">Cart</span><span class="dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">3</span></a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- A wishlist heart button, like the shop grid product card -->
+  <div style="max-width:420px; margin:24px auto; padding:16px; position:relative;">
+    <button type="button" class="dg-wishlist-toggle absolute top-4 right-4 z-20" data-product-id="43" aria-label="Add to wishlist" aria-pressed="false">
+      <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+    </button>
+  </div>
+</body>
+<script>
+window.dgAjax = {
+  url: '/wp-admin/admin-ajax.php',
+  nonce: 'test',
+  i18n: {
+    itemSingular: '1 item in bag', itemPlural: '%d items in bag',
+    navItemSingular: '1 item', navItemPlural: '%d items',
+    savedSingular: '1 saved item', savedPlural: '%d saved items'
+  }
+};
+// Stub the AJAX endpoint: the server confirms wishlist count = 2 after the add.
+window.fetch = function () {
+  return Promise.resolve({
+    json: function () {
+      return Promise.resolve({ success: true, data: { added: true, count: 2 } });
+    }
+  });
+};
+</script>
+<script src="../../wp-content/themes/dragon-glow/assets/js/lib/cart-badge.js"></script>
+<script src="../../wp-content/themes/dragon-glow/assets/js/lib/nav-badge.js"></script>
+<script src="../../wp-content/themes/dragon-glow/assets/js/lib/wishlist-toggle.js"></script>
+</html>

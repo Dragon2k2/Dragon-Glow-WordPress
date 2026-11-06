@@ -428,6 +428,13 @@
 	 */
 	function applyBadgeCount(count) {
 		const n = Number(count) || 0;
+
+		// Keep the combined badge on the menu toggle in sync — it shows
+		// bag + wishlist together (see assets/js/lib/nav-badge.js).
+		if (window.DGNavBadge && typeof window.DGNavBadge.setWishlist === 'function') {
+			window.DGNavBadge.setWishlist(n);
+		}
+
 		document.querySelectorAll('.dg-wishlist-count').forEach(function (el) {
 			const wasHidden = el.classList.contains('hidden');
 			const prevCount = el.textContent;
@@ -447,6 +454,31 @@
 				restartAnimation(el, 'is-pulse');
 			}
 		});
+
+		syncWishlistAriaLabel(n);
+	}
+
+	/**
+	 * Update the screen-reader label of the drawer's "Wishlist" item.
+	 *
+	 * The badge lives INSIDE the link, so a screen reader would otherwise
+	 * announce a bare digit ("Wishlist 3"). The anchor carries an explicit
+	 * `aria-label`, which wins over descendant text per the accname spec —
+	 * so the digit itself is never announced twice.
+	 *
+	 * @param {number} count Current wishlist item count.
+	 * @return {void}
+	 */
+	function syncWishlistAriaLabel(count) {
+		const i18n = (window.dgAjax && window.dgAjax.i18n) || {};
+		const items = count === 1
+			? (i18n.savedSingular || '1 saved item')
+			: ((i18n.savedPlural || '%d saved items').replace('%d', String(count)));
+
+		document.querySelectorAll('.dg-mobile-menu-item--wishlist a').forEach(function (link) {
+			const base = link.getAttribute('data-dg-label') || 'Wishlist';
+			link.setAttribute('aria-label', count > 0 ? base + ', ' + items : base);
+		});
 	}
 
 	/**
@@ -457,10 +489,19 @@
 	 */
 	function paintBadgeCount(count) {
 		const n = Number(count) || 0;
+
+		// Keep the combined badge on the menu toggle in sync — it shows
+		// bag + wishlist together (see assets/js/lib/nav-badge.js).
+		if (window.DGNavBadge && typeof window.DGNavBadge.setWishlist === 'function') {
+			window.DGNavBadge.setWishlist(n);
+		}
+
 		document.querySelectorAll('.dg-wishlist-count').forEach(function (el) {
 			el.textContent = String(n);
 			el.classList.toggle('hidden', n === 0);
 		});
+
+		syncWishlistAriaLabel(n);
 	}
 
 	/**

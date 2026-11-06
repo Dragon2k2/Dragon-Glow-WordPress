@@ -1,0 +1,29 @@
+<!DOCTYPE html><html class="dg-js"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/style.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/main.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/header-nav.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/woocommerce.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="tailwind-config.js"></script>
+</head>
+<body style="margin:0; background:#f7f4ef;">
+  <div class="lg:hidden" id="dg-mobile-menu" style="position:static; visibility:visible; transform:none; width:min(86vw,22.5rem); background:#fff;">
+    <div class="dg-mobile-menu__header">
+      <span class="dg-mobile-menu__brand-name">Dragon Glow</span>
+      <button class="dg-mobile-menu__close" id="dg-mobile-menu-close"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <ul class="dg-mobile-menu__list flex flex-col px-margin-mobile py-4 gap-4 border-t border-outline-variant/20">
+      <li class="menu-item dg-mobile-menu-item--home"><a href="#"><span class="font-body text-body-md text-on-surface">Home</span></a></li>
+      <li class="menu-item dg-mobile-menu-item--shop"><a href="#"><span class="font-body text-body-md text-on-surface">Shop</span></a></li>
+      <li class="menu-item dg-mobile-menu-item--divider"><span class="block border-t border-outline-variant/20 my-2"></span></li>
+      <li class="menu-item dg-mobile-menu-item--account"><a href="#"><span class="font-body text-body-md text-on-surface">Account</span></a></li>
+      <li class="menu-item dg-mobile-menu-item--wishlist"><a href="#"><span class="font-body text-body-md text-on-surface">Wishlist</span></a></li>
+      <li class="menu-item dg-mobile-menu-item--cart"><a href="#" data-dg-label="Cart"><span class="font-body text-body-md text-on-surface">Cart</span><span class="dg-cart-count absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">3</span></a></li>
+    </ul>
+  </div>
+</body>
+<script src="../../wp-content/themes/dragon-glow/assets/js/lib/cart-badge.js"></script>
+<script>window.dgAjax = { i18n: { itemSingular: '1 item in bag', itemPlural: '%d items in bag' } };</script>
+</html>

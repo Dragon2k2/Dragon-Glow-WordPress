@@ -1533,6 +1533,60 @@
 }
 
 /* =========================================
+   6b. EMPTY STATE — MOBILE ONLY (< 640px)
+   =========================================
+   Vấn đề gốc (đo bằng Playwright, `tmp-resp/wl-empty-check.js`):
+   - `.dg-wishlist-empty__bullets` có `padding-left: 105px` hard-code, thiết kế
+     cho cột 540px ở desktop (căn list trong khung rộng).
+   - Ở mobile khối ngoài chỉ còn ~250–340px → 105px chiếm 39% bề rộng, list
+     bị đẩy lệch sang phải, chữ bó sát mép phải và vỡ 2–3 dòng:
+       390px → text rộng 191px (2 dòng)
+       320px → text rộng 121px (3 dòng!)
+   - Icon 32px + gap 12px cũng chiếm thêm 44px nữa.
+
+   Giải pháp: bỏ indent hoàn toàn, icon dẫn hàng, thu nhỏ nhẹ tile icon +
+   font chữ để mỗi bullet vừa 1–2 dòng thoải mái.
+   Tablet (640px+) và desktop giữ nguyên layout gốc. */
+@media (max-width: 639px) {
+	.dg-wishlist-empty {
+		padding: 2rem 1.25rem;
+	}
+
+	.dg-wishlist-empty__bullets {
+		/* Bỏ indent 105px → icon dẫn hàng, text chiếm hết bề rộng còn lại */
+		padding-left: var(--wl-empty-bullets-indent-mobile);
+		gap: var(--wl-empty-bullets-row-gap-mobile);
+	}
+
+	.dg-wishlist-empty__bullets li {
+		/* Cột icon nhỏ lại: 32px → 28px (icon + gap tiết kiệm 6px cho text) */
+		grid-template-columns: var(--wl-empty-bullets-icon-size-mobile) 1fr;
+		gap: var(--wl-empty-bullets-gap-mobile);
+		font-size: var(--wl-empty-bullets-font-size-mobile);
+		line-height: 1.45;
+	}
+
+	.dg-wishlist-empty__bullets .material-symbols-outlined {
+		width: var(--wl-empty-bullets-icon-size-mobile);
+		height: var(--wl-empty-bullets-icon-size-mobile);
+		border-radius: 7px;
+		font-size: 16px;
+	}
+
+	/* Nút hành động full-width: trên mobile 2 nút cạnh nhau quá hẹp,
+	   chữ "Explore the collection" bị bó. */
+	.dg-wishlist-empty__actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.dg-wishlist-empty__actions .dg-wishlist-btn {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+/* =========================================
    7. BULK ACTION BAR
    ========================================= */
 .dg-wishlist-bulkbar {

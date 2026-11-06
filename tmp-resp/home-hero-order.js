@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Verify thứ tự 2 khối hero ở mobile:
- *   mobile (<640px): product frame TRÊN, copy column DƯỚI
- *   tablet (640-1023) & desktop (>=1024): copy TRÊN, visual DƯỚI (không đổi)
+ * Verify thứ tự 3 khối hero ở mobile:
+ *   mobile (<640px): badge TRÊN → product frame → copy body (title/desc/CTA/stats)
+ *   tablet (640-1023) & desktop (>=1024): KHÔNG ĐỔI (copy cột trái, visual cột phải)
  */
 const fs = require('fs');
 const path = require('path');
@@ -17,28 +17,30 @@ const MARKUP = `
 <body style="margin:0; background:#f7f4ef;">
   <section class="dg-home-hero-wrapper">
     <div class="dg-home-hero max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-10 pb-0">
-      <div class="lg:col-span-6 flex flex-col items-start gap-6 z-10" data-role="copy">
-        <div class="dg-home-hero__badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full">
+      <div class="dg-home-hero__copy lg:col-span-6 flex flex-col items-start gap-6 z-10" data-role="copy">
+        <div class="dg-home-hero__badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full" data-role="badge">
           <span class="inline-flex items-center justify-center w-2 h-2 rounded-full"></span>
           <span class="font-label-sm uppercase tracking-widest">2026 Cellular Drop 04</span>
+          <span class="dg-home-hero__badge-sep">•</span>
+          <span class="font-label-sm">Ultra-Bounce Skin</span>
         </div>
-        <div class="space-y-2">
+        <div class="space-y-2" data-role="headline">
           <h1 class="dg-home-hero__title font-display-xl text-display-xl lg:text-[72px]">Get Your Dragon Glaze On.</h1>
         </div>
-        <p class="dg-home-hero__desc font-body-lg text-body-lg max-w-xl leading-relaxed">
+        <p class="dg-home-hero__desc font-body-lg text-body-lg max-w-xl leading-relaxed" data-role="desc">
           An ancient Dragon Superfruit ritual, perfected by clinical skincare.
         </p>
-        <div class="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto">
+        <div class="flex flex-wrap items-center gap-4 pt-2 w-full sm:w-auto" data-role="cta">
           <a href="#" class="dg-home-hero__cta-primary w-full sm:w-auto">Shop The Glaze Ritual</a>
           <a href="#" class="dg-home-hero__cta-secondary w-full sm:w-auto">Discover Our Story</a>
         </div>
-        <div class="dg-home-hero__stats pt-6 w-full flex items-center gap-6 sm:gap-10">
+        <div class="dg-home-hero__stats pt-6 w-full flex items-center gap-6 sm:gap-10" data-role="stats">
           <div class="dg-home-hero__stat flex flex-col"><span class="dg-home-hero__stat-value">+98.4%</span><span class="dg-home-hero__stat-label">Instant Surface Glass Reflection</span></div>
           <div class="dg-home-hero__stat flex flex-col"><span class="dg-home-hero__stat-value">72 Hrs</span><span class="dg-home-hero__stat-label">Continuous Lipid Hydration</span></div>
         </div>
       </div>
-      <div class="dg-home-hero__visual lg:col-span-6 relative flex justify-center items-center">
-        <div class="dg-home-hero__product-frame relative w-full max-w-[520px] aspect-[4/5] rounded-[2.5rem] p-3">
+      <div class="dg-home-hero__visual lg:col-span-6 relative flex justify-center items-center" data-role="visual">
+        <div class="dg-home-hero__product-frame relative w-full max-w-[520px] aspect-[4/5] rounded-[2.5rem] p-3" data-role="frame">
           <div class="w-full h-full bg-gradient-to-br from-primary-container to-secondary-container rounded-[2rem]" style="height:100%;"></div>
           <div class="dg-home-hero__info-card absolute bottom-6 left-6 right-6 rounded-2xl flex items-center justify-between">
             <div class="dg-home-hero__info-main flex items-center"><div class="dg-home-hero__info-text"><h4>Dragon Glaze Elixir</h4><p>Bio-Fermented Superfruit Complex</p></div></div>
@@ -74,45 +76,57 @@ ${LINKS}
 
     const r = await page.evaluate(() => {
       const hero = document.querySelector('.dg-home-hero');
-      const copy = document.querySelector('[data-role="copy"]');
-      const visual = document.querySelector('.dg-home-hero__visual');
-      const frame = document.querySelector('.dg-home-hero__product-frame');
-      const cs = getComputedStyle(visual);
-      const fcs = getComputedStyle(frame);
-      const cr = copy.getBoundingClientRect();
-      const vr = visual.getBoundingClientRect();
-      // Số hàng của grid: 1 cột → 2 hàng (visual + copy xếp dọc)
+      const q = (role) => document.querySelector(`[data-role="${role}"]`);
+      const box = (role) => {
+        const el = q(role);
+        if (!el) return null;
+        const b = el.getBoundingClientRect();
+        return { top: Math.round(b.top), left: Math.round(b.left), w: Math.round(b.width), h: Math.round(b.height) };
+      };
       const rows = getComputedStyle(hero).gridTemplateRows.split(' ').filter(Boolean).length;
+      const copy = document.querySelector('.dg-home-hero__copy');
       return {
         rows,
-        cols: getComputedStyle(hero).gridTemplateColumns,
-        copyTop: Math.round(cr.top),
-        copyLeft: Math.round(cr.left),
-        copyH: Math.round(cr.height),
-        visualTop: Math.round(vr.top),
-        visualLeft: Math.round(vr.left),
-        visualH: Math.round(vr.height),
-        visualW: Math.round(vr.width),
-        frameW: Math.round(frame.getBoundingClientRect().width),
-        frameH: Math.round(frame.getBoundingClientRect().height),
-        order: cs.order,
-        frameMarginTop: fcs.marginTop,
+        copyDisplay: getComputedStyle(copy).display,
+        badge: box('badge'),
+        frame: box('frame'),
+        visual: box('visual'),
+        headline: box('headline'),
+        desc: box('desc'),
+        cta: box('cta'),
+        stats: box('stats'),
+        visualOrder: getComputedStyle(q('visual')).order,
+        badgeOrder: getComputedStyle(q('badge')).order,
+        rowGap: getComputedStyle(hero).rowGap,
+        scrollW: document.documentElement.scrollWidth,
+        clientW: document.documentElement.clientWidth,
       };
     });
 
-    // Grid 1 hàng (desktop 12 cột) → 2 khối CẠNH NHAU → so theo trục ngang.
-    // Grid nhiều hàng (mobile/tablet 1 cột) → 2 khối XẾP DỌC → so theo trục dọc.
     const sideBySide = r.rows === 1;
-    const copyFirst = sideBySide ? r.copyLeft < r.visualLeft : r.copyTop < r.visualTop;
     const tag = w < 640 ? 'MOBILE' : w < 1024 ? 'TABLET' : 'DESKTOP';
-    const ok = w < 640 ? !copyFirst : copyFirst;
-
     console.log(`\n--- ${w}px [${tag}] ---`);
-    console.log(`  grid: ${r.cols.length > 50 ? r.cols.slice(0, 40) + '…' : r.cols} | SỐ HÀNG: ${r.rows} → ${sideBySide ? 'cạnh nhau' : 'xếp dọc'}`);
-    console.log(`  copy   top=${r.copyTop} left=${r.copyLeft} h=${r.copyH}`);
-    console.log(`  visual top=${r.visualTop} left=${r.visualLeft} w=${r.visualW} order=${r.order}`);
-    console.log(`  frame w=${r.frameW} h=${r.frameH} marginTop=${r.frameMarginTop}`);
-    console.log(`  → ${w < 640 ? 'visual TRÊN, copy DƯỚI' : 'copy TRƯỚC, visual SAU'} | ${ok ? '✓ ĐÚNG' : '✗ SAI'}`);
+    console.log(`  grid rows=${r.rows} rowGap=${r.rowGap} copy.display=${r.copyDisplay}`);
+    console.log(`  badge  order=${r.badgeOrder} top=${r.badge && r.badge.top}`);
+    console.log(`  frame  top=${r.frame && r.frame.top} h=${r.frame && r.frame.h}`);
+    console.log(`  visual order=${r.visualOrder} top=${r.visual && r.visual.top}`);
+    console.log(`  headline top=${r.headline && r.headline.top} | desc top=${r.desc && r.desc.top} | cta top=${r.cta && r.cta.top} | stats top=${r.stats && r.stats.top}`);
+
+    let ok;
+    if (w < 1024) {
+      // Mobile & tablet: badge TRÊN → frame → copy body
+      const b = r.badge, f = r.frame, h = r.headline;
+      ok = b && f && h && b.top < f.top && f.top < h.top;
+      console.log(`  → ${ok ? '✓ badge TRÊN, frame GIỮA, copy DƯỚI' : '✗ SAI'}`);
+    } else {
+      // Desktop: copy trái, visual phải
+      const c = r.badge, v = r.visual;
+      ok = c && v && c.left < v.left;
+      console.log(`  → ${ok ? '✓ copy TRÁI, visual PHẢI (không đổi)' : '✗ SAI'}`);
+    }
+
+    const overflow = r.scrollW > r.clientW;
+    if (overflow) console.log(`  ⚠ OVERFLOW ngang: scrollW=${r.scrollW} > clientW=${r.clientW}`);
 
     await page.screenshot({ path: path.join(OUT, `hero-${w}.png`), fullPage: true });
     await page.close();

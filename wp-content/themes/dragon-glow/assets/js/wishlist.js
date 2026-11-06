@@ -781,6 +781,10 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		if (delta === 0) {
 			return;
 		}
+		if (window.DGCartBadge) {
+			window.DGCartBadge.bump(delta);
+			return;
+		}
 		document.querySelectorAll('.dg-cart-count').forEach(function (el) {
 			const current = parseInt(el.textContent, 10) || 0;
 			const next = current + delta;
@@ -1524,9 +1528,36 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 	function updateWishlistBadge() {
 		if (!grid) return;
 		const count = grid.querySelectorAll('[data-dg-wl-card]').length;
+		paintWishlistBadges(count);
+	}
+
+	/** Paint every `.dg-wishlist-count` badge and keep the combined badge on
+	    the mobile/tablet menu toggle in sync (bag + wishlist together). */
+	function paintWishlistBadges(count) {
+		// The toggle badge shows the COMBINED total, so it needs its own
+		// painter — see assets/js/lib/nav-badge.js.
+		if (window.DGNavBadge && typeof window.DGNavBadge.setWishlist === 'function') {
+			window.DGNavBadge.setWishlist(count);
+		}
 		document.querySelectorAll('.dg-wishlist-count').forEach(function (el) {
 			el.textContent = String(count);
 			el.classList.toggle('hidden', count === 0);
+		});
+		syncWishlistAriaLabel(count);
+	}
+
+	/** Rebuild the screen-reader label of the drawer's "Wishlist" item.
+	    The badge lives INSIDE the link, so without an explicit aria-label a
+	    screen reader would announce a bare digit ("Wishlist 3"). */
+	function syncWishlistAriaLabel(count) {
+		const i18n = (window.dgAjax && window.dgAjax.i18n) || {};
+		const items = count === 1
+			? (i18n.savedSingular || '1 saved item')
+			: ((i18n.savedPlural || '%d saved items').replace('%d', String(count)));
+
+		document.querySelectorAll('.dg-mobile-menu-item--wishlist a').forEach(function (link) {
+			const base = link.getAttribute('data-dg-label') || 'Wishlist';
+			link.setAttribute('aria-label', count > 0 ? base + ', ' + items : base);
 		});
 	}
 
@@ -1539,10 +1570,7 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		return post(fd).then(function (data) {
 			if (!data || !data.success) return 0;
 			const count = (data.data && data.data.count) || 0;
-			document.querySelectorAll('.dg-wishlist-count').forEach(function (el) {
-				el.textContent = String(count);
-				el.classList.toggle('hidden', count === 0);
-			});
+			paintWishlistBadges(count);
 			return count;
 		}).catch(function () { return 0; });
 	}

@@ -353,6 +353,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --hero-badge-font-size-mobile: 0.5rem;                      /* 8px text for ultra-compact mobile badge (desktop 12px) */
     --hero-badge-gap-mobile: 0.25rem;                           /* 4px gap between badge elements (desktop 8px) */
     --hero-badge-padding-mobile: 0.375rem 0.625rem;             /* 6px vertical × 10px horizontal (desktop 6px × 16px) */
+    --hero-stack-gap-mobile: 1.5rem;                           /* 24px — vertical rhythm between the stacked hero blocks on mobile (matches the desktop column gap-6) */
+    --hero-frame-bottom-gap-mobile: 0.5rem;                    /* 8px — extra breathing room under the product frame, keeping the frame → headline gap at 2rem like the old grid gap-8 */
     --hero-stats-gap-mobile: 0.625rem;                          /* 10px column gap — 3 stats share one row */
     --hero-stat-value-size-mobile: 1.125rem;                    /* 18px stat figures (+98.4%, 72 Hrs) */
     --hero-stat-value-line-height-mobile: 1.2;                  /* Tight figure leading */
@@ -395,6 +397,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Hero visual + Glaze Certified orb (tablet 640–1023px only) */
     --hero-visual-max-width-tablet: 520px;                      /* Same as the frame's max-w-[520px]; the column hugs the frame so the orb is anchored to the frame edge, not the wider grid column */
     --hero-orb-right-tablet: -5.3125rem;                           /* Orb overhangs the frame edge by 24px (desktop -4.1rem was measured from the wider column and left it floating off the frame) */
+    --hero-stack-gap-tablet: 1.5rem;                           /* 24px — vertical rhythm between the stacked hero blocks on tablet (matches the mobile stack) */
+    --hero-frame-bottom-gap-tablet: 0.5rem;                    /* 8px — extra breathing room under the product frame, keeping the frame → headline gap at 2rem like the old grid gap-8 */
 
     /* ========== Instagram Reel Product Button (Shoppable Card) ========== */
     /* Component-scoped: product CTA button overlay on reel cards (9/14 aspect ratio) */
@@ -979,6 +983,15 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --wl-empty-border: rgba(115, 92, 0, 0.25);
     --wl-empty-shadow: 0 12px 36px rgba(123, 84, 85, 0.16);
+    /* Empty-state bullets (mobile < 640px) — the desktop `padding-left: 105px`
+       is sized for the 540px centred column; on a phone it ate ~39% of the
+       available width and forced the text onto 2–3 lines. Mobile drops the
+       indent entirely and lets the icon lead the row. */
+    --wl-empty-bullets-indent-mobile: 0px;                  /* No indent on mobile — the 32px icon column is enough */
+    --wl-empty-bullets-icon-size-mobile: 28px;              /* Icon tile (desktop 32px) */
+    --wl-empty-bullets-gap-mobile: 10px;                    /* Icon ↔ text gap (desktop 12px) */
+    --wl-empty-bullets-row-gap-mobile: 12px;               /* Gap between bullet rows (desktop 14px) */
+    --wl-empty-bullets-font-size-mobile: 13px;             /* 13px bullet text (desktop 14px) */
     
     /* Wishlist no-result state (filter returns zero items) */
     --wl-noresult-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)); /* frosted glass fill */

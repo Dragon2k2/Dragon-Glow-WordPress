@@ -407,6 +407,158 @@
 }
 
 /* =========================================
+   4d-1. COMBINED COUNT BADGE ON THE MENU TOGGLE (mobile + tablet)
+   Below 1024px the desktop heart and bag icons are hidden (`hidden lg:block`),
+   so this 40×40px toggle is the only element that can surface a counter at a
+   glance. It can only carry one pill, so it shows bag + wishlist COMBINED.
+
+   The badge markup is produced by `dg_render_nav_count_badge()` and carries
+   the `.dg-nav-badge` class — deliberately NOT `.dg-cart-count`, because
+   `DGCartBadge.paint()` writes the cart count into every `.dg-cart-count`
+   element and would overwrite the combined total.
+
+   Every rule is scoped to `.dg-nav-toggle` on purpose: the desktop cart and
+   wishlist badges keep their existing look and behaviour (no animation),
+   exactly as before this change.
+
+   Animation contract mirrors the wishlist badge (`.dg-wishlist-count` in
+   woocommerce.css):
+     - `is-pulse`      → count changed → subtle scale pop
+     - `is-first-show` → badge appeared for the first time → stronger entrance
+   ========================================= */
+.dg-nav-toggle {
+	/* Anchor for the absolutely positioned badge. */
+	position: relative;
+}
+
+.dg-nav-toggle .dg-nav-badge {
+	position: absolute;
+	top: -0.25rem;
+	right: -0.25rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Match the wishlist badge sizing (`min-w` + `px-1`) so a 2- or 3-digit
+	   count grows the pill instead of clipping. */
+	width: auto;
+	min-width: 20px;
+	padding-left: 4px;
+	padding-right: 4px;
+	/* Solid ring so the badge separates from the menu glyph underneath. */
+	box-shadow: 0 0 0 2px var(--color-surface, #fbf9f5);
+	transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+/* The `hidden` utility (Tailwind, specificity 0,1,0) loses against the
+   `display` declaration above (0,2,0) — without this explicit override the
+   badge would stay visible when the combined count drops back to 0. */
+.dg-nav-toggle .dg-nav-badge.hidden {
+	display: none;
+}
+
+.dg-nav-toggle .dg-nav-badge.is-pulse {
+	animation: dgCartBadgePop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-nav-toggle .dg-nav-badge.is-first-show {
+	animation: dgCartBadgeFirstShow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dgCartBadgePop {
+	0%   { transform: scale(1); }
+	35%  { transform: scale(1.35); }
+	60%  { transform: scale(0.94); }
+	100% { transform: scale(1); }
+}
+
+@keyframes dgCartBadgeFirstShow {
+	0%   { transform: scale(0); opacity: 0; }
+	60%  { transform: scale(1.45); opacity: 1; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reduced motion — disable all badge animations (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-nav-toggle .dg-nav-badge.is-pulse,
+	.dg-nav-toggle .dg-nav-badge.is-first-show {
+		animation: none;
+	}
+}
+
+/* =========================================
+   4d-2. COUNT BADGES ON THE DRAWER ITEMS (mobile + tablet)
+   The drawer list is the only place below 1024px where "Cart" and "Wishlist"
+   entries are visible, so the bag size and the saved-item count belong next
+   to those labels too.
+
+   Unlike the toggle badge (absolutely positioned over the glyph), the
+   drawer badges sit in the normal flow at the end of the row — the anchor
+   is already a flex row, so `margin-left: auto` pushes the pill to the far
+   right and the number reads like a quantity column.
+
+   Same markup as the desktop badges (`.dg-cart-count` / `.dg-wishlist-count`)
+   → `DGCartBadge.paint()` and the wishlist badge painter update and animate
+   all of them together.
+   ========================================= */
+.dg-mobile-menu__list .dg-mobile-menu-item--cart a,
+.dg-mobile-menu__list .dg-mobile-menu-item--wishlist a {
+	/* Keep the label on the left and the count pill on the right. */
+	gap: 0.5rem;
+}
+
+.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count,
+.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count {
+	/* Reset the absolute positioning inherited from the shared badge class
+	   — inside the drawer the pill belongs in the flow, not over the glyph. */
+	position: static;
+	top: auto;
+	right: auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Push the pill to the trailing edge of the row. */
+	margin-left: auto;
+	/* Same flexible sizing as the toggle badge so 2-3 digit counts grow the
+	   pill instead of clipping. */
+	width: auto;
+	min-width: 20px;
+	padding-left: 4px;
+	padding-right: 4px;
+	/* No ring needed — the badge sits on its own, not over an icon. */
+	box-shadow: none;
+	flex-shrink: 0;
+	transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+/* The `hidden` utility (Tailwind, 0,1,0) loses against the `display`
+   declaration above (0,3,0) — without this the pill would stay visible
+   when the count drops back to 0. */
+.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count.hidden,
+.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count.hidden {
+	display: none;
+}
+
+.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count.is-pulse,
+.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count.is-pulse {
+	animation: dgCartBadgePop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count.is-first-show,
+.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count.is-first-show {
+	animation: dgCartBadgeFirstShow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced motion — disable all badge animations (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count.is-pulse,
+	.dg-mobile-menu__list .dg-mobile-menu-item--cart .dg-cart-count.is-first-show,
+	.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count.is-pulse,
+	.dg-mobile-menu__list .dg-mobile-menu-item--wishlist .dg-wishlist-count.is-first-show {
+		animation: none;
+	}
+}
+
+/* =========================================
    5. DESKTOP SAFETY — drawer never shows
    at lg+ even if Tailwind CDN fails.
    Breakpoint 1024px matches theme standard.

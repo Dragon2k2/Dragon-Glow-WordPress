@@ -3,6 +3,202 @@
 > Moved out of `CLAUDE.md` so it stops loading on every session.
 > `CLAUDE.md` keeps only the 5 most recent entries.
 
+- `2026-11-06i`: Header — **fix bug text "Menu" thừa hiện ra ở desktop** (trong `div.dg-nav-actions`).
+
+  **Root cause:** `$nav_aria = esc_attr_e( 'Menu', 'dragon-glow' );` — dùng nhầm biến thể `_e` (echo) thay vì `__` (return). `esc_attr_e()` **echo** ra output nên chữ "Menu" bị in thành text node ngay trong markup (hiện ra ở desktop vì nút toggle bị ẩn bởi `lg:hidden` nhưng text node thì không), đồng thời `$nav_aria` thành `null` → `aria-label=""` rỗng.
+
+  Fix: đổi sang `esc_attr__( 'Menu', 'dragon-glow' )` + comment giải thích để không lặp lại lỗi này.
+
+  Kiểm chứng (`tmp-resp/nav-cart-badge/render-header-nav.php` — render template với WP functions stubbed):
+  - Markup toggle: `<button ... aria-label="Menu, 4 items" ... data-dg-label="Menu">` ✓
+  - Không còn text node "Menu" trong button / trong `.dg-nav-actions` ✓
+  - `aria-label` không rỗng ✓
+
+  Không đổi `DG_VERSION` (không có thay đổi asset). Không commit git.
+
+- `2026-11-06h`: Header — **badge wishlist trên menu item "Wishlist" trong drawer mobile/tablet** + **badge TỔNG (giỏ hàng + wishlist) trên nút menu mobile/tablet**.
+
+  Yêu cầu: click `.dg-wishlist-toggle` → badge wishlist phải hiện trên nút menu mobile (`#dg-mobile-menu-toggle`) và trên menu item "Wishlist" trong drawer (`#dg-mobile-menu-item--wishlist`).
+
+  **Quyết định thiết kế (có hỏi user):** nút toggle chỉ 40×40px, không đủ chỗ cho 2 pill → chọn **1 badge TỔNG** (giỏ hàng + wishlist) thay vì 2 badge chồng nhau.
+
+  Sửa:
+  - `inc/helpers/ui-components.php` — `dg_render_nav_count_badge()` (helper mới): render pill tổng với class riêng `.dg-nav-badge` (**không** dùng `.dg-cart-count`, vì `DGCartBadge.paint()` sẽ ghi đè giá trị tổng bằng count giỏ hàng). Item "Wishlist" trong drawer giờ render `dg_render_wishlist_count_badge()` + `aria-label` server-side ("Wishlist, 2 saved items"). Item "Cart" cũng bổ sung `aria-label` server-side.
+  - `template-parts/global/header-nav.php` — nút toggle dùng `dg_render_nav_count_badge( $cart_count, $wishlist_count )`, `aria-label` server-side ("Menu, 4 items"). `$wishlist_count` tính 1 lần/request, tái dùng cho cả badge desktop.
+  - `assets/js/lib/nav-badge.js` (module mới) — sở hữu pill `.dg-nav-badge`: giữ 2 bộ đếm (cart/wishlist), tính tổng, vẽ + animation `is-pulse`/`is-first-show`, đồng bộ `aria-label` của toggle. API: `setCart()`, `setWishlist()`, `refresh()`.
+  - `assets/js/lib/cart-badge.js` — `paint()` gọi thêm `DGNavBadge.setCart(total)`; `syncAriaLabels()` bỏ phần toggle (nay do `nav-badge.js` lo).
+  - `assets/js/lib/wishlist-toggle.js` — `applyBadgeCount()` / `paintBadgeCount()` gọi thêm `DGNavBadge.setWishlist(n)` + `syncWishlistAriaLabel()` (aria-label cho link "Wishlist" trong drawer).
+  - `assets/js/wishlist.js` — `paintWishlistBadges()` (gộp 3 chỗ vẽ badge trùng lặp) + `syncWishlistAriaLabel()`.
+  - `assets/css/header-nav.css` — §4d-1 đổi từ `.dg-cart-count` sang `.dg-nav-badge`; §4d-2 gộp badge Cart + badge Wishlist trong drawer (cùng rule `position: static; margin-left: auto`).
+  - `inc/helpers/wishlist.php` — `dg_get_wishlist_count()` memoize theo request (bị đọc 3 lần/render), cache bị invalidate trong `dg_set_wishlist()`; `dg_render_wishlist_count_badge()` nhận thêm param `$count` để không gọi lại lookup.
+  - `inc/enqueue/scripts.php` — enqueue `dg-nav-badge` + thêm i18n `navItemSingular/navItemPlural/savedSingular/savedPlural`.
+
+  Kiểm chứng (Playwright, `tmp-resp/nav-cart-badge/nav-badge-*.js`):
+  - Click `.dg-wishlist-toggle` → badge drawer "Wishlist" 1→2, badge tổng trên toggle 4→5, aria-label rebuild ở cả 2 host ✓ (320/390/768/1023/1024px)
+  - `paint(0)` + `setWishlist(0)` → `display: none` (override tường minh `.hidden`) ✓
+  - Kích thước: 1–2 chữ số = 20×20px, 4 chữ số = 30×20px, không tràn viewport ở 320px ✓
+  - `prefers-reduced-motion: reduce` → `animation-name: none` ✓
+  - Desktop 1280px: toggle `display: none`, badge heart/bag desktop giữ nguyên 20px ✓
+
+  `DG_VERSION` → `1.16.7`. Không commit git.
+
+- `2026-11-06g`: Header — **badge số lượng giỏ hàng trên menu item "Cart" trong drawer mobile/tablet** + **fix bug badge không ẩn khi count = 0**.
+
+  Yêu cầu: `<li class="menu-item dg-mobile-menu-item--cart">` trong drawer (`#dg-mobile-menu`) hiện số lượng giỏ hàng, giống badge `.dg-cart-count` ở header.
+
+  Sửa:
+  - `inc/helpers/ui-components.php` — `dg_inject_mobile_menu_items()` render thêm `dg_render_cart_count_badge( dg_get_cart_item_count() )` vào sau label trong thẻ `<a>` của item Cart. Tái dùng helper sẵn có → markup/class giống hệt 2 badge còn lại, nên `DGCartBadge.paint()` cập nhật cả 3 cùng lúc.
+    - Thẻ `<a>` có `data-dg-label="Cart"` → JS dựng lại `aria-label` ("Cart, 3 items in bag") mỗi lần count đổi.
+  - `assets/css/header-nav.css` (block mới §4d-2) — badge trong drawer nằm **trong flow** (không absolute như badge trên toggle): `position: static` + `margin-left: auto` → pill đẩy sát mép phải của row, đọc như cột số lượng. `min-width: 20px; padding: 0 4px` → số 2–3 chữ số tự giãn pill. Animation `is-pulse` / `is-first-show` giống 2 badge kia.
+  - `assets/js/lib/cart-badge.js` — `syncToggleAriaLabel()` → `syncAriaLabels()`: đồng bộ `aria-label` cho **cả** toggle và drawer Cart item.
+
+  **BUG FIX (phát hiện khi verify):** rule `.dg-nav-toggle .dg-cart-count { display: inline-flex }` có specificity (0,2,0) **thắng** class `hidden` của Tailwind (0,1,0) → badge **vẫn hiện khi giỏ rỗng**. Đã thêm override tường minh `.dg-nav-toggle .dg-cart-count.hidden { display: none }` (và tương tự cho badge trong drawer). Đây là bug do chính thay đổi ở entry `2026-11-06f` gây ra.
+
+  Kiểm chứng (Playwright, `tmp-resp/nav-cart-badge-drawer*.js`, `nav-cart-badge-hide-check.js`):
+  - 320 / 390 / 768 / 1023px → badge trong drawer: `position=static`, 20×20px, cách mép phải row 21px (đúng padding), không đè glyph ✓
+  - `paint(7)` → `is-pulse`; `paint(0)` → `display: none`; `paint(2)` → `is-first-show`; `paint(1)` → aria "Cart, 1 item in bag"; `bump(+3)` → `4` ✓
+  - Pixel: fill `#735c00` + chữ trắng, badge nằm trong row ✓
+  - `prefers-reduced-motion: reduce` → `animation-name: none` ✓
+  - Regression toggle badge (entry `2026-11-06f`): 6 breakpoint vẫn ✓, `paint(0)` giờ ẩn đúng ✓
+
+  `DG_VERSION` → `1.16.6`. Không commit git.
+
+- `2026-11-06f`: Header — **badge số lượng giỏ hàng trên nút menu mobile/tablet** (`#dg-mobile-menu-toggle`), có animation pop mượt.
+
+  Vấn đề gốc: icon giỏ hàng ở desktop nằm trong `<a class="hidden lg:block relative">` → **bị ẩn hoàn toàn dưới 1024px**. Badge `.dg-cart-count` vốn chỉ render cạnh icon đó, nên trên mobile/tablet **không có bất kỳ chỗ nào hiển thị số lượng giỏ hàng** — người dùng điện thoại phải mở drawer mới biết túi có hàng hay không.
+
+  Sửa:
+  - `template-parts/global/header-nav.php` — render `dg_render_cart_count_badge( $cart_count )` **bên trong** nút `#dg-mobile-menu-toggle` (thêm class `relative` để làm anchor). Tái sử dụng nguyên helper sẵn có → markup/class giống hệt badge desktop, không viết lại markup.
+  - `assets/js/lib/cart-badge.js` (module mới) — `window.DGCartBadge.paint(count)` / `.bump(delta)`: nơi duy nhất vẽ badge + kích hoạt animation.
+    - `is-pulse` → số đổi → scale pop nhẹ.
+    - `is-first-show` → badge hiện lần đầu → entrance mạnh hơn.
+    - Cả 2 class luôn được xoá trước khi thêm lại (force reflow) → animation restart sạch khi bấm liên tục, không để class cũ tranh cascade.
+  - 6 call site cũ tự vẽ badge riêng (`lib/cart-api.js`, `lib/cart-feedback.js`, `cart.js`, `thankyou.js`, `wishlist.js`) → chuyển sang dùng `DGCartBadge` (giữ fallback cũ nếu module chưa load).
+  - `assets/css/header-nav.css` (block mới §4d-1) — style + keyframes `dgCartBadgePop` / `dgCartBadgeFirstShow`, **scope dưới `.dg-nav-toggle`** → desktop badge giữ nguyên 100%, không animation (đúng yêu cầu "không làm ở desktop").
+    - Badge trên toggle dùng `width: auto; min-width: 20px; padding: 0 4px` → số 2–3 chữ số tự giãn pill thay vì bị cắt (desktop vẫn giữ `w-5` cố định).
+    - `box-shadow: 0 0 0 2px var(--color-surface)` → ring nền tách badge khỏi glyph menu.
+  - `inc/enqueue/scripts.php` — enqueue `dg-cart-badge` + thêm vào deps của `dg-cart-api`, `dg-cart`, `dg-thankyou`.
+
+  Kiểm chứng (Playwright, `tmp-resp/nav-cart-badge-*.js`):
+  - 320 / 390 / 768 / 1023px → toggle hiện + badge hiện, `size=20x20`, offset `right=-4px top=-4px` (đúng parity với badge wishlist desktop) ✓
+  - 1024 / 1280px → toggle `display=none`, badge không render → **desktop không đổi** ✓
+  - `paint(7)` → text đổi + `is-pulse` bật; `paint(0)` → ẩn; `paint(2)` → `is-first-show`; `bump(+2)` → `4` ✓
+  - `aria-label`: "Menu, 4 items in bag" khi count=4, "Menu" khi count=0 ✓
+  - Badge 1–1234 chữ số: pill 20→30px, không cắt chữ ✓
+  - `prefers-reduced-motion: reduce` → `animation-name: none` ✓
+  - Pixel analysis: badge che 5.4% glyph menu (tương đương badge wishlist) ✓
+
+  A11y:
+  - Nút toggle có `data-dg-label` (label gốc) → `cart-badge.js` đồng bộ `aria-label` mỗi lần count đổi: "Menu, 4 items in bag" / về "Menu" khi rỗng. Badge **không** bị `aria-hidden` — theo accname spec, `aria-label` của host thắng descendant text nên số không bị đọc 2 lần.
+  - i18n mới trong `dgAjax.i18n`: `itemSingular` ("1 item in bag") + `itemPlural` ("%d items in bag").
+
+  `DG_VERSION` → `1.16.5`. Không commit git.
+
+- `2026-11-06e`: Shop — **nút "Add to Cart" luôn hiển thị ở mobile + tablet**, không cần hover.
+
+  Vấn đề gốc: `.dg-add-to-cart` mặc định `opacity: 0` + `transform: translateY(16px)` (ẩn), chỉ hiện khi `.dg-product-card:hover` — thiết kế cho chuột.
+  - Touch device không có hover → nút không bao giờ hiện, không tappable.
+  - Tablet có chuột nhưng người dùng vẫn hay dùng chạm → hover không đáng tin.
+
+  Theme đã có tiền lệ ở `home.css` (§ best-sellers, `.dg-home-product .dg-quick-add`) và `main.css` (§ carousel, `#dg-carousel .dg-quick-add`) dùng `@media (hover: none)`. Ở đây dùng **chiều rộng** (`max-width: 1023px`) thay vì `hover: none` vì yêu cầu là "mobile + tablet luôn hiện" — tablet có chuột vẫn phải hiện.
+
+  Sửa (`assets/css/shop.css`, block mới sau `.dg-product-card:hover .dg-add-to-cart`):
+  - `.dg-add-to-cart` → `opacity: 1` + `transform: translateY(0)`.
+  - `.dg-add-to-cart::before` → `left: 160%` + `transition: none` — sheen dịch ra ngoài khung ngay lập tức, không để lại vệt sáng đọng trên nút (trước nó chỉ chạy khi hover card).
+  - `.dg-add-to-cart:hover` → `transform: translateY(-2px)` — hiệu ứng nhấc nút khi hover/tap, khớp với base rule (base rule dùng `translateX(-50%)`, nhưng rule pill ở §13 đặt sau nên `left/right` + `translateY` mới là giá trị thực thi).
+  - `.dg-add-to-cart.dg-quick-add--added:hover` → `transform: translateY(-2px)` — giữ trạng thái "added" vĩnh viễn nhất quán.
+
+  Breakpoint 1024px = mốc theme chuyển sang layout 2–3 cột (`lg:grid-cols-12` / `lg:grid-cols-3`). Dưới mốc này grid là 1–2 cột, card nhỏ hơn → nút cần luôn hiện. **Desktop (>= 1024px) giữ nguyên hover-reveal.**
+
+  Kiểm chứng (Playwright, `tmp-resp/shop-quickadd-check.js` — đo cả `elementFromPoint` để xác nhận nút thật sự bắt click, không chỉ `opacity`):
+  - 320 / 390 / 430 / 639px (mobile) → không hover: `opacity=1`, `transform=matrix(1,0,0,1,0,0)`, `hit=true` ✓
+  - 640 / 768 / 1023px (tablet) → không hover: `opacity=1`, `hit=true` ✓
+  - 1024 / 1280px (desktop) → không hover: `opacity=0` + `translateY(16px)`; hover: `opacity=1` — **không đổi** ✓
+  - Kiểm tra hồi quy: nút `opacity: 0` ở desktop vẫn bắt `elementFromPoint`, nhưng khi chuột đi tới vị trí đó thì `:hover` của card kích hoạt → `opacity=1` → click vào nút hoạt động đúng (không chặn click ảnh) ✓
+
+  `DG_VERSION` → `1.16.4`. Không commit git.
+
+- `2026-11-06d`: Wishlist — **empty state bullets hiển thị xấu ở mobile**: bị đẩy lệch sang phải, chữ vỡ 2–3 dòng.
+
+  Vấn đề gốc: `.dg-wishlist-empty__bullets` có `padding-left: 105px` **hard-code**, thiết kế cho cột 540px ở desktop (căn list trong khung rộng). Ở mobile khối ngoài chỉ còn ~250–340px → 105px chiếm **39% bề rộng**, list bị đẩy lệch, chữ bó sát mép phải và vỡ dòng:
+    - 390px → text rộng 191px (2 dòng)
+    - 320px → text rộng 121px (**3 dòng**)
+
+  Không có media query nào cho `.dg-wishlist-empty__bullets` → mobile kế thừa nguyên layout desktop.
+
+  Sửa (`assets/css/wishlist.css`, block mới §6b `@media (max-width: 639px)`):
+  - `.dg-wishlist-empty__bullets` → `padding-left: var(--wl-empty-bullets-indent-mobile)` (0px — bỏ indent, icon dẫn hàng), `gap: var(--wl-empty-bullets-row-gap-mobile)`.
+  - `.dg-wishlist-empty__bullets li` → `grid-template-columns: var(--wl-empty-bullets-icon-size-mobile) 1fr` (icon 32px → 28px), `gap: var(--wl-empty-bullets-gap-mobile)`, `font-size: var(--wl-empty-bullets-font-size-mobile)`, `line-height: 1.45`.
+  - `.dg-wishlist-empty__bullets .material-symbols-outlined` → tile 28×28px, `font-size: 16px`.
+  - `.dg-wishlist-empty` → `padding: 2rem 1.25rem` (mobile nhỏ gọn hơn).
+  - `.dg-wishlist-empty__actions` → `flex-direction: column` + nút `width: 100%` (2 nút cạnh nhau quá hẹp, chữ "Explore the collection" bị bó).
+
+  Token mới trong `style.css` (§ Wishlist Component): `--wl-empty-bullets-indent-mobile`, `--wl-empty-bullets-icon-size-mobile`, `--wl-empty-bullets-gap-mobile`, `--wl-empty-bullets-row-gap-mobile`, `--wl-empty-bullets-font-size-mobile`.
+
+  Kiểm chứng (Playwright, `tmp-resp/wl-empty-check.js`):
+  - 320px → text rộng 121px (3 dòng) → **240px (2 dòng)** ✓
+  - 390px → text rộng 191px (2 dòng) → **310px (1 dòng)** ✓
+  - 430px → text rộng 231px (2 dòng) → **350px (1 dòng)** ✓
+  - 639px → text rộng 391px (1 dòng) → 502px ✓
+  - 640 / 768 / 1024 / 1280px (tablet + desktop) → `padding-left` vẫn 105px, icon 32px, text 391px — **không đổi** ✓
+  - Không overflow ngang ở mốc nào ✓
+
+  `DG_VERSION` → `1.16.3`. Không commit git.
+
+- `2026-11-06c`: hero trang chủ — **badge pill nằm TRÊN product frame ở tablet** (640–1023px). Trước đó tablet vẫn giữ layout cũ: copy trên, ảnh dưới.
+
+  Sửa (`assets/css/home.css`, block `@media (min-width: 640px) and (max-width: 1023px)`) — **dùng lại đúng kỹ thuật của block mobile**, chỉ khác giá trị token:
+  - `.dg-home-hero .dg-home-hero__copy` → `display: contents`.
+  - `.dg-home-hero .dg-home-hero__copy > *` → `min-width: 0` + `order: 0` + `justify-self: start`.
+  - `.dg-home-hero .dg-home-hero__copy > .dg-home-hero__badge` → `order: -2` (badge trên cùng).
+  - `.dg-home-hero .dg-home-hero__visual` → `order: -1` (giữ nguyên: frame ngay dưới badge).
+  - `.dg-home-hero-wrapper .dg-home-hero` → `row-gap: var(--hero-stack-gap-tablet)` (2 class để thắng utility `gap-8` của Tailwind CDN — §8b).
+  - `.dg-home-hero__product-frame` → `margin-top: 0` + `margin-bottom: var(--hero-frame-bottom-gap-tablet)`.
+  - `style.css` — thêm token `--hero-stack-gap-tablet: 1.5rem` và `--hero-frame-bottom-gap-tablet: 0.5rem`.
+
+  Bổ sung `justify-self: start` (áp dụng cho **cả** mobile và tablet):
+  - Cột copy gốc là flex `items-start` → khối con co theo nội dung. Khi hòa tan thành grid item, mặc định là `stretch` (full-width) → sai hành vi.
+  - Đo được trước khi sửa: title mobile 357px → 390px sau khi `display: contents`. Sau khi thêm `justify-self: start`: title 390px → 357px, khớp lại baseline flex.
+  - Các khối tự khai báo width (stats row `w-full`, CTA `w-full sm:w-auto`) vẫn giữ width của chúng.
+
+  Kiểm chứng (Playwright, `tmp-resp/home-hero-order.js` — đã mở rộng nhánh tablet):
+  - 640 / 768 / 1023px → `copy.display=contents`, badge `order=-2` top=40, frame top=100, headline top=782 → **badge TRÊN, frame GIỮA, copy DƯỚI** ✓
+  - 320 / 390 / 430 / 639px (mobile) → không đổi so với `2026-11-06b` ✓
+  - 1024 / 1280px (desktop) → `copy.display=flex`, grid 1 hàng 12 cột, copy trái / visual phải — **không đổi** ✓
+  - Độ rộng khối con ở tablet khớp baseline cũ: badge 372px, title 670px, desc 489px, CTA 319px ✓
+  - Không overflow ngang ở bất kỳ mốc nào ✓
+
+  `DG_VERSION` → `1.16.2`. Không commit git.
+
+- `2026-11-06b`: hero trang chủ — **badge pill nằm TRÊN product frame ở mobile** (trước: frame trên, badge bị đẩy xuống dưới cả tiêu đề).
+
+  Bối cảnh: sau `2026-11-06a` (đảo 2 khối ở mobile → ảnh lên trên), badge `.dg-home-hero__badge` vẫn nằm trong cột copy nên rơi xuống **dưới** tiêu đề + mô tả + CTA — sai thứ tự đọc trên mobile. Yêu cầu: badge phải nằm trên thẻ product frame, chỉ áp dụng mobile.
+
+  Sửa:
+  - `template-parts/home/hero.php` — thêm class theme-controlled `dg-home-hero__copy` cho cột copy (trước chỉ có `lg:col-span-6 flex …`, không có class để target an toàn theo §5g).
+  - `assets/css/home.css`, block mobile `@media (max-width: 639px)`:
+    - `.dg-home-hero .dg-home-hero__copy` → `display: contents` — hòa tan box của cột copy, các phần tử con (badge / headline / desc / CTA / stats) trở thành grid item trực tiếp của hero grid → mỗi phần tử `order` độc lập.
+    - `.dg-home-hero .dg-home-hero__copy > *` → `order: 0` + `min-width: 0` (reset, thay cho `min-width: 0` cũ do `.dg-home-hero > div` đảm nhiệm).
+    - `.dg-home-hero .dg-home-hero__copy > .dg-home-hero__badge` → `order: -2` (badge trên cùng).
+    - `.dg-home-hero .dg-home-hero__visual` → `order: -1` (giữ nguyên: frame ngay dưới badge).
+    - `.dg-home-hero-wrapper .dg-home-hero` → `row-gap: var(--hero-stack-gap-mobile)` (2 class để thắng utility `gap-8` của Tailwind CDN — §8b).
+    - `.dg-home-hero__product-frame` → `margin-top: 0` + `margin-bottom: var(--hero-frame-bottom-gap-mobile)`.
+  - `style.css` — thêm token `--hero-stack-gap-mobile: 1.5rem` và `--hero-frame-bottom-gap-mobile: 0.5rem`.
+
+  Vì sao dùng `display: contents` chứ không đổi DOM:
+  - Badge và product frame **không phải anh em** trong DOM (badge nằm trong cột copy) → `order` đơn thuần không diễn tả được "badge, frame, rồi phần copy còn lại".
+  - `display: contents` chỉ ảnh hưởng **layout**, không đổi DOM → screen reader và SEO vẫn đọc copy trước (thông điệp chính), không cần sửa template/touch semantics.
+  - `display: contents` chỉ bật trong media query mobile → desktop/tablet giữ nguyên layout 2 cột, `display: flex` của cột copy.
+
+  Kiểm chứng (Playwright, `tmp-resp/home-hero-order.js`):
+  - 320 / 390 / 430 / 639px → `copy.display=contents`, badge `order=-2` top=40, frame top=88, headline top=520/608/658/770 → **badge TRÊN, frame GIỮA, copy DƯỚI** ✓
+  - 640 / 768 / 1023px (tablet) → `copy.display=flex`, `order=0` → copy trên, visual dưới — **không đổi** ✓
+  - 1024 / 1280px (desktop) → grid 1 hàng 12 cột, copy trái / visual phải — **không đổi** ✓
+  - Căn trái: badge `left=0` khớp title `left=0`, frame `left=0` (639px: frame `left=60` do đã center trong cột max-width 520px) ✓
+  - Không overflow ngang ở bất kỳ mốc nào ✓
+
+  `DG_VERSION` → `1.16.1`. Không commit git.
+
 - `2026-11-06a`: hero trang chủ — **đảo thứ tự 2 khối ở mobile**: product frame (ảnh) LÊN TRÊN, cột copy (tiêu đề + CTA) XUỐNG DƯỚI.
 
   Bối cảnh: DOM order của `template-parts/home/hero.php` là copy → visual (đúng cho desktop 2 cột và cho screen reader/SEO). Ở mobile grid 1 cột thì copy nằm trên, ảnh sản phẩm nằm dưới — nhưng trên màn hình dọc nên ảnh sản phẩm dẫn nhịp trước.

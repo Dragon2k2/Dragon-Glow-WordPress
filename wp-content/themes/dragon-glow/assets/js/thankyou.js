@@ -60,6 +60,10 @@
         if (!isFinite(total) || total < 0) {
             total = 0;
         }
+        if (window.DGCartBadge) {
+            window.DGCartBadge.paint(total);
+            return;
+        }
         var nodes = document.querySelectorAll('.dg-cart-count');
         for (var i = 0; i < nodes.length; i++) {
             nodes[i].textContent = String(total);

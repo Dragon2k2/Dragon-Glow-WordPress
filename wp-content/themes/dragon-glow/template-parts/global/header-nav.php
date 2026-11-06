@@ -14,6 +14,7 @@ header( 'Pragma: no-cache' );
 header( 'Expires: 0' );
 
 $cart_count   = dg_get_cart_item_count();
+$wishlist_count = dg_get_wishlist_count();
 $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/wishlist/' );
 ?>
 <nav class="glass-nav header-nav<?php echo is_user_logged_in() ? ' header-nav--logged-in' : ''; ?> sticky top-0 z-[100] w-full" role="navigation" aria-label="Primary navigation">
@@ -86,7 +87,7 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 			   class="hidden lg:block p-2 cursor-pointer hover:bg-primary-container/20 rounded-full transition-all text-primary relative"
 			   aria-label="<?php esc_attr_e( 'Wishlist', 'dragon-glow' ); ?>">
 				<span class="material-symbols-outlined">favorite</span>
-				<?php echo dg_render_wishlist_count_badge(); ?>
+				<?php echo dg_render_wishlist_count_badge( $wishlist_count ); ?>
 			</a>
 
 			<a href="<?php echo esc_url( dg_get_cart_url() ); ?>"
@@ -96,8 +97,51 @@ $wishlist_url = get_permalink( get_page_by_path( 'wishlist' ) ) ?: home_url( '/w
 				<?php echo dg_render_cart_count_badge( $cart_count ); ?>
 			</a>
 
-			<button class="dg-nav-toggle lg:hidden p-2 text-primary" id="dg-mobile-menu-toggle" aria-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>" aria-expanded="false" aria-controls="dg-mobile-menu">
+			<?php
+			/* Combined counter badge on the mobile/tablet menu toggle.
+
+			   Below 1024px the desktop heart and bag icons are hidden
+			   (`hidden lg:block`), so this 40×40px toggle is the only
+			   element that can surface a counter at a glance. It can only
+			   carry one pill, so it shows bag + wishlist combined — see
+			   `dg_render_nav_count_badge()` for the rationale.
+
+			   The badge has its own class (`.dg-nav-badge`), NOT
+			   `.dg-cart-count`: the cart painter writes the cart count
+			   into every `.dg-cart-count` element and would overwrite
+			   the combined value. `assets/js/lib/nav-badge.js` owns this
+			   badge and keeps it in sync with both counters.
+
+			   `data-dg-label` keeps the untranslated-by-JS base label so
+			   the badge module can rebuild a screen-reader friendly
+			   aria-label ("Menu, 3 items") whenever the count changes.
+			   The badge itself is decorative for AT (the button label
+			   carries the information). */
+			$nav_total = $cart_count + $wishlist_count;
+			// `esc_attr__()` (NOT `esc_attr_e()`) — the `_e` variant ECHOES the
+			// string, which would print a stray "Menu" text node into the
+			// markup and leave `$nav_aria` as null.
+			$nav_aria  = esc_attr__( 'Menu', 'dragon-glow' );
+			if ( $nav_total > 0 ) {
+				$nav_aria = sprintf(
+					'%s, %s',
+					$nav_aria,
+					esc_attr(
+						1 === $nav_total
+							? __( '1 item', 'dragon-glow' )
+							: sprintf( __( '%d items', 'dragon-glow' ), $nav_total )
+					)
+				);
+			}
+			?>
+			<button class="dg-nav-toggle lg:hidden p-2 text-primary relative" id="dg-mobile-menu-toggle"
+				aria-label="<?php echo esc_attr( $nav_aria ); ?>"
+				aria-expanded="false" aria-controls="dg-mobile-menu"
+				data-dg-label="<?php esc_attr_e( 'Menu', 'dragon-glow' ); ?>">
 				<span class="material-symbols-outlined">menu</span>
+				<?php
+				echo dg_render_nav_count_badge( $cart_count, $wishlist_count );
+				?>
 			</button>
 		</div>
 		<?php else : ?>

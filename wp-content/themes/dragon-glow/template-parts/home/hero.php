@@ -48,7 +48,7 @@ $sticker2_text = get_theme_mod( 'dg_hero_sticker2_text', __( '280M+ Reels Views'
   <!-- Inner container (max-width + centered) -->
   <div class="dg-home-hero max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-10 pb-0">
         <!-- Left Column: Copy & CTAs -->
-        <div class="lg:col-span-6 flex flex-col items-start gap-6 z-10">
+        <div class="dg-home-hero__copy lg:col-span-6 flex flex-col items-start gap-6 z-10">
             
             <!-- Badge Pill -->
             <div class="dg-home-hero__badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary-container/30 backdrop-blur-md shadow-sm">

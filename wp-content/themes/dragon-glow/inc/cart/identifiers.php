@@ -55,6 +55,20 @@ function dg_get_cart_item_count(): int {
 /**
  * Render the cart-count badge markup.
  *
+ * The badge is rendered twice: on the desktop cart icon and on the drawer's
+ * "Cart" item (`.dg-mobile-menu-item--cart`) below 1024px. Both carry the
+ * `.dg-cart-count` class, so `window.DGCartBadge.paint()` updates and
+ * animates them together.
+ *
+ * The combined badge on the mobile/tablet menu toggle does NOT use this
+ * helper — it shows bag + wishlist and therefore has its own class
+ * (`.dg-nav-badge`, see `dg_render_nav_count_badge()`).
+ *
+ * The digit is NOT marked `aria-hidden` on purpose: both hosts already
+ * carry an `aria-label` ("Cart" / "Cart, 3 items in bag"), and per the
+ * accname spec an explicit `aria-label` wins over descendant text — so
+ * the count is never announced twice.
+ *
  * @param int $count Item count.
  * @return string
  */

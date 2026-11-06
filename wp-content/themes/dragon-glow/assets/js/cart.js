@@ -1088,10 +1088,14 @@
 
     /**
      * Update cart count badge in header (optimistic UI).
-     * 
+     *
      * @param {number} newCount - The new cart item count.
      */
     function updateCartCountBadge(newCount) {
+        if (window.DGCartBadge) {
+            window.DGCartBadge.paint(newCount);
+            return;
+        }
         var badges = document.querySelectorAll('.dg-cart-count');
         badges.forEach(function (badge) {
             badge.textContent = String(newCount);

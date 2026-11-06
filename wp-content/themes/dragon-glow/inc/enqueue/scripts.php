@@ -85,10 +85,36 @@ function dg_enqueue_scripts_assets(): void {
     // Cart API shared module — provides window.DGCart for all cart AJAX.
     // Depends on dg-main so dgAjax (url/nonce/i18n) is available.
     // Also registered as a dep of dg-quick-add-to-cart, dg-buy-now.
+    // Depends on dg-cart-badge so the badge painter is ready before any
+    // consumer can paint the badge.
     wp_enqueue_script(
         'dg-cart-api',
         DG_URI . '/assets/js/lib/cart-api.js',
-        array( 'dg-main' ),
+        array( 'dg-main', 'dg-cart-badge' ),
+        DG_VERSION,
+        true
+    );
+
+    // Cart-count badge painter — shared by every module that changes the
+    // cart count (cart-api, cart-feedback, cart, thankyou, wishlist).
+    // Provides window.DGCartBadge.paint() / .bump() with the change-detection
+    // animation. No deps: pure DOM, must be ready before any consumer runs.
+    wp_enqueue_script(
+        'dg-cart-badge',
+        DG_URI . '/assets/js/lib/cart-badge.js',
+        array(),
+        DG_VERSION,
+        true
+    );
+
+    // Combined nav badge — the pill on the mobile/tablet menu toggle shows
+    // bag + wishlist together. Owns `.dg-nav-badge` (NOT `.dg-cart-count`,
+    // which the cart painter would overwrite with the cart-only value).
+    // No deps: pure DOM, must be ready before any consumer runs.
+    wp_enqueue_script(
+        'dg-nav-badge',
+        DG_URI . '/assets/js/lib/nav-badge.js',
+        array(),
         DG_VERSION,
         true
     );
@@ -138,7 +164,7 @@ function dg_enqueue_scripts_assets(): void {
             wp_enqueue_script(
                 'dg-cart',
                 DG_URI . '/assets/js/cart.js',
-                array( 'dg-main', 'dg-cart-api' ),
+                array( 'dg-main', 'dg-cart-api', 'dg-cart-badge' ),
                 DG_VERSION,
                 true
             );
@@ -271,7 +297,7 @@ function dg_enqueue_scripts_assets(): void {
             wp_enqueue_script(
                 'dg-thankyou',
                 DG_URI . '/assets/js/thankyou.js',
-                array( 'dg-main', 'dg-cart-api' ),
+                array( 'dg-main', 'dg-cart-api', 'dg-cart-badge' ),
                 DG_VERSION,
                 true
             );
@@ -727,6 +753,18 @@ function dg_enqueue_scripts_assets(): void {
             'Network error.'  => __( 'Network error.', 'dragon-glow' ),
             'Added'             => __( 'Added', 'dragon-glow' ),
             'Could not add to bag.' => __( 'Could not add to bag.', 'dragon-glow' ),
+            // Screen-reader strings for the cart-count badge on the
+            // mobile/tablet menu toggle (assets/js/lib/cart-badge.js).
+            'itemSingular'     => __( '1 item in bag', 'dragon-glow' ),
+            'itemPlural'       => __( '%d items in bag', 'dragon-glow' ),
+            // Screen-reader strings for the COMBINED badge on the
+            // mobile/tablet menu toggle (assets/js/lib/nav-badge.js).
+            'navItemSingular'  => __( '1 item', 'dragon-glow' ),
+            'navItemPlural'    => __( '%d items', 'dragon-glow' ),
+            // Screen-reader strings for the wishlist badge in the mobile
+            // drawer (assets/js/lib/wishlist-toggle.js).
+            'savedSingular'    => __( '1 saved item', 'dragon-glow' ),
+            'savedPlural'      => __( '%d saved items', 'dragon-glow' ),
         ),
     ) );
 
