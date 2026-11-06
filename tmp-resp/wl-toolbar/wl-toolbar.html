@@ -1,0 +1,80 @@
+<!DOCTYPE html><html class="dg-js"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Plus+Jakarta+Sans:wght@600&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/style.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/main.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/wishlist.css">
+
+<style>
+.dg-wishlist-toolbar .material-symbols-outlined {
+  width: 1em;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body style="margin:0; background:#f5f3ef;">
+  <main class="dg-wishlist">
+    <div class="dg-wishlist-wrap">
+      <section class="dg-wishlist-toolbar">
+        <div class="dg-wishlist-toolbar__row">
+          <div class="dg-wishlist-toolbar__segment" role="tablist">
+            <button type="button" class="dg-wishlist-toolbar__seg is-active" role="tab" aria-selected="true">
+              <span class="material-symbols-outlined" aria-hidden="true">apps</span>
+              <span>All items</span>
+              <span class="dg-wishlist-toolbar__count">0</span>
+            </button>
+            <button type="button" class="dg-wishlist-toolbar__seg" role="tab" aria-selected="false">
+              <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+              <span>In stock</span>
+              <span class="dg-wishlist-toolbar__count">0</span>
+            </button>
+            <button type="button" class="dg-wishlist-toolbar__seg" role="tab" aria-selected="false">
+              <span class="material-symbols-outlined" aria-hidden="true">local_offer</span>
+              <span>On sale</span>
+              <span class="dg-wishlist-toolbar__count">0</span>
+            </button>
+          </div>
+          <div class="dg-wishlist-toolbar__right">
+            <label class="dg-wishlist-toolbar__select-all">
+              <input type="checkbox" class="dg-wishlist-toolbar__checkbox">
+              <span class="dg-wishlist-toolbar__checkbox-mark" aria-hidden="true"></span>
+              <span class="dg-wishlist-toolbar__select-all-label">Select<span class="dg-wishlist-toolbar__select-count">(0)</span></span>
+            </label>
+            <div class="dg-wishlist-toolbar__sort">
+              <span class="dg-wishlist-toolbar__sort-label">Sort by</span>
+              <select id="dg-wl-sort" class="dg-wishlist-toolbar__sort-select">
+                <option value="date">Recently saved</option>
+              </select>
+              <button type="button" class="dg-wishlist-toolbar__sort-trigger">
+                <span class="dg-wishlist-toolbar__sort-icon material-symbols-outlined" aria-hidden="true">schedule</span>
+                <span class="dg-wishlist-toolbar__sort-current">Recently saved</span>
+                <span class="dg-wishlist-toolbar__sort-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+              </button>
+              <div class="dg-wishlist-toolbar__sort-panel" role="listbox" hidden id="dg-wl-sort-panel">
+                <button type="button" class="dg-wishlist-toolbar__sort-option is-active" role="option" aria-selected="true">
+                  <span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">schedule</span>
+                  <span class="dg-wishlist-toolbar__sort-option-body">
+                    <span class="dg-wishlist-toolbar__sort-option-label">Recently saved</span>
+                    <span class="dg-wishlist-toolbar__sort-option-sub">Newest items first</span>
+                  </span>
+                  <span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+                </button>
+                <button type="button" class="dg-wishlist-toolbar__sort-option" role="option" aria-selected="false">
+                  <span class="dg-wishlist-toolbar__sort-option-icon material-symbols-outlined" aria-hidden="true">arrow_upward</span>
+                  <span class="dg-wishlist-toolbar__sort-option-body">
+                    <span class="dg-wishlist-toolbar__sort-option-label">Price: low to high</span>
+                    <span class="dg-wishlist-toolbar__sort-option-sub">Cheapest first</span>
+                  </span>
+                  <span class="dg-wishlist-toolbar__sort-option-check material-symbols-outlined" aria-hidden="true">check</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body></html>

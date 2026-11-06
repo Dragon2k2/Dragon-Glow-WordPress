@@ -3,6 +3,139 @@
 > Moved out of `CLAUDE.md` so it stops loading on every session.
 > `CLAUDE.md` keeps only the 5 most recent entries.
 
+- `2026-11-06a`: hero trang chủ — **đảo thứ tự 2 khối ở mobile**: product frame (ảnh) LÊN TRÊN, cột copy (tiêu đề + CTA) XUỐNG DƯỚI.
+
+  Bối cảnh: DOM order của `template-parts/home/hero.php` là copy → visual (đúng cho desktop 2 cột và cho screen reader/SEO). Ở mobile grid 1 cột thì copy nằm trên, ảnh sản phẩm nằm dưới — nhưng trên màn hình dọc nên ảnh sản phẩm dẫn nhịp trước.
+
+  Sửa (`assets/css/home.css`, block mobile `@media (max-width: 639px)`):
+  - `.dg-home-hero .dg-home-hero__visual` → `order: -1`.
+  - `.dg-home-hero .dg-home-hero__product-frame` → `margin-top: 0` (thay cho `var(--hero-frame-margin-top-mobile)`).
+
+  Vì sao dùng `order` chứ không đổi DOM:
+  - `order` chỉ sắp xếp lại **hiển thị** grid item, DOM giữ nguyên → screen reader vẫn đọc copy trước (thông điệp chính), SEO không đổi, không cần sửa template.
+  - Cột copy không có class theme-controlled nhưng **không cần rule**: grid item mặc định `order: 0`, chỉ cần hạ visual xuống `-1`.
+  - `margin-top` cũ của frame được bỏ vì frame giờ là hàng đầu của grid — margin đó chỉ có ý nghĩa khi frame nằm SAU copy. Khoảng cách visual → copy giờ do `gap: 2rem` của grid đảm nhiệm.
+
+  Kiểm chứng (Playwright, `tmp-resp/home-hero-order.js` — mock nạp Tailwind CDN để `lg:grid-cols-12` / `aspect-[4/5]` có tác dụng):
+  - 320 / 390 / 430 / 639px → `order: -1`, grid 2 hàng, **visual top < copy top** (ảnh trên, chữ dưới) ✓
+  - 640 / 768 / 1023px (tablet) → `order: 0`, copy trước, visual sau — **không đổi** ✓
+  - 1024 / 1280px (desktop) → grid 1 hàng 12 cột, copy trái / visual phải — **không đổi** ✓
+  - Frame margin-top = 0 ở mobile, 32px ở tablet/desktop ✓
+
+  `DG_VERSION` → `1.16.0`. Không commit git.
+
+- `2026-11-05t`: chip filter Wishlist — chip **active không còn đổi style khi hover**; chip chưa active giữ nguyên hover.
+
+  Vấn đề: `.dg-wishlist-toolbar__seg:hover` và `.dg-wishlist-toolbar__seg.is-active` cùng specificity (0,2,0), nhưng rule hover đứng **trước** → khi hover chip active, `background: var(--wl-chip-bg)` + `color: var(--wl-primary)` ghi đè nền vàng active → chip active bị "bay màu" khi chuột đi qua.
+
+  Sửa (`assets/css/wishlist.css`):
+  - `.dg-wishlist-toolbar__seg:hover` → `.dg-wishlist-toolbar__seg:not(.is-active):hover`
+  - `.dg-wishlist-toolbar__seg:hover .dg-wishlist-toolbar__count` → `.dg-wishlist-toolbar__seg:not(.is-active):hover .dg-wishlist-toolbar__count`
+
+  Không có rule nào ở media query nào bị ảnh hưởng → **mobile / tablet / desktop đồng bộ** theo yêu cầu.
+
+  Kiểm chứng (Playwright, `tmp-resp/wl-hover-check.js` + `wl-hover-lifecycle.js` — dùng `page.hover()` thật vì synthetic event không kích hoạt CSS `:hover`):
+  - 320 / 390 / 639 / 640 / 768 / 1280px → chip ACTIVE hover giữ nguyên `bg=rgb(115,92,0)` + chữ trắng + badge trắng 25% ✓
+  - Chip INACTIVE hover → đổi sang `bg=rgba(115,92,0,0.06)` + chữ `rgb(115,92,0)` + badge `rgba(115,92,0,0.12)` ✓
+  - Vòng đời chuyển trạng thái (JS đổi `is-active`): chip cũ **lấy lại** hover style, chip mới giữ nền active, `aria-selected` đồng bộ ✓
+
+  `DG_VERSION` → `1.15.99`. Không commit git.
+
+- `2026-11-05s`: chip filter Wishlist ở mobile — **giảm font chữ + icon**, text/icon **không còn sát viền chip**.
+
+  Vấn đề: ở mobile icon + text + badge vẫn dồn sát viền chip (padding 5px, chỉ ~3px từ text tới viền). Bản `2026-11-05r` đã dùng `padding: clamp(5px,...)` nhưng font 10px + icon 13px + badge 15px → nội dung chiếm gần hết chip, không còn dư chỗ thoáng.
+
+  Sửa (`assets/css/wishlist.css`, block `§12b` — `@media (max-width: 639px)`):
+  - `.dg-wishlist-toolbar__seg` → `font-size: clamp(10px, 2.5vw, 12px)` (giữ ≥ 10px để dễ đọc), `padding: clamp(5.5px, 1.6vw, 9px)`, `gap: clamp(3px, 0.9vw, 5px)`.
+  - `.dg-wishlist-toolbar__seg .material-symbols-outlined` → `font-size: clamp(11px, 2.8vw, 15px)` (giảm từ 13px).
+  - `.dg-wishlist-toolbar__count` → `min-width/height: clamp(12px, 3.6vw, 20px)` (giảm từ 15px), `font-size: clamp(9px, 2.2vw, 11px)`.
+
+  Nguyên tắc: **giảm kích thước nội dung để MUA được không gian padding**. Chip co lại → lấy phần không gian đó làm padding lớn hơn → text/icon tách xa viền.
+
+  Tối ưu bằng script brute-force (`tmp-resp/wl-chip-optimize.js`): quét 3.000+ tổ hợp (font, icon, badge, gap, padding) với ràng buộc tổng 3 chip ≤ content 244px ở 320px, ưu tiên **font lớn nhất** rồi **padding lớn nhất**. Kết quả chọn: font 10px / icon 11px / badge 12px / gap 3px / padding 5.5px.
+
+  Kiểm chứng (Playwright):
+  - 320/360/390/430/639px → overflow nội dung chip = **0px** ✓
+  - Padding chip: 5.5px (320px) → 6.2px (390px) → 6.9px (430px) → 9px (639px) — text không còn sát viền ✓
+  - Khoảng cách text ↔ icon / text ↔ badge: 3–5px đều đặn ✓
+  - Segment không tràn ngang: 3 chip 236px + 8px gap = 244px = content 254px ✓ (dư 5px mỗi bên)
+  - 640px & 768px → **không đổi** (fs 13px, padding 14px, icon 16px như desktop) ✓
+  - Select + sort vẫn cùng 1 hàng ngang, "Recently saved" không bị cắt ✓
+
+  `DG_VERSION` → `1.15.98`. Không commit git.
+
+- `2026-11-05r`: chip filter Wishlist ở mobile — **hiện lại icon** (giống desktop) + text **thoải mái, không sát viền**.
+
+  Vấn đề: ở mobile chip bị ép vào 1/3 chiều ngang (`repeat(3, minmax(0, 1fr))`) → chỉ có 79px ở 320px, trong khi bộ "icon + text + badge" cần ~91px ở font 12px → tràn; để vừa phải ẩn icon và rút padding xuống 3.2px → chữ sát viền, không thoải mái.
+
+  Sửa (`assets/css/wishlist.css`, block `§12b` — `@media (max-width: 639px)`):
+  - `.dg-wishlist-toolbar__segment` → `grid-template-columns: repeat(3, auto)` + `justify-content: space-between` (thay vì `minmax(0, 1fr)`) → mỗi chip có bề rộng **đúng bằng nội dung** → padding thoải mái, không dồn chữ.
+  - `.dg-wishlist-toolbar__seg .material-symbols-outlined` → `display: inline-block` (bỏ `display: none`) + `font-size: clamp(13px, 3.2vw, 16px)` → icon hiện lại giống desktop nhưng co nhỏ theo viewport.
+  - Mọi kích thước của chip dùng **fluid `clamp()`** để tự co giãn theo viewport:
+    - `font-size: clamp(10px, 2.6vw, 12px)` → 10px ở 320px, 12px ở 460px+
+    - `padding: clamp(5px, 1.4vw, 8px)` → 5px ở 320px, 8px ở 570px+
+    - `gap: clamp(3px, 0.9vw, 5px)`
+    - icon `clamp(13px, 3.2vw, 16px)`, badge `clamp(15px, 4.2vw, 20px)` (+ `flex-shrink: 0` để không bị bóp méo).
+  - `justify-content: center` trong chip → nội dung luôn căn giữa.
+
+  Số đo thật (Playwright): Ở 320px 3 chip = 77 + 74 + 72px + 2 gap 4px = **231px** < content 244px → vừa khít, không tràn, không cần cuộn ngang.
+
+  Kiểm chứng (Playwright, `tmp-resp/wl-chip-pad.js` + `wl-overflow-check.js`):
+  - 320/360/390/430/639px → icon **CÓ** trong cả 3 chip, overflow nội dung = **0px** ✓
+  - Padding chip: 5px (320px) → 5.5px (390px) → 6px (430px) → 8px (639px) — text không còn sát viền ✓
+  - Khoảng cách text ↔ icon / text ↔ badge: 3–5px, đều đặn ✓
+  - 640px & 768px → **không đổi** (fs 13px, padding 14px, icon 16px như desktop) ✓
+  - Select + sort vẫn cùng 1 hàng ngang, "Recently saved" không bị cắt ✓
+
+  `DG_VERSION` → `1.15.97`. Không commit git.
+
+- `2026-11-05q`: toolbar Wishlist — "Select (0)" và nút sort **cùng 1 hàng ngang** ở mobile (thay đổi so với `2026-11-05p` vốn xếp dọc).
+
+  Sửa (`assets/css/wishlist.css`, block `§12b` — `@media (max-width: 639px)`):
+  - `.dg-wishlist-toolbar__right` → `grid-template-columns: auto minmax(0, 1fr)` (thay vì `minmax(0, 1fr)` 1 cột) → select-all cột 1, sort cột 2, cùng hàng.
+  - `.dg-wishlist-toolbar__select-all` → `flex-shrink: 0` để không bị co lại.
+  - `.dg-wishlist-toolbar__sort-trigger` → `width: 100%` + `justify-content: flex-start`; chevron `margin-left: auto` → đẩy mép phải.
+
+  Số đo thật (Playwright) quyết định giữ được 1 hàng:
+  - select-all = **85px** (checkbox 20px + gap + chữ "Select (0)" 60px)
+  - sort trigger tối thiểu = padding 24 + "Recently saved" **96px** + chevron 20px + gap 6 = **146px**
+  - tổng + gap 10px = **241px** < content 256px ở 320px → **vừa đủ**, chữ không bị cắt.
+
+  Vì sao icon `schedule` vẫn ẩn ở mobile: giữ lại thì tổng thành 267px > 256px → "Recently saved" bị cắt thành "Recently save…". Icon là decoration; chevron vẫn giữ nên affordance dropdown rõ ràng.
+
+  Lưu ý kỹ thuật: file `assets/fonts/material-symbols-outlined.woff2` **không có trong repo** → ligature render thành chữ "expand_more" (109px) khi đo. Mock phải ép `width: 1em` cho icon để số đo phản ánh đúng bề rộng ligature thật (~20px).
+
+  Kiểm chứng (Playwright, `tmp-resp/wl-samerow-check.js` + `wl-overflow-check.js` + `wl-panel-check.js`):
+  - 320/360/390/430/639px → select-all & trigger **cùng hàng** (center lệch < 3px), gap = 10px ✓
+  - "Recently saved" overflow = **0px** ở mọi width ✓
+  - Toolbar cao 122px (2 hàng, giảm từ 153px ở bản xếp dọc) ✓
+  - Sort panel mở: `[47..287]` / `[117..357]` / `[150..397]` — trọn trong viewport ✓
+  - 640 / 768 / 1280px → **không đổi** (vẫn hiện nhãn "Sort by") ✓
+
+  `DG_VERSION` → `1.15.96`. Không commit git.
+
+- `2026-11-05p`: toolbar Wishlist (`.dg-wishlist-toolbar`) **mobile-only** — 3 chip filter về 1 hàng đều nhau, sort full-width.
+
+  Vấn đề: ở mobile toolbar vỡ — 3 chip filter (`All items` / `In stock` / `On sale`) cần tổng ~531px nhưng content chỉ ~252–362px → `flex-wrap` làm "On sale" rớt hàng; sort trigger rộng ~292px > content 252px ở 320px → tràn ngang.
+
+  Sửa (`assets/css/wishlist.css`) — block mới `§12b` dưới `@media (max-width: 639px)`, tách riêng khỏi block `767px` sẵn có để **tablet (640–767px) giữ nguyên layout desktop**:
+  - `.dg-wishlist-toolbar__segment` → `display: grid` + `grid-template-columns: repeat(3, minmax(0, 1fr))`, `flex-wrap: nowrap` → 3 chip đều nhau, 1 hàng.
+  - `.dg-wishlist-toolbar__seg` → `padding: 8px 6px`, `font-size: 12px`, `letter-spacing: 0.01em`, `white-space: nowrap`.
+  - Icon filter (`apps` / `check_circle` / `local_offer`) → `display: none` ở mobile (decoration, chữ đã đủ nghĩa; vẫn còn trong DOM cho a11y).
+  - `.dg-wishlist-toolbar__right` → grid 1 cột, xếp dọc: "Select (0)" 1 hàng, sort 1 hàng full-width. *(Sau đó đổi lại thành 1 hàng ngang ở `2026-11-05q`.)*
+  - `.dg-wishlist-toolbar__sort-label` ("Sort by") → ẩn; icon `schedule` → ẩn (decoration) để nhường chỗ cho nhãn giá trị; chevron giữ + `margin-left: auto` → đẩy mép phải.
+  - `.dg-wishlist-toolbar__sort-trigger` → `width: 100%`, `justify-content: flex-start`.
+
+  Vì sao sort xếp dọc thay vì chung hàng với "Select (0)": ở 320px, sort chỉ còn ~159px (sau khi trừ select-all 85px + gap) trong khi "Recently saved" cần ~236px → bị cắt "Recently save…". Full-width = 254px → vừa đủ, **overflow = 0** ở mọi mobile width.
+
+  Kiểm chứng (Playwright, `tmp-resp/wl-toolbar-measure.js` + `wl-overflow-check.js` + `wl-panel-check.js`):
+  - 320/360/390/430/639px → 3 chip **1 hàng**, đều nhau (79/102/115px), overflow nội dung = 0 ✓
+  - Sort trigger full-width, "Recently saved" **không bị cắt** (overflow 0px) ✓
+  - Sort panel mở: `[40..287]` / `[110..357]` / `[150..397]` — nằm trọn trong viewport ✓
+  - 640px & 768px & 1280px → **không đổi** (3 chip inline, còn nhãn "Sort by" 57px) ✓
+
+  `DG_VERSION` → `1.15.95`. Không commit git.
+
 - `2026-11-05o`: nhãn "On sale" (`.dg-wishlist-hero__stat-label--stacked`) cũng về **1 dòng** ở mobile.
 
   Vấn đề: nhãn này dùng 2 span `display: block` → cố ý xếp 2 dòng ("On" / "sale"). Ở mobile các label khác đã về 1 dòng (lượt trước) nhưng nhãn này vẫn 2 dòng → không đồng nhất.

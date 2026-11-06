@@ -1184,10 +1184,23 @@
         width: 100%;
         max-width: var(--hero-visual-max-width-mobile);
         margin-inline: auto;
+
+        /* Mobile: product frame FIRST, copy column SECOND.
+           DOM order is copy → visual (desktop reads left-to-right), but on a
+           1-column phone layout the product shot should lead the fold and the
+           headline follow underneath. `order` reorders grid items without
+           touching the DOM, so screen readers and SEO keep the original
+           (semantic) order: copy is still the first thing announced.
+           The copy column has no theme class, but it needs no rule — grid items
+           default to `order: 0`, so pulling the visual to `-1` is enough. */
+        order: -1;
     }
 
     .dg-home-hero .dg-home-hero__product-frame {
-        margin-top: var(--hero-frame-margin-top-mobile);
+        /* The frame is now the FIRST row of the grid, so the old top margin
+           (added when it followed the copy block) would only push the whole
+           hero down. The 2rem grid gap handles the visual → copy spacing. */
+        margin-top: 0;
     }
 
     /* Glaze Certified orb.

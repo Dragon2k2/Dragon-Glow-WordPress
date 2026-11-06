@@ -678,11 +678,12 @@ node .cursor/skills/wp-project-triage/scripts/detect_wp_project.mjs
 
 > Đầy đủ ở `docs/CHANGELOG.md`. Dưới đây chỉ là mốc gần nhất — lịch sử không cần nạp mỗi phiên.
 
-- `2026-11-05l`: thêm `padding-bottom: clamp(4rem, 10vw, 7rem)` cho `.dg-cookie`, `.dg-terms`, `.dg-accessibility` (đệm dưới các trang pháp lý còn lại). `DG_VERSION` → `1.15.91`.
-- `2026-11-05k`: thêm `padding-bottom: clamp(4rem, 10vw, 7rem)` cho `.dg-privacy` (đệm dưới trang Privacy Policy, đúng convention `.dg-faq`/`.dg-gift`). `DG_VERSION` → `1.15.90`.
-- `2026-11-05j`: nút "Write to us" (Careers closing) dùng chung hệ gold-pill với `.dg-sus-btn` — gộp rule thành selector list để 2 nút trong trang không lệch style. `DG_VERSION` → `1.15.89`.
-- `2026-11-05i`: chữ trắng cho cả 3 nút CTA gold-pill (token `--cta-gold-ink` → `--neutral-0`); contrast 1.58:1 (dưới AA, quyết định thiết kế có chủ đích). `DG_VERSION` → `1.15.88`.
-- `2026-11-05h`: nút CTA Sustainability (`.dg-sus-btn`) dùng chung hệ editorial gold-pill với OI + Careers; gom token `--oi-btn-*` → `--cta-gold-*` (theo vai trò). `DG_VERSION` → `1.15.87`.
+- `2026-11-05t`: chip filter Wishlist — chip **active không đổi style khi hover** (`:hover` → `:not(.is-active):hover`; cùng specificity nên thứ tự rule cũ ghi đè nền active). Chip chưa active giữ nguyên hover. Không nằm trong media query → mobile/tablet/desktop đồng bộ. `DG_VERSION` → `1.15.99`.
+- `2026-11-05s`: chip filter Wishlist ở mobile — **giảm font chữ + icon** (font 10px, icon 11px, badge 12px) để text/icon **không còn sát viền chip** (padding 5.5px ở 320px → 9px ở 639px). Bộ giá trị chọn bằng brute-force 3.000+ tổ hợp (`tmp-resp/wl-chip-optimize.js`), ràng buộc tổng 3 chip ≤ content 244px ở 320px. `DG_VERSION` → `1.15.98`.
+- `2026-11-05r`: chip filter Wishlist ở mobile — **hiện lại icon** giống desktop + text thoải mái (chip co theo nội dung `repeat(3, auto)` + fluid `clamp()` cho font/padding/gap/icon/badge; ở 320px 3 chip = 231px < content 244px → vừa khít, overflow 0). `DG_VERSION` → `1.15.97`.
+- `2026-11-05q`: toolbar Wishlist — "Select (0)" và nút sort **cùng 1 hàng ngang** ở mobile (`grid-template-columns: auto minmax(0,1fr)` trong block `@media (max-width: 639px)` §12b). Icon `schedule` vẫn ẩn để "Recently saved" không bị cắt (tổng cần 241px < content 256px ở 320px). `DG_VERSION` → `1.15.96`.
+- `2026-11-05p`: toolbar Wishlist (`.dg-wishlist-toolbar`) mobile-only — 3 chip filter về 1 hàng đều nhau (grid 3 cột), sort full-width 1 hàng riêng, ẩn icon filter + nhãn "Sort by". Block `@media (max-width: 639px)` mới §12b trong `wishlist.css` — tablet/desktop không đổi. `DG_VERSION` → `1.15.95`.
+- `2026-11-05o`: nhãn "On sale" (`.dg-wishlist-hero__stat-label--stacked`) về 1 dòng ở mobile.
 - `2026-11-04f`: **xoá hẳn** hook báo cáo chrome-devtools (`chrome-devtools-mcp-session-start.ps1` + `.chrome-devtools-tools-cache.json`) — không còn sentinel, không còn inject mỗi phiên. MCP server trong `.cursor/mcp.json` giữ nguyên, tool vẫn dùng được.
 - `2026-11-04e`: tắt hook chrome-devtools mặc định (-985 tok/phiên), xoá sentinel, tách changelog sang `docs/CHANGELOG.md`, nén §5/§8. `CLAUDE.md` 60.365 -> 39.120 chars.
 - `2026-11-04d`: docs upstream (61 tool) lệch npm `1.12.0` (59 tool) — `--categoryWebauthn=true` bị bỏ qua âm thầm. Luôn đối chiếu `npm dist-tags`.
