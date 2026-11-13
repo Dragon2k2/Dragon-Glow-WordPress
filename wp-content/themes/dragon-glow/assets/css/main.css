@@ -1026,6 +1026,76 @@ table th {
     }
 }
 
+/* =========================================
+   28. QUICK-ADD — OPTIMISTIC POP FEEDBACK
+   =========================================
+
+   The quick-add button paints its "Added" state synchronously on click,
+   before the AJAX round-trip completes. This animation is the tactile
+   confirmation that the click registered instantly.
+
+   The pop is applied to the ICON and the LABEL, never to the button
+   itself: the button's `transform` is already owned by the layout
+   (translateX / translateY for the pill position, and the hover lift),
+   so animating it here would fight the existing rules. The inner
+   elements have no positioning transform of their own, so they are free
+   to scale freely.
+
+   The class is re-triggered from JS (`.dg-quick-add--pop`) so the
+   animation replays on every add/remove cycle. */
+
+/**
+ * Icon pop — the checkmark / bag glyph scales up and settles back.
+ *
+ * `display: inline-block` is required: `transform` does not apply to
+ * non-replaced inline elements, and the glyph is rendered as a bare
+ * inline `<span>`.
+ */
+.dg-quick-add--pop .material-symbols-outlined {
+    display: inline-block;
+    animation: dg-quick-add-icon-pop 420ms var(--luxury-bezier);
+}
+
+/**
+ * Label fade-in — the text swaps between "Add to Cart" and "Added",
+ * so a short fade hides the hard text swap.
+ */
+.dg-quick-add--pop .dg-quick-add__label {
+    display: inline-block;
+    animation: dg-quick-add-label-in 260ms var(--luxury-bezier);
+}
+
+@keyframes dg-quick-add-icon-pop {
+    0% {
+        transform: scale(1);
+    }
+    35% {
+        transform: scale(1.35);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes dg-quick-add-label-in {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Reduced motion: keep the instant state change, drop the animation. */
+@media (prefers-reduced-motion: reduce) {
+    .dg-quick-add--pop .material-symbols-outlined,
+    .dg-quick-add--pop .dg-quick-add__label {
+        animation: none;
+    }
+}
+
 /* Reduced motion: no smooth scrolling in carousel. */
 @media (prefers-reduced-motion: reduce) {
     #dg-carousel {

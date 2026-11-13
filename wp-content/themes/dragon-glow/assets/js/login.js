@@ -40,18 +40,19 @@
 	 * @param {HTMLFormElement} form Sign-in form.
 	 */
 	function initValidation(form) {
+		// NOTE: the submit spinner is owned by the global `DGLoading`
+		// document-level handler (lib/loading.js) via
+		// `data-dg-loading-form`. Do NOT call `DGLoading.start()` here:
+		// the form listener runs before the event bubbles to `document`,
+		// so starting here would make the global handler mistake the
+		// FIRST submit for a double submit and `preventDefault()` it,
+		// cancelling the POST entirely (silent reload, no login).
 		form.addEventListener('submit', function (e) {
 			const errors = validateForm();
 			if (errors.length) {
 				e.preventDefault();
 				renderErrors(form, errors);
 				return;
-			}
-
-			// Valid: block double submits while the request is in flight.
-			const submit = form.querySelector('.dg-login__submit');
-			if (submit) {
-				window.DGLoading.start(submit);
 			}
 		});
 
@@ -78,6 +79,7 @@
 		// Browsers restore the page from bfcache with the busy state still set.
 		window.addEventListener('pageshow', function (e) {
 			if (!e.persisted) return;
+			if (!window.DGLoading || typeof window.DGLoading.stop !== 'function') return;
 			const submit = form.querySelector('.dg-login__submit');
 			if (submit) {
 				window.DGLoading.stop(submit);

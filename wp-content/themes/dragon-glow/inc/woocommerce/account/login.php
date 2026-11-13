@@ -32,6 +32,10 @@ function dg_render_account_signed_out(): void {
 	// re-renders after a validation error). Validated again server-side by
 	// dg_account_safe_redirect_target() / WC's own redirect_to handling.
 	$redirect_to = dg_account_safe_redirect_target();
+	// Every validation error of the last submit, tagged by field (see
+	// login-validation.php). Drives the summary + inline messages below.
+	$login_errors  = dg_login_get_errors();
+	$login_grouped = dg_login_group_errors( $login_errors );
 	?>
 	<!-- Viewport outer double-gold pinstripe frame -->
 	<div class="dg-account-auth__viewport-frame dg-account-auth__viewport-frame--outer" aria-hidden="true"></div>
@@ -154,11 +158,32 @@ function dg_render_account_signed_out(): void {
 				</p>
 				</header>
 
-					<?php wc_print_notices(); ?>
+					<?php wc_print_notices(); // Success / info notices only; errors are rendered below. ?>
 
-					<form method="post" class="dg-account-form" action="<?php echo esc_url( dg_login_url() ); ?>" novalidate>
+					<!-- Error summary: server-rendered after a failed submit, filled by JS on client-side validation -->
+					<div class="dg-login__summary" id="dg-login-summary" role="alert" tabindex="-1"<?php echo empty( $login_errors ) ? ' hidden' : ''; ?>>
+						<span class="material-symbols-outlined" aria-hidden="true">error</span>
+						<div class="dg-login__summary-body">
+							<p class="dg-login__summary-title"><?php echo esc_html( dg_login_messages()['summary_title'] ); ?></p>
+							<ul class="dg-login__summary-list">
+								<?php foreach ( $login_errors as $login_error ) : ?>
+									<li>
+										<?php if ( isset( dg_login_fields()[ $login_error['field'] ] ) ) : ?>
+											<a href="#<?php echo esc_attr( dg_login_fields()[ $login_error['field'] ] ); ?>" data-dg-error-link="<?php echo esc_attr( $login_error['field'] ); ?>"><?php echo esc_html( $login_error['message'] ); ?></a>
+										<?php else : ?>
+											<?php echo esc_html( $login_error['message'] ); ?>
+										<?php endif; ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					</div>
+
+					<form method="post" class="dg-account-form dg-login__form" action="<?php echo esc_url( dg_login_url() ); ?>" data-dg-loading-form novalidate>
 
 						<?php do_action( 'woocommerce_login_form_start' ); ?>
+
+						<input type="hidden" name="dg_login_context" value="page" />
 
 						<div class="dg-account-field">
 							<div class="dg-account-field__row-label">
@@ -174,9 +199,11 @@ function dg_render_account_signed_out(): void {
 									id="dg-login-username"
 									autocomplete="username"
 									placeholder="<?php esc_attr_e( 'patron@maison-dragonglow.com', 'dragon-glow' ); ?>"
+									<?php echo dg_login_field_attrs( 'username', $login_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?>
 									value="<?php echo isset( $_POST['username'] ) ? esc_attr( wp_unslash( $_POST['username'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 										?>" />
 							</div>
+							<?php dg_login_render_field_error( 'username', $login_grouped ); ?>
 						</div>
 
 						<div class="dg-account-field">
@@ -194,7 +221,8 @@ function dg_render_account_signed_out(): void {
 									name="password"
 									id="dg-login-password"
 									autocomplete="current-password"
-									placeholder="<?php esc_attr_e( 'Enter your confidential cipher', 'dragon-glow' ); ?>" />
+									placeholder="<?php esc_attr_e( 'Enter your confidential cipher', 'dragon-glow' ); ?>"
+									<?php echo dg_login_field_attrs( 'password', $login_grouped ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper. ?> />
 								<button
 									type="button"
 									class="dg-account-field__toggle"
@@ -205,6 +233,7 @@ function dg_render_account_signed_out(): void {
 									<span class="material-symbols-outlined">visibility</span>
 								</button>
 							</div>
+							<?php dg_login_render_field_error( 'password', $login_grouped ); ?>
 						</div>
 
 					<div class="dg-account-field__row">

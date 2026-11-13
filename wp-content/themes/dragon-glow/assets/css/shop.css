@@ -384,17 +384,8 @@ input[type="range"]::-moz-range-thumb {
 		transition: none;
 	}
 
-	/* `:hover` trên touch vẫn kích hoạt sau khi tap → nền đổi + nhấc nút
-	   dù nút đã hiện sẵn. Đặt lại transform gốc cho nhất quán với base rule
-	   (base rule dùng `translateX(-50%)`, override ở trên dùng pill inset). */
-	.dg-add-to-cart:hover {
-		transform: translateY(-2px);
-	}
-
-	/* Nút "added" giữ trạng thái vĩnh viễn (rule base ở § Quick-Add toggle). */
-	.dg-add-to-cart.dg-quick-add--added:hover {
-		transform: translateY(-2px);
-	}
+	/* Trạng thái `:hover` bị vô hiệu hoá hoàn toàn ở mobile + tablet —
+	   xem § "QUICK-ADD — NO HOVER ON MOBILE + TABLET" cuối file. */
 }
 
 /* Checkmark icon turns golden when button is in "added" state */
@@ -961,13 +952,62 @@ a.dg-product-stretched-link {
 }
 
 /**
- * Hover on an "Added" button: subtle darker-gold tint + slight lift
- * to hint that clicking will remove the item.
+ * Hover on an "Added" button: keep the resting gold surface, only lift the
+ * button slightly so it still reads as interactive.
+ *
+ * Background and text colour are pinned to the same tokens as the resting
+ * state (--color-tertiary-container / --color-on-tertiary-container), because
+ * the "Added" surface IS the brand gold. Using --color-primary-container here
+ * (a pale pink) broke the palette and made the button look like a different
+ * component on hover.
+ *
+ * Desktop only — see § "QUICK-ADD — NO HOVER ON MOBILE + TABLET" below.
  */
 .dg-add-to-cart.dg-quick-add--added:hover {
-	background-color: var(--color-primary-container, var(--gold-400));
-	color: var(--color-on-primary-container, #554300);
+	background-color: var(--color-tertiary-container, #f1ca50);
+	color: var(--color-on-tertiary-container, #6b5500);
 	transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUICK-ADD — NO HOVER ON MOBILE + TABLET (< 1024px)
+   ═══════════════════════════════════════════════════════ */
+
+/**
+ * Vì sao bỏ hover ở mobile + tablet:
+ *   - Touch device không có con trỏ → `:hover` là trạng thái "dính" sau khi
+ *     tap. Nút sẽ kẹt ở màu hồng + bị nhấc lên 2px cho tới lần chạm sau.
+ *   - Tablet có chuột nhưng người dùng vẫn chủ yếu dùng chạm.
+ *
+ * Desktop (>= 1024px) giữ nguyên: hover-reveal là một phần của thiết kế card
+ * (nút chỉ hiện khi hover card) + sheen sweep chạy theo hover.
+ *
+ * Cách hiện thực: khai báo lại giá trị nền / màu chữ / transform gốc cho
+ * trạng thái `:hover`. Specificity bằng với rule hover gốc (0,2,0 / 0,3,0) và
+ * nằm SAU trong file → thắng. Không cần JS: `:hover` là pseudo-class của CSS
+ * (không có class để gỡ bằng script), và theme không có handler hover nào cho
+ * nút này — `quick-add-to-cart.js` chỉ lắng nghe `click`.
+ */
+@media (max-width: 1023px) {
+	/* Nền + màu chữ + transform giữ nguyên như trạng thái nghỉ. */
+	.dg-add-to-cart:hover {
+		background-color: var(--color-tertiary-container, #f1ca50);
+		color: var(--color-on-tertiary-container, #6b5500);
+		transform: translateY(0);
+	}
+
+	/* Trạng thái "Added" cũng vậy — không đổi sang hồng, không nhấc nút. */
+	.dg-add-to-cart.dg-quick-add--added:hover {
+		background-color: var(--color-tertiary-container, #f1ca50);
+		color: var(--color-on-tertiary-container, #6b5500);
+		transform: translateY(0);
+	}
+
+	/* Sheen sweep không chạy theo hover card — tránh vệt sáng đọng lại sau tap. */
+	.dg-product-card:hover .dg-add-to-cart::before {
+		left: 160%;
+		transition: none;
+	}
 }
 
 /* ═══════════════════════════════════════════════════════

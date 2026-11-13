@@ -265,7 +265,7 @@ $has_items  = ! empty( $cart_items );
             </div><!-- .dg-glass-panel -->
 
             <!-- Trust badge pills -->
-            <div class="flex flex-wrap gap-3 pt-1">
+            <div class="flex flex-wrap gap-3 pt-1 dg-cart-trust-badges">
                 <span class="dg-trust-badge">
                     <span class="material-symbols-outlined" style="font-size:18px;">verified</span>
                     <?php esc_html_e( 'Vegan Formula', 'dragon-glow' ); ?>

@@ -57,6 +57,30 @@ function dg_enqueue_scripts_assets(): void {
 		);
 	}
 
+    // Shared image lightbox controller — provides window.DGZoomLightbox.
+    // Used by the single product gallery (product.js) and the gift cards
+    // preview (gift-cards-zoom.js). No deps: pure DOM, must be ready before
+    // any consumer runs.
+    wp_enqueue_script(
+        'dg-zoom-lightbox',
+        DG_URI . '/assets/js/lib/zoom-lightbox.js',
+        array(),
+        DG_VERSION,
+        true
+    );
+
+    // Shared form loading-state helper — provides window.DGLoading
+    // (spinner on the submit button of native POST forms, page loader for
+    // navigations). No deps: pure vanilla, must be ready before any
+    // consumer script runs.
+    wp_enqueue_script(
+        'dg-loading',
+        DG_URI . '/assets/js/lib/loading.js',
+        array(),
+        DG_VERSION,
+        true
+    );
+
     // Toast notification system — provides window.DGToast for any feature
     // (account.js WC notice bridge today; cart/wishlist/etc. can reuse it).
     // No deps: pure vanilla, must be ready before any consumer script runs.
@@ -152,7 +176,7 @@ function dg_enqueue_scripts_assets(): void {
     // Page-specific JS (WooCommerce conditionals)
     if ( dg_is_woocommerce_active() ) {
         if ( is_product() ) {
-            wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main' ), DG_VERSION, true );
+            wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main', 'dg-zoom-lightbox' ), DG_VERSION, true );
         }
         if ( is_cart() ) {
             wp_enqueue_style(
@@ -352,6 +376,27 @@ function dg_enqueue_scripts_assets(): void {
 					array( 'dg-main' ),
 					DG_VERSION,
 					true
+				);
+
+				// Sign-in form — client-side validation + submit loading state.
+				// Mirrors inc/woocommerce/account/login-validation.php so
+				// client-side and server-side messages never drift apart.
+				wp_enqueue_script(
+					'dg-account-login',
+					DG_URI . '/assets/js/login.js',
+					array( 'dg-main', 'dg-loading' ),
+					DG_VERSION,
+					true
+				);
+
+				// Same texts the server uses (login-validation.php), so
+				// blocked submits show identical copy before the round-trip.
+				wp_localize_script(
+					'dg-account-login',
+					'dgLogin',
+					array(
+						'messages' => dg_login_messages(),
+					)
 				);
 			}
 
@@ -733,6 +778,26 @@ function dg_enqueue_scripts_assets(): void {
             DG_VERSION,
             true
         );
+        // Shared gift-card denomination state — classic script, no deps.
+        // Owns the chip / hidden input / submit label / preview image so the
+        // lightbox (gift-cards-zoom.js) can sync the page when the user
+        // browses other denominations inside the modal.
+        wp_enqueue_script(
+            'dg-gift-value',
+            DG_URI . '/assets/js/lib/gift-value.js',
+            array(),
+            DG_VERSION,
+            true
+        );
+        // Lightbox xem ảnh thẻ quà — classic script độc lập để hoạt động
+        // kể cả khi ES module gift-cards.js bị skip (CDN Motion lỗi/chậm).
+        wp_enqueue_script(
+            'dg-gift-cards-zoom',
+            DG_URI . '/assets/js/gift-cards-zoom.js',
+            array( 'dg-gift-value', 'dg-zoom-lightbox' ),
+            DG_VERSION,
+            true
+        );
         wp_enqueue_script_module(
             'dg-gift-cards',
             DG_URI . '/assets/js/gift-cards.js',
@@ -753,6 +818,8 @@ function dg_enqueue_scripts_assets(): void {
             'Network error.'  => __( 'Network error.', 'dragon-glow' ),
             'Added'             => __( 'Added', 'dragon-glow' ),
             'Could not add to bag.' => __( 'Could not add to bag.', 'dragon-glow' ),
+            // Quick-add optimistic toggle (assets/js/quick-add-to-cart.js).
+            'Could not remove item.' => __( 'Could not remove item.', 'dragon-glow' ),
             // Screen-reader strings for the cart-count badge on the
             // mobile/tablet menu toggle (assets/js/lib/cart-badge.js).
             'itemSingular'     => __( '1 item in bag', 'dragon-glow' ),
@@ -769,10 +836,12 @@ function dg_enqueue_scripts_assets(): void {
     ) );
 
     // Quick Add to Cart — loads on any page with .dg-quick-add buttons (Shop grid, etc.)
+    // Optimistic flow: paints the "Added" state synchronously and reports
+    // failures through the site-wide toast system (window.DGToast).
     wp_enqueue_script(
         'dg-quick-add-to-cart',
         DG_URI . '/assets/js/quick-add-to-cart.js',
-        array( 'dg-cart-api' ),
+        array( 'dg-cart-api', 'dg-cart-badge', 'dg-toast' ),
         DG_VERSION,
         true
     );

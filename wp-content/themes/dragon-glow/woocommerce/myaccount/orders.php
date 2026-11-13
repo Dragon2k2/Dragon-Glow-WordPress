@@ -129,8 +129,15 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 								 * @param WC_Order $order The current order object.
 								 */
 								do_action( 'woocommerce_account_orders_column_order_total_before', $order );
-								/* translators: 1: formatted order total 2: total order items */
-								echo wp_kses_post( sprintf( _n( '%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'woocommerce' ), $order->get_formatted_order_total(), $item_count ) );
+								?>
+								<?php // Dragon Glow: bọc giá trị trong một phần tử để ô label/value ở mobile không bị tách. ?>
+								<span class="woocommerce-orders-table__cell-value">
+									<?php
+									/* translators: 1: formatted order total 2: total order items */
+									echo wp_kses_post( sprintf( _n( '%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'woocommerce' ), $order->get_formatted_order_total(), $item_count ) );
+									?>
+								</span>
+								<?php
 								/**
 								 * Fires after the order total in the orders table.
 								 *
@@ -211,16 +218,66 @@ do_action( 'woocommerce_before_account_orders', $has_orders ); ?>
 				<?php
 			endif;
 
-			// Page numbers
+			// Page numbers.
+			//
+			// Every page is rendered so no visitor ever loses a link. Pages
+			// outside a viewport's window are tagged and collapsed behind an
+			// ellipsis by the stylesheet — see dg_account_orders_page_window().
+			//
+			// Two windows are needed because the row has room for a different
+			// number of pages per breakpoint:
+			//   - the compact window (current ±1) used on phones and tablets,
+			//     where the content column is 523-561px wide;
+			//   - the wide window (current ±2) used on desktop, where the
+			//     column is 776px. This matches WooCommerce core's own
+			//     `paginate_links()` shape (mid_size = 2).
+			//
+			// Both windows collapse the middle of a long list behind an
+			// ellipsis, exactly like WooCommerce core does. A list that fits
+			// the row is never collapsed — see the `$total <= 5` guard inside
+			// dg_account_orders_page_window().
+			//
+			// Each page is tagged per window: `data-dg-page-out-compact` when
+			// it falls outside the compact window, `data-dg-page-out-wide`
+			// when it falls outside the wide one. The stylesheet hides the
+			// matching set per breakpoint and reveals the ellipsis marker
+			// that belongs to the window in use.
+			$total_pages     = (int) $customer_orders->max_num_pages;
+			$visible_compact = dg_account_orders_page_window( (int) $current_page, $total_pages, 1 );
+			$visible_wide    = dg_account_orders_page_window( (int) $current_page, $total_pages, 2 );
+
 			echo '<span class="woocommerce-pagination__numbers">';
-			for ( $i = 1; $i <= intval( $customer_orders->max_num_pages ); $i++ ) :
-				if ( $i === $current_page ) :
-					echo '<span class="page-numbers current" aria-current="page">' . esc_html( $i ) . '</span>';
+			for ( $i = 1; $i <= $total_pages; $i++ ) :
+				$is_current = ( $i === (int) $current_page );
+				$in_compact = in_array( $i, $visible_compact, true );
+				$in_wide    = in_array( $i, $visible_wide, true );
+
+				// Ellipsis placeholders for the collapsed gaps. One marker per
+				// gap per window, emitted at the first hidden page after a
+				// visible run. Exactly one set is visible per breakpoint.
+				if ( ! $in_compact && in_array( $i - 1, $visible_compact, true ) ) {
+					echo '<span class="page-numbers dg-account-pagination__ellipsis" aria-hidden="true" data-dg-page-ellipsis="compact">…</span>';
+				}
+
+				if ( ! $in_wide && in_array( $i - 1, $visible_wide, true ) ) {
+					echo '<span class="page-numbers dg-account-pagination__ellipsis" aria-hidden="true" data-dg-page-ellipsis="wide">…</span>';
+				}
+
+				$hidden_attr = '';
+				if ( ! $in_compact ) {
+					$hidden_attr .= ' data-dg-page-out-compact';
+				}
+				if ( ! $in_wide ) {
+					$hidden_attr .= ' data-dg-page-out-wide';
+				}
+
+				if ( $is_current ) :
+					echo '<span class="page-numbers current" aria-current="page"' . $hidden_attr . '>' . esc_html( $i ) . '</span>';
 				else :
 					$page_url = 1 === $i
 						? $orders_base
 						: trailingslashit( $orders_base ) . 'page/' . $i . '/';
-					echo '<a class="page-numbers" href="' . esc_url( $page_url ) . '">' . esc_html( $i ) . '</a>';
+					echo '<a class="page-numbers" href="' . esc_url( $page_url ) . '"' . $hidden_attr . '>' . esc_html( $i ) . '</a>';
 				endif;
 			endfor;
 			echo '</span>';

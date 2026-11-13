@@ -1,0 +1,85 @@
+{
+  "cookies": [
+    {
+      "name": "__test",
+      "value": "a1bcded29b2cf70615e94cb3fcaf5816",
+      "domain": "dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": 1794112124.688471,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_migrations",
+      "value": "1418474375998%3D1",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_current_add",
+      "value": "fd%3D2026-11-07%2022%3A28%3A48%7C%7C%7Cep%3Dhttps%3A%2F%2Fdragonglow.freehosting.dev%2Fmy-account%2Forders%2F%3Fi%3D1%7C%7C%7Crf%3Dhttps%3A%2F%2Fdragonglow.freehosting.dev%2Fmy-account%2Forders%2F",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_first_add",
+      "value": "fd%3D2026-11-07%2022%3A28%3A48%7C%7C%7Cep%3Dhttps%3A%2F%2Fdragonglow.freehosting.dev%2Fmy-account%2Forders%2F%3Fi%3D1%7C%7C%7Crf%3Dhttps%3A%2F%2Fdragonglow.freehosting.dev%2Fmy-account%2Forders%2F",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_current",
+      "value": "typ%3Dtypein%7C%7C%7Csrc%3D%28direct%29%7C%7C%7Cmdm%3D%28none%29%7C%7C%7Ccmp%3D%28none%29%7C%7C%7Ccnt%3D%28none%29%7C%7C%7Ctrm%3D%28none%29%7C%7C%7Cid%3D%28none%29%7C%7C%7Cplt%3D%28none%29%7C%7C%7Cfmt%3D%28none%29%7C%7C%7Ctct%3D%28none%29",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_first",
+      "value": "typ%3Dtypein%7C%7C%7Csrc%3D%28direct%29%7C%7C%7Cmdm%3D%28none%29%7C%7C%7Ccmp%3D%28none%29%7C%7C%7Ccnt%3D%28none%29%7C%7C%7Ctrm%3D%28none%29%7C%7C%7Cid%3D%28none%29%7C%7C%7Cplt%3D%28none%29%7C%7C%7Cfmt%3D%28none%29%7C%7C%7Ctct%3D%28none%29",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_udata",
+      "value": "vst%3D1%7C%7C%7Cuip%3D%28none%29%7C%7C%7Cuag%3DMozilla%2F5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20HeadlessChrome%2F156.0.0.0%20Safari%2F537.36",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sbjs_session",
+      "value": "pgs%3D1%7C%7C%7Ccpg%3Dhttps%3A%2F%2Fdragonglow.freehosting.dev%2Fmy-account%2Forders%2F%3Fi%3D1",
+      "domain": ".dragonglow.freehosting.dev",
+      "path": "/",
+      "expires": 1794092328,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

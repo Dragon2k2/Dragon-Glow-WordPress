@@ -1151,6 +1151,35 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
     .dg-glass-panel {
         padding: 1.25rem;
     }
+
+    .dg-cart-trust-badges {
+        justify-content: center;
+    }
+
+    /* Mobile-only: bulkbar gọn + tinh tế (2 nút 1 hàng, không rớt 2 dòng). */
+    .dg-cart-bulkbar__inner {
+        padding: 10px 12px;
+    }
+    .dg-cart-bulkbar__actions {
+        gap: 6px;
+    }
+    .dg-cart-bulkbar__actions .dg-cart-bulkbar__btn {
+        padding: 6px 8px;
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        gap: 4px;
+        white-space: nowrap;
+    }
+    .dg-cart-bulkbar__actions .dg-cart-bulkbar__btn .material-symbols-outlined {
+        font-size: 13px;
+    }
+}
+
+/* Tablet-only (641-1024px): căn giữa hàng trust badge. Mobile và desktop giữ nguyên. */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .dg-cart-trust-badges {
+        justify-content: center;
+    }
 }
 
 /* Reduced motion — also kill bulkbar + confirm modal animations. */

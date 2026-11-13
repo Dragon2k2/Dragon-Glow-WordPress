@@ -1036,6 +1036,123 @@ body.dg-hide-site-chrome {
 	box-shadow: var(--auth-input-shadow-focus);
 }
 
+/* Invalid controls — server (aria-invalid) and client (JS) share the same visual. */
+.dg-login__panel-col .dg-account-field__input[aria-invalid="true"] {
+	border-color: var(--register-error-input-border);
+}
+
+.dg-login__panel-col .dg-account-field__input[aria-invalid="true"]:focus {
+	border-color: var(--register-error-input-border);
+	box-shadow: var(--register-error-input-shadow);
+}
+
+/* Validation summary + inline field errors (parity with register.css §5b-ter). */
+.dg-login__summary {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 12px;
+	margin-bottom: 16px;
+	padding: 14px 16px;
+	background: var(--register-error-bg);
+	border: 1px solid var(--register-error-border);
+	border-radius: 8px;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--register-error-text);
+	text-align: center;
+}
+
+.dg-login__summary[hidden] {
+	display: none;
+}
+
+.dg-login__summary:focus-visible {
+	outline: 2px solid var(--register-error-input-border);
+	outline-offset: 2px;
+}
+
+.dg-login__summary > .material-symbols-outlined {
+	font-size: 20px;
+	color: var(--register-error-icon);
+	flex-shrink: 0;
+}
+
+.dg-login__summary-title {
+	margin: 0 0 4px;
+	font-weight: 700;
+}
+
+.dg-login__summary-list {
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.dg-login__summary-list a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.dg-login__summary-list a:hover,
+.dg-login__summary-list a:focus-visible {
+	color: var(--register-error-icon);
+}
+
+.dg-login__error {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	margin: 8px 0 0;
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 12.5px;
+	line-height: 1.5;
+	color: var(--register-error-text);
+}
+
+.dg-login__error[hidden] {
+	display: none;
+}
+
+.dg-login__error .material-symbols-outlined {
+	font-size: 16px;
+	margin-top: 1px;
+	color: var(--register-error-icon);
+	flex-shrink: 0;
+}
+
+/* Submit loading state — spinner overlays the button (text stays for width).
+   Driven by `window.DGLoading` (lib/loading.js); `aria-disabled` is set so
+   assistive tech announces the busy state without dropping focus. */
+.dg-login__submit.dg-loading {
+	position: relative;
+	color: transparent;
+	pointer-events: none;
+}
+
+.dg-login__submit.dg-loading::after {
+	content: "";
+	position: absolute;
+	width: 22px;
+	height: 22px;
+	border: 2px solid rgba(255, 253, 246, 0.45);
+	border-top-color: var(--auth-btn-text);
+	border-radius: 50%;
+	animation: dg-login-spin 0.7s linear infinite;
+}
+
+.dg-login__submit.dg-loading .material-symbols-outlined,
+.dg-login__submit.dg-loading span:not(.dg-login__submit-frame) {
+	opacity: 0;
+}
+
+@keyframes dg-login-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 /* Browser autofill override — keep theme colors instead of yellow autofill tint */
 .dg-login__panel-col .dg-account-field__input:-webkit-autofill,
 .dg-login__panel-col .dg-account-field__input:-webkit-autofill:hover,
@@ -1682,5 +1799,11 @@ body.dg-hide-site-chrome {
 	.dg-account-auth *::before,
 	.dg-account-auth *::after {
 		transition-duration: 0.001ms !important;
+		animation-duration: 0.001ms !important;
+	}
+
+	.dg-login__submit.dg-loading::after {
+		animation: none;
+		border-top-color: rgba(255, 253, 246, 0.45);
 	}
 }

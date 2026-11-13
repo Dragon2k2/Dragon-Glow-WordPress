@@ -12,15 +12,36 @@ defined( 'ABSPATH' ) || exit;
 
 $sections = dg_privacy_policy_sections_data();
 ?>
-<div class="dg-privacy-toc-mobile" id="dg-privacy-toc-mobile">
-	<select class="dg-privacy-toc-select" onchange="document.getElementById(this.value).scrollIntoView({behavior: 'smooth'})">
-		<?php foreach ( $sections as $section ) : ?>
-			<option value="<?php echo esc_attr( $section['id'] ); ?>">
-				<?php echo esc_html( $section['num'] . '. ' . $section['title'] ); ?>
-			</option>
+<div class="dg-privacy-toc-mobile" id="dg-privacy-toc-mobile" data-dg-toc>
+	<button
+		type="button"
+		class="dg-privacy-toc-select dg-privacy-toc-btn"
+		id="dg-privacy-toc-btn"
+		aria-haspopup="listbox"
+		aria-expanded="false"
+		aria-controls="dg-privacy-toc-list"
+	>
+		<?php if ( ! empty( $sections ) ) : ?>
+			<span class="dg-privacy-toc-btn-label" id="dg-privacy-toc-label"><?php echo esc_html( $sections[0]['num'] . '. ' . $sections[0]['title'] ); ?></span>
+		<?php endif; ?>
+		<span class="material-symbols-outlined dg-privacy-toc-icon" aria-hidden="true">expand_more</span>
+	</button>
+	<div class="dg-privacy-toc-panel" hidden>
+	<ul class="dg-privacy-toc-list" id="dg-privacy-toc-list" role="listbox" aria-labelledby="dg-privacy-toc-label" hidden>
+		<?php foreach ( $sections as $i => $section ) : ?>
+			<li class="dg-privacy-toc-item" id="dg-privacy-toc-opt-<?php echo esc_attr( $i + 1 ); ?>" role="option" aria-selected="<?php echo 0 === $i ? 'true' : 'false'; ?>">
+				<a class="dg-privacy-toc-link" href="#<?php echo esc_attr( $section['id'] ); ?>"><?php echo esc_html( $section['num'] . '. ' . $section['title'] ); ?></a>
+			</li>
 		<?php endforeach; ?>
-	</select>
-	<span class="material-symbols-outlined dg-privacy-toc-icon">expand_more</span>
+	</ul>
+	</div>
+	<noscript>
+		<ul class="dg-privacy-toc-noscript">
+			<?php foreach ( $sections as $section ) : ?>
+				<li><a href="#<?php echo esc_attr( $section['id'] ); ?>"><?php echo esc_html( $section['num'] . '. ' . $section['title'] ); ?></a></li>
+			<?php endforeach; ?>
+		</ul>
+	</noscript>
 </div>
 
 <aside class="dg-privacy-sidebar">

@@ -113,9 +113,9 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 			<div class="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 md:max-h-[600px] custom-scrollbar">
 				<?php foreach ( $thumbnails as $i => $thumb ) : ?>
 					<button type="button"
-							class="dg-thumb-btn thumbnail-btn flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all <?php echo 0 === $i ? 'is-active border-primary ring-2 ring-primary-container/20' : 'border-outline-variant/30 opacity-60 hover:opacity-100'; ?>"
+							class="dg-thumb-btn flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all <?php echo 0 === $i ? 'is-active border-primary ring-2 ring-primary-container/20' : 'border-outline-variant/30 opacity-60 hover:opacity-100'; ?>"
 							data-full="<?php echo esc_url( $thumb['full'] ); ?>"
-							onclick="dgChangeImage(this)">
+							data-dg-thumb>
 						<img src="<?php echo esc_url( $thumb['src'] ); ?>"
 							 alt="<?php echo esc_attr( $thumb['alt'] ); ?>"
 							 class="w-full h-full object-cover" />
@@ -124,13 +124,17 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 			</div>
 			<?php endif; ?>
 
-			<!-- Main image -->
+			<!-- Main image — click (hoặc Enter/Space) để mở lightbox xem ảnh đầy đủ -->
 			<div class="flex-grow rounded-3xl overflow-hidden relative group glass-card">
 				<img id="dg-main-image"
 					 src="<?php echo esc_url( $initial_main_url ); ?>"
 					 alt="<?php echo esc_attr( $product->get_name() ); ?>"
 					 class="w-full h-[400px] md:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
-					 loading="eager" />
+					 loading="eager"
+					 role="button"
+					 tabindex="0"
+					 data-dg-zoom-trigger
+					 aria-label="<?php esc_attr_e( 'Zoom image', 'dragon-glow' ); ?>" />
 
 				<?php if ( $is_on_sale && $product->get_regular_price() && $product->get_sale_price() ) : ?>
 					<?php
@@ -144,37 +148,13 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 			<button type="button"
 					class="dg-zoom-btn absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all"
 					aria-label="<?php esc_attr_e( 'Zoom image', 'dragon-glow' ); ?>"
-					onclick="dgOpenZoom()">
-				<span class="material-symbols-outlined text-[20px]">zoom_in</span>
+					data-dg-zoom-trigger>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">zoom_in</span>
 			</button>
 			</div>
 
 		</div><!-- end flex row -->
 	</div><!-- end sticky -->
-
-	<!-- Zoom Modal Lightbox -->
-	<div id="dg-zoom-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-md" onclick="dgCloseZoom(event)" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Image zoom view', 'dragon-glow' ); ?>">
-		<button type="button" class="absolute top-4 right-4 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgCloseZoom();" aria-label="<?php esc_attr_e( 'Close zoom', 'dragon-glow' ); ?>">
-			<span class="material-symbols-outlined text-[24px]">close</span>
-		</button>
-		
-		<!-- Navigation buttons -->
-		<button type="button" id="dg-zoom-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgZoomPrev();" aria-label="<?php esc_attr_e( 'Previous image', 'dragon-glow' ); ?>">
-			<span class="material-symbols-outlined text-[24px]">chevron_left</span>
-		</button>
-		<button type="button" id="dg-zoom-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all" onclick="event.stopPropagation(); dgZoomNext();" aria-label="<?php esc_attr_e( 'Next image', 'dragon-glow' ); ?>">
-			<span class="material-symbols-outlined text-[24px]">chevron_right</span>
-		</button>
-		
-		<!-- Image counter -->
-		<div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full bg-white/10 backdrop-blur text-white text-sm font-medium">
-			<span id="dg-zoom-counter">1 / 1</span>
-		</div>
-		
-		<div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4" onclick="event.stopPropagation()">
-			<img id="dg-zoom-image" src="" alt="" class="max-w-full max-h-full object-contain rounded-2xl" />
-		</div>
-	</div>
 
 	<!-- RIGHT: Details -->
 	<div class="space-y-6" id="product-info">

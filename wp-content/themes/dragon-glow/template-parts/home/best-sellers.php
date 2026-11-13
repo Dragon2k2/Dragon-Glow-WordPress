@@ -158,9 +158,18 @@ $fallback_products = array(
                         </span>
                     <?php endif; ?>
 
+                    <?php
+                    // SSR-aware "already in cart" state — see the note in
+                    // template-parts/shop/product-card.php. Rendering it here
+                    // removes one full AJAX round-trip (~2s on this host)
+                    // from the page-load path.
+                    $dg_bs_ids  = dg_get_cart_identifiers();
+                    $dg_bs_cart = array_map( 'intval', (array) ( $dg_bs_ids['product_ids'] ?? array() ) );
+                    ?>
                     <button class="dg-quick-add absolute bottom-4 right-4 bg-white/90 backdrop-blur text-primary p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 active:scale-90 shadow-lg"
                             data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
                             data-original-label="<?php esc_attr_e( 'Add to cart', 'dragon-glow' ); ?>"
+                            data-in-cart="<?php echo in_array( (int) $product->get_id(), $dg_bs_cart, true ) ? '1' : '0'; ?>"
                             aria-label="<?php esc_attr_e( 'Add to cart', 'dragon-glow' ); ?>">
                         <span class="material-symbols-outlined">shopping_bag</span>
                         <span class="sr-only dg-quick-add__label"><?php esc_html_e( 'Add to cart', 'dragon-glow' ); ?></span>

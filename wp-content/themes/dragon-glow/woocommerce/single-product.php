@@ -22,4 +22,10 @@ get_header();
 
 </main>
 
+<?php
+// Lightbox xem ảnh đầy đủ — đặt ngoài <main> để `position: fixed` không bị
+// neo sai bởi transform của animation reveal.
+get_template_part( 'template-parts/global/zoom-modal' );
+?>
+
 <?php get_footer();

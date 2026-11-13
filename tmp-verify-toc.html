@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOC listbox verify</title>
+<style>
+:root{
+--color-on-surface:#1b1c1a;--color-on-surface-variant:#5a5b58;--color-outline:#d8d5cc;
+--color-outline-variant:#e4e1d6;--color-primary:#8a6d2f;--neutral-warm-100:#faf9f6;
+--neutral-warm-100-alpha-95:rgba(250,249,246,.95);--gold-rgb:201,162,75;
+--a11y-radius:.25rem;--a11y-toc-panel-bg:var(--neutral-warm-100-alpha-95);
+--a11y-toc-panel-border:var(--color-outline-variant);
+--a11y-toc-panel-shadow:0 16px 40px rgb(26 26 26 / .14);--a11y-toc-panel-radius:1rem;
+--a11y-toc-item-active-bg:rgba(var(--gold-rgb),.1);--a11y-toc-item-active-text:var(--color-primary);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--neutral-warm-100);font-family:system-ui,sans-serif;padding:24px 16px}
+</style>
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/accessibility-statement.css">
+</head>
+<body>
+<div class="dg-accessibility"><div class="dg-accessibility-wrap"><div class="dg-accessibility-layout">
+<div class="dg-accessibility-toc-mobile" id="dg-accessibility-toc-mobile" data-dg-toc>
+<button type="button" class="dg-accessibility-toc-select dg-a11y-toc-btn" id="dg-a11y-toc-btn" aria-haspopup="listbox" aria-expanded="true" aria-controls="dg-a11y-toc-list">
+<span class="dg-a11y-toc-btn-label" id="dg-a11y-toc-label">1. Our commitment</span>
+<span class="material-symbols-outlined dg-accessibility-toc-icon" aria-hidden="true">expand_more</span>
+</button>
+<ul class="dg-a11y-toc-list" id="dg-a11y-toc-list" role="listbox" aria-labelledby="dg-a11y-toc-label">
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-1" role="option" aria-selected="true"><a class="dg-a11y-toc-link" href="#section-1">1. Our commitment</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-2" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-2">2. Conformance status</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-3" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-3">3. Measures we take</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-4" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-4">4. Accessibility features of this site</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-5" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-5">5. Known limitations</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-6" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-6">6. Compatibility</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-7" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-7">7. Technical specifications</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-8" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-8">8. How we assess accessibility</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-9" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-9">9. Feedback and contact</a></li>
+<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-10" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-10">10. Formal complaints</a></li>
+</ul>
+</div>
+</div></div></div>
+</body>
+</html>

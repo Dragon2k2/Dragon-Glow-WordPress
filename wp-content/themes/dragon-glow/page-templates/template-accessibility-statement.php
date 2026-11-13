@@ -32,21 +32,45 @@ require_once locate_template( 'template-parts/accessibility-statement/data-acces
 		<!-- Main Layout: Sidebar + Content -->
 		<div class="dg-accessibility-layout">
 
-			<!-- Mobile: Sticky Table of Contents Dropdown -->
-			<div class="dg-accessibility-toc-mobile" id="dg-accessibility-toc-mobile">
-				<select class="dg-accessibility-toc-select" onchange="document.getElementById(this.value).scrollIntoView({behavior: 'smooth'})">
-					<option value="section-1">1. Our commitment</option>
-					<option value="section-2">2. Conformance status</option>
-					<option value="section-3">3. Measures we take</option>
-					<option value="section-4">4. Accessibility features of this site</option>
-					<option value="section-5">5. Known limitations</option>
-					<option value="section-6">6. Compatibility</option>
-					<option value="section-7">7. Technical specifications</option>
-					<option value="section-8">8. How we assess accessibility</option>
-					<option value="section-9">9. Feedback and contact</option>
-					<option value="section-10">10. Formal complaints</option>
-				</select>
-				<span class="material-symbols-outlined dg-accessibility-toc-icon">expand_more</span>
+			<!-- Mobile: Sticky Table of Contents Dropdown (custom listbox, <1024px) -->
+			<div class="dg-accessibility-toc-mobile" id="dg-accessibility-toc-mobile" data-dg-toc>
+				<button
+					type="button"
+					class="dg-accessibility-toc-select dg-a11y-toc-btn"
+					id="dg-a11y-toc-btn"
+					aria-haspopup="listbox"
+					aria-expanded="false"
+					aria-controls="dg-a11y-toc-list"
+				>
+					<span class="dg-a11y-toc-btn-label" id="dg-a11y-toc-label">1. Our commitment</span>
+					<span class="material-symbols-outlined dg-accessibility-toc-icon" aria-hidden="true">expand_more</span>
+				</button>
+				<ul class="dg-a11y-toc-list" id="dg-a11y-toc-list" role="listbox" aria-labelledby="dg-a11y-toc-label" hidden>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-1" role="option" aria-selected="true"><a class="dg-a11y-toc-link" href="#section-1">1. Our commitment</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-2" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-2">2. Conformance status</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-3" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-3">3. Measures we take</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-4" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-4">4. Accessibility features of this site</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-5" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-5">5. Known limitations</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-6" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-6">6. Compatibility</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-7" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-7">7. Technical specifications</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-8" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-8">8. How we assess accessibility</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-9" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-9">9. Feedback and contact</a></li>
+					<li class="dg-a11y-toc-item" id="dg-a11y-toc-opt-10" role="option" aria-selected="false"><a class="dg-a11y-toc-link" href="#section-10">10. Formal complaints</a></li>
+				</ul>
+				<noscript>
+					<ul class="dg-a11y-toc-noscript">
+						<li><a href="#section-1">1. Our commitment</a></li>
+						<li><a href="#section-2">2. Conformance status</a></li>
+						<li><a href="#section-3">3. Measures we take</a></li>
+						<li><a href="#section-4">4. Accessibility features of this site</a></li>
+						<li><a href="#section-5">5. Known limitations</a></li>
+						<li><a href="#section-6">6. Compatibility</a></li>
+						<li><a href="#section-7">7. Technical specifications</a></li>
+						<li><a href="#section-8">8. How we assess accessibility</a></li>
+						<li><a href="#section-9">9. Feedback and contact</a></li>
+						<li><a href="#section-10">10. Formal complaints</a></li>
+					</ul>
+				</noscript>
 			</div>
 
 			<!-- Desktop: Sticky Sidebar Navigation -->

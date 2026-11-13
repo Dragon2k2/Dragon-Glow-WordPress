@@ -1,7 +1,7 @@
 <?php
 /**
  * Dragon Glow — Our Ingredients: Traceable
- * Full-bleed image with overlay, centered text + country labels.
+ * Full-bleed image with a glass content card, centered text + country labels.
  * Mirrors stitch: "Traceable. Always."
  *
  * @package Dragon_Glow
@@ -21,7 +21,6 @@ $countries  = $traceable['countries'];
 			loading="lazy"
 			decoding="async"
 		>
-		<div class="dg-oi-traceable-overlay" aria-hidden="true"></div>
 	</div>
 
 	<div class="dg-oi-traceable-content" data-sr>

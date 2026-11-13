@@ -19,6 +19,8 @@
  *                                (rewrite rule, canonical redirects).
  *   - register-validation.php    Server-side validation of every register-form
  *                                field; collects all errors in one pass.
+ *   - login-validation.php       Server-side validation of every sign-in form
+ *                                field; collects all errors tagged by field.
  *   - register-handler.php       Processes the registration form submission.
  *   - dashboard.php              Hero, sidebar nav, dashboard panel, master
  *                                `dg_render_wc_account()` dispatcher, confirm modal.
@@ -60,6 +62,7 @@ require_once __DIR__ . '/register-endpoint.php';
 require_once __DIR__ . '/register-route.php';
 require_once __DIR__ . '/register-validation.php';
 require_once __DIR__ . '/register-handler.php';
+require_once __DIR__ . '/login-validation.php';
 require_once __DIR__ . '/account-details-endpoint.php';
 require_once __DIR__ . '/address-details-endpoint.php';
 require_once __DIR__ . '/dashboard.php';

@@ -79,7 +79,7 @@ if ( function_exists( 'wc_print_notices' ) ) {
 
 	<p class="dg-account-address-edit__actions">
 		<button type="submit" class="button dg-account-address-edit__save" name="save_address" value="<?php esc_attr_e( 'Save address', 'woocommerce' ); ?>">
-			<span class="material-symbols-outlined dg-account-address-edit__save-icon" aria-hidden="true">save</span>
+			<span class="material-symbols-outlined dg-account-address-edit__save-icon" aria-hidden="true">check_circle</span>
 			<span class="dg-account-address-edit__save-label"><?php esc_html_e( 'Save address', 'woocommerce' ); ?></span>
 		</button>
 		<?php wp_nonce_field( 'woocommerce-edit_address', 'woocommerce-edit-address-nonce' ); ?>

@@ -1,0 +1,523 @@
+﻿/* =========================================
+   DRAGON GLOW — WOOCOMMERCE: SHARED STYLES
+   Loaded site-wide when WooCommerce is active. Covers elements reused across
+   shop, product, cart, checkout, and account pages. Page-specific styles live
+   in the matching single-product.css, cart.css, checkout-page.css, account.css.
+   ========================================= */
+
+/* =========================================
+   1. MESSAGES & NOTICES
+   ========================================= */
+
+.woocommerce-error,
+.woocommerce-info,
+.woocommerce-message {
+	border-radius: 1rem;
+	padding: 1.25rem 1.5rem;
+	margin-bottom: 2rem;
+	border: none;
+	border-left: 4px solid;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+
+/* Error - Professional red (Tailwind red-50/600/800) */
+.woocommerce-error {
+	background-color: #FEF2F2;
+	border-left-color: #DC2626;
+	color: #991B1B;
+}
+
+.woocommerce-error::before {
+	content: "⚠";
+	color: #DC2626;
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1;
+	flex-shrink: 0;
+	align-self: flex-start;
+}
+
+/* Error list items - stack vertically */
+.woocommerce-error ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.woocommerce-error li {
+	padding: 0;
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* Info - Professional blue (Tailwind blue-50/600/800) */
+.woocommerce-info,
+.woocommerce-message {
+	background-color: #EFF6FF;
+	border-left-color: #2563EB;
+	color: #1E40AF;
+}
+
+.woocommerce-info::before,
+.woocommerce-message::before {
+	content: "ℹ";
+	color: #2563EB;
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+/* =========================================
+   2. PRODUCT LOOP / ARCHIVE
+   ========================================= */
+
+.woocommerce ul.products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .woocommerce ul.products {
+        grid-template-columns: 1fr;
+    }
+}
+
+.woocommerce ul.products li.product {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+    position: relative;
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #1b1c1a;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+
+.woocommerce ul.products li.product a img {
+    margin-bottom: 0;
+    border-radius: 1rem;
+}
+
+.woocommerce ul.products li.product .price {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+}
+
+.woocommerce ul.products li.product .price del {
+    color: #827473;
+    opacity: 0.6;
+}
+
+.woocommerce ul.products li.product .price ins {
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.woocommerce ul.products li.product a.button {
+    display: none; /* We use custom Quick Add button */
+}
+
+/* =========================================
+   3. SHOP / ARCHIVE BREADCRUMB
+   ========================================= */
+
+.woocommerce .woocommerce-breadcrumb {
+    font-size: 0.75rem;
+    color: #504444;
+    margin-bottom: 1rem;
+}
+
+.woocommerce .woocommerce-breadcrumb a {
+    color: var(--color-primary);
+}
+
+.woocommerce .woocommerce-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   4. SALE FLASH
+   ========================================= */
+
+.woocommerce span.onsale {
+    background: #f1ca50;
+    color: #6b5500;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    min-width: auto;
+    min-height: auto;
+    line-height: 1;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+}
+
+/* =========================================
+   5. FORM INPUTS
+   ========================================= */
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d4c2c2;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    font-size: 1rem;
+    color: #1b1c1a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.woocommerce form .form-row input.input-text:focus,
+.woocommerce form .form-row textarea:focus,
+.woocommerce form .form-row select:focus {
+	border-color: #FFC107;
+	box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+	outline: none;
+}
+
+/* Browser autofill override — keep theme colors instead of yellow autofill tint */
+.woocommerce form .form-row input.input-text:-webkit-autofill,
+.woocommerce form .form-row input.input-text:-webkit-autofill:hover,
+.woocommerce form .form-row input.input-text:-webkit-autofill:focus,
+.woocommerce .coupon input.input-text:-webkit-autofill,
+.woocommerce .coupon input.input-text:-webkit-autofill:hover,
+.woocommerce .coupon input.input-text:-webkit-autofill:focus {
+	-webkit-text-fill-color: #1b1c1a;
+	caret-color: #1b1c1a;
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+
+.woocommerce form .form-row label {
+    color: #504444;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   6. ORDER DETAILS
+   ========================================= */
+
+.woocommerce table.order_details {
+    border: none;
+}
+
+.woocommerce table.order_details th,
+.woocommerce table.order_details td {
+    border-bottom: 1px solid #e4e2de;
+    padding: 1rem;
+}
+
+/* =========================================
+   7. COUPON
+   ========================================= */
+
+.woocommerce .coupon {
+    margin-bottom: 1.5rem;
+}
+
+.woocommerce .coupon input.input-text {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d4c2c2;
+    border-radius: 0.75rem;
+    min-width: 200px;
+}
+
+/* =========================================
+   8. PAGINATION
+   ========================================= */
+
+.woocommerce nav.woocommerce-pagination ul {
+    border: none;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.woocommerce nav.woocommerce-pagination ul li {
+    border: none;
+    margin: 0;
+    padding: 0;
+    float: none;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a,
+.woocommerce nav.woocommerce-pagination ul li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid #d4c2c2;
+    color: #504444;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a:hover,
+.woocommerce nav.woocommerce-pagination ul li span.current {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
+/* =========================================
+   9. SELECT2 DROPDOWN MENU
+   Appended to <body> by WooCommerce country-select; reused on checkout,
+   cart shipping calculator, and account edit-address country/state fields.
+   ========================================= */
+
+/* ── Select2 dropdown menu ── */
+.select2-container--default .select2-dropdown {
+    border: 1px solid #d0c5af !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    margin-top: 0.25rem !important;
+    overflow: hidden !important;
+}
+
+.select2-container--default .select2-search--dropdown {
+    padding: 0.75rem !important;
+    background: #f6f3f2 !important;
+    border-bottom: 1px solid #d0c5af !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #d0c5af !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9375rem !important;
+    color: #1c1b1b !important;
+    outline: none !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+	border-color: #FFC107 !important;
+	box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.15) !important;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9375rem !important;
+    color: #1c1b1b !important;
+    transition: background-color 0.15s, color 0.15s !important;
+}
+
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #f6f3f2 !important;
+    color: var(--gold-dark) !important;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: #ffe088 !important;
+    color: #554300 !important;
+    font-weight: 500 !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true]:not(.select2-results__option--highlighted) {
+    background-color: #ffe088 !important;
+    color: #554300 !important;
+}
+
+/* ── Select2 search field placeholder ── */
+.select2-container--default .select2-search--dropdown .select2-search__field::placeholder {
+    color: #a8998b !important;
+    opacity: 0.6 !important;
+    font-style: italic !important;
+}
+
+/* ── Select2 "no results" message ── */
+.select2-container--default .select2-results__option--disabled {
+    color: #827473 !important;
+    font-style: italic !important;
+}
+
+/* =========================================
+   WISHLIST HEART TOGGLE
+   Universal save-to-wishlist button rendered on every product surface:
+   shop grid, single product gallery, related products. Position is owned
+   by Tailwind utilities on the button itself (e.g. `absolute top-4
+   right-4 z-20`) so the parent layout decides where the heart lives —
+   this block only owns the visual.
+   Backing handler: assets/js/lib/wishlist-toggle.js (delegated click).
+   ========================================= */
+.dg-wishlist-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border-radius: 9999px;
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	background-color: rgba(255, 255, 255, 0.78);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	color: var(--color-on-surface-variant, #4d4635);
+	box-shadow: var(--wc-input-shadow);
+	cursor: pointer;
+	transition:
+		transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+		box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+	-webkit-tap-highlight-color: transparent;
+}
+
+.dg-wishlist-toggle .material-symbols-outlined {
+	font-size: 1.125rem;
+	line-height: 1;
+	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+	transition: font-variation-settings 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover — subtle lift + warm tint, signals interactivity */
+.dg-wishlist-toggle:hover {
+	transform: scale(1.08);
+	background-color: rgba(255, 255, 255, 0.92);
+	box-shadow: var(--wc-input-shadow-focus);
+}
+
+/* Focus ring for keyboard users (CLAUDE.md §8) */
+.dg-wishlist-toggle:focus-visible {
+	outline: 2px solid var(--color-primary, var(--gold-dark));
+	outline-offset: 2px;
+}
+
+/* Active (saved) — filled heart in error color, slightly stronger surface.
+   Mirrors the wishlist page's `dg-wishlist-card__heart.is-active` so the
+   visual language stays consistent everywhere a heart can live. */
+.dg-wishlist-toggle.is-active {
+	background-color: rgba(255, 255, 255, 0.95);
+	color: var(--color-error, #ba1a1a);
+	border-color: rgba(186, 26, 26, 0.18);
+}
+
+.dg-wishlist-toggle.is-active .material-symbols-outlined {
+	font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.dg-wishlist-toggle.is-active:hover {
+	background-color: var(--color-error-container, #ffdad6);
+	color: var(--color-on-error-container, #93000a);
+	border-color: transparent;
+}
+
+/* In-flight AJAX — dim for visual feedback. We deliberately do NOT set
+   `pointer-events: none` here. The heart sits at z-index 20 above the
+   `.dg-product-stretched-link` (z-index 1), so rapid repeat clicks would
+   otherwise pass through the dimmed button and hit the stretched anchor
+   beneath — navigating away to the product page mid-toggle. The JS
+   handler short-circuits on `is-busy` instead, keeping the heart
+   clickable while ignoring re-entrant clicks. */
+.dg-wishlist-toggle.is-busy {
+	opacity: 0.75;
+}
+
+/* Reduced motion — drop the lift/scale animations but keep the color
+   change so state is still legible (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-wishlist-toggle,
+	.dg-wishlist-toggle .material-symbols-outlined {
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+	.dg-wishlist-toggle:hover {
+		transform: none;
+	}
+}
+
+/* =========================================
+   WISHLIST COUNT BADGE (header nav)
+   Sits on top of the heart icon in the global nav. Painted by
+   `dg_render_wishlist_count_badge()` in PHP and refreshed from JS via
+   `applyBadgeCount(count)` in lib/wishlist-toggle.js — both paths share
+   the same `.dg-wishlist-count` selector so a single CSS block governs
+   the look + the change-detection animation.
+
+   Animation strategy — chosen for **perceived speed**:
+   - Subtle scale + ring pulse fires when JS adds the `is-pulse` class
+     (toggled every time the count changes). Uses `animation` (not
+     `transition`) so it restarts cleanly even if the class is added
+     twice in a row.
+   - First appearance (`hidden → visible`) gets a stronger entrance so
+     users notice the badge for the first time.
+   - Reduced-motion users get no animation, just an instant color flash.
+   ========================================= */
+.dg-wishlist-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 0 0 2px var(--color-surface, #fbf9f5),
+		var(--wc-tabs-shadow);
+	transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.dg-wishlist-count.is-pulse {
+	animation: dgWishlistBadgePop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dg-wishlist-count.is-first-show {
+	animation: dgWishlistBadgeFirstShow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes dgWishlistBadgePop {
+	0%   { transform: scale(1); }
+	35%  { transform: scale(1.35); }
+	60%  { transform: scale(0.94); }
+	100% { transform: scale(1); }
+}
+
+@keyframes dgWishlistBadgeFirstShow {
+	0%   { transform: scale(0); opacity: 0; }
+	60%  { transform: scale(1.45); opacity: 1; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+/* Reduced motion — disable all badge animations (CLAUDE.md §8). */
+@media (prefers-reduced-motion: reduce) {
+	.dg-wishlist-count.is-pulse,
+	.dg-wishlist-count.is-first-show {
+		animation: none;
+	}
+}
+

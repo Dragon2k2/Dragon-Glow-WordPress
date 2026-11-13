@@ -39,6 +39,17 @@
 	var FIRST_SHOW_CLASS = 'is-first-show';
 
 	/**
+	 * Last known cart count.
+	 *
+	 * Kept in memory so `bump()` does not have to read the DOM: the badge
+	 * element may be hidden, replaced by a fragment refresh, or absent on
+	 * pages that render no cart badge at all. `null` means "not known yet".
+	 *
+	 * @type {number|null}
+	 */
+	var lastCount = null;
+
+	/**
 	 * Remove any pending animation class, force a reflow, then add the given
 	 * one so the CSS animation restarts cleanly even on rapid repeat changes.
 	 *
@@ -109,6 +120,8 @@
 			total = 0;
 		}
 
+		lastCount = total;
+
 		syncAriaLabels(total);
 
 		// Keep the combined badge on the menu toggle in sync. The toggle
@@ -147,11 +160,15 @@
 	/**
 	 * Optimistically adjust every badge by a signed delta.
 	 *
-	 * Used by the wishlist "add all to bag" flow, which knows the delta
+	 * Used by the optimistic quick-add flow (assets/js/quick-add-to-cart.js)
+	 * and by the wishlist "add all to bag" flow, which both know the delta
 	 * before the server confirms. The optimistic value is painted WITH the
 	 * animation so the user gets instant feedback; the follow-up
 	 * `DGCart.refreshCount()` then reconciles against the server and stays
 	 * silent (the value already matches, so nothing re-animates).
+	 *
+	 * The current value is read from the in-memory counter when available,
+	 * falling back to the DOM for the very first call before any `paint()`.
 	 *
 	 * @param {number} by Signed integer — positive to add, negative to subtract.
 	 * @return {void}
@@ -162,12 +179,15 @@
 			return;
 		}
 
-		var badges = document.querySelectorAll('.dg-cart-count');
-		if (!badges.length) {
-			return;
+		var current = lastCount;
+		if (current === null) {
+			var badges = document.querySelectorAll('.dg-cart-count');
+			if (!badges.length) {
+				return;
+			}
+			current = parseInt(badges[0].textContent, 10) || 0;
 		}
 
-		var current = parseInt(badges[0].textContent, 10) || 0;
 		var next = current + delta;
 		if (next < 0) {
 			next = 0;

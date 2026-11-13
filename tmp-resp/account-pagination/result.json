@@ -1,0 +1,386 @@
+﻿{
+  "320": {
+    "viewport": 320,
+    "docScrollWidth": 320,
+    "bodyScrollWidth": 320,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 279,
+      "width": 238
+    },
+    "numbersWidth": 238,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 229,
+      "height": 45,
+      "width": 113
+    },
+    "nextRect": {
+      "top": 229,
+      "height": 45,
+      "width": 113
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "360": {
+    "viewport": 360,
+    "docScrollWidth": 360,
+    "bodyScrollWidth": 360,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 319,
+      "width": 278
+    },
+    "numbersWidth": 278,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 224.27200317382812,
+      "height": 45,
+      "width": 133
+    },
+    "nextRect": {
+      "top": 224.27200317382812,
+      "height": 45,
+      "width": 133
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "390": {
+    "viewport": 390,
+    "docScrollWidth": 390,
+    "bodyScrollWidth": 390,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 349,
+      "width": 308
+    },
+    "numbersWidth": 308,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 182.27059936523438,
+      "height": 45,
+      "width": 148
+    },
+    "nextRect": {
+      "top": 182.27059936523438,
+      "height": 45,
+      "width": 148
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "480": {
+    "viewport": 480,
+    "docScrollWidth": 480,
+    "bodyScrollWidth": 480,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 439,
+      "width": 398
+    },
+    "numbersWidth": 398,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 182.6727294921875,
+      "height": 45,
+      "width": 193
+    },
+    "nextRect": {
+      "top": 182.6727294921875,
+      "height": 45,
+      "width": 193
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "639": {
+    "viewport": 639,
+    "docScrollWidth": 639,
+    "bodyScrollWidth": 639,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 598,
+      "width": 557
+    },
+    "numbersWidth": 557,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 184.22067260742188,
+      "height": 45.00001525878906,
+      "width": 272.5
+    },
+    "nextRect": {
+      "top": 184.22067260742188,
+      "height": 45.00001525878906,
+      "width": 272.5
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45.00001525878906,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "640": {
+    "viewport": 640,
+    "docScrollWidth": 640,
+    "bodyScrollWidth": 640,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 41,
+      "right": 599,
+      "width": 558
+    },
+    "numbersWidth": 558,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "…",
+      "5",
+      "6",
+      "7",
+      "…",
+      "12"
+    ],
+    "visiblePillCount": 7,
+    "hiddenPillCount": 7,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 184.27114868164062,
+      "height": 45,
+      "width": 273
+    },
+    "nextRect": {
+      "top": 184.27114868164062,
+      "height": 45,
+      "width": 273
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 45,
+    "touchTargetOk": true,
+    "numbersDisplay": "flex",
+    "numbersWrap": "wrap",
+    "errors": []
+  },
+  "768": {
+    "viewport": 768,
+    "docScrollWidth": 768,
+    "bodyScrollWidth": 768,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 88.03125,
+      "right": 679.96875,
+      "width": 591.9375
+    },
+    "numbersWidth": 529.703125,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12"
+    ],
+    "visiblePillCount": 12,
+    "hiddenPillCount": 2,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 152.81362915039062,
+      "height": 35.1875,
+      "width": 82.703125
+    },
+    "nextRect": {
+      "top": 248.00111389160156,
+      "height": 35.18748474121094,
+      "width": 58.015625
+    },
+    "prevNextSameRow": false,
+    "prevHeight": 35.1875,
+    "touchTargetOk": false,
+    "numbersDisplay": "flex",
+    "numbersWrap": "nowrap",
+    "errors": []
+  },
+  "1024": {
+    "viewport": 1024,
+    "docScrollWidth": 1024,
+    "bodyScrollWidth": 1024,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 407.71875,
+      "right": 928.28125,
+      "width": 520.5625
+    },
+    "numbersWidth": 529.703125,
+    "numbersOverflowsPanel": true,
+    "visiblePillText": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12"
+    ],
+    "visiblePillCount": 12,
+    "hiddenPillCount": 2,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 158.17828369140625,
+      "height": 35.1875,
+      "width": 82.703125
+    },
+    "nextRect": {
+      "top": 253.3657989501953,
+      "height": 35.18748474121094,
+      "width": 58.015625
+    },
+    "prevNextSameRow": false,
+    "prevHeight": 35.1875,
+    "touchTargetOk": false,
+    "numbersDisplay": "flex",
+    "numbersWrap": "nowrap",
+    "errors": []
+  },
+  "1280": {
+    "viewport": 1280,
+    "docScrollWidth": 1280,
+    "bodyScrollWidth": 1280,
+    "horizontalOverflow": false,
+    "navRect": {
+      "left": 409,
+      "right": 1183,
+      "width": 774
+    },
+    "numbersWidth": 529.703125,
+    "numbersOverflowsPanel": false,
+    "visiblePillText": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12"
+    ],
+    "visiblePillCount": 12,
+    "hiddenPillCount": 2,
+    "pagFlexDirection": "row",
+    "prevRect": {
+      "top": 173.08233642578125,
+      "height": 35.1875,
+      "width": 82.703125
+    },
+    "nextRect": {
+      "top": 173.08233642578125,
+      "height": 35.1875,
+      "width": 58.015625
+    },
+    "prevNextSameRow": true,
+    "prevHeight": 35.1875,
+    "touchTargetOk": false,
+    "numbersDisplay": "flex",
+    "numbersWrap": "nowrap",
+    "errors": []
+  }
+}

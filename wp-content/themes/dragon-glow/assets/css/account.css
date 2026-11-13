@@ -54,9 +54,17 @@
 }
 
 .dg-account__sidebar {
-	position: sticky;
-	top: 96px;
 	align-self: start;
+}
+
+/* Sticky only on desktop (>=1024px), where the sidebar is a separate column.
+   Below that the layout is single-column and the nav collapses into a toggle,
+   so it must scroll with the page instead of following the viewport. */
+@media (min-width: 1024px) {
+	.dg-account__sidebar {
+		position: sticky;
+		top: 96px;
+	}
 }
 
 /* =========================================
@@ -796,34 +804,253 @@
 	color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
+/* Tablet + desktop shared (>= 641px): card surface, hover, icon tile.
+   Mobile (<= 640px) defines its own card further below. */
+@media (min-width: 641px) {
 	.dg-account-order {
-		grid-template-columns: 1fr auto;
-		grid-template-rows: auto auto;
-		row-gap: 8px;
+		padding: var(--account-order-row-padding-desktop);
+		background: var(--account-order-row-bg);
+		border-color: var(--account-order-row-border);
+		border-radius: var(--account-order-row-radius);
+		box-shadow: var(--account-order-row-shadow);
+		transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 	}
-	.dg-account-order__total {
-		grid-column: 2;
-		grid-row: 1;
+
+	.dg-account-order:hover,
+	.dg-account-order:focus-within {
+		transform: translateY(-2px);
+		background: var(--account-order-row-hover-bg);
+		border-color: var(--account-order-row-hover-border);
+		box-shadow: var(--account-order-row-hover-shadow);
 	}
-	.dg-account-order__status {
-		grid-column: 1;
-		grid-row: 2;
-		justify-self: start;
+
+	.dg-account-order__id .material-symbols-outlined {
+		flex: 0 0 auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--account-order-row-icon-size);
+		height: var(--account-order-row-icon-size);
+		border-radius: 12px;
+		background: var(--account-order-row-icon-bg);
+		font-size: 22px;
 	}
+
+	/* Text wrapper inside __id — must be shrinkable for the ellipsis to apply. */
+	.dg-account-order__id > div {
+		min-width: 0;
+	}
+
+	.dg-account-order__num {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
 	.dg-account-order__action {
-		grid-column: 2;
-		grid-row: 2;
-		justify-self: end;
+		min-height: var(--account-order-row-action-min-height);
+		padding: 0 4px 0 12px;
+		border-radius: 999px;
+	}
+
+	.dg-account-order__action:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
 	}
 }
 
-@media (max-width: 480px) {
-	.dg-account-order__total {
+/* Tablet (641-1279px): two-row card — header (icon + number/date + total),
+   hairline divider, footer (status + View). Content column is 523-776px wide
+   next to the sidebar, so a single row would not fit. */
+@media (min-width: 641px) and (max-width: 1279px) {
+	.dg-account-order {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto auto auto;
+		gap: var(--account-order-row-gap) 16px;
+		padding: var(--account-order-row-padding-tablet);
+	}
+
+	.dg-account-order::before {
+		content: "";
+		grid-column: 1 / -1;
+		grid-row: 2;
+		height: 1px;
+		background: var(--account-order-row-divider);
+	}
+
+	.dg-account-order__id {
+		grid-column: 1;
+		grid-row: 1;
+		gap: 14px;
+	}
+
+	.dg-account-order__num {
+		font-size: var(--account-order-row-num-size-tablet);
+	}
+
+	.dg-account-order__date {
 		font-size: 13px;
 	}
+
+	.dg-account-order__total {
+		grid-column: 2;
+		grid-row: 1;
+		font-size: var(--account-order-row-total-size-tablet);
+	}
+
+	.dg-account-order__status {
+		grid-column: 1;
+		grid-row: 3;
+		justify-self: start;
+	}
+
 	.dg-account-order__action {
+		grid-column: 2;
+		grid-row: 3;
+		justify-self: end;
+		margin-right: -4px;
+		font-size: 14px;
+	}
+}
+
+/* Desktop (>= 1280px): one row with fixed trailing tracks, so Total / Status /
+   View line up vertically across every order regardless of content width. */
+@media (min-width: 1280px) {
+	.dg-account-order {
+		grid-template-columns:
+			minmax(0, 1fr)
+			var(--account-order-col-total)
+			var(--account-order-col-status)
+			var(--account-order-col-action);
+		column-gap: var(--account-order-row-gap-desktop);
+	}
+
+	.dg-account-order__id {
+		gap: 16px;
+	}
+
+	.dg-account-order__num {
+		font-size: 15px;
+	}
+
+	.dg-account-order__total {
+		font-size: var(--account-order-row-total-size-desktop);
+	}
+
+	.dg-account-order__status {
+		justify-self: start;
+	}
+
+	.dg-account-order__action {
+		justify-self: end;
+		margin-right: -4px;
+	}
+}
+
+@media (min-width: 641px) and (prefers-reduced-motion: reduce) {
+	.dg-account-order,
+	.dg-account-order:hover,
+	.dg-account-order:focus-within {
+		transition: none;
+		transform: none;
+	}
+}
+
+/* Mobile (<= 640px): each order becomes a two-row card.
+   Row 1 = icon tile + order number/date + total.
+   Row 2 = hairline divider (::before), row 3 = status pill + View link.
+   Tablet and desktop are handled by the blocks above. */
+@media (max-width: 640px) {
+	.dg-account-orders {
+		gap: 12px;
+	}
+
+	.dg-account-order {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto auto auto;
+		gap: var(--account-order-row-gap) 12px;
+		padding: var(--account-order-row-padding);
+		background: var(--account-order-row-bg);
+		border-color: var(--account-order-row-border);
+		border-radius: var(--account-order-row-radius);
+		box-shadow: var(--account-order-row-shadow);
+	}
+
+	/* Touch devices keep :hover after a tap — no lift on mobile. */
+	.dg-account-order:hover {
+		transform: none;
+		box-shadow: var(--account-order-row-shadow);
+	}
+
+	/* Divider between header and footer rows. */
+	.dg-account-order::before {
+		content: "";
+		grid-column: 1 / -1;
+		grid-row: 2;
+		height: 1px;
+		background: var(--account-order-row-divider);
+	}
+
+	.dg-account-order__id {
+		grid-column: 1;
+		grid-row: 1;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.dg-account-order__id .material-symbols-outlined {
+		flex: 0 0 auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--account-order-row-icon-size);
+		height: var(--account-order-row-icon-size);
+		border-radius: 12px;
+		background: var(--account-order-row-icon-bg);
+		font-size: 22px;
+	}
+
+	.dg-account-order__num {
+		font-size: 15px;
+		line-height: 1.3;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.dg-account-order__date {
+		margin-top: 2px;
 		font-size: 12px;
+		line-height: 1.3;
+	}
+
+	.dg-account-order__total {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: center;
+		font-size: var(--account-order-row-total-size);
+	}
+
+	.dg-account-order__status {
+		grid-column: 1;
+		grid-row: 3;
+		justify-self: start;
+		align-self: center;
+	}
+
+	.dg-account-order__action {
+		grid-column: 2;
+		grid-row: 3;
+		justify-self: end;
+		align-self: center;
+		min-height: var(--account-order-row-action-min-height);
+		padding: 0 4px 0 12px;
+		margin-right: -4px;
+		font-size: 13px;
+	}
+
+	.dg-account-order__action:hover {
+		gap: 2px;
 	}
 }
 
@@ -1246,6 +1473,10 @@
 	vertical-align: middle !important;
 }
 
+/* The Order cell is a `<th scope="row">` in WooCommerce, so `td:first-child`
+   never matches (the first child of the row is the `<th>`). Kept as-is so
+   desktop keeps its exact current styling — the mobile block below resets
+   the Date cell explicitly. */
 .dg-account-panel .woocommerce-orders-table tbody td:first-child {
 	padding-left: 24px;
 	font-weight: 600;
@@ -1397,7 +1628,13 @@
 .dg-account-panel .woocommerce-pagination__numbers {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 8px;
+	/* Never overflow the column: with a very long order history the list can
+	   exceed the panel width, so it wraps onto a second line instead of
+	   pushing the page sideways. */
+	flex-wrap: wrap;
+	min-width: 0;
 }
 
 /* Page number links */
@@ -1435,15 +1672,178 @@
 	pointer-events: none;
 }
 
-/* Responsive: Stack pagination on mobile */
-@media (max-width: 640px) {
+/* Ellipsis markers — placeholders for the collapsed page windows.
+   One marker per gap per window. The `wide` set is shown on desktop, the
+   `compact` set below 1280px; exactly one is visible per breakpoint. */
+.dg-account-panel .woocommerce-pagination__numbers .dg-account-pagination__ellipsis {
+	display: none;
+}
+
+/* Ellipsis marker — shared look for both windows. */
+.dg-account-panel .woocommerce-pagination__numbers .dg-account-pagination__ellipsis {
+	align-items: center;
+	justify-content: center;
+	min-width: var(--account-pagination-ellipsis-min);
+	height: var(--account-pagination-pill-height);
+	padding: 0 2px;
+	background: transparent;
+	color: var(--account-pagination-ellipsis-color);
+	font-size: var(--account-pagination-ellipsis-font);
+	line-height: 1;
+	letter-spacing: 2px;
+	user-select: none;
+	pointer-events: none;
+}
+
+/* Responsive: Pagination — compact layout (mobile + tablet)
+   ---------------------------------------------------------------------------
+   The Orders panel renders one link per page inside a single row. With 12+
+   pages that row is ~530px wide, and together with the Previous/Next buttons
+   it needs ~695px. Below 1280px the content column cannot provide that
+   (523px at 1024px once the 280px sidebar appears, ~561px at 641px), so the
+   row either wrapped into 2-3 ragged lines or overflowed the panel.
+
+   Two layers keep it inside the column:
+     1. Markup (see woocommerce/myaccount/orders.php) tags every page that
+        falls outside the viewport's window — `data-dg-page-out-compact` for
+        the compact window (current ±1), `data-dg-page-out-wide` for the wide
+        window (current ±2) — and emits one ellipsis marker per collapsed
+        gap (`data-dg-page-ellipsis="compact"` / `="wide"`).
+     2. This stylesheet hides the tagged pages and reveals the `compact`
+        ellipsis, so the row only ever shows: first … current ±1 … last.
+
+   From 1280px up the column is 776px wide and the wider desktop window
+   takes over (see the `@media (min-width: 1280px)` block below).
+   --------------------------------------------------------------------------- */
+@media (max-width: 1279px) {
+	/* Keep the whole control on ONE line. Without `nowrap` the Previous /
+	   Next buttons fall onto their own lines once the row is wider than the
+	   column, which reads as a broken layout. The compact window keeps the
+	   row narrow enough to fit (≈447px at the 641px breakpoint). */
 	.dg-account-panel .woocommerce-pagination {
-		flex-direction: column;
-		gap: 16px;
+		flex-wrap: nowrap;
+		gap: var(--account-pagination-gap);
 	}
 
 	.dg-account-panel .woocommerce-pagination__numbers {
+		flex-wrap: nowrap;
+		flex-shrink: 1;
+		min-width: 0;
+	}
+
+	/* Collapsed pages are hidden; the ellipsis takes their place. */
+	.dg-account-panel .woocommerce-pagination__numbers [data-dg-page-out-compact],
+	.dg-account-panel .woocommerce-pagination__numbers [data-dg-page-out-wide] {
+		display: none;
+	}
+
+	.dg-account-panel .woocommerce-pagination__numbers .dg-account-pagination__ellipsis[data-dg-page-ellipsis='compact'] {
+		display: inline-flex;
+	}
+}
+
+/* Responsive: Pagination — desktop window (>= 1280px)
+   ---------------------------------------------------------------------------
+   Desktop has room for more page numbers (the content column is 776px wide),
+   so it uses the wider window: first … current ±2 … last.
+
+   The desktop window collapses the middle of a long list behind an ellipsis
+   just like WooCommerce core's `paginate_links()` does — a customer with 12
+   order pages sees "1 2 3 … 12", not twelve separate pills. Listing every
+   page is only acceptable while the list still fits the row, which the
+   `$total <= 5` guard inside dg_account_orders_page_window() covers.
+
+   Without this, a customer with a long order history pushed the row over the
+   edge: the Previous button stayed on line 1, the page numbers wrapped over
+   several lines, and the Next button dropped onto the last line — the
+   control read as broken. Collapsing the middle keeps every viewport on a
+   single line.
+   --------------------------------------------------------------------------- */
+@media (min-width: 1280px) {
+	.dg-account-panel .woocommerce-pagination {
+		flex-wrap: nowrap;
+		gap: var(--account-pagination-gap);
+	}
+
+	.dg-account-panel .woocommerce-pagination__numbers {
+		flex-wrap: nowrap;
+		flex-shrink: 1;
+		min-width: 0;
+	}
+
+	/* Pages outside the wide window stay hidden; the wide ellipsis marker
+	   takes their place. */
+	.dg-account-panel .woocommerce-pagination__numbers [data-dg-page-out-wide] {
+		display: none;
+	}
+
+	.dg-account-panel .woocommerce-pagination__numbers .dg-account-pagination__ellipsis[data-dg-page-ellipsis='wide'] {
+		display: inline-flex;
+	}
+}
+
+/* Responsive: Pagination on mobile (<= 640px)
+   ---------------------------------------------------------------------------
+   Grid layout: the page numbers take the full first row, the Previous and
+   Next buttons share the second row (one column each).
+
+   Grid — rather than flex column — is what puts the two buttons side by
+   side without needing an extra wrapper element in the markup.
+   --------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+	.dg-account-panel .woocommerce-pagination {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: center;
+		gap: 12px;
+	}
+
+	/* Page numbers sit on their own row above the Prev/Next buttons. */
+	.dg-account-panel .woocommerce-pagination__numbers {
+		grid-column: 1 / -1;
 		order: -1;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		gap: var(--account-pagination-gap);
+		max-width: 100%;
+	}
+
+	/* Pills shrink a little on phones so five of them plus the ellipsis
+	   still fit on one row at 320px. */
+	.dg-account-panel .woocommerce-pagination .page-numbers {
+		min-width: var(--account-pagination-pill-min);
+		height: var(--account-pagination-pill-height);
+		padding: 0 10px;
+		font-size: var(--account-pagination-pill-font);
+	}
+
+	/* Prev/Next share the second row — each button fills its column.
+	   The min-height keeps the touch target above the 44px WCAG 2.5.5
+	   minimum; the extra 1px covers sub-pixel rounding at odd viewport
+	   widths (43.99px measured at 390px). */
+	.dg-account-panel .woocommerce-pagination .woocommerce-button {
+		grid-row: 2;
+		justify-content: center;
+		min-height: 45px;
+		min-width: 0;
+	}
+
+	.dg-account-panel .woocommerce-pagination .woocommerce-button--previous {
+		grid-column: 1;
+	}
+
+	.dg-account-panel .woocommerce-pagination .woocommerce-button--next {
+		grid-column: 2;
+	}
+
+	/* At the first/last page one of the two buttons is absent. Let the
+	   remaining button span the full row instead of leaving a gap.
+	   Browsers without :has() keep the half-width button — still usable. */
+	.dg-account-panel .woocommerce-pagination:not(:has(.woocommerce-button--previous)) .woocommerce-button--next,
+	.dg-account-panel .woocommerce-pagination:not(:has(.woocommerce-button--next)) .woocommerce-button--previous {
+		grid-column: 1 / -1;
 	}
 }
 
@@ -1455,10 +1855,48 @@
 	font-size: 14px;
 }
 
-/* Responsive: Mobile stacked cards */
+/* Responsive: Stacked order cards — tablet + mobile (<= 768px)
+   ---------------------------------------------------------------------------
+   The Orders table has five columns. Below 768px it becomes one card per
+   order instead.
+
+   The Order column is rendered by WooCommerce as `<th scope="row">`, not
+   `<td>`. The previous rule set only targeted `tbody td`, so the Order
+   cell stayed a `table-cell` — it kept table padding, had no label and no
+   flex layout, and sat on its own line above the other four cells while
+   they stacked below it. The table read as broken.
+
+   The same rule set now targets `tbody th` and `tbody td` together:
+
+     - The Order cell becomes the card header (number left, badge right).
+     - Every other cell becomes a label/value row; the label comes from
+       `data-title` via `::before`.
+     - The View button fills the card footer on mobile (<= 640px); on tablet
+       it shrinks to fit the button text.
+
+   `thead` is visually hidden rather than `display: none`, so a screen
+   reader still announces the column names.
+   --------------------------------------------------------------------------- */
 @media (max-width: 768px) {
+	.dg-account-panel .woocommerce-orders-table {
+		display: block;
+		width: 100%;
+	}
+
+	/* The column headers stay in the accessibility tree (visually hidden
+	   instead of `display: none`), so a screen reader still announces
+	   "Order / Date / Status / Total / Actions" as the table header. */
 	.dg-account-panel .woocommerce-orders-table thead {
-		display: none;
+		display: block;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
 	}
 
 	.dg-account-panel .woocommerce-orders-table tbody,
@@ -1467,29 +1905,61 @@
 	}
 
 	.dg-account-panel .woocommerce-orders-table tbody tr {
-		margin-bottom: 16px;
-		border-radius: 16px;
+		margin-bottom: 14px;
+		border-radius: var(--account-orders-card-radius);
 		overflow: hidden;
-		border: 1px solid var(--color-outline-variant);
+		border: 1px solid var(--account-orders-card-border);
+		background: var(--account-orders-card-bg);
+		box-shadow: var(--account-orders-card-shadow);
 	}
 
-	.dg-account-panel .woocommerce-orders-table tbody td {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 14px 20px;
-		border-bottom: 1px solid var(--wl-chip-bg);
-		text-align: right;
+	.dg-account-panel .woocommerce-orders-table tbody tr:last-child {
+		margin-bottom: 0;
 	}
 
+	/* Every cell — `<th>` and `<td>` alike — becomes one label/value row.
+	   `!important` is required because the desktop rules above set padding
+	   and border with `!important`. `td:first-child` / `td:last-child` are
+	   re-declared with the same specificity so the structural rules cannot
+	   leak their padding into the card. */
+	.dg-account-panel .woocommerce-orders-table tbody th,
+	.dg-account-panel .woocommerce-orders-table tbody td,
 	.dg-account-panel .woocommerce-orders-table tbody td:first-child,
 	.dg-account-panel .woocommerce-orders-table tbody td:last-child {
-		padding: 14px 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		min-height: var(--account-orders-cell-min-height);
+		padding: 12px 16px !important;
+		border-bottom: 1px solid var(--account-orders-cell-divider) !important;
 		text-align: right;
+		color: var(--color-on-surface) !important;
+		font-size: 14px;
 	}
 
+	/* The Order cell is the card header: number on the left, badge on the
+	   right, separated from the rows below by a stronger rule. */
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number {
+		justify-content: flex-start;
+		gap: 12px;
+		padding: 16px !important;
+		background: var(--account-orders-card-header-bg) !important;
+		border-bottom: 1px solid var(--account-orders-card-header-divider) !important;
+		font-weight: 700;
+		font-size: 16px;
+		text-align: left;
+	}
+
+	/* The Order cell has no label — its content is self-describing. */
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number::before {
+		content: none;
+	}
+
+	/* Label shown on the left of every value row. */
 	.dg-account-panel .woocommerce-orders-table tbody td::before {
 		content: attr(data-title);
+		flex: 0 0 auto;
 		font-weight: 600;
 		font-size: 11px;
 		letter-spacing: 0.12em;
@@ -1498,14 +1968,103 @@
 		text-align: left;
 	}
 
-	.dg-account-panel .woocommerce-orders-table tbody tr:last-child td:first-child,
-	.dg-account-panel .woocommerce-orders-table tbody tr:last-child td:last-child {
-		border-radius: 0;
+	/* The value side keeps its own styling instead of inheriting the
+	   label's uppercase treatment. */
+	.dg-account-panel .woocommerce-orders-table tbody td > * {
+		min-width: 0;
+		text-align: right;
+	}
+
+	/* The desktop rules treat the first `<td>` (Date) as the leading
+	   column — bold, gold. In a card Date is a plain label/value row, so
+	   that emphasis has to go. */
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-date {
+		font-weight: 400;
+		color: var(--color-on-surface-variant);
+		font-size: 14px;
+	}
+
+	/* Actions row: the button fills the card width. */
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-actions {
+		padding: 14px 16px !important;
+	}
+
+	/* The last row of the card has no divider — the card border closes it. */
+	.dg-account-panel .woocommerce-orders-table tbody tr > *:last-child {
+		border-bottom: 0 !important;
+	}
+
+	/* Actions row: the button fills the card width on mobile (<= 640px). */
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-actions {
+		padding: 14px 16px !important;
 	}
 
 	.dg-account-panel .woocommerce-orders-table .woocommerce-button {
-		width: 100%;
+		width: fit-content;
+		min-width: 91px;
+		padding: 6px 14px;
 		justify-content: center;
+		min-height: auto;
+		font-size: 11px;
+		font-weight: 600;
+	}
+
+	/* Hover lift is a pointer affordance — it has no meaning on touch. */
+	.dg-account-panel .woocommerce-orders-table tbody tr:hover {
+		transform: none;
+		box-shadow: var(--account-orders-card-shadow);
+	}
+}
+
+/* Responsive: View button — tablet refinement (641-768px)
+   ---------------------------------------------------------------------------
+   Tablet has enough width for the button to be narrower. On tablet, the
+   Actions row uses `justify-content: space-between`, so the button aligns
+   right and matches the Status badge width (auto, not full-width). Mobile
+   keeps full-width for touch target (WCAG 2.5.5). Desktop unchanged.
+   --------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 768px) {
+	.dg-account-panel .woocommerce-orders-table .woocommerce-button {
+		width: fit-content;
+		min-width: 91px;
+		padding: 6px 14px;
+		min-height: auto;
+		font-size: 11px;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	/* Hover lift is a pointer affordance — it has no meaning on touch. */
+	.dg-account-panel .woocommerce-orders-table tbody tr:hover {
+		transform: none;
+		box-shadow: var(--account-orders-card-shadow);
+	}
+}
+
+/* Responsive: Stacked order cards — tablet refinement (641-768px)
+   ---------------------------------------------------------------------------
+   A tablet has enough width for the label and the value to sit on one
+   line with room to spare, so the label column gets a fixed width and the
+   rows breathe a little more than on a phone.
+   --------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 768px) {
+	.dg-account-panel .woocommerce-orders-table tbody td {
+		padding: 14px 24px !important;
+	}
+
+	/* The label sits in a fixed column so every value starts at the same
+	   x position — the card reads as a two-column mini table. */
+	.dg-account-panel .woocommerce-orders-table tbody td::before {
+		flex: 0 0 var(--account-orders-label-width);
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number {
+		padding: 18px 24px !important;
+		font-size: 17px;
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-actions {
+		padding: 16px 24px !important;
 	}
 }
 
@@ -2887,6 +3446,7 @@ html.dg-signout-open {
 .dg-account-address-edit__actions {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: flex-end;
 	gap: 10px;
 	margin-top: 8px;
 	padding-top: 18px;
@@ -2942,6 +3502,10 @@ html.dg-signout-open {
 @media (max-width: 640px) {
 	.dg-account-address {
 		padding: 18px;
+	}
+	/* Mobile: nút Save address căn giữa (desktop/tablet giữ căn phải). */
+	.dg-account-address-edit__actions {
+		justify-content: center;
 	}
 	.dg-account-address__title-block {
 		gap: 10px;
@@ -3539,14 +4103,14 @@ html.dg-signout-open {
 	padding-right: 40px;
 }
 
-/* Form actions — submit button */
+/* Form actions — submit button sits close under the last section (no separator), aligned right. */
 .dg-account-form__actions {
 	display: flex;
 	gap: 12px;
-	justify-content: flex-start;
-	margin-top: 32px;
-	padding-top: 32px;
-	border-top: 1px solid var(--color-outline-variant);
+	justify-content: flex-end;
+	margin-top: 0;
+	padding-top: 0;
+	border-top: none;
 }
 
 .dg-account-form__submit {
@@ -3608,11 +4172,13 @@ html.dg-signout-open {
 
 	.dg-account-form__actions {
 		flex-direction: column;
+		align-items: center;
 	}
 
 	.dg-account-form__submit {
-		width: 100%;
-		min-width: auto;
+		/* Mobile: cỡ gọn như nút Save address (hình 1) — không full-width. */
+		width: auto;
+		min-width: 0;
 	}
 }
 

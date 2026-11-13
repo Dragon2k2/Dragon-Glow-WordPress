@@ -38,7 +38,21 @@ $default_amount = $values[1]['amount'];
 			alt="<?php echo esc_attr( $preview['main_alt'] ); ?>"
 			loading="eager"
 			decoding="async"
+			role="button"
+			tabindex="0"
+			data-dg-zoom-trigger
+			aria-label="<?php esc_attr_e( 'Zoom gift card image', 'dragon-glow' ); ?>"
 		/>
+		<!-- Zoom trigger — mở lightbox xem ảnh thẻ ở kích thước đầy đủ.
+		     Parity với nút zoom của trang single product (woocommerce/content-single-product.php). -->
+		<button
+			type="button"
+			class="dg-zoom-btn absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all"
+			aria-label="<?php esc_attr_e( 'Zoom image', 'dragon-glow' ); ?>"
+			data-dg-zoom-trigger
+		>
+			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">zoom_in</span>
+		</button>
 		<span
 			class="dg-gift-card-tag"
 			data-tag-for="physical"

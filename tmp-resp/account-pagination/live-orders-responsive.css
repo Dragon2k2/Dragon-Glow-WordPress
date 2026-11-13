@@ -1,0 +1,191 @@
+
+}
+
+/* Empty state */
+.dg-account-panel .woocommerce-orders-table__empty-message {
+	text-align: center;
+	padding: 48px 24px;
+	color: var(--color-on-surface-variant);
+	font-size: 14px;
+}
+
+/* Responsive: Stacked order cards — tablet + mobile (<= 768px)
+   ---------------------------------------------------------------------------
+   The Orders table has five columns. Below 768px it becomes one card per
+   order instead.
+
+   The Order column is rendered by WooCommerce as `<th scope="row">`, not
+   `<td>`. The previous rule set only targeted `tbody td`, so the Order
+   cell stayed a `table-cell` — it kept table padding, had no label and no
+   flex layout, and sat on its own line above the other four cells while
+   they stacked below it. The table read as broken.
+
+   The same rule set now targets `tbody th` and `tbody td` together:
+
+     - The Order cell becomes the card header (number left, badge right).
+     - Every other cell becomes a label/value row; the label comes from
+       `data-title` via `::before`.
+     - The View button fills the card footer.
+
+   `thead` is visually hidden rather than `display: none`, so a screen
+   reader still announces the column names.
+   --------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+	.dg-account-panel .woocommerce-orders-table {
+		display: block;
+		width: 100%;
+	}
+
+	/* The column headers stay in the accessibility tree (visually hidden
+	   instead of `display: none`), so a screen reader still announces
+	   "Order / Date / Status / Total / Actions" as the table header. */
+	.dg-account-panel .woocommerce-orders-table thead {
+		display: block;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody,
+	.dg-account-panel .woocommerce-orders-table tbody tr {
+		display: block;
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody tr {
+		margin-bottom: 14px;
+		border-radius: var(--account-orders-card-radius);
+		overflow: hidden;
+		border: 1px solid var(--account-orders-card-border);
+		background: var(--account-orders-card-bg);
+		box-shadow: var(--account-orders-card-shadow);
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody tr:last-child {
+		margin-bottom: 0;
+	}
+
+	/* Every cell — `<th>` and `<td>` alike — becomes one label/value row.
+	   `!important` is required because the desktop rules above set padding
+	   and border with `!important`. `td:first-child` / `td:last-child` are
+	   re-declared with the same specificity so the structural rules cannot
+	   leak their padding into the card. */
+	.dg-account-panel .woocommerce-orders-table tbody th,
+	.dg-account-panel .woocommerce-orders-table tbody td,
+	.dg-account-panel .woocommerce-orders-table tbody td:first-child,
+	.dg-account-panel .woocommerce-orders-table tbody td:last-child {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		min-height: var(--account-orders-cell-min-height);
+		padding: 12px 16px !important;
+		border-bottom: 1px solid var(--account-orders-cell-divider) !important;
+		text-align: right;
+		color: var(--color-on-surface) !important;
+		font-size: 14px;
+	}
+
+	/* The Order cell is the card header: number on the left, badge on the
+	   right, separated from the rows below by a stronger rule. */
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number {
+		justify-content: flex-start;
+		gap: 12px;
+		padding: 16px !important;
+		background: var(--account-orders-card-header-bg) !important;
+		border-bottom: 1px solid var(--account-orders-card-header-divider) !important;
+		font-weight: 700;
+		font-size: 16px;
+		text-align: left;
+	}
+
+	/* The Order cell has no label — its content is self-describing. */
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number::before {
+		content: none;
+	}
+
+	/* Label shown on the left of every value row. */
+	.dg-account-panel .woocommerce-orders-table tbody td::before {
+		content: attr(data-title);
+		flex: 0 0 auto;
+		font-weight: 600;
+		font-size: 11px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-on-surface-variant);
+		text-align: left;
+	}
+
+	/* The value side keeps its own styling instead of inheriting the
+	   label's uppercase treatment. */
+	.dg-account-panel .woocommerce-orders-table tbody td > * {
+		min-width: 0;
+		text-align: right;
+	}
+
+	/* The desktop rules treat the first `<td>` (Date) as the leading
+	   column — bold, gold. In a card Date is a plain label/value row, so
+	   that emphasis has to go. */
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-date {
+		font-weight: 400;
+		color: var(--color-on-surface-variant);
+		font-size: 14px;
+	}
+
+	/* Actions row: the button fills the card width. */
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-actions {
+		padding: 14px 16px !important;
+	}
+
+	/* The last row of the card has no divider — the card border closes it. */
+	.dg-account-panel .woocommerce-orders-table tbody tr > *:last-child {
+		border-bottom: 0 !important;
+	}
+
+	.dg-account-panel .woocommerce-orders-table .woocommerce-button {
+		width: 100%;
+		justify-content: center;
+		min-height: var(--account-orders-button-min-height);
+	}
+
+	/* Hover lift is a pointer affordance — it has no meaning on touch. */
+	.dg-account-panel .woocommerce-orders-table tbody tr:hover {
+		transform: none;
+		box-shadow: var(--account-orders-card-shadow);
+	}
+}
+
+/* Responsive: Stacked order cards — tablet refinement (641-768px)
+   ---------------------------------------------------------------------------
+   A tablet has enough width for the label and the value to sit on one
+   line with room to spare, so the label column gets a fixed width and the
+   rows breathe a little more than on a phone.
+   --------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 768px) {
+	.dg-account-panel .woocommerce-orders-table tbody td {
+		padding: 14px 24px !important;
+	}
+
+	/* The label sits in a fixed column so every value starts at the same
+	   x position — the card reads as a two-column mini table. */
+	.dg-account-panel .woocommerce-orders-table tbody td::before {
+		flex: 0 0 var(--account-orders-label-width);
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody th.woocommerce-orders-table__cell-order-number {
+		padding: 18px 24px !important;
+		font-size: 17px;
+	}
+
+	.dg-account-panel .woocommerce-orders-table tbody td.woocommerce-orders-table__cell-order-actions {
+		padding: 16px 24px !important;
+	}
+}
+
+/* =========================================
+   

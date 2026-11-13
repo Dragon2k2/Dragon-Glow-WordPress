@@ -73,3 +73,16 @@
 	font-weight: 700;
 	border-bottom-color: #f1ca50;
 }
+
+/* ── Product tabs section — mobile top spacing ──
+   .mt-section-gap (Tailwind CDN, inject runtime vào <head>) đặt margin-top: 120px
+   ở mọi breakpoint. Trên mobile khoảng trống này quá lớn → ghi đè bằng giá trị nhỏ hơn.
+   Dùng ID selector (specificity 1,0,0) để thắng utility class (0,1,0) của Tailwind,
+   vì Tailwind CDN nạp sau cùng các file CSS của theme.
+   Breakpoint 768px khớp với product.js (window.innerWidth < 768 = mobile),
+   nên tablet (≥768px) và desktop giữ nguyên 120px như thiết kế. */
+@media (max-width: 767px) {
+	#product-tabs {
+		margin-top: var(--product-tabs-gap-mobile);
+	}
+}

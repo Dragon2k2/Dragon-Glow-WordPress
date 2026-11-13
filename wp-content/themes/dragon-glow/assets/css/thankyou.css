@@ -68,12 +68,13 @@
 	max-width: var(--spacing-container-max);
 	margin-left: auto;
 	margin-right: auto;
-	padding: 48px var(--spacing-margin-mobile);
+	padding-block: 48px 64px;
+	padding-inline: var(--spacing-margin-mobile);
 }
 
 @media (min-width: 768px) {
 	.dg-thankyou-main {
-		padding: 48px var(--spacing-margin-desktop);
+		padding-inline: var(--spacing-margin-desktop);
 	}
 }
 
@@ -112,6 +113,16 @@
 .dg-thankyou-email {
 	color: var(--color-on-surface-variant);
 	margin: 0 0 32px;
+}
+
+/* Mobile-only: dòng email xác nhận gọn, tinh tế hơn. */
+@media (max-width: 767px) {
+	.dg-thankyou-email {
+		font-size: 13px;
+		line-height: 1.65;
+		max-width: 300px;
+		margin: 0 auto 24px;
+	}
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -447,6 +458,25 @@ a.dg-thankyou-contact-value:focus-visible {
 	.dg-thankyou-actions {
 		flex-direction: row;
 		align-items: center;
+	}
+}
+
+/* Mobile-only: 2 nút actions gọn 1 hàng ngang. */
+@media (max-width: 639px) {
+	.dg-thankyou-actions {
+		flex-direction: row;
+		align-items: stretch;
+		justify-content: center;
+		gap: 8px;
+	}
+	.dg-thankyou-actions .dg-btn {
+		flex: 0 1 auto;
+		min-width: 0;
+		padding: 8px 14px;
+		font-size: 10px;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		border-width: 1px;
 	}
 }
 

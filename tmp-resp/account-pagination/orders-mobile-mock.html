@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" class="dg-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orders — mobile mock</title>
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/style.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/main.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/woocommerce.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/account.css">
+<style>
+	/* Khung giả lập bề rộng nội dung như trang thật ở mobile. */
+	body { margin: 0; padding: 0; }
+	.dg-account-panel { width: 100%; }
+</style>
+</head>
+<body class="woocommerce-account">
+<div class="woocommerce-MyAccount">
+	<div class="dg-account-panel">
+		<h2>My orders</h2>
+		<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table">
+			<thead>
+				<tr>
+					<th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr">Order</span></th>
+					<th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span class="nobr">Date</span></th>
+					<th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr">Status</span></th>
+					<th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-total"><span class="nobr">Total</span></th>
+					<th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions"><span class="nobr">Actions</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-on-hold order">
+					<th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number" data-title="Order" scope="row">
+						<a href="#" aria-label="View order number 218">#218</a>
+					</th>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
+						<time datetime="2026-10-16T20:05:08+00:00">October 16, 2026</time>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="Status">
+						<span class="order-status status-on-hold">On hold</span>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-total" data-title="Total">
+						<span class="woocommerce-orders-table__cell-value">
+							<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>258.00</span> for 6 items
+						</span>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
+						<a href="#" class="woocommerce-button button view" aria-label="View" data-dg-modal-bound="1">View</a>
+					</td>
+				</tr>
+				<tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-processing order">
+					<th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number" data-title="Order" scope="row">
+						<a href="#" aria-label="View order number 210">#210</a>
+					</th>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
+						<time datetime="2026-10-16T18:04:20+00:00">October 16, 2026</time>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="Status">
+						<span class="order-status status-processing">Processing</span>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-total" data-title="Total">
+						<span class="woocommerce-orders-table__cell-value">
+							<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>0.00</span> for 2 items
+						</span>
+					</td>
+					<td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions" data-title="Actions">
+						<a href="#" class="woocommerce-button button view" aria-label="View" data-dg-modal-bound="1">View</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

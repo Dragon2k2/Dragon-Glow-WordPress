@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════════════════════════════
    DRAGON GLOW — GIFT CARDS
    Elegance to share · Geist · glass-panel · bento 12-col
    Color tokens per DESIGN.md (Quiet Luxury · Light Dominant)
@@ -756,6 +756,25 @@
 	.dg-gift-value.is-active {
 		padding: calc(0.625rem - 1px) calc(0.25rem - 1px);
 	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ZOOM LIGHTBOX — trigger trên card preview
+   Toàn bộ style của modal lightbox + rule của nút `.dg-zoom-btn` dùng chung
+   nằm ở assets/css/zoom-lightbox.css — trang Gift Cards và trang single
+   product dùng chung một controller + một bộ style.
+   Ở đây chỉ giữ rule riêng cho ảnh preview của trang Gift Cards.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Ảnh preview cũng là trigger mở lightbox → dùng con trỏ pointer + phủ focus
+   để người dùng keyboard biết có thể kích hoạt. */
+.dg-gift-card-image {
+	cursor: zoom-in;
+}
+
+.dg-gift-card-image:focus-visible {
+	outline: 2px solid var(--gift-gold);
+	outline-offset: 2px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

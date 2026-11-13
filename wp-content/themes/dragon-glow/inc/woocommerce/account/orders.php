@@ -13,6 +13,83 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Build the set of page numbers that stay visible in the pagination row.
+ *
+ * WooCommerce core's `paginate_links()` hides the middle of a long page list
+ * behind an ellipsis. We need the same information, but for a different
+ * reason: the Orders panel renders one link per page inside a single row, so
+ * a customer with a long order history would overflow the column and wrap
+ * the row into ragged lines (the Previous button on line 1, the Next button
+ * on the last line).
+ *
+ * Rather than hiding pages in the markup (which would change the output for
+ * every viewport), the template renders every page and tags the ones outside
+ * each window. The stylesheet hides the tagged pages and reveals the
+ * ellipsis markers in their place.
+ *
+ * Window shape (the classic "1 … 5 6 7 … 12" pattern):
+ *   - Page 1 and the last page are always visible.
+ *   - The current page and its `$radius` neighbours are always visible.
+ *   - Near the first or the last page the window extends inwards instead, so
+ *     the customer always has a run of pages to move through.
+ *
+ * @param int $current Current page number (1-indexed).
+ * @param int $total   Total number of pages (1-indexed).
+ * @param int $radius  How many neighbours on each side of the current page
+ *                     stay visible. 1 → "1 … 5 6 7 … 12"; 2 gives the wider
+ *                     "1 … 4 5 6 7 8 … 12" window used on desktop.
+ * @return int[] Sorted list of page numbers that stay visible.
+ */
+function dg_account_orders_page_window( int $current, int $total, int $radius = 1 ): array {
+	$total   = max( 1, $total );
+	$current = min( max( 1, $current ), $total );
+	$radius  = max( 0, $radius );
+
+	// Short lists fit entirely — nothing to collapse.
+	if ( $total <= 5 ) {
+		return range( 1, $total );
+	}
+
+	$pages = array();
+
+	if ( $current <= $radius + 1 ) {
+		// Near the start: list the opening pages, then jump to the last one.
+		// Mirrors WooCommerce core's `paginate_links()`: the run ends at
+		// current + mid_size.
+		$run_end = min( $total, $current + $radius );
+
+		for ( $i = 1; $i <= $run_end; $i++ ) {
+			$pages[] = $i;
+		}
+
+		$pages[] = $total;
+	} elseif ( $current >= $total - $radius ) {
+		// Near the end: jump to the last pages.
+		$pages[] = 1;
+
+		$run_start = max( 2, $current - $radius );
+
+		for ( $i = $run_start; $i <= $total; $i++ ) {
+			$pages[] = $i;
+		}
+	} else {
+		// In the middle: first page, the current run, last page.
+		$pages[] = 1;
+
+		for ( $i = $current - $radius; $i <= $current + $radius; $i++ ) {
+			$pages[] = $i;
+		}
+
+		$pages[] = $total;
+	}
+
+	$pages = array_values( array_unique( $pages ) );
+	sort( $pages );
+
+	return $pages;
+}
+
+/**
  * Render the Orders list panel (the /my-account/orders endpoint).
  *
  * @return void

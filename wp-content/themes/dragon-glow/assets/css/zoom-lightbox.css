@@ -1,0 +1,225 @@
+/* ==== DRAGON GLOW — SHARED IMAGE LIGHTBOX ==== */
+/*
+ * Lightbox dùng chung cho mọi gallery ảnh của theme (single product +
+ * gift cards). Controller: assets/js/lib/zoom-lightbox.js.
+ * Markup: template-parts/global/zoom-modal.php.
+ *
+ * Không phụ thuộc Tailwind runtime cho trạng thái mở/đóng (`display:none` +
+ * `.is-open`) — nếu Tailwind CDN bị chặn, lightbox vẫn hoạt động.
+ * ===================================================== */
+
+.dg-zoom-modal {
+	position: fixed;
+	inset: 0;
+	z-index: var(--zoom-z-index);
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--zoom-counter-gap);
+	padding: var(--zoom-stage-padding);
+	background: var(--zoom-backdrop);
+	-webkit-backdrop-filter: blur(var(--zoom-backdrop-blur));
+	backdrop-filter: blur(var(--zoom-backdrop-blur));
+	cursor: zoom-out;
+}
+
+.dg-zoom-modal.is-open {
+	display: flex;
+}
+
+/* Ảnh trong lightbox — không cho kéo/chọn text. */
+.dg-zoom-modal__image {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: var(--zoom-radius);
+	box-shadow: var(--zoom-image-shadow);
+	cursor: default;
+	user-select: none;
+	-webkit-user-select: none;
+	opacity: 0;
+	transform: scale(0.95);
+	transition: opacity var(--zoom-duration) var(--zoom-easing),
+		transform var(--zoom-duration) var(--zoom-easing);
+}
+
+.dg-zoom-modal__image.is-visible {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* Vùng chứa ảnh — chiếm phần không gian còn lại của modal. */
+.dg-zoom-modal__stage {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1 1 auto;
+	min-height: 0;
+	width: 100%;
+	max-width: 80rem;
+}
+
+/* Nút đóng — góc trên bên phải. */
+.dg-zoom-modal__close {
+	position: absolute;
+	top: var(--zoom-control-offset);
+	right: var(--zoom-control-offset);
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--zoom-control-size);
+	height: var(--zoom-control-size);
+	border: 0;
+	border-radius: 50%;
+	background: var(--zoom-control-bg);
+	color: var(--zoom-control-ink);
+	cursor: pointer;
+	transition: background var(--zoom-duration) var(--zoom-easing),
+		transform var(--zoom-duration) var(--zoom-easing);
+}
+
+.dg-zoom-modal__close:hover {
+	background: var(--zoom-control-bg-hover);
+	transform: scale(1.05);
+}
+
+/* Nút chuyển ảnh (prev / next) — đặt giữa chiều cao, hai bên. */
+.dg-zoom-modal__nav {
+	position: absolute;
+	top: 50%;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--zoom-control-size);
+	height: var(--zoom-control-size);
+	border: 0;
+	border-radius: 50%;
+	background: var(--zoom-control-bg);
+	color: var(--zoom-control-ink);
+	cursor: pointer;
+	transform: translateY(-50%);
+	transition: background var(--zoom-duration) var(--zoom-easing),
+		transform var(--zoom-duration) var(--zoom-easing);
+}
+
+.dg-zoom-modal__nav--prev {
+	left: var(--zoom-control-offset);
+}
+
+.dg-zoom-modal__nav--next {
+	right: var(--zoom-control-offset);
+}
+
+.dg-zoom-modal__nav:hover {
+	background: var(--zoom-control-bg-hover);
+	transform: translateY(-50%) scale(1.05);
+}
+
+/* Bộ đếm ảnh — nằm trong flow (không overlay lên ảnh) nên khoảng cách với
+   đáy ảnh luôn xác định, kể cả khi ảnh cao. */
+.dg-zoom-modal__counter {
+	position: relative;
+	flex: 0 0 auto;
+	padding: var(--zoom-counter-padding-y) var(--zoom-counter-padding-x);
+	border-radius: 9999px;
+	background: var(--zoom-control-bg);
+	color: var(--zoom-control-ink);
+	font-size: var(--zoom-counter-font-size);
+	font-weight: 500;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+/* `display` khai báo ở trên đè lên rule mặc định `[hidden] { display: none }`
+   của UA → phải khai báo lại, nếu không nút ẩn vẫn hiện. */
+.dg-zoom-modal__nav[hidden],
+.dg-zoom-modal__counter[hidden] {
+	display: none;
+}
+
+/* ── Trigger ─────────────────────────────────────────────────────────────── */
+/* Mọi phần tử mang `data-dg-zoom-trigger` đều mở lightbox. */
+/* Nút zoom nổi trên ảnh — dùng chung single product + gift cards. */
+.dg-zoom-btn {
+	cursor: pointer;
+}
+
+.dg-zoom-btn:focus-visible {
+	outline: 2px solid var(--zoom-focus-ring);
+	outline-offset: 2px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+/* Ở mobile, ảnh chiếm gần hết bề ngang → nút chuyển ảnh không thể đặt ở
+   giữa 2 bên (sẽ đè lên ảnh). Dùng grid 2 hàng:
+     hàng 1 → ảnh
+     hàng 2 → [prev] [counter] [next]
+   Cả nhóm được canh giữa theo chiều dọc (`align-content: center`) nên
+   khoảng trống dư chia đều trên/dưới, không dồn cục về một phía. */
+@media (max-width: 639px) {
+	.dg-zoom-modal {
+		display: none;
+		grid-template-rows: auto auto;
+		grid-template-columns: 1fr auto 1fr;
+		align-content: center;
+		align-items: center;
+		justify-items: center;
+		gap: var(--zoom-counter-gap);
+		padding: var(--zoom-stage-padding);
+	}
+
+	.dg-zoom-modal.is-open {
+		display: grid;
+	}
+
+	.dg-zoom-modal__stage {
+		grid-row: 1;
+		grid-column: 1 / -1;
+		justify-self: stretch;
+		align-self: center;
+		max-height: calc(100vh - 2 * var(--zoom-stage-padding) - var(--zoom-control-size) - var(--zoom-counter-gap));
+	}
+
+	.dg-zoom-modal__nav {
+		position: static;
+		grid-row: 2;
+		transform: none;
+	}
+
+	.dg-zoom-modal__nav:hover {
+		transform: scale(1.05);
+	}
+
+	.dg-zoom-modal__nav--prev {
+		grid-column: 1;
+		justify-self: start;
+	}
+
+	.dg-zoom-modal__nav--next {
+		grid-column: 3;
+		justify-self: end;
+	}
+
+	.dg-zoom-modal__counter {
+		grid-row: 2;
+		grid-column: 2;
+	}
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.dg-zoom-modal__image,
+	.dg-zoom-modal__close,
+	.dg-zoom-modal__nav {
+		transition: none !important;
+	}
+
+	.dg-zoom-modal__image {
+		transform: none !important;
+	}
+}

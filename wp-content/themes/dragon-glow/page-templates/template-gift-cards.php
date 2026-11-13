@@ -36,4 +36,11 @@ require_once locate_template( 'template-parts/gift-cards/data-config.php' );
 	</div>
 </main>
 
+<?php
+// Lightbox xem ảnh thẻ quà ở kích thước đầy đủ. Đặt ngoài <main class="dg-gift">
+// để không bị ảnh hưởng bởi transform của animation reveal (position: fixed
+// sẽ bị neo sai nếu ancestor có transform).
+get_template_part( 'template-parts/global/zoom-modal' );
+?>
+
 <?php get_footer(); ?>

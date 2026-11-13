@@ -3,6 +3,377 @@
 > Moved out of `CLAUDE.md` so it stops loading on every session.
 > `CLAUDE.md` keeps only the 5 most recent entries.
 
+- `2026-11-09e`: My Account → Account details — **nút "Save changes" gọn như nút "Save address" ở mobile**. Yêu cầu: nút hình 2 (`dg-account-form__submit`) full-width, muốn giống kích thước gọn của nút hình 1; chỉ mobile (≤640px), desktop/tablet giữ nguyên, chuẩn enterprise WordPress, không commit git. Root cause: block mobile ép `.dg-account-form__submit { width: 100%; min-width: auto }` nên nút bè full-width, trong khi nút hình 1 là `inline-flex` rộng theo nội dung (`padding 12px 24px`, cùng font Montserrat 14px/600, icon 18px). Sửa trong block `@media (max-width: 640px)`: submit về `width: auto; min-width: 0` (kế thừa padding/font/border-radius pill từ `.dg-btn` gốc → cùng cỡ nút hình 1) + `.dg-account-form__actions` thêm `align-items: center` để nút gọn nằm giữa (đồng nhịp với Save address đã căn giữa ở task trước). Không đụng markup/JS. `DG_VERSION` → `1.16.53`. Không commit git.
+
+- `2026-11-09d`: My Account → Edit Address — **nút "Save address" căn giữa ở mobile**. Yêu cầu: nối tiếp task căn phải, chỉ mobile (≤640px) căn giữa, desktop/tablet giữ căn phải, chuẩn enterprise WordPress, không commit git. Sửa: thêm `justify-content: center` cho `.dg-account-address-edit__actions` trong block `@media (max-width: 640px)` sẵn có của cụm address trong `assets/css/account.css` (breakpoint mobile chuẩn của theme; rule trong media thắng rule gốc cùng specificity vì đứng sau + match). Không đụng markup/JS. `DG_VERSION` → `1.16.52`. Không commit git.
+
+- `2026-11-09c`: My Account → Edit Address — **nút "Save address" căn phải ở desktop, mobile/tablet đồng bộ**. Yêu cầu: `<button class="button dg-account-address-edit__save">` đang nằm trái, chuyển sang phải; làm ở desktop để mobile/tablet đồng bộ theo, chuẩn enterprise WordPress, không commit git. Root cause: `.dg-account-address-edit__actions` là flex nhưng không khai báo `justify-content` → mặc định `flex-start` (căn trái). Sửa: thêm `justify-content: flex-end` vào đúng rule gốc trong `assets/css/account.css` (không media query → mọi breakpoint cùng căn phải, đồng bộ đúng yêu cầu). Không đụng markup (giữ `<p>` bọc nonce/hidden input), không đụng JS submit/spinner. `DG_VERSION` → `1.16.51`. Không commit git.
+
+- `2026-11-09b`: Terms + Cookie — **mang cấu trúc vỏ panel đã thành công từ Privacy sang**. Yêu cầu: tương tự, thanh cuộn dropdown mục lục ôm theo bo góc ở mobile/tablet (≤1023px), không đụng desktop, chuẩn enterprise WordPress, không commit git. Sửa y hệt phương án đã verify: `style.css` thêm `--terms/cookie-toc-panel-scrollbar-inset: 0.75rem`; `section-toc.php` 2 trang bọc `ul` trong div vỏ `hidden`; CSS tách 2 lớp (vỏ `overflow: hidden` giữ border/radius/shadow, ruột `margin-right: -10px` + `padding-right: 10px` + thumb `border 3px transparent` + `content-box`); JS `openToc/closeToc` gỡ/gắn `hidden` cả vỏ; no-JS ẩn cả vỏ. `php -l` sạch 3 file. `DG_VERSION` → `1.16.50`. Không commit git.
+
+- `2026-11-09a`: Privacy Policy — **thanh cuộn dropdown mục lục ôm theo bo góc panel ở mobile/tablet**. Yêu cầu: đầu/cuối thanh cuộn của `<ul class="dg-privacy-toc-list" role="listbox">` đang nằm ngoài border cong; chỉ mobile/tablet (≤1023px), không đụng desktop, chuẩn enterprise WordPress, không commit git. Root cause: panel `border-radius: 1rem` + `overflow-y: auto` nhưng rãnh `::-webkit-scrollbar-track` không có `margin` → thumb WebKit kéo dài full chiều cao, đè lên đường cong ở 2 góc. Sửa lần 1: token scoped `--priv-toc-panel-scrollbar-inset: 0.75rem` (`style.css` `:root`, token-first §8a) + track `margin-top/bottom` theo token trong block `@media (max-width: 1023px)` — debug console của user cho thấy token đã load (`12px 12px`) mà thumb vẫn đè viền → margin track không đủ vì thumb tự vẽ tràn. Sửa lần 2 (chắc chắn): thumb dùng `border: 3px solid transparent` + `background-clip: content-box` (lõi thumb giữ 4px như cũ, rãnh rộng 10px) + `border-radius: 8px` → lõi thumb thụt khỏi mép phải và 2 đầu, ôm theo đường cong. Debug v2 của user (`?ver=1.16.48`): rãnh `10px` + thumb `border 3px transparent` + `background-clip: content-box` + track `margin 12px` đều đã ăn, nhưng `scrollbarW thực tế = 2` (Chrome Mobile scale/rút gọn) + `borderRadius 16px` + `border 0.8px` → rãnh WebKit vẫn vẽ tràn lên viền vì `overflow` và `border` nằm cùng một box. Sửa lần 3 (cấu trúc): tách panel thành 2 lớp — `.dg-privacy-toc-panel` (vỏ: giữ `position/border/radius/shadow/backdrop`, thêm `overflow: hidden` để kẹp rãnh vào trong) + `.dg-privacy-toc-list` (ruột: chỉ `overflow-y: auto` + scrollbar, `margin-right: -10px` + `padding-right: 10px` đẩy rãnh vào trong 10px, nền/border/radius/shadow về 0) → thanh cuộn không bao giờ chạm đường cong. Markup `section-toc.php` bọc thêm div vỏ (giữ nguyên id/role/aria trên `ul`); JS `openToc/closeToc` gỡ/gắn `hidden` cho cả vỏ; CSS no-JS ẩn cả vỏ; bỏ rule `:has()` thừa. `DG_VERSION` → `1.16.49`. Không commit git.
+
+- `2026-11-08r`: Accessibility — **sửa icon dropdown mục lục vẫn lệch 4px (specificity)**. Yêu cầu: nối tiếp task căn giữa, debug console của user cho thấy `iconTop_css: "28px"` + `transform: matrix(1,0,0,1,0,-20)` — tức rule `top: 50%` gốc vẫn thắng; chỉ mobile/tablet, không đụng desktop, chuẩn enterprise WordPress, không commit git. Root cause: rule gốc `.dg-accessibility-toc-icon` (0,1,0) đứng **sau** media query trong file, mà rule sửa trong media cũng chỉ (0,1,0) → theo cascade rule đứng sau thắng bất kể media match → `top: 50%` gốc đè `top: 0.75rem`. Sửa: tăng specificity rule sửa thành `.dg-accessibility-toc-mobile .dg-accessibility-toc-icon` (0,2,0) ở cả 2 nhánh (≤1023px, ≤640px) → thắng rule gốc mà không cần `!important`, không đổi thứ tự file. Kiểm chứng bằng debug của user: kỳ vọng sau deploy `iconTop_css: "12px"`, `iconTransform_css: "none"`, `drift_px: 0`, `centered: true`. `DG_VERSION` → `1.16.45`. Không commit git.
+
+- `2026-11-08q`: Accessibility — **icon dropdown mục lục căn giữa tâm chữ ở mobile/tablet**. Yêu cầu: nối tiếp task pill, icon `expand_more` trong ảnh lệch khỏi tâm text; chỉ mobile/tablet, không đụng desktop, chuẩn enterprise WordPress, không commit git. Root cause: `.dg-accessibility-toc-icon` dùng `top: 50% + translateY(-50%)` nhưng neo theo `.dg-accessibility-toc-mobile` — wrapper có `padding: 0.75rem 0 0.25rem` ở mobile/tablet nên tâm wrapper ≠ tâm select (lệch đúng 4px = nửa chênh padding trên/dưới). Sửa: icon chuyển sang `top: 0.75rem` (= padding-top wrapper) + `height: 44px` (= chiều cao select) + `display: inline-flex; align-items: center` → tâm icon ≡ tâm select mọi breakpoint; nhánh `≤640px` thêm `height: 40px` theo select. Kiểm chứng (Chrome DevTools MCP, 502px): `iconTop: 0`, `iconH: 40` = `selH: 40`, **lệch tâm 0px** (`centered: true`), không tràn ✓; desktop giữ `top: 50%` gốc. Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.44`. Không commit git.
+
+- `2026-11-08p`: Accessibility — **dropdown mục lục (`.dg-accessibility-toc-select`) kiểu pill glass ở mobile/tablet** (≤1023px). Yêu cầu: giao diện đẹp phù hợp hơn; chỉ mobile + tablet, không đụng desktop, chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/accessibility-statement.css` thêm 2 block — (1) `max-width: 1023px`: select thành pill `border-radius: 9999px` + nền glass + `box-shadow` nhẹ, `height: 44px`, `font-size: 0.875rem` + `font-weight: 500`, `ellipsis` khi nhãn dài; wrapper bỏ nền/blur/border cũ cho thoáng; icon chevron nhỏ lại + màu primary; hover/focus viền primary (+ focus ring gold cho a11y). (2) `max-width: 640px`: `height: 40px` + `font-size: 0.8125rem` vừa màn hẹp. Desktop ≥1024px dropdown `display: none` sẵn (sidebar thay thế) → không đổi. Kiểm chứng (Chrome DevTools MCP, dựng đúng DOM + inject đúng thứ tự rule, 502px ~ tablet/mobile): `height: 40px`, `font-size: 13px`, `border-radius: 9999px`, `font-weight: 500`, không tràn ✓; `:focus-visible` giữ ring — bàn phím vẫn thấy. Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.43`. Không commit git.
+
+- `2026-11-08o`: Thank-you — **dòng email xác nhận (`.dg-thankyou-email`) gọn tinh tế ở mobile** (≤767px). Yêu cầu: thu nhỏ font cho tinh tế; chỉ mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/thankyou.css` thêm block mobile-only → `font-size: 16px → 13px`, `line-height: 1.65`, `max-width: 300px` + `margin: 0 auto 24px` (gọn vào giữa, nhịp đều với subtitle). Kiểm chứng (Chrome DevTools MCP, cột 256px mô phỏng 320px): `font-size: 13px`, cao **64px** (3 dòng đều), căn giữa, `docOverflow = 0` ✓; tablet/desktop không đổi. Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.42`. Không commit git.
+
+- `2026-11-08n`: Thank-you — **2 nút actions nhỏ gọn tinh tế hơn ở mobile** (≤639px). Yêu cầu: nối tiếp task 1 hàng, làm gọn + tinh tế hơn; chỉ mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Sửa (cùng block mobile-only): nút `flex: 1 1 0 → 0 1 auto` (rộng theo nội dung, cụm gọn vào giữa thay vì bè 2 nửa), `padding: 10px 8px → 8px 14px`, `font-size: 11px → 10px`, `border-width: 1.5px → 1px` (viền mảnh thanh thoát), actions thêm `justify-content: center` + `gap: 8px`. Kiểm chứng (Chrome DevTools MCP, cột 256px mô phỏng 320px): cùng 1 hàng, mỗi nút cao **33px** (trước 38px), tổng 256px vừa khít, `docOverflow = 0` ✓; tablet/desktop không đổi. Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.41`. Không commit git.
+
+- `2026-11-08m`: Thank-you — **2 nút actions (`Continue Shopping / My Account`) gọn 1 hàng ngang ở mobile** (≤639px). Yêu cầu: thu nhỏ font + 2 nút cùng 1 dòng ngang ở mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Root cause: `.dg-thankyou-actions` mặc định `flex-direction: column` → mobile 2 nút xếp dọc, nút `padding: 14px 32px` + `font-size: 14px` cồng kềnh trên màn hẹp. Sửa: `assets/css/thankyou.css` thêm block mobile-only → actions `flex-direction: row` + `gap: 10px`, nút `flex: 1 1 0` + `padding: 10px 8px` + `font-size: 11px` + `white-space: nowrap` (chia đều 2 nửa, không rớt dòng). Kiểm chứng (Chrome DevTools MCP, dựng đúng DOM + inject đúng rule, cột 256px mô phỏng 320px): 2 nút **cùng 1 hàng**, mỗi nút cao **38px**, `font-size: 11px`, tổng 256px = vừa khít ✓; `docOverflow = 0` ✓; tablet/desktop giữ nguyên (media `min-width: 640px` không đổi, block mới giới hạn `max-width: 639px`). Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.40`. Không commit git.
+
+- `2026-11-08l`: Thank-you — **chuẩn hoá `padding-bottom: 64px` cho `.dg-thankyou-main`, desktop/mobile/tablet đồng bộ**. Yêu cầu (làm rõ): đáy 64px là chuẩn chung mọi breakpoint, không giới hạn mobile như các task trước. Chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/thankyou.css` → tách shorthand thành `padding-block: 48px 64px` (đáy 64px đặt **một lần duy nhất** ở rule gốc, desktop/mobile/tablet cùng kế thừa) + `padding-inline` theo breakpoint (mobile `var(--spacing-margin-mobile)` / desktop `var(--spacing-margin-desktop)` trong media 768px) — ba breakpoint tự đồng bộ, không lặp đáy. Kiểm chứng (Chrome DevTools MCP, dựng đúng DOM + inject đúng rule): desktop 1282px → `pb: 64px`, `pt: 48px`, đáy nút cách đáy wrapper **64px** ✓; mobile 502px → `pb: 64px` ✓; tablet kế thừa rule gốc + media 768px → đồng bộ 64px (cùng 1 khai báo). Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.39`. Không commit git.
+
+- `2026-11-08k`: Checkout — **cụm `Calculated at next step` ép 1 dòng ở mobile** (≤640px). Yêu cầu: nối tiếp task shipping, chữ đang rớt 2 dòng, chỉ thu nhỏ font ô giá trị cho vừa 1 dòng, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/checkout-page.css` trong block mobile-only sẵn có → ô giá trị Shipping/Tax thêm `font-size: 10px` + `white-space: nowrap` (kích thước ước lượng ~120px < khoảng trống ~116px ở 320px sau khi trừ nhãn + gap; `nowrap` khóa cứng 1 dòng). Kiểm chứng (Chrome DevTools MCP, inject đúng rule lên trang live): cả 2 ô giá trị `font-size: 10px`, `white-space: nowrap`, cao **20px = đúng 1 dòng** (`rowH: [20,20]`), `docOverflow = 0` ✓; tablet/desktop không thêm rule → giữ nguyên. Đã dọn style tạm. `DG_VERSION` → `1.16.38`. Không commit git.
+
+- `2026-11-08j`: Checkout — **hàng Shipping (`Calculated at next step`) gọn lại ở mobile** (≤640px). Yêu cầu: hàng `Shipping | Calculated at next step` trong ảnh mobile rớt chữ xấu, chỉ làm mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Root cause: hàng là flex `justify-between`, cụm từ dài phía phải không bị giới hạn bề rộng nên ở cột summary hẹp mobile nó rớt dòng, vỡ nhịp với Subtotal/Tax. Sửa: `assets/css/checkout-page.css` thêm block mobile-only → hàng Shipping/Tax `gap: 12px` + `font-size: 0.8125rem`, ô giá trị `text-align: right; flex-shrink: 0; max-width: 55%` (không bị nhãn đẩy, tự xuống dòng gọn trong nửa phải). Kiểm chứng (Chrome DevTools MCP, inject đúng rule lên trang live, 390px): trước `176×24px` rớt xấu → sau giá trị `143×20px` **đúng 1 dòng** (`lines: 1`), cùng hàng với nhãn (`y` bằng nhau), `text-align: right` ✓; hàng Tax cùng hàng ✓; `docOverflow = 0` ✓; tablet/desktop không thêm rule → giữ nguyên. Đã dọn style tạm. `DG_VERSION` → `1.16.37`. Không commit git.
+
+- `2026-11-08i`: Checkout — **xoá 2 div rỗng `.woocommerce-shipping-fields` + `.woocommerce-additional-fields`**. Yêu cầu: xoá hẳn 2 thẻ (không giấu bằng CSS), chuẩn enterprise WordPress, không commit git. Root cause: theme tự render form qua `dg_render_wc_checkout()` (`inc/woocommerce/checkout.php`) và gọi `$dg_wc_checkout->checkout_form_shipping()` → WC nạp `checkout/form-shipping.php`, chính template này in ra cả 2 div; ở store này cả 2 đều rỗng (ship-to-different tắt, `order_comments` đã chuyển vào billing ở `dg_customize_checkout_fields`) → giữ lại chỉ tạo div trống làm vỡ khoảng cách cột trái. Sửa: bỏ lệnh gọi `checkout_form_shipping()`, giữ `checkout_form_billing()` + giải thích trong comment; không đụng hook/filter WC (giữ tương thích khi bật ship-to-different sau này — lúc đó cần render lại). Kiểm chứng: `php -l` sạch; grep `checkout_form_shipping|woocommerce_checkout_shipping` trong theme → chỉ còn comment; đo trên site live (đang chạy code cũ): form chỉ còn `.woocommerce-billing-fields` + card payment, không còn div trống cao >40px → sau deploy 2 div rỗng biến mất, billing + payment + summary giữ nguyên. `DG_VERSION` → `1.16.36`. Không commit git.
+
+- `2026-11-08h`: Cart — **2 nút bulkbar (`Remove selected` / `Clear cart`) nhỏ gọn, tinh tế hơn ở mobile** (≤640px). Yêu cầu: nối tiếp task trust-badge, chỉ làm mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/cart.css` trong block `@media (max-width: 640px)` sẵn có → `.dg-cart-bulkbar__inner { padding: 10px 12px }` (panel gọn lại), `.dg-cart-bulkbar__actions { gap: 6px }`, nút `padding: 6px 8px` + `font-size: 11px` + `letter-spacing: 0.02em` + `gap: 4px` + `white-space: nowrap` (không rớt 2 dòng), icon `16px → 13px`. Kiểm chứng (Chrome DevTools MCP, dựng đúng DOM bulkbar + inject đúng rule): 390px → 2 nút **cùng 1 hàng**, mỗi nút cao **30px** (gọn hơn gốc nhưng vẫn dễ bấm, giữ nguyên `focus-visible` + `disabled`), tổng 253px ≤ inner 292px ✓; tablet/desktop **không thêm rule** → giữ nguyên. Đã dọn DOM/style tạm. `DG_VERSION` → `1.16.35`. Không commit git.
+
+- `2026-11-08g`: Cart — **căn giữa hàng trust badge (Vegan Formula / Cruelty-Free / Organic Ingredients) ở tablet** (641–1024px). Yêu cầu: nối tiếp task mobile, chỉ làm tablet, không đụng mobile/desktop, chuẩn enterprise WordPress, không commit git. Sửa: `assets/css/cart.css` thêm block tablet-only `@media (min-width: 641px) and (max-width: 1024px)` → `.dg-cart-trust-badges { justify-content: center; }` (tái dụng class móc đã thêm ở task mobile trong `woocommerce/cart/cart.php`, không sửa markup). Kiểm chứng (Chrome DevTools MCP, inject đúng 2 rule mobile/tablet lên trang live): 768/770px → `justify-content: center` ✓; biên 641/643px → `center` ✓; biên 1024/1026px → `normal` (rơi khỏi media query) ✓; desktop 1280/1282px → `normal` (không đổi) ✓; đã dọn style + DOM tạm sau khi đo. `DG_VERSION` → `1.16.34`. Không commit git.
+
+- `2026-11-08e`: My Account → Orders — **sửa bảng lịch sử đơn hàng hiển thị rất xấu ở kích thước mobile** (≤640px). Yêu cầu: tối ưu `<table class="woocommerce-orders-table … account-orders-table">` cho mobile, không đụng tablet/desktop, chuẩn enterprise WordPress, không commit git. Vấn đề (đo bằng Playwright trên mock markup thật, `tmp-resp/account-pagination/measure-orders-mobile.js`): block mobile cũ ở `assets/css/account.css` (`@media (max-width: 768px)`) chỉ style `tbody td` — nhưng WooCommerce render cột đầu là **`<th scope="row">`** (ô Order), không phải `<td>`. Hậu quả đo được ở 390px: ô Order giữ `display: table-cell` (55×47px) → **tự đứng một dòng riêng ở góc trên**, không có nhãn, không có padding đồng nhất, lệch với 4 ô `td` bên dưới (đã là flex, xếp dọc từ y=116) → bảng trông vỡ. Thêm nữa `tbody td:first-child` không còn trỏ vào ô Order (nó là `<th>`) nên **ô Date bị nhận nhầm style "cột đầu"** (bold + màu gold). Root cause: selector dựa trên `:first-child`/`:last-child` thay vì class cột, cộng bỏ sót `<th>`. Sửa — (1) `assets/css/account.css`: thêm block `@media (max-width: 640px)` mới (giữ nguyên block 768px cho tablet 641–768px): `thead` **visually-hidden** (`clip-path: inset(50%)`) thay vì `display: none` → giữ tên cột trong cây trợ năng; `tbody th` + `tbody td` cùng nhận `display: flex; justify-content: space-between; gap: 16px; min-height: 44px` → mọi ô cùng x, cùng rộng, xếp dọc đều; ô Order (`th.woocommerce-orders-table__cell-order-number`) làm **header của card** (số đơn trái, nền riêng, rule đậm hơn) và `::before { content: none }` (không nhãn trùng); ô Date bỏ style "cột đầu" (`font-weight: 400`); ô Actions làm footer, nút "View" full-width + `min-height: 44px` (WCAG 2.5.5); bỏ `transform: translateX(2px)` của `:hover` (không có ý nghĩa trên touch). (2) `woocommerce/myaccount/orders.php`: bọc giá trị ô Total trong `<span class="woocommerce-orders-table__cell-value">` → nếu không, flex tách `<span class="woocommerce-Price-amount">` và text node "for 6 items" thành 2 item. (3) `style.css` `:root`: thêm 9 token component `--account-orders-card-*` / `--account-orders-cell-*` / `--account-orders-button-min-height` (theo §8a token-first, không hard-code trong file trang). Kiểm chứng: `php -l woocommerce/myaccount/orders.php` → không lỗi; Playwright `tmp-resp/account-pagination/verify-orders-mobile.js` (13 viewport 320→1440px) → **ALL PASS**: mobile 320/375/390/414/480/600/639/640px → `thead` còn trong a11y tree, `th`+`td` đều flex, mọi ô cùng x/cùng rộng/xếp dọc, ô Date không còn bold, nút View **44px** ≥ 44px, `docOverflow = 0`; **tablet 641/768px → không đổi** (`th` vẫn `table-cell`, `rowH` 309px, thead `none`); **desktop 1024/1280/1440px → không đổi** (`thead` hiện, mọi ô `table-cell`, `rowH` 72px); so sánh ảnh trước/sau (`orders-before-390.png` ↔ `orders-after3-390.png`) → sau là card gọn gàng, đồng bộ bề rộng. `DG_VERSION` → `1.16.29`. Không commit git.
+
+- `2026-11-08d`: My Account → Orders — **sửa phân trang desktop không hiện dấu `…` (ellipsis)** khi khách có ≤13 trang. Yêu cầu: sau khi tối ưu desktop, người dùng báo *"trong hình là kết quả sau khi bạn làm thì paginate vẫn chưa hiển thị ..."* (kèm ảnh chụp). Không commit git. Chẩn đoán (theo `systematic-debugging`, đo pixel ảnh người dùng): ảnh 1024×514 là ảnh chụp **viewport 1536px đã thu nhỏ còn 1024px** (tỉ lệ 2/3, pill 24px ảnh ↔ 36px CSS); dựng lại 14 cụm pixel trong dải `y=359..382` → #1 là pill active (trang 1), #2–#13 là **11 số (2→12)**, #14 là nút Next → **12 trang, KHÔNG có ellipsis**, khớp 100% với `max_num_pages = 12` của store (113 đơn). Root cause: `woocommerce/myaccount/orders.php` còn nhánh `if ( $total_pages <= $full_limit ) { $visible_wide = range( 1, $total_pages ); }` với `dg_account_orders_pagination_full_limit()` = 13 → 12 ≤ 13 → **cố tình bỏ qua window rộng** và in hết 12 số; điều này **lệch với WooCommerce core** (`paginate_links()`, `mid_size = 2` → 12 trang phải ra `1 2 3 … 12`). Sửa: (1) `inc/woocommerce/account/orders.php` — **xoá hẳn** helper `dg_account_orders_pagination_full_limit()` (kèm filter `dg_account_orders_pagination_full_limit`) vì không còn ngưỡng "hiện đủ"; guard duy nhất còn lại là `$total <= 5` trong `dg_account_orders_page_window()` → danh sách ≤5 trang vẫn hiện đủ, không collapse. (2) `woocommerce/myaccount/orders.php` — xoá nhánh override `$visible_wide = range(1, $total_pages)` → **cả 2 window (compact `current±1`, wide `current±2`) luôn collapse** giống hệt core. (3) `assets/css/account.css` — sửa comment block `@media (min-width: 1280px)` bỏ claim "13 số vừa 1 hàng 745px" (không còn đúng) và mô tả lại hành vi mới. Không đụng CSS layout, không đụng JS. Kiểm chứng: PHP CLI test `tmp-resp/account-pagination/test-window-desktop.php` (bỏ case `full_limit = 13`, thêm case 12 trang khớp ảnh người dùng: `cur=1 total=12 r=2 → 1,2,3,12`, `cur=6 → 1,4..8,12`, `cur=12 → 1,10,11,12`, và case "≤5 trang không collapse") → **ALL PASS**; `php -l` cả 2 file → không lỗi cú pháp; **đo trực tiếp site live** (Chrome DevTools MCP, tab đã đăng nhập, 113 đơn / 12 trang): 1440px trang 1 → `1 2 3 … 12` (**trước: `1 2 3 4 … 12` thiếu dấu `…`**); 1280px trang 6 → `1 … 4 5 6 7 8 … 12`; 1280px trang 12 → `1 … 10 11 12` (`aria-current="page"=12`, đúng 1 nút Previous, không có Next); 1024px → `1 … 5 6 7 … 12` (**không đổi**); 390px → `1 … 5 6 7 … 12` (**không đổi**), `pagH` 93px (Prev/Next 45px ≥ 44px WCAG 2.5.5); ở 1280px dải số 362px ≤ cột 776px → **1 dòng, không tràn**, `docOverflow = 0` ✓. `DG_VERSION` → `1.16.28`. Không commit git.
+
+- `2026-11-08c`: My Account → Orders — **sửa phân trang vỡ ở kích thước desktop** khi lịch sử đơn hàng dài. Yêu cầu: làm tối ưu phân trang cho desktop giống đã làm cho mobile/tablet, chuẩn enterprise WordPress, không commit git. Vấn đề (đo bằng Playwright trên layout thật ở 1280px — viewport desktop hẹp nhất, cột nội dung 776px): hàng phân trang gồm `Previous` (83px) + hàng số trang + `Next` (58px). Với **≤13 trang** hàng vừa khít 1 dòng (745px ≤ 776px) → hiển thị đẹp. Nhưng **từ 14 trang** hàng số vượt cột → `.woocommerce-pagination` (`flex-wrap: wrap`) **gãy thành 2–6 dòng lệch lạch**: `Previous` ở dòng 1, các số trang vắt ngang dòng 2, `Next` rơi xuống dòng cuối (đo ở 50 trang: `prevRow/numsRow/nextRow` = 0/1/5, chiều cao khối 262px). Tình huống này rất phổ biến ở store enterprise (khách có 100+ đơn hàng). Sửa — theo đúng pattern window của WooCommerce core (`paginate_links()`, `mid_size`): (1) `inc/woocommerce/account/orders.php` — helper `dg_account_orders_page_window( int $current, int $total, int $radius = 1 )` nhận thêm `$radius` (bán kính window) + thuật toán 3 nhánh giống hệt core (đầu → liệt kê `1..current+radius` rồi nhảy tới trang cuối; giữa → `1 … current±radius … total`; cuối → `1 … current-radius..total`); thêm helper `dg_account_orders_pagination_full_limit(): int` (mặc định 13, có `apply_filters` `dg_account_orders_pagination_full_limit`) → số trang vẫn nằm trọn 1 dòng ở desktop. (2) `woocommerce/myaccount/orders.php` — render **2 tầng window** (compact `current±1` cho mobile/tablet, wide `current±2` cho desktop); mỗi trang được tag riêng `data-dg-page-out-compact` (ngoài window hẹp) và `data-dg-page-out-wide` (ngoài window rộng), kèm **2 bộ ellipsis riêng** `data-dg-page-ellipsis="compact"|"wide"` → đúng 1 bộ hiển thị theo breakpoint, không bao giờ lệch dấu. Desktop dùng window rộng khi tổng trang > 13, ngược lại giữ **đủ 12 số** như cũ. (3) `assets/css/account.css` — block `@media (min-width: 1280px)` mới: `flex-wrap: nowrap` + ẩn `[data-dg-page-out-wide]` + hiện ellipsis `wide`; block `@media (max-width: 1279px)` dùng `[data-dg-page-out-compact]` + ellipsis `compact`; rule ellipsis gộp ra khối chung (không lặp 2 lần). Kiểm chứng: PHP CLI test `tmp-resp/account-pagination/test-window-desktop.php` (logic window thật, không phải bản port JS) → **ALL PASS** (radius 1/2, biên total=0, current vượt/clamp, radius=0); Playwright `tmp-resp/account-pagination/verify-desktop.js` → desktop 1280/1366/1440/1600/1920px với 12 trang → **đủ 12 số, 1 dòng, 0 ellipsis**; 50 trang → window `1 … 23 24 25 26 27 … 50`, **1 dòng, không tràn**; trang đầu/cuối/second → `1 2 3 … 50` / `1 … 48 49 50` / `1 2 3 4 … 50`; hồi quy mobile 320–640px + tablet 641–1279px → **không đổi** (`1 … 5 6 7 … 12`); a11y `aria-current="page"` + `aria-hidden="true"` giữ nguyên; `prefers-reduced-motion` → transition 0s; edge case 50 trang ở 390/834/1440px → không tràn ✓; thêm `tmp-resp/account-pagination/verify-edge-desktop.js` → **ngưỡng 13/14 trang @1280px** (13 trang = 13 số đủ, dải số 577px ≤ cột 776px; 14 trang → tự collapse `1 … 5 6 7 8 9 … 14`, dải số 364px, 1 dòng, không tràn) ✓; **đo trực tiếp trên site live** (Chrome DevTools MCP, tab đã đăng nhập): 1440px → `1 2 3 … 12` đủ 12 số, 1 dòng, cột 776px, không tràn; 1280px → đủ 12 số, 1 dòng; 834px → `1 2 … 12` (compact window, không đổi); 390px → `1 2 … 12` (không tràn) ✓. `DG_VERSION` → `1.16.27`. Không commit git.
+
+- `2026-11-08b`: My Account → Orders — **sửa phân trang vỡ ở kích thước tablet** (641–1279px). Yêu cầu: làm tối ưu phân trang cho tablet giống đã làm cho mobile, theo chuẩn enterprise WordPress, không commit git. Vấn đề (đo bằng Playwright trên layout thật, có sidebar 280px từ 1024px): (1) `.woocommerce-pagination` là `display: flex; flex-wrap: wrap` → `Previous` + hàng 12 số trang (~530px) + `Next` (~589px tổng) **vượt cột nội dung** (561px ở 641px, 523px ở 1024px) → wrap thành **2–3 dòng lệch lạch** ở 641/768/834/1024/1080/1112px; (2) ở **1024px hàng số tràn khỏi panel** (panel 523px < hàng số 530px) → vỡ layout. Sửa: tái sử dụng đúng cơ chế window đã có (không viết lại markup) — `assets/css/account.css` thêm block `@media (max-width: 1279px)` (1) ẩn `[data-dg-page-hidden]` + hiện `.dg-account-pagination__ellipsis` (tái dụng markup window `dg_account_orders_page_window()` sẵn có trong `inc/woocommerce/account/orders.php`), (2) `.woocommerce-pagination { flex-wrap: nowrap; gap: var(--account-pagination-gap) }` + `.woocommerce-pagination__numbers { flex-wrap: nowrap; flex-shrink: 1; min-width: 0 }` → **ép cả khối nằm 1 hàng duy nhất**, không wrap lệch dòng; (3) `.woocommerce-pagination__numbers` (mặc định) thêm `flex-wrap: wrap; min-width: 0` → desktop **tự wrap xuống dòng 2** thay vì tràn ngang khi khách có **> 12 trang** (edge case). `style.css` `:root` đồng bộ 3 token pill về giá trị desktop (`--account-pagination-pill-min` 34→36px, `--account-pagination-pill-height` 34→36px, `--account-pagination-pill-font` 13→14px) để pill trên tablet **khớp đúng chiều cao/màu** với desktop (trước: tablet dùng pill 34px, desktop 36px → lệch). Phân trang desktop (≥1280px) **giữ nguyên 12 số đầy đủ** — chọn ngưỡng 1280px (không phải 1200px) vì đo thật: hàng đầy đủ cần 606px, cột nội dung ở 1200px chỉ 696px → **vừa sát 1px** nên dễ wrap; từ 1280px cột rộng 776px → dư 170px. Kiểm chứng Playwright (`tmp-resp/account-pagination/final-verify.js`, 20 viewport 320→1920px): mobile 320–640px → **không tràn ngang**, Prev/Next cùng hàng, touch target 45px ≥ 44px (WCAG 2.5.5), window `1 … 5 6 7 … 12`; tablet 641/768/834/900/1023/1024/1080/1112/1200/1279px → **1 hàng duy nhất** (`flexWrap: nowrap`), **không tràn panel**, window `1 … 5 6 7 … 12`; desktop 1280/1440/1920px → **12 số đầy đủ**, 1 hàng, ellipsis ẩn; trang đầu/cuối → đúng 1 nút điều hướng; `prefers-reduced-motion` → transition 0s; edge case **50 trang** ở 390/834/1440px → không tràn ✓. `aria-current="page"` + `aria-hidden="true"` trên ellipsis giữ nguyên. `DG_VERSION` → `1.16.26`. Không commit git.
+
+- `2026-11-08a`: Shipping & Returns — **thanh cuộn của modal Return giống hệt modal Apply** (Careers).
+
+  Yêu cầu: giao diện thanh cuộn của `<div class="dg-rm-dialog" role="document">` phải giống `<div class="dg-apply-dialog" role="document">`.
+
+  Vấn đề: `.dg-rm-dialog` có `overflow-y: auto` nhưng **không có** rule `::-webkit-scrollbar` nào → hiện thanh cuộn mặc định của hệ điều hành (không đồng bộ brand).
+
+  Sửa:
+  - `style.css` `:root` (section "Shipping & Returns Component"): thêm 4 token `--sr-scrollbar-size: 8px`, `--sr-scrollbar-track: var(--neutral-warm-100)`, `--sr-scrollbar-thumb: var(--neutral-400)`, `--sr-scrollbar-thumb-hover: var(--neutral-500)` — **cùng bảng màu** với `--a-surface-low` / `--a-outline` / `--a-outline-strong` của Careers (cả 2 đều trỏ về `--neutral-warm-100` / `--neutral-400` / `--neutral-500`).
+  - `assets/css/shipping-returns.css`: thêm block `::-webkit-scrollbar` cho `.dg-rm-dialog` (width / track / thumb / thumb:hover) — **mirror y hệt** rule của `.dg-apply-dialog` trong `careers.css`.
+  - `careers.css` **không đổi** (baseline tham chiếu).
+
+  Ghi chú kỹ thuật: đo pixel trực tiếp trên máy dev **không đáng tin** vì Chrome dùng *overlay scrollbar* (`offsetWidth - clientWidth === 0` → scrollbar không chiếm layout). Cách kiểm chứng đúng là đọc `getComputedStyle(el, '::-webkit-scrollbar')` / `('::-webkit-scrollbar-thumb')` / `('::-webkit-scrollbar-track')` — đã xác nhận `var()` **resolve bình thường** trong pseudo-element scrollbar của Chrome.
+
+  Kiểm chứng (Playwright, site live — inject nguyên file JS + CSS từ disk):
+  - Baseline Apply: `width: 8px`, thumb `rgb(212, 194, 194)`, thumb radius `4px`, track `rgb(250, 249, 246)`, track radius `4px`, transition `background 0.25s`
+  - Modal Return ở 320/390/768/1280px: **computed style giống hệt baseline** (từng thuộc tính khớp) ✓; scroll hoạt động (`maxScrollTop` 299/83 ở mobile) ✓; nút Close vẫn đóng modal ✓; không `pageerror` ✓
+
+  `DG_VERSION` → `1.16.25`. Không commit git.
+
+- `2026-11-07n`: Shipping & Returns — **sửa nút Close (×) và Cancel của modal Return không hoạt động** (click trúng nút nhưng modal không đóng / click bị chặn).
+
+  Yêu cầu: `<button class="dg-rm-close" data-rm-close>` và `<button class="dg-rm-btn dg-rm-btn--secondary" data-rm-close>` bấm không có tác dụng.
+
+  Vấn đề — có **3 nguyên nhân độc lập**, tất cả đều lộ ra khi chẩn đoán bằng hit-test (`document.elementFromPoint`) + bắt `pageerror` trên site live:
+  1. **CSS — nút Close bị header đè**: `.dg-rm-close` là `position: absolute` (không có `z-index`), còn `.dg-rm-header` là `position: relative` và đứng **sau** trong DOM → header vẽ đè lên nút. Ở 390px, `elementFromPoint` trả về `header.dg-rm-header` → Playwright báo *"header intercepts pointer events"*, click thật của user **không trúng nút**.
+  2. **JS — `EASE is not defined`**: `shipping-returns.js` dùng biến `EASE` ở `open()`/`close()` (dòng animate dialog) nhưng **không khai báo** `const EASE` (khác 14 file JS khác trong theme đều có) → `ReferenceError` ném ra **giữa chừng** `open()`, làm animation và các bước sau (focus, `body` scroll lock…) không chạy hết.
+  3. **JS — `delay` non-finite**: `animate(children, …, { delay: children.length > 1 ? { each: 0.08 } : 0 })` — Motion v11 không nhận object `{ each }` (đó là cú pháp của `stagger()`) → *"Failed to read the 'delay' property from 'EffectTiming': The provided double value is non-finite"* → vòng reveal của group `[data-sr-group]` chết, kéo theo phần reveal của chính modal.
+
+  Sửa:
+  - `assets/js/shipping-returns.js`: thêm `const EASE = [ 0.16, 1, 0.3, 1 ];` (khớp giá trị các file khác); import thêm `stagger` từ Motion và đổi `delay: … { each: 0.08 }` → `stagger(0.08)`.
+  - `assets/css/shipping-returns.css`: `.dg-rm-close` → thêm `z-index: 2` để nằm trên `.dg-rm-header` (đã `position: relative`) → không còn bị chặn click.
+
+  Kiểm chứng (Playwright, site live — inject nguyên file JS + CSS từ disk):
+  - 320/390/768/1280px: hit-test nút Close → `topElement` = `span` con của nút, `clickable: true` ✓; **click Close** → `hidden: true`, `dataOpen: false`, `bodyLock: false` ✓; **click Cancel** → đóng ✓; **ESC** → đóng ✓; **click overlay** → đóng ✓
+  - Focus: mở modal → focus vào `.dg-rm-close`; đóng → focus trả về trigger `.dg-sr-returns-cta` ✓; focus trap: 12 lần Tab **luôn ở trong** dialog ✓
+  - `prefers-reduced-motion: reduce` → mọi hành vi trên vẫn đúng ✓
+  - **Không còn `pageerror`** (trước: 2 lỗi `EASE is not defined` + 1 lỗi `delay` non-finite) ✓
+
+  `DG_VERSION` → `1.16.24`. Không commit git.
+
+- `2026-11-07l`: Careers — **2 nút trong modal Apply nằm cùng một hàng ngang ở mobile** (chỉ mobile; tablet/desktop giữ nguyên).
+
+  Yêu cầu: trong `<div class="dg-apply-actions">`, nút `Cancel` và `Send application` phải hiển thị cùng 1 dòng ngang ở kích thước mobile; không làm ở desktop và tablet.
+
+  Vấn đề: `.dg-apply-actions` khai báo `flex-direction: column-reverse` ở mobile → 2 nút xếp **dọc** (nút phụ ở trên), chỉ từ `min-width: 640px` mới chuyển sang hàng ngang.
+
+  Sửa (`assets/css/careers.css`):
+  - `.dg-apply-actions` → `flex-direction: row` (mặc định) + `gap: 0.875rem`; khối `@media (min-width: 640px)` giữ nguyên `justify-content: flex-end` → tablet/desktop **không đổi** (nút căn phải, primary `min-width: 200px`).
+  - Khối `@media (max-width: 639px)` mới: `align-items: stretch` + `gap: 0.625rem`; nút `display: flex` (canh giữa cả 2 chiều), `align-self: stretch` (đè lại `align-self: flex-start` kế thừa từ `.dg-careers-btn--secondary` → 2 nút **bằng nhau chiều cao**), `min-height: 44px` (chuẩn touch target WCAG 2.5.5), `font-size: 0.75rem`, `letter-spacing: 0.04em`, `padding: 0.75rem 0.625rem`.
+  - Nút phụ `--secondary` → `flex: 0 0 auto` (chiều rộng theo nội dung, ngắn); nút chính `--primary` → `flex: 1 1 auto` + `min-width: 0` (chiếm phần còn lại → nhãn "SEND APPLICATION" luôn nằm **1 dòng**, không xuống dòng ở 320px).
+
+  Kiểm chứng (Playwright, site live — inject nguyên file `careers.css` từ disk, mở modal qua `[data-apply-trigger]`):
+  - 320/360/390/639px: `flexDirection: row`, 2 nút **cùng hàng** (`sameRow: true`), cùng chiều cao **44px**, `submitLines: 1` (nhãn 1 dòng), gap 10px, không overlap, nằm trong dialog, **không tràn ngang** (`scrollWidth == innerWidth`), không cắt chữ, touch target ≥ 44px ✓
+  - 640/768/1280px: **không đổi** — `justify-content: flex-end`, gap 14px, cancel 118.2px / submit 201.5px (primary giữ `min-width: 200px`), cao 49.5px ✓
+  - Không `pageerror` ✓
+
+  `DG_VERSION` → `1.16.23`. Không commit git.
+
+- `2026-11-07m`: Our Ingredients — **bỏ nền glass card của khối chữ Traceable** (chữ nằm trực tiếp trên ảnh, không còn nền/viền/đổ bóng/blur).
+
+  Yêu cầu: xoá background của `<div class="dg-oi-traceable-content">`.
+
+  Vấn đề phát hiện khi đo pixel thật: ảnh `traceable.webp` **không đồng nhất** — nền kem sáng (luma ~220) ở trái nhưng chai serum tối (luma ~57) ở giữa. Bỏ nền card hoàn toàn → chữ tối nằm trực tiếp trên chai tối → contrast **1.14–1.89:1**, fail WCAG AA. Ảnh cũng không đủ tối để dùng chữ trắng (nền kem sáng → contrast 1.16–2.65:1).
+
+  Sửa — thay vì nền đục (card) hoặc overlay tối ảnh, dùng **halo sáng quanh nét chữ** (`text-shadow`):
+  - `assets/css/our-ingredients.css` — `.dg-oi-traceable-content` bỏ `background` / `border` / `border-radius` / `box-shadow` / `backdrop-filter` + khối `@supports`; bỏ `padding` (không còn viền card, chỉ giữ `margin` để chữ không dính mép).
+  - `assets/css/our-ingredients.css` — 4 rule text thêm `text-shadow: var(--oi-traceable-halo)` (headline dùng `--oi-traceable-halo-wide`).
+  - `style.css` `:root` — xoá 6 token card (`--oi-traceable-card-bg/-bg-solid/-border/-radius/-shadow/-blur`), thêm `--oi-traceable-halo` + `--oi-traceable-halo-wide`; `--oi-traceable-rule` tăng alpha `0.25 → 0.35`, footnote `0.88 → 0.92`.
+
+  Kiểm chứng (Playwright, site live — inject nguyên file `our-ingredients.css` + token `--oi-traceable-*` từ `style.css` trên disk; đo contrast bằng pixel thật: glyph tối nhất vs halo sáng quanh nó):
+  - Card: `background: rgba(0,0,0,0)`, `border: 0px solid`, `box-shadow: none`, `backdrop-filter: none`, `padding: 0px` ✓
+  - Contrast thực tế: 320px → headline **9.88**, body **4.89**, country **13.37**, footnote **6.86**; 390px → 7.89 / 5.09 / 13.77 / 6.40; 640px → 8.99 / 5.36 / 9.53 / 6.45; 768px → 16.36 / 8.92 / 16.37 / 7.35; 1024px → 13.72 / 7.76 / 14.71 / 6.70; 1280px → 14.32 / 7.90 / 14.76 / 6.80 → **đạt WCAG AA** ở mọi viewport ✓
+  - 320/390/640/768/1024/1280px: không tràn ngang ✓; không `pageerror` ✓
+
+  `DG_VERSION` → `1.16.23`. Không commit git.
+
+- `2026-11-07k`: Our Ingredients — **bỏ lớp overlay tối của ảnh section Traceable**, khối chữ chuyển sang glass card.
+
+  Yêu cầu: xoá lớp overlay của ảnh trong `<div class="dg-oi-traceable-bg">`.
+
+  Vấn đề phát hiện khi đo (site live, đọc pixel ảnh `traceable.webp` 1024×570): overlay `rgba(49,48,48,0.6)` + `mix-blend-mode: multiply` làm tối ảnh còn ~51%, nhưng **chữ trong section lại là màu tối** — vì rule `color: var(--oi-bg)` trỏ tới token đã bị xoá lúc migrate (`--oi-bg` nằm trong danh sách "OLD tokens removed") → `var()` rơi về `unset` → kế thừa màu `--color-on-surface` (#1b1c1a). Kết quả: **chữ tối trên nền ảnh tối**. Đo contrast thực tế (chụp ảnh nền thuần + median màu tại bbox từng element): headline **2.61:1**, body **1.68:1**, country **3.73:1**, footnote **3.22:1** → **fail WCAG AA** ở cả 390px lẫn 1280px.
+
+  Sửa:
+  - `template-parts/our-ingredients/section-traceable.php` — xoá hẳn `<div class="dg-oi-traceable-overlay" aria-hidden="true"></div>` (không còn element rỗng trong DOM).
+  - `assets/css/our-ingredients.css` — xoá rule `.dg-oi-traceable-overlay`; `.dg-oi-traceable-content` nay là **glass card**: nền `var(--oi-traceable-card-bg)` + `backdrop-filter: blur(18px)` (fallback nền đặc khi trình duyệt không hỗ trợ, theo pattern `@supports` sẵn có của `contact.css`), border + radius + shadow; padding `clamp(1.5rem, 4vw, 2.75rem)`.
+  - `assets/css/our-ingredients.css` — sửa lỗi token chết: `color: var(--oi-bg)` → `var(--oi-traceable-text)` (headline, country); body → `var(--oi-traceable-text-muted)`; country border-bottom `rgba(252,249,248,0.3)` → `var(--oi-traceable-rule)`; footnote `rgba(220,217,217,0.8)` (màu sáng, vô hình trên nền sáng) → `var(--oi-traceable-footnote)`.
+  - `style.css` `:root` — thêm bộ token component `--oi-traceable-*` (card bg/border/radius/shadow/blur, text, rule, footnote) theo Layer 3 component token; không hard-code màu trong file trang.
+
+  Kiểm chứng (Playwright, site live — đo contrast bằng pixel thật: ẩn chữ → chụp nền thuần → median màu tại bbox → tính WCAG):
+  - **Trước** (overlay còn): headline 2.61, body 1.68, country 3.73, footnote 3.22 → fail AA ✗
+  - **Sau**: headline **14.89**, body **8.39**, country **15.89**, footnote **5.65** → đạt AA ✓ (AAA cho headline/body/country)
+  - 320/390/640/768/1024/1280px: không tràn ngang (`scrollWidth == innerWidth`), card nằm trong viewport (left 20px ở mobile, 64px ở ≥768px), `backdrop-filter: blur(18px)` hoạt động ✓
+  - `prefers-reduced-motion: reduce` → nội dung `opacity: 1` (hiển thị đầy đủ) ✓
+  - Không `pageerror` ✓
+
+  Ghi chú: Motion CDN bị chặn → `[data-sr]` giữ `opacity: 0` (FOUC guard của trang) → chữ tàng hình. Đây là hành vi **có sẵn từ trước** (`data-sr` + reveal animation phụ thuộc Motion), không phát sinh từ thay đổi này — chưa sửa vì ngoài phạm vi yêu cầu.
+
+  `DG_VERSION` → `1.16.22`. Không commit git.
+
+- `2026-11-07j`: Single product — **thoát lightbox thì ảnh bên ngoài giữ nguyên ảnh vừa xem** (parity với Gift Cards).
+
+  Yêu cầu: lightbox đang ở ảnh 3 → thoát ra thì ảnh chính `#dg-main-image` + thumbnail active phải là ảnh 3, không phải ảnh trước đó.
+
+  Nguyên nhân: `onChange` của lib được gọi ở **mọi** lần render, kể cả lúc mở → controller không phân biệt "mở lightbox" (phản ánh state hiện tại) với "user điều hướng" (state phải đổi theo).
+
+  Sửa — lib phân biệt 2 loại render:
+  - `assets/js/lib/zoom-lightbox.js` — `render(notify)`: `onChange` chỉ chạy khi `notify === true` (prev/next). `open()` gọi `render(false)` → mở lightbox không đổi state trang. `next()`/`prev()` gọi `render(true)` → user điều hướng thì trang phải theo. Cập nhật JSDoc của `onChange`.
+  - `assets/js/product.js` — `items[]` giữ thêm tham chiếu `thumb` (element thumbnail tương ứng); thêm `onChange(index, item)` → gọi lại `dgChangeImage(item.thumb)` để tái dùng đúng hành vi cache-aware (fade khi ảnh chưa load) + cập nhật trạng thái active của thumbnail. Guard: bỏ qua nếu ảnh ngoài đã đúng ảnh này.
+  - `assets/js/product.js` — `resolveCurrentIndex()` ưu tiên **thumbnail active** (state hiển thị của trang) thay vì so sánh `src` của ảnh chính (`src` có thể chưa kịp cập nhật nếu ảnh chưa load xong); `src` chỉ là fallback.
+  - `assets/js/gift-cards-zoom.js` — `resolveCurrentIndex()` ưu tiên **`window.DGGiftValue.get()`** (state mệnh giá mà form đang gửi) thay vì đọc `src` ảnh preview; `src` chỉ là fallback.
+
+  Kiểm chứng (Playwright, site live):
+  - Mở (ảnh 1) → `next` → `next` → ảnh 3: ảnh ngoài `mainSrc` + thumbnail active đều = `shot3` ✓
+  - `Escape` → ảnh ngoài **vẫn `shot3`** (không revert về ảnh 1) ✓
+  - Mở lại → counter `3 / 4` (không reset về ảnh đầu) ✓
+  - Phím `←` → ảnh ngoài = `shot2` ✓; wrap-around → `shot4` ✓; thoát → giữ `shot4` ✓
+  - Không `pageerror` ✓
+  - Hồi quy Gift Cards: mở → `2 / 4`; `next` → preview/chip/hidden đồng bộ `$250`; đóng giữ state; mở lại `3 / 4` ✓ (390/1280px)
+  - Hồi quy a11y: focus trap 5× Tab trong modal ✓; reduced-motion ✓; `role`/`aria-modal`/`aria-live` ✓
+
+  `DG_VERSION` → `1.16.21`. Không commit git.
+
+- `2026-11-07i`: Lightbox — **bộ đếm ảnh không còn dính sát đáy ảnh** (chuyển từ overlay sang flow layout).
+
+  Vấn đề: `.dg-zoom-modal__counter` là `position: absolute; bottom: 1rem` → **phủ lên vùng ảnh**. Khi ảnh cao (chiếm gần hết chiều cao khả dụng) khoảng cách thực tế chỉ còn ~14px → bộ đếm dính sát đáy ảnh, trông như bị dính vào ảnh.
+
+  Sửa — chuyển sang **flow layout** (chuẩn enterprise: khoảng cách xác định bằng layout, không phụ thuộc vị trí tuyệt đối):
+  - `.dg-zoom-modal` → `display: flex; flex-direction: column; gap: var(--zoom-counter-gap)` + `padding`. Ảnh (`.dg-zoom-modal__stage`) `flex: 1 1 auto; min-height: 0`, bộ đếm `flex: 0 0 auto` → bộ đếm **nằm trong flow**, khoảng cách với đáy ảnh luôn = `gap`, không bao giờ dính ảnh.
+  - `.dg-zoom-modal__counter` bỏ `position: absolute` + `transform: translateX(-50%)`; thêm `font-variant-numeric: tabular-nums` (số không nhảy khi đổi ảnh) + `white-space: nowrap`.
+  - Mobile ≤639px: nút chuyển ảnh không thể đặt ở giữa 2 bên (đè lên ảnh) → chuyển modal sang **CSS grid 2 hàng**: hàng 1 = ảnh, hàng 2 = `[prev] [counter] [next]`, `align-content: center` → khoảng trống dư chia đều trên/dưới (trước dồn hết xuống dưới). Nút nav `position: static` + `grid-column` → không còn overlay lên bộ đếm.
+  - Token mới `--zoom-counter-gap: 1.25rem`; xoá `--zoom-stage-max-height-offset` (không còn dùng).
+
+  Kiểm chứng (Playwright, site live — đo `getBoundingClientRect`):
+  - Khoảng cách đáy ảnh ↔ counter: **20px** ở viewport thấp (1280×560, 1280×600, 1440×700, 768×500) và 29px ở mobile 390px; 88–246px ở viewport cao → trước là 14px ✓
+  - Không tràn: `counter.bottom` và `img.bottom` luôn ≤ viewport height ✓
+  - Mobile 390×844: cân đối — trống 269px trên / 278px dưới (trước dồn hết xuống dưới) ✓
+  - Hồi quy: click ảnh → mở (counter `1 / 4`), `→` → `2 / 4`, đổi thumbnail → `3 / 4` ✓; Gift Cards (đồng bộ mệnh giá, đóng giữ state, mở lại đúng index) ✓ 390/1280px
+
+  `DG_VERSION` → `1.16.20`. Không commit git.
+
+- `2026-11-07h`: Single product — **click vào ảnh chính `#dg-main-image` mở lightbox** + **tách lightbox thành lib dùng chung** (single product + gift cards).
+
+  Yêu cầu: click vào ảnh trong `<div class="flex-grow rounded-3xl overflow-hidden relative group glass-card">` mở lightbox xem ảnh đầy đủ — trước đó chỉ nút zoom `.dg-zoom-btn` mở được.
+
+  Vấn đề kiến trúc phát hiện khi implement: có **2 bản lightbox trùng lặp** — `#dg-zoom-modal` (trang single product, inline trong `content-single-product.php`, JS legacy `window.dgOpenZoom/dgCloseZoom/dgZoomPrev/dgZoomNext` với `setTimeout` lồng nhau) và `.dg-gift-zoom-modal` (trang gift cards, 1 file JS riêng). Cùng 1 UX nhưng 2 markup + 2 CSS + 2 controller → sửa 1 bên là lệch bên kia.
+
+  Kiến trúc mới — 1 lib + 1 partial + 1 CSS dùng chung:
+  - `assets/js/lib/zoom-lightbox.js` (mới) — classic script, không phụ thuộc gì → `window.DGZoomLightbox.create({ root, items, scope, resolveIndex, onChange })`. Controller **không gắn listener trực tiếp vào trigger** mà dùng **event delegation** trên `document` (`[data-dg-zoom-trigger]`) → trigger có thể được JS di chuyển (preview thẻ quà bị relocate trên mobile/tablet) vẫn hoạt động. Xử lý: `open/close/next/prev`, focus trap (Tab), `Escape`/`←`/`→`, restore focus, lock scroll body, `aria-hidden` trên root.
+  - `template-parts/global/zoom-modal.php` (mới) — markup dùng chung, gắn qua data attribute (`[data-dg-zoom-root|image|counter|prev|next|close]`). Phải include **sau `</main>`** vì `position: fixed` bị neo sai bởi `transform` của animation reveal.
+  - `assets/css/zoom-lightbox.css` (mới) — BEM `.dg-zoom-modal__*`, không phụ thuộc Tailwind runtime cho trạng thái mở/đóng (`display:none` + `.is-open`) → Tailwind CDN chặn vẫn chạy. Mobile ≤639px: nút chuyển ảnh xuống đáy (ảnh chiếm gần hết bề ngang).
+  - Token `--zoom-*` trong `style.css` `:root`; xoá token `--gift-zoom-*` cũ.
+
+  Sửa:
+  - `woocommerce/content-single-product.php` — ảnh chính `#dg-main-image` nay là trigger: `role="button"` + `tabindex="0"` + `aria-label="Zoom image"` + `data-dg-zoom-trigger`; nút `.dg-zoom-btn` bỏ `onclick="dgOpenZoom()"` → `data-dg-zoom-trigger`; **xoá hẳn** markup modal inline `#dg-zoom-modal`; thumbnail bỏ `onclick="dgChangeImage(this)"` → `data-dg-thumb`.
+  - `woocommerce/single-product.php` — include `template-parts/global/zoom-modal.php` sau `</main>`.
+  - `assets/js/product.js` — **xoá hẳn** block zoom legacy (175 dòng `dgZoomState` + `dgOpenZoom`/`dgZoomPrev`/`dgZoomNext`/`dgUpdateZoomImage`/`dgCloseZoom` + listener phím) → `initZoomLightbox()` dùng lib chung; gallery lấy từ `[data-dg-thumb]`; `resolveIndex()` đọc `src` hiện tại của `#dg-main-image` → mở đúng ảnh user đang xem, đồng bộ bộ đếm & prev/next. `dgChangeImage` chuyển từ `window.dgChangeImage` (inline handler) sang listener delegate.
+  - `assets/js/gift-cards-zoom.js` — viết lại dùng lib chung; giữ nguyên hành vi đồng bộ mệnh giá (`onChange` → `window.DGGiftValue.set(item.amount)`).
+  - `template-parts/gift-cards/section-bento.php` — ảnh + nút zoom bỏ `onclick="dgOpenZoom()"` → `data-dg-zoom-trigger`.
+  - `template-parts/gift-cards/section-zoom-modal.php` — **xoá** (thay bằng partial dùng chung); `page-templates/template-gift-cards.php` include partial mới.
+  - `assets/css/single-product.css` — xoá block `#dg-zoom-modal` (chuyển sang lib CSS), giữ rule `#dg-main-image` (cursor + focus ring).
+  - `assets/css/gift-cards.css` — xoá block `.dg-gift-zoom-modal*` (~210 dòng), giữ rule trigger riêng của trang.
+  - `inc/enqueue/styles.php` — enqueue `dg-zoom-lightbox` (global, vì markup render ở nhiều template).
+  - `inc/enqueue/scripts.php` — enqueue `dg-zoom-lightbox`; `dg-product` + `dg-gift-cards-zoom` khai báo dependency.
+
+  Kiểm chứng (Playwright, site live `https://dragonglow.freehosting.dev/`):
+  - Click `#dg-main-image` → modal mở (`is-open`, `display: flex`), `aria-hidden=false`, ảnh `shot1.jpg`, counter `1 / 4`, `body` overflow hidden, focus vào nút đóng ✓
+  - Click nút `.dg-zoom-btn` → mở ✓; `→` → counter `2 / 4` + ảnh `shot2.jpg` ✓; `Escape` → đóng + overflow reset ✓
+  - **Focus restore**: click ảnh (img không focus được khi click) → đóng → focus trả về `#dg-main-image` ✓; click nút zoom → focus trả về nút ✓
+  - **Focus trap**: 5 lần `Tab` → focus luôn nằm trong modal ✓ (`prev` → `next` → `close` → `prev` → `next`)
+  - **Mở đúng ảnh đang xem**: đổi thumbnail sang `shot3` → mở → counter `3 / 4`, ảnh `shot3` ≡ `#dg-main-image` ✓
+  - **Keyboard activation**: focus `#dg-main-image` + `Enter` → mở ✓
+  - **A11y**: `role=dialog`, `aria-modal=true`, `aria-hidden` đồng bộ, counter `aria-live="polite"`, `img alt` = "Browluxe Define Brow Mascara shot 1" ✓
+  - **Reduced motion**: `transition-duration: 0s`, `transform: none`, ảnh vẫn hiện ✓
+  - **Responsive**: 390px → nav `48×48` ở đáy (y=836), 768/1280px → nav giữa chiều cao 2 bên ✓
+  - **Hồi quy Gift Cards**: mở từ ảnh thẻ → counter `2 / 4`; `next` → `card-$250` + chip `$250` + hidden `250`; `Escape` → state giữ `$250`; mở lại → `3 / 4` ✓ (390px + 1280px, không `pageerror`)
+  - Không còn `onclick` inline nào chứa "zoom" ✓
+
+  `DG_VERSION` → `1.16.18`. Không commit git.
+
+- `2026-11-07g`: Gift Cards — **chuyển ảnh trong lightbox → đồng bộ toàn bộ state mệnh giá bên ngoài** (ảnh preview + chip active + hidden input form + nhãn giá nút "Add to Bag").
+
+  Yêu cầu: khi thoát lightbox, ảnh preview bên ngoài phải khớp với ảnh cuối cùng user xem trong lightbox (lightbox ở ảnh 1 → thoát ra ảnh ngoài cũng là ảnh 1).
+
+  Vấn đề phát hiện khi implement: nếu chỉ đổi `src` ảnh preview thì **form vẫn giữ mệnh giá cũ** → user nhìn thấy ảnh `$250` nhưng bấm "Add to Bag" lại gửi `$100` = đơn hàng sai. Nên phải đồng bộ **toàn bộ** state mệnh giá, không chỉ ảnh.
+
+  Kiến trúc — tách state ra module chung:
+  - `assets/js/lib/gift-value.js` (mới) — classic script, **không phụ thuộc gì**, sở hữu DUY NHẤT state mệnh giá: ảnh preview `.dg-gift-card-image` + chip `[data-amount]` (`is-active` / `aria-checked`) + hidden `input[name="value"]` (giá trị gửi form) + nhãn `.dg-gift-submit-value`. API: `window.DGGiftValue.get()` / `.set(amount)`.
+  - Vì sao tách module: `assets/js/gift-cards.js` là **ES module** (import Motion từ CDN) → nếu CDN chặn/chậm thì cả module bị skip; `assets/js/gift-cards-zoom.js` là classic script độc lập (lightbox phải sống tối thiểu) → không import được ES module. Module classic độc lập là điểm giao duy nhất hai script dùng chung được.
+  - `assets/js/gift-cards.js` — **xoá hẳn** `initValueChips()` + `swapCardImage()` (logic trùng lặp). Chip mệnh giá nay do `gift-value.js` gắn listener → **chip vẫn hoạt động kể cả khi ES module bị skip** (trước đây chip chết theo Motion CDN).
+  - `assets/js/gift-cards-zoom.js` — `render()` gọi `window.DGGiftValue.set(item.amount)` sau khi đổi ảnh → đồng bộ **live** (ngay khi chuyển ảnh, không chờ đóng lightbox).
+  - `inc/enqueue/scripts.php` — enqueue handle mới `dg-gift-value`; `dg-gift-cards-zoom` khai báo dependency `dg-gift-value` để luôn load trước.
+
+  Kiểm chứng (Playwright, mock `tmp-resp/gift-zoom/sync-mock.html` nạp JS thật của theme + site live `tmp-resp/gift-zoom/sync-live.js`):
+  - Chip `$250` → ảnh preview `card-250` + chip active `250` + hidden `250` + nhãn `$250` ✓
+  - Mở lightbox → counter `3 / 4`, ảnh `card-250` (đúng mệnh giá hiện tại) ✓
+  - `next` → `$500`: preview/chip/hidden/nhãn đều `500`, counter `4 / 4` ✓
+  - `Escape` đóng → state bên ngoài giữ nguyên `$500` (không revert) ✓
+  - Mở lại → index đúng `500` (không reset về ảnh đầu) ✓; `prev` → `$250` đồng bộ ✓
+  - **Regression**: mở rồi đóng ngay (không chuyển ảnh) → state giữ nguyên `$100`, không bị đổi ✓
+  - Chip vẫn hoạt động sau khi lightbox đã dùng ✓; đóng bằng click backdrop ✓; không `pageerror` ✓
+  - **Site live** `https://dragonglow.freehosting.dev/gift-cards/`: mở → counter `2 / 4`; `next` → preview `card-$250` + chip `250` + hidden `250` + nhãn `$250`; `Escape` → state giữ `$250`; mở lại → counter `3 / 4` ✓
+  - **Motion CDN bị chặn** (`tmp-resp/gift-zoom/sync-cdn-blocked.js`, abort mọi request jsDelivr): ES module `gift-cards.js` bị skip → `window.DGGiftValue` vẫn tồn tại, chip `$250` vẫn đổi ảnh + hidden + nhãn, lightbox vẫn mở + chuyển ảnh + đồng bộ `$500` ✓, không `pageerror` ✓
+  - **Thứ tự thực thi**: `gift-value.js` (classic, footer) chạy trước `gift-cards.js` (ES module → deferred) → `DGGiftValue` luôn sẵn sàng ✓; load order trên live: `gift-cards.js` → `gift-cards-card-preview.js` → `gift-value.js` → `gift-cards-zoom.js` ✓
+
+  `DG_VERSION` → `1.16.17`. Không commit git.
+
+- `2026-11-07f`: Gift Cards — **click vào ảnh thẻ mở lightbox + thêm nút chuyển ảnh (prev/next) + bộ đếm `1 / 4`** trong lightbox (parity với lightbox trang single product).
+
+  Yêu cầu: click trực tiếp vào ảnh `.dg-gift-card-image` trong `.dg-gift-card-preview` cũng mở lightbox; lightbox có nút chuyển ảnh giống `#dg-zoom-next` của trang single product, cycle qua 4 mệnh giá ($50 / $100 / $250 / $500).
+
+  Sửa:
+  - `template-parts/gift-cards/section-bento.php` — ảnh `.dg-gift-card-image` nay là trigger: thêm `role="button"` + `tabindex="0"` + `aria-label="Zoom gift card image"` (WCAG — ảnh không focus được mặc định).
+  - `template-parts/gift-cards/section-zoom-modal.php` — thêm 2 nút `__nav--prev` / `__nav--next` (`chevron_left` / `chevron_right`) + khối bộ đếm `__counter` (`#dg-gift-zoom-counter`, `aria-live="polite"`).
+  - `assets/js/gift-cards-zoom.js` — dựng gallery từ `data-card-{amount}` trên `.dg-gift-card-preview` (duyệt `preview.attributes` → đúng thứ tự PHP render 50 → 100 → 250 → 500); `resolveInitialIndex()` suy ra index từ `src` hiện tại của `.dg-gift-card-image` (đọc `getAttribute('src')` vì `gift-cards.js` set `img.src` khi đổi mệnh giá, `currentSrc` có thể chưa cập nhật); `goTo()` wrap-around 2 chiều; `render()` cập nhật `src` + bộ đếm + ẩn nút/bộ đếm khi gallery chỉ có 1 ảnh; click `.dg-gift-card-image` → `open()`; `Enter`/`Space` → `open()` (keyboard activation); phím `ArrowLeft`/`ArrowRight` chuyển ảnh, `Escape` đóng (chỉ khi modal đang mở).
+  - `assets/css/gift-cards.css` — style `__nav` (tròn 48×48, `top: 50%`, `margin-top: -1.5rem`, hover scale 1.05) + `__counter` (căn giữa đáy) dùng token `--gift-zoom-close-bg` / `--gift-zoom-close-ink`; `[hidden]` phải khai báo lại vì rule `display` đè lên UA `[hidden]{display:none}`; `cursor: zoom-in` cho `.dg-gift-card-image`; `:focus-visible` cho ảnh + nút nav; block `@media (max-width: 639px)` chuyển nút nav xuống đáy modal (ảnh mobile chiếm gần hết bề ngang → nút giữa cạnh sẽ đè lên ảnh); `__stage` giảm `max-height` còn `calc(90vh - 4rem)` để chừa chỗ cho bộ đếm; block `prefers-reduced-motion` riêng (modal nằm ngoài scope `.dg-gift`).
+
+  Kiểm chứng (Playwright, mock `tmp-resp/gift-zoom/gallery-mock.html` nạp CSS/JS thật của theme):
+  - Click ảnh → modal `display: flex`, `is-open`, `aria-hidden: false`, `body` overflow `hidden` ✓
+  - `next` ×3: `$100`→`$250`→`$500`→`$50` (wrap), bộ đếm `2/4`→`3/4`→`4/4`→`1/4` ✓
+  - `prev` từ `$50` → `$500` (wrap ngược) ✓; `ArrowRight` chuyển ảnh ✓; `Escape` đóng + reset overflow ✓
+  - Nút zoom cũ vẫn mở modal, giữ đúng index theo mệnh giá hiện tại ✓; không có `pageerror` ✓
+  - Keyboard: focus ảnh → `Enter` mở modal, focus nhảy vào nút close ✓
+  - 390 / 768 / 1280px → nút nav `48×48`, `z-index: 2`; mobile: nav ở đáy (`y: 836`), ảnh `358×269` không bị đè ✓
+
+  `DG_VERSION` → `1.16.16`. Không commit git.
+
+- `2026-11-07e`: Gift Cards — **thêm nút zoom (`.dg-zoom-btn`) trên ảnh preview thẻ quà + lightbox xem ảnh đầy đủ**.
+
+  Yêu cầu: thêm nút zoom vào `<div class="dg-gift-card-preview">` (markup cho sẵn từ single product).
+
+  Vấn đề: trang Gift Cards là **page template**, không phải product → `assets/js/product.js` (chứa `dgOpenZoom()` + markup `#dg-zoom-modal`) **không được enqueue** ở đây. Nếu chỉ chèn nút theo markup thì `onclick="dgOpenZoom()"` sẽ ném `ReferenceError` → nút chết.
+
+  Sửa:
+  - `template-parts/gift-cards/section-bento.php` — thêm nút zoom vào `.dg-gift-card-preview` (đặt sau `<img>`, trước 2 tag), markup mirror `woocommerce/content-single-product.php`.
+  - `template-parts/gift-cards/section-zoom-modal.php` (mới) — markup lightbox, đặt **ngoài `<main class="dg-gift">`** để `position: fixed` không bị neo sai bởi transform của animation reveal.
+  - `assets/js/gift-cards-zoom.js` (mới) — classic script độc lập (không phụ thuộc Motion, giống `gift-cards-card-preview.js`): mở/đóng modal, đọc `src` ảnh đang chọn theo mệnh giá hiện tại, focus trap vào nút close, restore focus khi đóng, Escape đóng, lock scroll body. Khai báo `window.dgOpenZoom` (guard: bỏ qua nếu trang đã có `#dg-zoom-modal` của product.js).
+  - `assets/css/gift-cards.css` — style lightbox (`.dg-gift-zoom-modal`, `__close`, `__stage`, `__image`) + `:focus-visible` cho nút zoom; block `prefers-reduced-motion` riêng vì modal nằm ngoài scope `.dg-gift`.
+  - `style.css` — token mới `--gift-zoom-backdrop`, `--gift-zoom-close-bg`, `--gift-zoom-close-bg-hover`, `--gift-zoom-close-ink`.
+  - `inc/enqueue/scripts.php` — enqueue `dg-gift-cards-zoom` trong block Gift Cards.
+  - `page-templates/template-gift-cards.php` — include partial lightbox sau `</main>`.
+
+  Kiểm chứng (Playwright `tmp-resp/gift-zoom/verify.js` + `measure.js`, mock HTML `tmp-resp/gift-zoom/mock.html` nạp CSS/JS thật của theme):
+  - 390 / 768 / 1280px → nút `visible: true`, `position: absolute`, `top/right: 16px`, `z-index: 10`, kích thước `40×40` ✓
+  - Click → modal `display: flex`, `is-open: true`, `aria-hidden: false`, ảnh zoom `src` = ảnh preview hiện tại, `opacity: 1` ✓
+  - `body` overflow = `hidden` khi mở, reset về `''` khi đóng ✓
+  - Focus vào nút close khi mở ✓
+  - Escape → modal `display: none`, `is-open: false` ✓
+  - Ảnh 1200×900 → render `1080×810` (đúng tỉ lệ, `object-fit: contain`, không méo) ✓
+
+  `DG_VERSION` → `1.16.15`. Không commit git.
+
+- `2026-11-07d`: Wishlist — **ô chọn (`.dg-wishlist-card__select`) luôn hiện ở mobile + tablet**, không cần hover (desktop giữ hover-reveal).
+
+  Yêu cầu: label `.dg-wishlist-card__select` hiển thị sẵn ở mobile và tablet; desktop giữ nguyên.
+
+  Đo trạng thái thật trước khi sửa (Playwright, mock HTML `tmp-resp/wl-select/card.html` nạp CSS live):
+  - ≤767px — `opacity: 1` (đã hiện sẵn, do rule cũ trong block `@media (max-width: 767px)`).
+  - **768–1023px (tablet) — `opacity: 0.0004`, `translateY(-4px)` → ẨN, chỉ hiện khi hover.** ← gap thật của yêu cầu.
+  - ≥1024px — ẩn, hover mới hiện (giữ nguyên).
+
+  Sửa (`assets/css/wishlist.css`):
+  - Thêm rule mới ngay sau block `:hover` của `.dg-wishlist-card__select`: `@media (max-width: 1023px) { .dg-wishlist-card__select { opacity: 1; transform: translateY(0); } }` → phủ mobile + tablet.
+  - Xoá rule trùng lặp cũ trong block `@media (max-width: 767px)` (§ 12 RESPONSIVE TUNING) — nay đã bao phủ bởi rule mới, tránh hai nguồn sự thật.
+
+  Về thứ tự specificity: rule mới (0,1,0) nằm SAU rule `:hover` (0,3,0) → khi chuột đi qua card ở mobile/tablet, trạng thái hover vẫn ra `opacity: 1` / `translateY(0)` — **trùng khớp với trạng thái nghỉ** → không nhấp nháy khi rê chuột.
+
+  Về JS: `assets/js/wishlist.js` không có handler `mouseenter`/`mouseleave`/`mouseover` nào (chỉ xử lý `click`) → `:hover` là pseudo-class của CSS nên xử lý bằng CSS, không sửa JS.
+
+  Kiểm chứng (Playwright `tmp-resp/wl-select/measure.js`, đo `getComputedStyle` với CSS live):
+  - 390 / 640 / 767 / 768 / 1023px → `opacity: 1`, `transform: translateY(0)` khi **không hover** ✓
+  - 1024 / 1280px → vẫn `opacity: ~0` khi nghỉ, `1` khi hover ✓ (không regression)
+
+  `DG_VERSION` → `1.16.14`. Không commit git.
+
+- `2026-11-07c`: Shop — **hover nút quick-add ở trạng thái "Added" (desktop) giữ nguyên màu nền như lúc chưa hover**.
+
+  Yêu cầu: ở desktop, hover vào nút `.dg-add-to-cart.dg-quick-add--added` phải giữ màu background giống trạng thái nghỉ.
+
+  Vấn đề: rule `.dg-add-to-cart.dg-quick-add--added:hover` dùng `--color-primary-container` = `#f4c2c2` (**hồng pale pink**) + `--color-on-primary-container` = `#554300`. Trong khi trạng thái nghỉ dùng `--color-tertiary-container` = `#f1ca50` (**vàng brand**) + `--color-on-tertiary-container` = `#6b5500`. Nên hover lệch hẳn sang hồng → nút trông như component khác, vỡ bảng màu.
+
+  Sửa (`assets/css/shop.css`): đổi 2 token trong rule hover sang đúng bộ token của trạng thái nghỉ (`--color-tertiary-container` / `--color-on-tertiary-container`), giữ nguyên `transform: translateY(-2px)` để nút vẫn "có phản hồi" khi hover.
+
+  Kiểm chứng (Playwright `tmp-resp/quickadd-hover/verify-desktop-added.js`, đo `getComputedStyle` trên site live):
+  - 1024px / 1280px, trạng thái "Added": bg `rgb(241,202,80)` ≡ `rgb(241,202,80)`, color `rgb(113,85,9)` ≡ `rgb(113,85,9)`, icon color `rgb(115,92,0)` ≡ `rgb(115,92,0)` ✓ — chỉ còn `transform` đổi `0,0` → `0,-2` (nhấc nút 2px) ✓
+  - 390px / 768px — không đổi (đã bỏ hover từ `2026-11-07b`) ✓
+  - 1024px / 1280px — hover-reveal + sheen sweep của card giữ nguyên ✓
+
+  `DG_VERSION` → `1.16.13`. Không commit git.
+
+- `2026-11-07b`: Shop — **bỏ hover của nút quick-add ở mobile + tablet** (desktop giữ nguyên).
+
+  Yêu cầu: `.dg-add-to-cart.dg-quick-add` không còn phản ứng hover ở kích thước mobile và tablet; desktop giữ nguyên.
+
+  Đo lại trạng thái hover trước khi sửa (Playwright `tmp-resp/quickadd-hover/measure-added.js`):
+  - 390px / 768px — hover đổi nền `rgb(241,202,80)` → `rgb(244,194,194)` (hồng `--color-primary-container`) + nhấc nút `translateY(-2px)`.
+  - Vấn đề thực tế: touch device **giữ `:hover` dính** sau khi tap → nút kẹt ở màu hồng + bị nhấc lên 2px cho tới lần chạm kế tiếp. Đây chính là "hover state bị dính" trên mobile.
+  - Desktop (>= 1024px): hover là **hover-reveal** — nút `opacity: 0` → `1` khi hover card, kèm sheen sweep (`::before`). Phải giữ nguyên.
+
+  Sửa (`assets/css/shop.css`):
+  - Thêm block mới `@media (max-width: 1023px)` ở cuối file: khai báo lại nền / màu chữ / transform gốc cho `.dg-add-to-cart:hover` và `.dg-add-to-cart.dg-quick-add--added:hover` → hover không còn thay đổi gì. Kèm `.dg-product-card:hover .dg-add-to-cart::before { left: 160%; transition: none; }` để sheen không chạy theo hover card (tránh vệt sáng đọng lại sau tap).
+  - Xoá 2 rule hover cũ trong block media `< 1024px` đã tồn tại từ trước (`transform: translateY(-2px)`) — chúng **cố tình** giữ hiệu ứng nhấc nút, nay trái với yêu cầu mới.
+
+  Về JS: grep toàn bộ `assets/js/` — **không có** handler `mouseenter`/`mouseleave`/`mouseover`/`mouseout` nào cho `.dg-add-to-cart` hay `.dg-quick-add` (chỉ `click` trong `quick-add-to-cart.js`). `:hover` là pseudo-class của CSS, không có class để gỡ bằng script → xử lý đúng là bằng CSS, không cần sửa JS.
+
+  Kiểm chứng (Playwright `tmp-resp/quickadd-hover/verify.js`, đo `getComputedStyle` trên site live):
+  - 390px / 768px — rest ≡ hover, cả trạng thái thường lẫn "Added": bg `rgb(241,202,80)`, color `rgb(113,85,9)`, transform `matrix(1,0,0,1,0,0)`, sheen transition `0s` ✓
+  - 1024px / 1280px — hover-reveal + sheen + màu hồng trạng thái "Added" **giữ nguyên** ✓
+
+  `DG_VERSION` → `1.16.12`. Không commit git.
+
+- `2026-11-07a`: Single product — **giảm khoảng cách trên của section `#product-tabs` ở mobile** (tablet/desktop giữ nguyên).
+
+  Vấn đề: section dùng class Tailwind `mt-section-gap` → `margin-top: 120px` ở **mọi** breakpoint. Ở mobile (320–767px) khoảng trống này quá lớn, nội dung tab bị đẩy xuống khá xa so với khối thông tin sản phẩm phía trên.
+
+  Sửa:
+  - `style.css` (`:root`) — thêm token `--product-tabs-gap-mobile: 48px` (nhóm token single-product hiện có).
+  - `assets/css/product.css` — thêm block `@media (max-width: 767px) { #product-tabs { margin-top: var(--product-tabs-gap-mobile); } }`.
+  - `functions.php` — `DG_VERSION` → `1.16.11`.
+
+  Ghi chú kỹ thuật (đã kiểm chứng bằng CDP): Tailwind CDN **inject `<style>` runtime vào `<head>`** → nằm **sau** các file CSS của theme. Nếu dùng class thường (specificity 0,1,0) thì utility `.mt-section-gap` của Tailwind sẽ thắng do đứng sau. Vì vậy dùng **ID selector** `#product-tabs` (1,0,0) — cùng pattern đã có trong file này (`#dg-main-image`, `#sticky-add-to-bag`) → luôn thắng bất kể thứ tự nạp.
+
+  Breakpoint `767px` chọn khớp với logic mobile đã có trong `assets/js/product.js` (`window.innerWidth < 768` → coi là mobile, scroll tới tabs). Ở 640–767px section trước đó bị "chật" hơn desktop → nay đồng nhất với mobile.
+
+  Kiểm chứng (Playwright `tmp-resp/product-tabs-gap/check.js`, đo `getComputedStyle().marginTop` trên site live):
+  - 320 / 390 / 430 / 639 / 640 / 767px → `48px` ✓
+  - 768 / 1023 / 1024 / 1280px → `120px` (không đổi) ✓
+
+  Không commit git.
+
 - `2026-11-06i`: Header — **fix bug text "Menu" thừa hiện ra ở desktop** (trong `div.dg-nav-actions`).
 
   **Root cause:** `$nav_aria = esc_attr_e( 'Menu', 'dragon-glow' );` — dùng nhầm biến thể `_e` (echo) thay vì `__` (return). `esc_attr_e()` **echo** ra output nên chữ "Menu" bị in thành text node ngay trong markup (hiện ra ở desktop vì nút toggle bị ẩn bởi `lg:hidden` nhưng text node thì không), đồng thời `$nav_aria` thành `null` → `aria-label=""` rỗng.

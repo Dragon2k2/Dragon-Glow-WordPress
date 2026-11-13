@@ -228,7 +228,14 @@ function dg_render_wc_checkout(): void {
 					if ( class_exists( 'WC_Checkout' ) ) {
 						$dg_wc_checkout = WC_Checkout::instance();
 						$dg_wc_checkout->checkout_form_billing();
-						$dg_wc_checkout->checkout_form_shipping();
+						// Không gọi checkout_form_shipping(): template
+						// checkout/form-shipping.php của WC chính là nơi in ra
+						// <div class="woocommerce-shipping-fields"> và
+						// <div class="woocommerce-additional-fields">. Cả 2 khối
+						// đều đang rỗng ở store này (ship-to-different tắt,
+						// order_comments đã chuyển vào billing ở
+						// dg_customize_checkout_fields), giữ lại chỉ tạo div
+						// trống làm vỡ layout.
 					}
 					do_action( 'woocommerce_checkout_after_customer_details' );
 					?>

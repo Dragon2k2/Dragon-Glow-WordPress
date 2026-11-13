@@ -5,13 +5,16 @@
  *
  * @package Dragon_Glow
  */
-import { animate, inView } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
+import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 
 (function () {
 	'use strict';
 
 	/* ── Guard: respect prefers-reduced-motion ─────────────── */
 	const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	/* ── Shared easing curve (Motion vanilla API) ──────────── */
+	const EASE = [ 0.16, 1, 0.3, 1 ];
 
 	/* ── Scope: chỉ chạy trên trang Shipping & Returns ────── */
 	const root = document.querySelector('[data-page="shipping-returns"]');
@@ -35,7 +38,7 @@ import { animate, inView } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
 					{
 						duration: 0.7,
 						ease: [0.2, 0, 0, 1],
-						delay: children.length > 1 ? { each: 0.08 } : 0,
+						delay: children.length > 1 ? stagger(0.08) : 0,
 					}
 				);
 			}, { amount: 0.15 });

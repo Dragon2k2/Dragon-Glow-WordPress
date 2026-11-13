@@ -1,0 +1,88 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      "primary":"#735c00",
+      "on-primary":"#ffffff",
+      "primary-container":"#d4af37",
+      "on-primary-container":"#554300"
+    },
+    borderRadius: { DEFAULT: "0.125rem", lg: "0.25rem", xl: "0.5rem", full: "9999px" }
+  } }
+};
+</script>
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/style.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/main.css">
+<link rel="stylesheet" href="../../wp-content/themes/dragon-glow/assets/css/gift-cards.css">
+</head>
+<body style="margin:0; background:#fcf9f8;">
+<main class="dg-gift" id="main-content">
+  <div class="dg-gift-wrap">
+    <div class="dg-gift-layout">
+      <div class="dg-gift-layout-visual">
+        <div class="dg-gift-bento">
+          <div
+            class="dg-gift-card-preview"
+            data-default-format="digital"
+            data-sr
+            data-card-50="card-50.webp"
+            data-card-100="card-100.webp"
+            data-card-250="card-250.webp"
+            data-card-500="card-500.webp"
+          >
+            <img
+              class="dg-gift-card-image"
+              src="card-100.webp"
+              alt="Dragon Glow gift card — premium textured card with embossed brand mark on a soft marble surface."
+              loading="eager"
+              decoding="async"
+              role="button"
+              tabindex="0"
+              aria-label="Zoom gift card image"
+            />
+            <button
+              type="button"
+              class="dg-zoom-btn absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/70 backdrop-blur flex items-center justify-center text-primary hover:bg-white transition-all"
+              aria-label="Zoom image"
+              onclick="dgOpenZoom()"
+            >
+              <span class="material-symbols-outlined text-[20px]" aria-hidden="true">zoom_in</span>
+            </button>
+            <span class="dg-gift-card-tag" data-tag-for="physical">Physical Edition</span>
+            <span class="dg-gift-card-tag dg-gift-card-tag--digital is-hidden" data-tag-for="digital">Digital Edition</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div
+  id="dg-gift-zoom-modal"
+  class="dg-gift-zoom-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-label="Gift card zoom view"
+  tabindex="-1"
+>
+  <button type="button" class="dg-gift-zoom-modal__close" aria-label="Close zoom">
+    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+  </button>
+  <button type="button" class="dg-gift-zoom-modal__nav dg-gift-zoom-modal__nav--prev" aria-label="Previous image">
+    <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+  </button>
+  <button type="button" class="dg-gift-zoom-modal__nav dg-gift-zoom-modal__nav--next" aria-label="Next image">
+    <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+  </button>
+  <div class="dg-gift-zoom-modal__stage">
+    <img id="dg-gift-zoom-image" class="dg-gift-zoom-modal__image" src="" alt="" />
+  </div>
+  <div class="dg-gift-zoom-modal__counter">
+    <span id="dg-gift-zoom-counter">1 / 1</span>
+  </div>
+</div>
+<script src="../../wp-content/themes/dragon-glow/assets/js/gift-cards-zoom.js"></script>
+</body></html>

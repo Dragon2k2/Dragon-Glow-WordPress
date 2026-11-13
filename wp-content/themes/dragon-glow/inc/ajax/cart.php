@@ -57,6 +57,11 @@ function dg_ajax_add_to_cart(): void {
 			'message'       => __( 'Added to bag!', 'dragon-glow' ),
 			'redirect'      => $result['redirect'] ?? dg_get_cart_url(),
 			'cart_item_key' => $cart_item_key,
+			// Authoritative cart count AFTER the add. Lets the client
+			// reconcile its optimistic badge without a second round-trip
+			// (`dg_ajax_get_cart_count`), which is what made the quick-add
+			// button feel slow.
+			'count'         => dg_get_cart_item_count(),
 		);
 
 		if ( $redirect_after ) {

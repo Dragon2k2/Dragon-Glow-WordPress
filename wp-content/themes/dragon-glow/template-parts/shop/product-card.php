@@ -98,13 +98,31 @@ $delay_style = $delay_ms > 0 ? sprintf('transition-delay: %dms;', $delay_ms) : '
 			<span class="material-symbols-outlined" aria-hidden="true">favorite</span>
 		</button>
 
-		<button class="dg-add-to-cart dg-quick-add inline-flex items-center justify-center gap-2"
+		<?php
+		// SSR-aware "already in cart" state.
+		//
+		// The client used to fetch the cart identifiers over AJAX on load,
+		// which cost one full round-trip (~2s on this host) before the
+		// buttons could show the correct "Added" state. Rendering it
+		// server-side removes that delay entirely and avoids the visual
+		// jump from "Add to Cart" to "Added".
+		//
+		// `dg_get_cart_identifiers()` reads the same cart the AJAX endpoint
+		// reads, so the two can never drift.
+		$dg_cart_ids = dg_get_cart_identifiers();
+		$dg_in_cart  = in_array( (int) $product_id, array_map( 'intval', (array) ( $dg_cart_ids['product_ids'] ?? array() ) ), true );
+		$dg_qa_label = $dg_in_cart
+			? __( 'Added', 'dragon-glow' )
+			: __( 'Add to Cart', 'dragon-glow' );
+		?>
+		<button class="dg-add-to-cart dg-quick-add inline-flex items-center justify-center gap-2<?php echo $dg_in_cart ? ' dg-quick-add--added' : ''; ?>"
 			data-product-id="<?php echo esc_attr($product_id); ?>"
 			data-product-slug="<?php echo esc_attr($product_slug); ?>"
 			data-original-label="<?php esc_attr_e('Add to Cart', 'dragon-glow'); ?>"
+			data-in-cart="<?php echo $dg_in_cart ? '1' : '0'; ?>"
 			type="button">
-		<span class="material-symbols-outlined" style="font-size:16px;line-height:1;">shopping_bag</span>
-		<span class="dg-quick-add__label"><?php esc_html_e('Add to Cart', 'dragon-glow'); ?></span>
+		<span class="material-symbols-outlined" style="font-size:16px;line-height:1;"><?php echo $dg_in_cart ? 'check' : 'shopping_bag'; ?></span>
+		<span class="dg-quick-add__label"><?php echo esc_html($dg_qa_label); ?></span>
 		</button>
 	</div>
 	<a href="<?php echo esc_url($product_link); ?>" class="text-center px-2 dg-product-info-link">

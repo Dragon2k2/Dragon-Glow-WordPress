@@ -922,6 +922,30 @@
 	transform: translateY(0);
 }
 
+/* ── Select checkbox — always visible on MOBILE + TABLET (< 1024px) ────
+   Vì sao:
+   - Touch device không có con trỏ → `:hover` là trạng thái "dính" sau khi
+     tap, không phải trạng thái "đang chỉ vào". Ẩn ô checkbox theo hover
+     khiến người dùng mobile/tablet không biết mình có thể chọn hàng loạt.
+   - Tablet có chuột nhưng người dùng vẫn chủ yếu dùng chạm.
+
+   Desktop (>= 1024px) giữ nguyên hover-reveal: nút chọn nằm trên ảnh và
+   chỉ hiện khi chuột đi qua card, tránh nhiễu thị giác trên lưới sản phẩm.
+
+   Breakpoint 1024px = mốc theme chuyển sang lưới 4 cột (`.dg-wishlist-grid`
+   § Responsive). Dưới mốc này là 1–3 cột, card nhỏ hơn → ô chọn nhỏ 28px
+   không làm rối mắt nên hiện sẵn.
+
+   Ghi chú về thứ tự rule: rule này (0,1,0) nằm SAU rule `:hover` (0,3,0)
+   nên khi chuột đi qua card ở mobile/tablet, trạng thái hover vẫn cho
+   opacity: 1 / translateY(0) — trùng với trạng thái nghỉ, không nhấp nháy. */
+@media (max-width: 1023px) {
+	.dg-wishlist-card__select {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
 .dg-wishlist-toolbar__checkbox-mark,
 .dg-wishlist-card__checkbox-mark {
 	/* Hidden by default — revealed when sibling input is `:checked`
@@ -2145,11 +2169,6 @@
 	.dg-wishlist-toolbar__right {
 		width: 100%;
 		justify-content: space-between;
-	}
-
-	.dg-wishlist-card__select {
-		opacity: 1;
-		transform: translateY(0);
 	}
 
 	.dg-wishlist-bulkbar__inner {

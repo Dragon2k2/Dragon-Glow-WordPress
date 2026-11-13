@@ -912,6 +912,49 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --account-btn-secondary-border: rgba(115, 92, 0, 0.30);
     
     --account-table-shadow: 0 4px 16px rgba(115, 92, 0, 0.08);
+
+    /* Orders table — mobile stacked card (<= 640px)
+       One card per order. The Order cell (a `<th scope="row">` in
+       WooCommerce) becomes the card header; the remaining cells become
+       label/value rows and the View button fills the card footer. */
+    --account-orders-card-radius: 16px;
+    --account-orders-card-border: rgba(115, 92, 0, 0.14);
+    --account-orders-card-bg: rgba(255, 255, 255, 0.55);
+    --account-orders-card-shadow: 0 4px 16px rgba(115, 92, 0, 0.08);
+    --account-orders-card-header-bg: rgba(255, 255, 255, 0.42);
+    --account-orders-card-header-divider: rgba(115, 92, 0, 0.16);
+    --account-orders-cell-divider: rgba(115, 92, 0, 0.08);
+    --account-orders-cell-min-height: 44px;
+    --account-orders-button-min-height: 44px;
+
+    /* Order list (<ul class="dg-account-orders">) — mobile card (<= 640px)
+       Header row: icon tile + order number/date + total.
+       Footer row (after a divider): status pill + View link. */
+    --account-order-row-padding: 16px;
+    --account-order-row-gap: 12px;
+    --account-order-row-radius: 16px;
+    --account-order-row-bg: rgba(255, 255, 255, 0.72);
+    --account-order-row-border: rgba(115, 92, 0, 0.14);
+    --account-order-row-shadow: 0 2px 10px rgba(115, 92, 0, 0.06);
+    --account-order-row-divider: rgba(115, 92, 0, 0.10);
+    --account-order-row-icon-size: 40px;
+    --account-order-row-icon-bg: rgba(115, 92, 0, 0.08);
+    --account-order-row-total-size: 16px;
+    --account-order-row-action-min-height: 44px;
+    /* Tablet card (641-1279px): same two-row card, roomier. */
+    --account-order-row-padding-tablet: 20px 24px;
+    --account-order-row-total-size-tablet: 18px;
+    --account-order-row-num-size-tablet: 16px;
+    /* Desktop single row (>= 1280px): fixed columns so Total / Status / View align across rows. */
+    --account-order-row-padding-desktop: 16px 24px;
+    --account-order-row-gap-desktop: 24px;
+    --account-order-col-total: 104px;
+    --account-order-col-status: 148px;
+    --account-order-col-action: 72px;
+    --account-order-row-total-size-desktop: 16px;
+    --account-order-row-hover-border: rgba(115, 92, 0, 0.32);
+    --account-order-row-hover-shadow: 0 8px 24px rgba(115, 92, 0, 0.12);
+    --account-order-row-hover-bg: rgba(255, 255, 255, 0.9);
     
     --account-badge-shadow: 0 6px 18px rgba(115, 92, 0, 0.28);
     --account-downloads-shadow: 0 14px 32px rgba(123, 84, 85, 0.10);
@@ -923,6 +966,15 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     
     --account-payment-border: rgba(115, 92, 0, 0.16);
     --account-payment-bg-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.14), rgba(212, 175, 55, 0.22));
+
+    /* Orders pagination — compact layout (mobile + tablet) */
+    --account-pagination-gap: 8px;
+    --account-pagination-pill-min: 36px;
+    --account-pagination-pill-height: 36px;
+    --account-pagination-pill-font: 14px;
+    --account-pagination-ellipsis-color: var(--color-on-surface-variant);
+    --account-pagination-ellipsis-font: 14px;
+    --account-pagination-ellipsis-min: 22px;
     
     --account-subscription-border: rgba(115, 92, 0, 0.22);
     --account-subscription-bg-hover: rgba(115, 92, 0, 0.08);
@@ -1025,6 +1077,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Single product page — title, price, add to cart, tabs */
     
     --product-btn-gradient: linear-gradient(135deg, #c9a96e 0%, #e8d5a3 45%, #c9a96e 75%, #a07840 100%);
+    /* Khoảng cách trên của section #product-tabs ở mobile (ghi đè .mt-section-gap 120px) */
+    --product-tabs-gap-mobile: 48px;
     
     --product-qty-border: rgba(123, 84, 85, 0.12);
     --product-qty-shadow: 0 1px 3px rgba(123, 84, 85, 0.06);
@@ -1275,6 +1329,12 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --a11y-sidebar-w: 280px;
     --a11y-content-w: 720px;
     --a11y-gutter: 40px;
+    --a11y-toc-panel-bg: var(--neutral-warm-100-alpha-95);
+    --a11y-toc-panel-border: var(--color-outline-variant);
+    --a11y-toc-panel-shadow: 0 16px 40px rgb(26 26 26 / 0.14);
+    --a11y-toc-panel-radius: 1rem;
+    --a11y-toc-item-active-bg: rgba(var(--gold-rgb), 0.1);
+    --a11y-toc-item-active-text: var(--color-primary);
 
     /* ========== Careers Component ========== */
     /* Token chuyển từ assets/css/careers.css → style.css :root (single source of truth). */
@@ -1303,6 +1363,13 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --cookie-sidebar-w: 280px;
     --cookie-content-w: 720px;
     --cookie-gutter: 40px;
+    --cookie-toc-panel-bg: var(--neutral-warm-100-alpha-95);
+    --cookie-toc-panel-border: var(--color-outline-variant);
+    --cookie-toc-panel-shadow: 0 16px 40px rgb(26 26 26 / 0.14);
+    --cookie-toc-panel-radius: 1rem;
+    --cookie-toc-panel-scrollbar-inset: 0.75rem;
+    --cookie-toc-item-active-bg: rgba(var(--gold-rgb), 0.1);
+    --cookie-toc-item-active-text: var(--color-primary);
 
     /* ========== FAQ Component ========== */
     /* Token chuyển từ assets/css/faq.css → style.css :root (single source of truth). */
@@ -1349,6 +1416,28 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --gift-easing: cubic-bezier(0.22, 1, 0.36, 1);
     --gift-duration: 500ms;
 
+    /* ========== Shared Image Lightbox Component ========== */
+    /* Token dùng chung cho lightbox ảnh (single product + gift cards).
+       Nguồn: assets/css/zoom-lightbox.css */
+    --zoom-z-index: 9999;
+    --zoom-backdrop: rgba(0, 0, 0, 0.9);
+    --zoom-backdrop-blur: 16px;
+    --zoom-control-bg: rgba(255, 255, 255, 0.1);
+    --zoom-control-bg-hover: rgba(255, 255, 255, 0.2);
+    --zoom-control-ink: #ffffff;
+    --zoom-control-size: 3rem;
+    --zoom-control-offset: 1rem;
+    --zoom-counter-padding-y: 0.5rem;
+    --zoom-counter-padding-x: 1rem;
+    --zoom-counter-font-size: 0.875rem;
+    --zoom-counter-gap: 1.25rem;
+    --zoom-stage-padding: 1rem;
+    --zoom-radius: 0.75rem;
+    --zoom-image-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    --zoom-duration: 300ms;
+    --zoom-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --zoom-focus-ring: var(--color-primary);
+
     /* ========== Help Center Component ========== */
     /* Token chuyển từ assets/css/help-center.css → style.css :root (single source of truth). */
     --hc-radius-sm: 0.25rem;
@@ -1365,12 +1454,31 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --oi-gutter: 24px;
     --oi-section-gap: 120px;
 
+    /* Traceable — text sits directly on the photo (no card, no overlay).
+       Readability relies on a light halo around the glyphs: the photo is not
+       uniform (cream backdrop on the left, dark serum bottle in the middle). */
+    --oi-traceable-halo: 0 0 8px rgba(252, 249, 248, 1), 0 0 18px rgba(252, 249, 248, 0.95), 0 0 32px rgba(252, 249, 248, 0.8);
+    --oi-traceable-halo-wide: 0 0 10px rgba(252, 249, 248, 1), 0 0 24px rgba(252, 249, 248, 0.95), 0 0 48px rgba(252, 249, 248, 0.85);
+    --oi-traceable-text: var(--color-on-surface);
+    --oi-traceable-text-muted: var(--color-on-surface-variant);
+    --oi-traceable-rule: rgba(28, 27, 27, 0.35);
+    --oi-traceable-footnote: rgba(28, 27, 27, 0.92);
+
     /* ========== Privacy Policy Component ========== */
     /* Token chuyển từ assets/css/privacy-policy.css → style.css :root (single source of truth). */
     --priv-radius: 0.25rem;
     --priv-sidebar-width: 280px;
     --priv-content-width: 720px;
     --priv-gutter: 40px;
+    --priv-toc-panel-bg: var(--neutral-warm-100-alpha-95);
+    --priv-toc-panel-border: var(--color-outline-variant);
+    --priv-toc-panel-shadow: 0 16px 40px rgb(26 26 26 / 0.14);
+    --priv-toc-panel-radius: 1rem;
+    /* Khoảng thụt đầu/cuối của rãnh scrollbar (WebKit) để thanh cuộn
+       nằm gọn trong bo góc panel, không đè lên đường border cong. */
+    --priv-toc-panel-scrollbar-inset: 0.75rem;
+    --priv-toc-item-active-bg: rgba(var(--gold-rgb), 0.1);
+    --priv-toc-item-active-text: var(--color-primary);
 
     /* ========== Shipping & Returns Component ========== */
     /* Token chuyển từ assets/css/shipping-returns.css → style.css :root (single source of truth). */
@@ -1378,6 +1486,11 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --sr-faq-icon-gap: 1rem; /* question → chevron breathing room */
     --sr-faq-icon-duration: 320ms;
     --sr-faq-icon-ease: cubic-bezier(0.2, 0, 0, 1);
+    /* Scrollbar của modal Return — cùng bảng màu với modal Apply (Careers). */
+    --sr-scrollbar-size: 8px;
+    --sr-scrollbar-track: var(--neutral-warm-100);
+    --sr-scrollbar-thumb: var(--neutral-400);
+    --sr-scrollbar-thumb-hover: var(--neutral-500);
 
     /* ========== Shop Component ========== */
     /* Token chuyển từ assets/css/shop.css → style.css :root (single source of truth). */
@@ -1420,6 +1533,13 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --terms-sidebar-width: 280px;
     --terms-content-width: 720px;
     --terms-gutter: 40px;
+    --terms-toc-panel-bg: var(--neutral-warm-100-alpha-95);
+    --terms-toc-panel-border: var(--color-outline-variant);
+    --terms-toc-panel-shadow: 0 16px 40px rgb(26 26 26 / 0.14);
+    --terms-toc-panel-radius: 1rem;
+    --terms-toc-panel-scrollbar-inset: 0.75rem;
+    --terms-toc-item-active-bg: rgba(var(--gold-rgb), 0.1);
+    --terms-toc-item-active-text: var(--color-primary);
 
     /* ========== Thank You Component ========== */
     /* Token chuyển từ assets/css/thankyou.css → style.css :root (single source of truth). */

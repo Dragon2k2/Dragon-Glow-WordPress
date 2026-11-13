@@ -1387,7 +1387,7 @@
 
 .dg-apply-actions {
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: row;
 	gap: 0.875rem;
 	margin-top: 1rem;
 	padding-top: 1.5rem;
@@ -1396,7 +1396,6 @@
 
 @media (min-width: 640px) {
 	.dg-apply-actions {
-		flex-direction: row;
 		justify-content: flex-end;
 	}
 }
@@ -1446,6 +1445,41 @@
 	opacity: 0.5;
 	cursor: not-allowed;
 	pointer-events: none;
+}
+
+/* Mobile: hai nút nằm cùng một hàng ngang.
+   Tablet (≥640px) và desktop giữ nguyên hành vi cũ: nút căn phải, primary có
+   min-width 200px — chỉ mobile mới bỏ min-width và co nút phụ lại theo nội dung. */
+@media (max-width: 639px) {
+	.dg-apply-actions {
+		gap: 0.625rem;
+		align-items: stretch;
+	}
+
+	.dg-apply-actions .dg-careers-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-self: stretch;
+		min-width: 0;
+		min-height: 44px;
+		padding: 0.75rem 0.625rem;
+		font-size: 0.75rem;
+		line-height: 1.25;
+		letter-spacing: 0.04em;
+		text-align: center;
+	}
+
+	.dg-apply-actions .dg-careers-btn--secondary {
+		/* Nút phụ giữ chiều rộng theo nội dung (ngắn). */
+		flex: 0 0 auto;
+	}
+
+	.dg-apply-actions .dg-careers-btn--primary {
+		/* Nút chính chiếm phần chiều rộng còn lại → chữ luôn nằm 1 dòng. */
+		flex: 1 1 auto;
+		min-width: 0;
+	}
 }
 
 /* Tránh body scroll khi modal mở. */

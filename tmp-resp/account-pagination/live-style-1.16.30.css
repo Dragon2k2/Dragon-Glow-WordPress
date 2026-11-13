@@ -1,0 +1,1682 @@
+/*
+Theme Name:  Dragon Glow
+Theme URI:   https://dragonglows.page.gd
+Description: Luxury skincare e-commerce theme with Luminous Ethereal design system. WooCommerce integrated.
+Version:     1.0.0
+Author:      Dragon Glow Studio
+Author URI:  https://dragonglows.page.gd
+Text Domain: dragon-glow
+Domain Path: /languages
+Requires at least: 6.4
+Tested up to:      6.7
+Requires PHP:      8.0
+WC tested up to:   9.0
+License:     GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-menu, editor-style, featured-images, threaded-comments, translation-ready
+*/
+
+/* =========================================
+   DRAGON GLOW — DESIGN TOKEN SYSTEM
+   Architecture: Primitive → Semantic → Component
+   Reference: TOKEN-AUDIT-REPORT.md
+   ========================================= */
+
+:root {
+    /* =====================================================
+       LAYER 1: PRIMITIVE TOKENS (Raw Values)
+       Single source of truth for all color values.
+       Never use these directly in components — use semantic/component tokens.
+       ===================================================== */
+    
+    /* ----- Brand Primary (Deep Brown-Gold) ----- */
+    --primary-900: #241a00;      /* Darkest — text on gold backgrounds */
+    --primary-800: #554300;      /* Dark — headings, strong emphasis */
+    --primary-rgb: 115, 92, 0;   /* RGB of primary-700 for alpha channels */
+    
+    /* ----- NEW: Canonical Dark Gold (Primary Brand) ----- */
+    --gold-dark: #735c00;        /* Canonical primary brand color (replaces 15+ duplicate names) */
+    --gold-dark-rgb: 115, 92, 0; /* RGB for alpha channels */
+    
+    /* ----- Gold Accent (Luxury Highlight) ----- */
+    --gold-200: #ffe182;         /* Light — borders, dividers */
+    --gold-400: #d4af37;         /* Medium-light — borders, icons */
+    --gold-400-rgb: 212, 175, 55; /* RGB of gold-400 for alpha channels */
+    --gold-500: #c9a24b;         /* Base gold — primary accent (canonical) */
+    --gold-600: #a67c1e;         /* Medium-dark — hover states, emphasis */
+    --gold-700: #8c6d23;         /* Dark — strong contrast */
+    --gold-800: #715509;         /* Darker — headings, deep emphasis */
+    --gold-900: #5b4300;         /* Darkest — maximum contrast */
+    --gold-rgb: 201, 162, 75;    /* RGB of gold-500 for alpha channels */
+    --gold-fixed: #ffe088;       /* Light gold for text/icons on dark-gold (--gold-dark) surfaces */
+
+    /* ----- NEW: Warm Gradient Palette (Hero Gradient) ----- */
+    --warm-reddish-brown: #a9371e;  /* Warm reddish-brown — gradient start */
+    --warm-coral: #fd7455;          /* Coral/salmon — gradient middle */
+    --warm-gold: #d4af37;           /* Gold — gradient end (same as gold-400) */
+    --gold-bright: #f1ca50;         /* Bright gold — eyebrow labels (same value as --color-tertiary-container) */
+    
+    /* ----- Secondary (Mauve-Slate) ----- */
+    --secondary-700: #5c5d6e;    /* Base secondary */
+    --secondary-600: #6f5f59;    /* Container text */
+    
+    /* ----- Neutral (Surface & Background) ----- */
+    --neutral-0: #ffffff;        /* Pure white */
+    --neutral-50: #fbf9f5;       /* Lightest — page background (canonical cool ivory) */
+    --neutral-100: #f7f4ee;      /* Very light — card backgrounds */
+    --neutral-200: #efeeea;      /* Light — container backgrounds */
+    --neutral-300: #eae8e4;      /* Medium-light — borders */
+    --neutral-400: #d4c2c2;      /* Medium — dividers */
+    --neutral-500: #827473;      /* Medium-dark — borders */
+    --neutral-600: #504444;      /* Dark — secondary text */
+    --neutral-700: #1b1c1a;      /* Darker — body text (canonical text color) */
+    --neutral-800: #1e1b17;      /* Darkest — headings */
+    --neutral-900: #313030;      /* Deepest — dark backgrounds, footer */
+    
+    /* ----- NEW: Warm Background Variants ----- */
+    --neutral-warm-50: #fcf9f8;  /* Warm ivory (replaces 12 duplicate definitions) */
+    --neutral-warm-100: #faf9f6; /* Cooler warm ivory variant */
+    
+    /* ----- Functional Colors ----- */
+    --error-500: #ba1a1a;        /* Error state */
+    --error-700: #93000a;        /* Error state — deep (gradient end, pressed) */
+    --error-rgb: 186, 26, 26;    /* RGB of error-500 for alpha channels */
+    --success-500: #3b7a38;      /* Success state */
+    --warning-500: #ffc107;      /* Warning state (e.g., checkout icon) */
+    
+    /* ----- Auth Portal Heritage Colors (Parchment Tones) ----- */
+    /* Scoped primitive colors for classical heritage design */
+    --heritage-ivory-0: #fffdf9;     /* Lightest ivory — panel surface */
+    --heritage-ivory-100: #faf7f0;   /* Light — input backgrounds */
+    --heritage-ivory-150: #faf5e8;   /* Between 100-200 — medallion */
+    --heritage-ivory-200: #f5eee0;   /* Medium — showcase gradient */
+    --heritage-brown-300: #9f917b;   /* Input placeholder */
+    --heritage-brown-500: #665b47;   /* Body copy */
+    --heritage-brown-600: #4a3c23;   /* Labels */
+    --heritage-brown-700: #251a00;   /* Near-black headings */
+    
+    /* =====================================================
+       LAYER 2: SEMANTIC TOKENS (Purpose-Driven)
+       Map primitive tokens to semantic meanings.
+       Use these in component tokens.
+       ===================================================== */
+    
+    /* ----- Brand Identity ----- */
+    --color-primary: var(--gold-dark);        /* ← UPDATED: Now references canonical --gold-dark */
+    --color-primary-dark: var(--primary-800);
+    --color-on-primary: var(--neutral-0);
+    --color-on-primary-container: var(--primary-800);
+    
+    /* ----- Accent & Emphasis ----- */
+    --color-accent: var(--gold-400);          /* Light gold highlight */
+    --color-accent-alt: var(--gold-500);      /* ← NEW: Alt gold variant */
+    --color-background: var(--neutral-50);
+    --color-background-warm: var(--neutral-warm-50); /* ← NEW: Warm background variant */
+    --color-surface: var(--neutral-50);
+    --color-surface-container: var(--neutral-200);
+    --color-surface-container-low: var(--neutral-100); /* ← NEW: Explicit low variant */
+    --color-surface-container-high: var(--neutral-300);
+    --color-on-background: var(--neutral-700);
+    --color-on-surface: var(--neutral-700);
+    --color-on-surface-variant: var(--neutral-600);
+    
+    /* ----- Home Page Background (Semantic) ----- */
+    /* Component-scoped: home page body background — matches section container colors */
+    /* Isolated from global --color-background to prevent affecting cart/account/wishlist pages */
+    --home-page-bg: var(--neutral-100);  /* #f7f4ee — seamless with section containers */
+    
+    /* ----- Borders & Dividers ----- */
+    --color-outline: var(--neutral-500);
+    --color-outline-variant: var(--neutral-400);
+    --color-error: var(--error-500);
+    --color-on-error: var(--neutral-0);
+    --color-success: var(--success-500);
+    --font-price: 'Bodoni Moda', Georgia, serif;  /* Every price / amount / total shown to the shopper */
+    
+    /* ----- Typography: primitive body fonts (Layer 1 — reusable across semantic tokens) ----- */
+    --font-body: 'Plus Jakarta Sans', sans-serif;  /* Primary body font for UI text */
+    
+    /* ----- Secondary Brand ----- */
+    --color-secondary: var(--secondary-700);
+    --color-on-secondary: var(--neutral-0);
+    --color-secondary-container: #f0dbd3;
+    --color-on-secondary-container: var(--secondary-600);
+    
+    /* ----- Legacy Aliases (for backward compatibility) ----- */
+    /* These map old token names to new canonical values */
+    --color-primary-container: #f4c2c2;  /* Pale pink container */
+    --color-tertiary: var(--gold-dark);  /* ← UPDATED: Now references canonical --gold-dark */
+    --color-on-tertiary: var(--neutral-0);
+    --color-tertiary-container: #f1ca50;
+    --color-on-tertiary-container: var(--gold-800);
+    --color-checkout-icon: var(--warning-500);
+    
+    /* ----- NEW: Additional Legacy Aliases ----- */
+    /* Allow old token names to work during migration */
+    --color-gold: var(--gold-400);       /* OLD NAME → CLARIFY WHICH GOLD */
+    
+    /* =====================================================
+       LAYER 3: COMPONENT TOKENS (Context-Specific)
+       Scoped to specific UI components.
+       Always reference semantic tokens, never primitives.
+       ===================================================== */
+    
+    /* ========== Gold CTA Button (cart "Proceed to Checkout") ========== */
+    /* Gold gradient; end stop kept light enough for AA large-text contrast with dark label */
+    --btn-gold-gradient-start: var(--gold-400);
+    --btn-gold-gradient-end: var(--gold-600);
+    --btn-gold-gradient: linear-gradient(135deg, var(--btn-gold-gradient-start) 0%, var(--btn-gold-gradient-end) 100%);
+    --btn-gold-text: var(--primary-900);
+
+    /* ========== Editorial CTA Button — hệ nút gold-pill dùng chung ========== */
+    /* Canonical cho hệ nút CTA editorial kiểu "Luminous Ethereal":
+       gradient gold sáng ở góc trên-trái, đậm dần xuống, bo góc pill,
+       mũi tên "→" trượt ra khi hover, shadow gold nổi, hover NÂNG + SÁNG HƠN.
+
+       ► Dùng chung cho 3 trang (một hệ nút CTA duy nhất của theme):
+         - Our Ingredients  `.dg-oi-btn`            (hero + outro)
+         - Careers          `.dg-careers-btn--secondary` (hero)
+         - Sustainability   `.dg-sus-btn`           (hero + closing)
+
+       Màu chữ: TRẮNG (--neutral-0) theo yêu cầu chủ design — giữ nguyên
+       nền gradient gold và hướng hover "luminance lift" sáng hơn.
+
+       ⚠ LƯU Ý ACCESSIBILITY: chữ trắng trên gradient gold hiện tại chỉ đạt
+       ~2.40:1 → THẤP HƠN WCAG 2.1 AA (4.5:1) cho text 12px (nút dùng
+       font-size 12px, uppercase = "small text", bắt buộc ≥ 4.5:1). Đây là
+       quyết định thiết kế có chủ đích; nếu cần tuân thủ AA/AAA thì phải
+       đổi nền sang gold-700 → gold-800 (AA 4.85–6.99:1) hoặc tối hơn,
+       hoặc giữ chữ --primary-900 như bản AAA trước đó.
+       Bản AAA trước đó: chữ --primary-900 → contrast ≥ 7.16:1 trên cả hai
+       đầu gradient.
+
+       Hover ĐI SÁNG HƠN (không đậm lại): --gold-bright → --gold-400. Đây
+       là hướng "luminance lift" của design system Luminous Ethereal: hover
+       làm nút nổi lên, không làm nút chìm xuống. Gradient trước đây dùng
+       gold-500 → gold-600 (đậm hơn) — đã bỏ.
+       --gold-200 (#ffe182) dành cho gold-bright; --gold-400 (#d4af37) là
+       base nên hover dừng ở đây để không nhảy quá xa, giữ cảm giác "1 bước".
+
+       Tên token theo VAI TRÒ (`--cta-gold-*`) chứ không theo tên trang, vì
+       dùng chung ≥ 3 trang → theo §8a "Define once, use everywhere". */
+    --cta-gold-bg: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+    --cta-gold-bg-hover: linear-gradient(135deg, var(--gold-bright), var(--gold-400));
+    --cta-gold-ink: var(--neutral-0);
+    --cta-gold-border: rgba(var(--gold-dark-rgb), 0.28);
+    --cta-gold-shadow: 0 10px 24px -10px rgba(var(--gold-dark-rgb), 0.45);
+    --cta-gold-shadow-hover: 0 16px 32px -12px rgba(var(--gold-dark-rgb), 0.55);
+    /* Khoảng cách giữa text và mũi tên "→" (pseudo-element ::after của label) */
+    --cta-gold-arrow-gap: 0.5rem;
+    /* Bo góc pill */
+    --cta-gold-radius: 9999px;
+    /* Khoảng cách letter-spacing của label nút */
+    --cta-gold-tracking: 0.12em;
+
+    /* ========== Hero Gradient Headline ========== */
+    /* Warm luxury gradient: reddish-brown → coral → gold */
+    /* Used for headline.dg-home-hero__gradient-text */
+    --hero-gradient: linear-gradient(to right, var(--warm-reddish-brown), var(--warm-coral), var(--warm-gold));
+    --hero-gradient-underline: var(--warm-coral);
+
+    /* Hero headline hover sheen — light band sweeping left → right through the glyphs */
+    /* Scoped to .dg-home-hero__gradient-text (home.css) */
+    --hero-sheen-color: rgba(255, 255, 255, 0.85);          /* Peak of the light band */
+    --hero-sheen-gradient: linear-gradient(105deg, transparent 38%, var(--hero-sheen-color) 50%, transparent 62%);
+    --hero-sheen-size: 300% 100%;                           /* Band starts and ends fully outside the text (no residue at edges) */
+    --hero-sheen-duration: 0.8s;                            /* One full sweep (same for hover-in and hover-out) */
+    --hero-sheen-easing: cubic-bezier(0.45, 0.05, 0.55, 0.95); /* Near-sine in-out: band moves evenly through the glyphs */
+
+    /* ========== CTA Button Gradient (Hero Primary) ========== */
+    /* Warm luxury gradient: coral → reddish-brown → dark-gold */
+    /* Used for primary CTA button in hero section */
+    --cta-primary-gradient: linear-gradient(to right, var(--warm-coral), var(--warm-reddish-brown), var(--gold-dark));
+    --cta-primary-text: var(--neutral-0);
+
+    /* ========== Hero Section Background ========== */
+    /* Semantic token (scoped to hero section) — matches surface-container-low for visual harmony */
+    /* Maps to: --color-surface-container-low (used in other landing sections) */
+    --hero-section-bg: var(--color-surface-container-low);
+
+    /* ========== Section Spacing — Gutters Between Sections ========== */
+    /* Semantic tokens for consistent vertical rhythm between page sections */
+    /* Default gutter between hero + trust-badges, trust-badges + next section */
+
+    /* ========== Trust Badges Section (Landing Page) ========== */
+    /* Component-scoped: 4-column badge bar showcasing brand values */
+    /* Semantic token: maps to surface-container-low for visual harmony */
+    /* Isolated to prevent affecting other sections using same surface color */
+    --trust-badges-bg: var(--color-surface-container-low); /* Light neutral background (#f7f4ee) */
+    --trust-badges-padding-y: 3rem;       /* 48px vertical padding (py-12) */
+    --trust-badges-gap: 2rem;             /* 32px gap between badges (grid layout < 1024px) */
+    --trust-badges-gutter: clamp(1.25rem, 4vw, 4rem); /* Side inset from screen edge: 20px mobile → 64px max */
+
+    /* Mobile-only (< 640px) compact variant: keeps the 2x2 grid, one line per title/description */
+    --trust-badges-padding-y-mobile: 1rem;      /* 16px top padding */
+    --trust-badges-row-gap-mobile: 1.25rem;     /* 20px between rows */
+    --trust-badges-col-gap-mobile: 0.625rem;    /* 10px between columns */
+    --trust-badges-item-gap-mobile: 0.5rem;     /* 8px icon → text */
+    --trust-badges-icon-size-mobile: 1.125rem;  /* 18px icon */
+    --trust-badges-title-size-mobile: clamp(0.6875rem, 3.2vw, 0.75rem);  /* 11–12px title */
+    --trust-badges-desc-size-mobile: clamp(0.5625rem, 2.7vw, 0.625rem);  /* 9–10px description */
+    --trust-badges-text-leading-mobile: 1.3;    /* Tight leading for the 2-line text block */
+
+    /* Tablet-only (768–1023px) 4-col row: one line per title/description */
+    --trust-badges-padding-y-tablet: 1rem;      /* 16px top padding */
+    --trust-badges-col-gap-tablet: 1rem;        /* 16px between columns */
+    --trust-badges-item-gap-tablet: 0.625rem;   /* 10px icon → text */
+    --trust-badges-icon-size-tablet: 1.5rem;    /* 24px icon */
+    --trust-badges-title-size-tablet: clamp(0.8125rem, 1.75vw, 1rem);     /* 13.4px @768 → 16px */
+    --trust-badges-desc-size-tablet: clamp(0.6875rem, 1.42vw, 0.875rem); /* 11px @768 → 14px */
+    --trust-badges-text-leading-tablet: 1.4;    /* Tight leading for the 2-line text block */
+
+    /* ========== Hero Sticker Badges (Floating Elements) ========== */
+    /* Maps to demo sticker colors from Stitch design system */
+    
+    /* Sticker 1: "100% Juicy Bounce" (Glassmorphism Pill) */
+    /* Demo uses: bg-surface-container-lowest/90 + bg-secondary-container + text-secondary */
+    --hero-sticker-1-bg: rgba(255, 255, 255, 0.9);     /* surface-container-lowest at 90% */
+    --hero-sticker-1-dot-bg: #fd7455;                  /* secondary-container (from demo Tailwind) */
+    --hero-sticker-1-text: #a9371e;                    /* secondary (from demo Tailwind) */
+    --hero-sticker-1-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    
+    /* Sticker 2: "280M+ Reels Views" (Solid Secondary) */
+    /* Demo uses: bg-secondary + text-on-secondary + shadow-xl */
+    --hero-sticker-2-bg: #a9371e;                      /* secondary (from demo Tailwind) */
+    --hero-sticker-2-text: #ffffff;                    /* on-secondary (from demo Tailwind) */
+    --hero-sticker-2-icon: #ffffff;                    /* on-secondary (from demo Tailwind) */
+    --hero-sticker-2-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+    /* ========== Icon Badge — Vibrant Gradient (Hero Info Card) ========== */
+    /* Component-scoped: water_drop icon badge at bottom-left of product frame */
+    /* Gradient: vibrant coral → warm gold (matches demo showcase) */
+    /* Isolated token prevents affecting global secondary-container elsewhere */
+    --badge-vibrant-from: #fd7455;                      /* vibrant coral (demo secondary-container) */
+    --badge-vibrant-to: #d4af37;                        /* warm gold (primary-container) */
+
+    /* ========== Star Rating Component ========== */
+    /* Unified star rating: Material Symbols icons with FILL variation */
+    /* Applies to: product cards, single product page, hero section, cart, wishlist */
+    /* Color: canonical gold for all filled/empty/half stars (consistency across theme) */
+    --star-color: #f1ca50;                              /* Canonical star gold (matches Material Symbols) */
+    --star-size: 16px;                                  /* Default size for inline ratings */
+    --star-gap: 0.125rem;                               /* 2px gap between stars (Tailwind gap-0.5 = 0.125rem) */
+    --badge-vibrant-gradient: linear-gradient(135deg, var(--badge-vibrant-from) 0%, var(--badge-vibrant-to) 100%);
+    --badge-vibrant-shadow: 0 4px 12px rgba(253, 116, 85, 0.2);
+    --badge-icon-color: #ffffff;                        /* white icon for contrast */
+
+    /* ========== Hero Info Card Typography Colors (Scoped) ========== */
+    /* Component-scoped: price + restock label in bottom-left card */
+    /* Demo uses warm secondary (#a9371e) + warm tertiary (#8c4d39) */
+    /* Isolated from global palette to prevent affecting other price displays */
+    --info-card-price-text: #a9371e;                    /* warm reddish-brown (demo secondary) */
+    --info-card-restock-text: #8c4d39;                  /* warm brown (demo tertiary) */
+
+    /* ========== Hero Info Card Sizing & Spacing (Scoped) ========== */
+    /* Component-scoped: compact, elegant info card dimensions */
+    /* Balanced padding and typography for refined appearance */
+    --info-card-padding: 0.625rem;                      /* 10px padding (p-2.5 equivalent, balanced) */
+    --info-card-gap: 0.5rem;                            /* 8px gap between icon and text */
+    --info-card-icon-size: 40px;                        /* 40px icon */
+    --info-card-title-font-size: 15px;                  /* 15px title (balanced between 14-16) */
+    --info-card-title-line-height: 1.25;                /* 1.25 line-height (balanced tightness) */
+    --info-card-desc-font-size: 13px;                   /* 13px description (balanced) */
+    --info-card-desc-line-height: 1.25;                 /* 1.25 line-height for desc (balanced) */
+
+    /* ========== Glaze Certified Orb Gradient & Position ========== */
+    /* Component-scoped: decorative floating orb (bottom-right hero frame) */
+    /* Gradient: light gold → vibrant coral (matches demo) */
+    /* Isolated to prevent affecting other primary-fixed + secondary-container combinations */
+    --orb-gradient-from: #ffe088;                       /* light gold (primary-fixed) */
+    --orb-gradient-to: #fd7455;                         /* vibrant coral (demo secondary-container) */
+    --orb-gradient: linear-gradient(to bottom right, var(--orb-gradient-from) 0%, var(--orb-gradient-to) 100%);
+    --orb-text-color: #ffffff;                          /* white text (on-primary) */
+    --orb-position-bottom: -1.5rem;                     /* distance from bottom (-bottom-6 = -1.5rem) */
+    --orb-position-right: -4.375rem;                      /* shifted right for visual balance (was -right-6 = -1.5rem) */
+
+    /* ========== Hero Headline Emoji Accent ========== */
+    /* Component-scoped: sparkle emoji icon right of "Dragon Glaze" */
+    /* Size, color, animation matched to demo showcase */
+    /* Increased to 44px (60% of 72px headline) for visual prominence */
+    --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
+
+    /* ========== Home — Hero Responsive (mobile + tablet, < 1024px only) ========== */
+    /* Component-scoped: consumed only by the "HERO — RESPONSIVE" block in home.css. Desktop is untouched. */
+    --hero-title-size-compact: clamp(2rem, 8vw, 3.75rem);       /* 32px (≤400px) → 60px (≥750px); desktop keeps 72px via lg:text-[72px] */
+    --hero-title-line-height-compact: 1.1;                      /* Tight display leading */
+    --hero-emoji-size-compact: 0.85em;                          /* Sparkle scales with the headline instead of fixed 72px */
+    --hero-padding-bottom-compact: 2.5rem;                      /* 40px — breathing room under the product frame (desktop keeps pb-0) */
+    --hero-desc-size-mobile: 1rem;                              /* 16px body copy under 640px (desktop 18px) */
+    --hero-cta-min-height: 2.75rem;                             /* 44px minimum touch target */
+    --hero-badge-radius-mobile: 1.25rem;                        /* Rounded corners for horizontal badge (single-line layout) */
+    --hero-badge-sep-offset: -2px;                              /* Vertical nudge upward for separator bullet (•) to align with label baseline */
+    --hero-badge-sep-offset-mobile: -1px;                        /* Smaller upward nudge on mobile — 8px badge text needs less travel than 12px desktop text */
+    --hero-badge-font-size-mobile: 0.5rem;                      /* 8px text for ultra-compact mobile badge (desktop 12px) */
+    --hero-badge-gap-mobile: 0.25rem;                           /* 4px gap between badge elements (desktop 8px) */
+    --hero-badge-padding-mobile: 0.375rem 0.625rem;             /* 6px vertical × 10px horizontal (desktop 6px × 16px) */
+    --hero-stack-gap-mobile: 1.5rem;                           /* 24px — vertical rhythm between the stacked hero blocks on mobile (matches the desktop column gap-6) */
+    --hero-frame-bottom-gap-mobile: 0.5rem;                    /* 8px — extra breathing room under the product frame, keeping the frame → headline gap at 2rem like the old grid gap-8 */
+    --hero-stats-gap-mobile: 0.625rem;                          /* 10px column gap — 3 stats share one row */
+    --hero-stat-value-size-mobile: 1.125rem;                    /* 18px stat figures (+98.4%, 72 Hrs) */
+    --hero-stat-value-line-height-mobile: 1.2;                  /* Tight figure leading */
+    --hero-stat-label-size-mobile: clamp(0.625rem, 0.125rem + 2.5vw, 0.6875rem); /* 10px @320px → 11px @≥360px: keeps "Glass Reflection" on one line so both captions wrap to exactly 2 lines */
+    --hero-stat-label-line-height-mobile: 1.35;                 /* Caption leading */
+    --hero-stat-caption-size-mobile: 0.625rem;                  /* 10px rating caption "4.9/5 (18.2K+ …)" */
+    --hero-stat-caption-letter-spacing-mobile: 0.02em;          /* Tighter than label-sm 0.1em so the caption fits the column */
+    --hero-stat-star-size-mobile: 0.8125rem;                    /* 13px rating stars (global 16px) */
+    --hero-sticker-font-size-mobile: 0.5rem;                    /* 8px sticker text (desktop 12px) — small enough for both stickers to share one row at 320px */
+    --hero-sticker-line-height-mobile: 1;                       /* Label box = font size, so sticker height comes from padding only */
+    --hero-sticker-padding-mobile: 0.25rem 0.5rem;              /* 4px / 8px compact sticker padding (half of tablet px-4 py-2) */
+    --hero-sticker-inset-mobile: 0.75rem;                       /* Distance of stickers from the frame edge (half of tablet 24px) */
+    --hero-sticker-1-top-mobile: 0.75rem;                       /* Top-right, mirrors tablet top-6 (24px) at half scale */
+    --hero-sticker-2-top-mobile: 1rem;                          /* Top-left, mirrors tablet top-8 (32px) at half scale */
+    --hero-card-inset-mobile: 0.75rem;                          /* Info card inset from the frame edge */
+    --hero-sticker-rotate-mobile: 6deg;                         /* Same ±6deg tilt as tablet/desktop rotate-6 */
+    --hero-sticker-gap-mobile: 0.25rem;                         /* 4px icon/dot ↔ label gap (desktop gap-2) */
+    --hero-sticker-icon-size-mobile: 0.625rem;                  /* 10px movie icon (desktop 18px) */
+    --hero-sticker-dot-size-mobile: 0.25rem;                    /* 4px pulse dot (desktop 10px) */
+    --hero-sticker-letter-spacing-mobile: 0.04em;               /* Tighter than tracking-widest so the pill stays short */
+    --hero-info-padding-mobile: 0.5rem 0.625rem;                /* Info card padding: 8px / 10px */
+    --hero-info-gap-mobile: 0.5rem;                             /* Gap between text column and price column */
+    --hero-info-icon-size-mobile: 1.75rem;                      /* 28px water-drop badge (global 40px) */
+    --hero-info-icon-glyph-mobile: 0.875rem;                    /* 14px glyph inside the badge */
+    --hero-info-text-line-height-mobile: 1.25;                  /* Title/description may wrap to 2 lines — keep them tight */
+    --hero-info-price-size-mobile: 0.875rem;                    /* 14px price */
+    --hero-info-restock-size-mobile: 0.5rem;                    /* 8px restock caption */
+    /* Hero visual + Glaze Certified orb (mobile < 640px only) */
+    --hero-visual-max-width-mobile: 520px;                      /* Same as the frame's max-w-[520px]; orb is anchored to the frame edge, not the wider column */
+    --hero-frame-margin-top-mobile: 0.5rem;                     /* Was 2rem on top of the 2rem grid gap (double spacing) */
+    --hero-orb-size-mobile: 4.5rem;                             /* 72px (desktop 96px) */
+    --hero-orb-top-mobile: 42%;                                 /* Sits between the stickers and the info card, never over either */
+    --hero-orb-right-mobile: -0.5rem;                           /* Straddles the frame edge; stays inside the 20px page gutter (no horizontal scroll) */
+    --hero-orb-padding-mobile: 0.25rem;                         /* Inner padding so "CERTIFIED" never touches the circle edge */
+    --hero-orb-font-size-mobile: 0.5625rem;                     /* 9px */
+    --hero-orb-letter-spacing-mobile: 0.05em;                   /* Tighter than label-sm's 0.1em so the longest word fits */
+    --hero-info-title-size-mobile: 0.8125rem;                   /* 13px info card title (global 15px) */
+    --hero-info-desc-size-mobile: 0.6875rem;                    /* 11px info card description (global 13px) */
+
+    /* Hero visual + Glaze Certified orb (tablet 640–1023px only) */
+    --hero-visual-max-width-tablet: 520px;                      /* Same as the frame's max-w-[520px]; the column hugs the frame so the orb is anchored to the frame edge, not the wider grid column */
+    --hero-orb-right-tablet: -5.3125rem;                           /* Orb overhangs the frame edge by 24px (desktop -4.1rem was measured from the wider column and left it floating off the frame) */
+    --hero-stack-gap-tablet: 1.5rem;                           /* 24px — vertical rhythm between the stacked hero blocks on tablet (matches the mobile stack) */
+    --hero-frame-bottom-gap-tablet: 0.5rem;                    /* 8px — extra breathing room under the product frame, keeping the frame → headline gap at 2rem like the old grid gap-8 */
+
+    /* ========== Instagram Reel Product Button (Shoppable Card) ========== */
+    /* Component-scoped: product CTA button overlay on reel cards (9/14 aspect ratio) */
+    /* Glassmorphism: semi-transparent surface + backdrop blur */
+    /* Demo uses: Tailwind CSS classes (shadow-lg, tracking-wider, font-bold, py-3 px-4) */
+    /* Mapped to theme tokens from Tailwind config (tailwind-config.php) */
+    --instagram-button-bg-default: rgba(255, 255, 255, 0.9);     /* bg-surface-container-lowest/90 (pure white at 90%) */
+    --instagram-button-bg-hover: rgba(255, 255, 255, 1);         /* hover:bg-surface-container-lowest (pure white opaque) */
+    --instagram-button-backdrop-blur: 12px;                      /* backdrop-blur-md */
+    --instagram-button-padding-y: 0.75rem;                       /* py-3 (Tailwind: 12px) */
+    --instagram-button-padding-x: 1rem;                          /* px-4 (Tailwind: 16px) */
+    --instagram-button-radius: 1rem;                             /* rounded-2xl (16px) */
+    --instagram-button-text-primary: rgb(28, 27, 27);            /* text-on-surface from Tailwind config (#1c1b1b) */
+    --instagram-button-text-secondary: rgb(169, 55, 30);         /* Warm reddish-brown from Tailwind demo (#a9371e) */
+    --instagram-button-text-transform: uppercase;                /* uppercase */
+    --instagram-button-letter-spacing: 0.125em;                  /* tracking-wider (Tailwind) */
+    --instagram-button-font-weight-name: 700;                    /* font-bold (Tailwind) */
+    --instagram-button-font-weight-price: 700;                   /* Bold — inherit from button (no explicit weight in demo) */
+    --instagram-button-font-size: 0.6875rem;                     /* label-md: 13px (demo uses text-label-md) */
+    --instagram-button-shadow-default: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* shadow-lg (Tailwind) */
+    --instagram-button-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);   /* shadow-lg (no change on hover) */
+    --instagram-button-shadow-active: 0 10px 15px -3px rgba(0, 0, 0, 0.1);  /* shadow-lg (no change on active) */
+    --instagram-button-motion-duration: 0.15s;                   /* transition-all (fast) */
+    --instagram-button-motion-easing: ease-in-out;               /* Material motion curve */
+    --instagram-button-hover-lift: 0;                            /* No lift — demo doesn't have translateY */
+    --instagram-button-padding-x-compact: 0.625rem;              /* 10px — 1024–1279px narrow 4-col cards */
+    --instagram-button-gap-compact: 0.375rem;                    /* 6px name ↔ price gap — 1024–1279px */
+    --instagram-button-letter-spacing-compact: 0.05em;           /* Tighter tracking — 1024–1279px */
+    --instagram-reel-overlay-gap: 1.5rem;                        /* 24px quote → button spacing (matches former bottom-20 / bottom-4 offsets) */
+
+    /* ========== Instagram Reel Quote Typography ========== */
+    /* Component-scoped: quote text overlay (Playfair Display serif) */
+    /* Luxury caption: creator story/testimonial on reel card */
+    --instagram-reel-quote-font-family: "Playfair Display", Georgia, serif;  /* Serif display font */
+    --instagram-reel-quote-font-size: 1rem;                       /* 16px (text-[16px] from template) */
+    --instagram-reel-quote-line-height: 1.5;                      /* leading-snug (1.5) */
+    --instagram-reel-quote-font-weight: 400;                      /* font-normal (400) */
+    --instagram-reel-quote-color: rgb(255, 255, 255);             /* text-white */
+    --instagram-reel-quote-margin-top: 0.25rem;                   /* mt-1 (Tailwind: 4px) */
+
+    /* ========== Instagram Reel Audio Label ========== */
+    /* Component-scoped: audio source label (icon + text on single line) */
+    /* Layout: flex row, no-wrap, white/80 color, compact spacing */
+    --instagram-reel-audio-label-display: flex;                   /* flex */
+    --instagram-reel-audio-label-align: center;                   /* items-center */
+    --instagram-reel-audio-label-gap: 0.25rem;                    /* gap-1 (4px) */
+    --instagram-reel-audio-label-whitespace: nowrap;              /* NO WRAP — single line */
+    --instagram-reel-audio-label-font-family: "Montserrat", sans-serif; /* label font */
+    --instagram-reel-audio-label-font-size: 0.625rem;             /* text-[10px] */
+    --instagram-reel-audio-label-color: rgba(255, 255, 255, 0.8); /* text-white/80 */
+    --instagram-reel-audio-icon-size: 0.6875rem;                  /* text-[11px] */
+
+    /* ========== Home — Brand Story ========== */
+    /* Component-scoped: used only by .dg-home-story__eyebrow in home.css */
+    --home-story-eyebrow-color: var(--gold-bright);               /* #f1ca50 — "Our Philosophy" label */
+    --home-story-icon-bg: rgba(var(--gold-400-rgb), 0.3);         /* #d4af37 at 30% — shared by all 3 feature icon tiles */
+    --home-story-icon-color: var(--gold-dark);                    /* #735c00 — shared by all 3 feature glyphs */
+
+    /* ========== Home — Testimonials ========== */
+    /* Component-scoped: star size/gap fed into the shared .dg-stars component (color stays --star-color) */
+    --home-testimonial-star-size: 0.875rem;                       /* 14px (was Tailwind text-sm) */
+    --home-testimonial-star-gap: 0.25rem;                         /* 4px (was Tailwind gap-1) */
+
+    /* ========== Instagram Section ========== */
+    /* Component-scoped: used only by .dg-home-instagram in home.css */
+    --instagram-section-padding-top: 3.375rem;                    /* 54px — top spacing of the Instagram Reels section */
+
+    /* ========== Instagram Section Header ========== */
+    /* Component-scoped: section header colors (eyebrow label + CTA link) */
+    /* Brand color: warm reddish-brown accent for Instagram section identity */
+    --instagram-header-text-color: rgb(169, 55, 30);              /* #a9371e (warm reddish-brown) */
+    --instagram-header-headline-color: var(--gold-dark);          /* #735c00 — "Featured on Instagram Reels" headline */
+    --instagram-header-eyebrow-color: var(--gold-bright);         /* #f1ca50 — "Curated on Instagram" label + icon */
+    --instagram-header-eyebrow-font-size: 0.75rem;               /* text-label-md (12px) */
+    --instagram-header-eyebrow-font-weight: 600;                 /* font-semibold */
+    --instagram-header-eyebrow-letter-spacing: 0.2em;             /* tracking-[0.2em] */
+    --instagram-header-cta-font-size: 0.625rem;                  /* text-label-lg (14px) */
+    --instagram-header-cta-font-weight: 600;                     /* font-semibold */
+    --instagram-header-cta-letter-spacing: 0.125em;              /* tracking-wider */
+    --instagram-header-cta-hover-opacity: 0.8;                   /* hover:opacity-80 */
+    --instagram-header-cta-transition: opacity 0.2s ease-in-out; /* transition-opacity */
+    --instagram-header-cta-icon-primary-size: 0.9375rem;         /* 15px (smart_display) */
+    --instagram-header-cta-icon-secondary-size: 1rem;            /* 16px (arrow_forward) */
+    /* Enterprise luxury: smooth scale + shadow intensify + subtle overlay tint */
+    --hero-image-hover-scale: 1.05;                     /* Scale up on hover (spring physics) */
+    --hero-image-hover-shadow-color: rgba(var(--gold-rgb), 0.15); /* Gold-tinted shadow glow */
+    --hero-image-overlay-tint: rgba(var(--warm-coral), 0.08); /* Warm coral overlay (hover) */
+    /* Glassmorphism dropdown with gold accents */
+    --filter-glass-bg: linear-gradient(135deg, 
+                        rgba(var(--gold-rgb), 0.05) 0%, 
+                        rgba(253, 252, 249, 0.95) 100%);
+    --filter-glass-border: rgba(var(--gold-rgb), 0.2);
+    
+    --filter-card-bg: rgba(255, 255, 255, 0.6);
+    --filter-card-bg-hover: rgba(255, 255, 255, 0.75);
+    --filter-card-border: rgba(var(--gold-rgb), 0.2);
+    --filter-card-border-hover: rgba(var(--gold-rgb), 0.3);
+    --filter-card-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.08);
+    
+    --filter-item-bg: rgba(255, 255, 255, 0.5);
+    --filter-item-bg-hover: rgba(255, 255, 255, 0.9);
+    --filter-item-bg-active: rgba(var(--gold-rgb), 0.1);
+    --filter-item-bg-active-hover: rgba(var(--gold-rgb), 0.15);
+    --filter-item-border: transparent;
+    --filter-item-border-hover: rgba(var(--gold-rgb), 0.2);
+    --filter-item-text-active: var(--color-accent);
+    --filter-item-count-active: var(--color-accent);
+    --filter-item-font-weight-active: 600;
+
+    /* Category list items — mobile (<= 640px) only: compact, refined rows. */
+    --filter-item-gap-mobile: 4px;
+    --filter-item-padding-mobile: 7px 10px;
+    --filter-item-radius-mobile: 6px;
+    --filter-item-font-size-mobile: 13px;
+    --filter-item-count-font-size-mobile: 10px;
+    --filter-item-count-gap-mobile: 6px;
+    
+    --filter-checkbox-bg: rgba(var(--gold-rgb), 0.05);
+    --filter-checkbox-checked-bg: rgba(var(--gold-rgb), 0.15);
+    --filter-checkbox-focus: rgba(var(--gold-rgb), 0.5);
+    
+    --filter-slider-track-bg: rgba(var(--gold-rgb), 0.15);
+    --filter-slider-thumb-gradient: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --filter-slider-thumb-shadow: 0 2px 8px rgba(var(--gold-rgb), 0.3);
+    --filter-slider-thumb-shadow-hover: 0 4px 12px rgba(var(--gold-rgb), 0.4);
+    
+    --filter-btn-bg: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+    --filter-btn-border: rgba(var(--gold-rgb), 0.3);
+    --filter-btn-padding-mobile: 12px 4px;
+    --filter-btn-font-size-mobile: 11px;
+    --filter-btn-letter-spacing-mobile: 0.04em;
+    
+    --filter-divider: rgba(var(--gold-rgb), 0.15);
+    
+    --filter-clear-border: rgba(var(--gold-rgb), 0.2);
+    --filter-clear-bg-hover: rgba(var(--gold-rgb), 0.08);
+    --filter-clear-border-hover: rgba(var(--gold-rgb), 0.3);
+    --filter-clear-active-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.2);
+    --filter-clear-active-shadow-hover: 0 6px 16px rgba(var(--gold-rgb), 0.3);
+    
+    /* ========== Sustainability Page CTA Button ========== */
+    /* Nút CTA của trang Sustainability (.dg-sus-btn) nay dùng CHUNG bộ token
+       --cta-gold-* (hệ nút editorial gold-pill) với Our Ingredients và
+       Careers → 1 hệ nút CTA duy nhất cho toàn theme. Xem --cta-gold-* ở
+       Layer 3 phía trên. */
+
+    /* ========== Mobile Navigation Menu Component ========== */
+    /* Responsive drawer with icon + text layout, glassmorphism accents */
+    
+    /* Primary navigation items (Home, Shop, Our Story, Contact) */
+    --mobile-nav-primary-icon: var(--color-accent-alt);        /* Gold-500 icon color */
+    --mobile-nav-primary-text: var(--color-on-surface);        /* Neutral-700 dark text */
+    --mobile-nav-primary-text-hover: var(--color-primary);     /* Gold-dark on hover */
+    --mobile-nav-primary-bg-hover: linear-gradient(90deg, 
+                                    rgba(var(--gold-rgb), 0.06) 0%, 
+                                    rgba(var(--gold-rgb), 0.12) 100%);
+    --mobile-nav-primary-font-weight: 500;                     /* Medium weight */
+    
+    /* Secondary navigation items (Account, Wishlist, Cart — after divider) */
+    --mobile-nav-secondary-icon: var(--color-primary);         /* Primary gold-dark */
+    --mobile-nav-secondary-text: var(--color-on-surface-variant); /* Neutral-600 lighter */
+    --mobile-nav-secondary-text-hover: var(--color-primary);
+    --mobile-nav-secondary-bg-hover: rgba(var(--gold-rgb), 0.08);
+    --mobile-nav-secondary-border-hover: rgba(var(--gold-rgb), 0.15);
+    --mobile-nav-secondary-font-weight: 400;                   /* Regular weight */
+    
+    /* Active / Current menu item state */
+    --mobile-nav-active-bg: linear-gradient(90deg, 
+                            rgba(var(--gold-rgb), 0.12) 0%, 
+                            rgba(var(--gold-rgb), 0.18) 100%);
+    --mobile-nav-active-text: var(--color-primary);
+    --mobile-nav-active-icon: var(--gold-600);                 /* Darker gold for filled icon */
+    --mobile-nav-active-font-weight: 600;                      /* Semi-bold */
+    --mobile-nav-active-border: rgba(var(--gold-rgb), 0.55);
+    
+    /* Divider styling */
+    --mobile-nav-divider: rgba(var(--gold-rgb), 0.35);
+    
+    /* Focus state (accessibility) */
+    --mobile-nav-focus-ring: var(--color-primary);
+    --mobile-nav-focus-ring-offset: 2px;
+
+    /* ========== Auth Portal Component (Sign In Page) ========== */
+    /* Classical heritage design with parchment tones */
+    --auth-bg: var(--neutral-100);  /* Light cream background (#f7f4ee) — signed-out portal main background */
+    --auth-panel-bg: var(--heritage-ivory-0);
+    --auth-panel-border: rgba(217, 196, 150, 0.8);
+    --auth-showcase-gradient: linear-gradient(180deg, 
+                              #faf6ef 0%, 
+                              var(--heritage-ivory-200) 55%, 
+                              rgba(239, 229, 208, 0.6) 100%);
+    
+    --auth-heading: var(--heritage-brown-700);
+    --auth-eyebrow: var(--gold-800);
+    --auth-body: var(--heritage-brown-500);
+    --auth-label: var(--heritage-brown-600);
+    --auth-divider: var(--gold-400);
+    
+    --auth-input-bg: var(--heritage-ivory-100);
+    --auth-input-bg-focus: var(--heritage-ivory-0);
+    --auth-input-border: #d9caaf;
+    --auth-input-border-focus: var(--gold-600);
+    --auth-input-shadow-focus: 0 0 0 3px rgba(166, 124, 30, 0.15);
+    --auth-input-placeholder: var(--heritage-brown-300);
+    --auth-icon-muted: #a8987d;
+    --auth-btn-border: #856312;
+    --auth-btn-text: #fffdf6;
+    --auth-btn-shadow: 0 4px 16px rgba(181, 140, 40, 0.28);
+    --auth-btn-shadow-hover: 0 6px 22px rgba(181, 140, 40, 0.4);
+    
+    --auth-viewport-frame-outer: rgba(212, 175, 55, 0.4);
+    --auth-viewport-frame-inner: rgba(197, 155, 39, 0.2);
+    --auth-corner-flourish: rgba(197, 155, 39, 0.6);
+    
+    --auth-checkbox-size: 18px;
+    --auth-checkbox-bg: var(--heritage-ivory-0);
+    --auth-checkbox-bg-hover: rgba(232, 212, 168, 0.15);
+    --auth-checkbox-bg-checked: rgba(166, 124, 30, 0.12);
+    --auth-checkbox-bg-checked-hover: rgba(166, 124, 30, 0.18);
+    --auth-checkbox-border: var(--gold-400);
+    --auth-checkbox-border-hover: var(--gold-600);
+    --auth-checkbox-border-checked: var(--gold-700);
+    --auth-checkbox-checkmark: var(--gold-700);
+    --auth-checkbox-shadow-focus: 0 0 0 3px rgba(166, 124, 30, 0.15);
+    --auth-footer-padding-top: 47px;                               /* Heritage footer top padding: tucks the footer closer to the auth panel (was 20px) */
+    --auth-footer-padding-top-mobile: 35px;                        /* Same, < 640px (was 16px) */
+    --auth-footer-padding-x-mobile: 28px;                         /* Heritage footer side padding < 640px: clears the 14px inner viewport frame + 14px air */
+    --auth-footer-location-size-mobile: clamp(11px, 3.6vw, 13px); /* Stacked uppercase location lines: ~11.5px @320 → 13px from ~361 */
+    --auth-footer-location-tracking-mobile: 0.1em;                /* Location tracking (0.14em on desktop) */
+    --auth-footer-copyright-size-mobile: clamp(10px, 2.9vw, 11px);/* Copyright: 10px @320 → 11px from ~380 */
+    --auth-footer-copyright-tracking-mobile: 0.06em;              /* Copyright tracking (0.1em on desktop) */
+    --auth-medallion-bg: var(--heritage-ivory-150);
+    --auth-brand-title-text: var(--gold-600);
+
+    /* Login eyebrow (IV • Luxury Skincare) — matches register eyebrow style */
+    --login-eyebrow-text: var(--gold-800);
+    --login-eyebrow-font: 'Plus Jakarta Sans', sans-serif;
+    --login-eyebrow-size-desktop: 11px;
+    --login-eyebrow-size-mobile: clamp(10px, 3.1vw, 11px);
+    --login-eyebrow-weight: 700;
+    --login-eyebrow-tracking-desktop: 0.2em;
+    --login-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em);
+
+    /* Login member-badge (Member Access) — matches register badge style */
+    --login-member-badge-bg: linear-gradient(135deg, rgba(255, 253, 249, 0.95) 0%, rgba(var(--gold-rgb), 0.14) 100%);  /* Ivory → soft gold glass pill */
+    --login-member-badge-text: var(--gold-800);
+    --login-member-badge-border: rgba(var(--gold-rgb), 0.45);
+    --login-member-badge-shadow: 0 1px 2px rgba(var(--gold-rgb), 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.85);      /* Soft lift + top highlight */
+    --login-member-badge-blur: 6px;
+    --login-member-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --login-member-badge-size-desktop: 11px;
+    --login-member-badge-size-mobile: clamp(9px, 2.8vw, 10px);
+    --login-member-badge-padding-desktop: 5px 12px 5px 10px;
+    --login-member-badge-padding-mobile: 4px 10px 4px 8px;
+    --login-member-badge-gap: 7px;
+    --login-member-badge-gap-mobile: 6px;
+    --login-member-badge-weight: 600;
+    --login-member-badge-tracking: 0.06em;
+    --login-member-badge-tracking-mobile: 0.04em;
+
+    /* Login pulse-dot (status indicator): solid core + expanding halo ring */
+    --login-pulse-dot-size: 6px;
+    --login-pulse-dot-color: var(--gold-500);
+    --login-pulse-dot-halo: rgba(var(--gold-rgb), 0.45);
+    --login-pulse-dot-halo-size: 6px;                              /* Max halo spread at the end of the pulse */
+
+    /* Login trust badges (apothecary authentication micro-badge) — parity with register page */
+    --auth-portal-padding-top: clamp(1.25rem, 3vw, 2rem);         /* Space above the brand header (was 1.5rem-3rem) */
+    --auth-brand-logo-size: 7rem;                                 /* Mark on desktop: 112px at 16px root, 98px at 14px root */
+    --auth-brand-logo-size-mobile: 6rem;                          /* Mark below 640px: 64px at 16px root, 56px at 14px root */
+    --auth-brand-logo-gap: 0.75rem;                               /* Space between mark and eyebrow */
+    --auth-brand-logo-shine: #fff6da;                             /* Hover sweep highlight (matches brand title shimmer) */
+    --auth-brand-title-size: clamp(28px, 9vw, 44px);              /* "Dragon Glow" title: fits one line down to 320px, 44px from ~490px up */
+    --auth-input-font-size-mobile: 16px;                          /* >= 16px stops iOS Safari auto-zooming on input focus */
+    --auth-input-placeholder-size-mobile: clamp(9px, 0.4rem + 0.6vw, 14px); /* Placeholder only (typed text stays 16px): 9px @mobile → 14px @desktop */
+    --auth-input-icon-padding-mobile: 34px;                       /* Text start: leading icon ends at 30px + 4px air (40px on desktop) */
+    --auth-input-padding-x-mobile: 10px;                          /* Trailing padding on plain inputs (12px on desktop) */
+    --auth-input-toggle-padding: 44px;                            /* Trailing padding when the 36px show/hide toggle sits inside the input */
+    --auth-input-toggle-padding-mobile: 38px;                     /* Same, < 640px: eye glyph spans 14-34px from the edge + 4px air */
+    --auth-touch-target: 44px;                                    /* WCAG 2.5.5 / Apple HIG minimum tap size on touch layouts */
+    --auth-row-label-size-mobile: clamp(12px, 3.9vw, 14px);       /* "Security Passphrase" label < 640px: 12.5px @320 → 14px from 360 (fits 1 line with link) */
+    --auth-row-link-size-mobile: clamp(12px, 3.6vw, 13px);        /* "Lost credentials?" link < 640px: 12px @320 → 13px from 360 */
+    --auth-register-prompt-size-mobile: clamp(12px, 3.75vw, 15px);/* "Don't have an account?" < 640px: 12px @320 → 15px from 400 */
+    --auth-register-link-size-mobile: clamp(13px, 4.1vw, 17px);   /* "Create Account" CTA < 640px: 13px @320 → 17px from ~415 */
+    --auth-brand-tagline-size-mobile: clamp(8px, 2.6vw, 11px);   /* "Est. 2026 • San Francisco • New York" < 640px: 10px @320 → 11px from ~425 */
+    --auth-brand-tagline-tracking-mobile: clamp(0.1em, 1.7vw - 4.2px, 0.28em); /* Tracking eases 0.28em → ~0.12em @320 so the tagline stays on 1 line */
+    --auth-touch-hit-inset: -6px -8px;                            /* Invisible ::after hit-area around inline text links: 20px line → 32px tall (> WCAG 2.5.8 24px) without overlapping the input 6px below */
+    --auth-sub-font-size-mobile: clamp(8.5px, 2.4vw, 9.5px);    /* Sub copy ("Access your orders, saved items, and exclusive member benefits...") < 768px: scales 8.5px → 9.5px as viewport grows, ensuring the full ~143-char sentence fits EXACTLY 3 lines at 320-767px without clip/ellipsis. At 375px (iPhone SE) = 9px, 3 lines × line-height 1.5 ≈ 40.5px total, preserving the eyebrow / title / sub visual hierarchy */
+    --auth-title-size-mobile: clamp(22px, 6.4vw, 28px);          /* H1 title ("Sign In to Your Account") < 768px: scales 22px @320 → 28px @640+, ensuring the 25-char title stays on 1 line at all mobile viewports with reduced letter-spacing (0.01em vs 0.02em desktop) */
+    --auth-title-tracking-mobile: 0.01em;                         /* Letter-spacing for title on mobile — tighter than desktop 0.02em to prevent wrapping */
+
+    /* ========== Register Page Component ========== */
+    /* Luminous Radiance scheme — brighter, more inviting than auth portal */
+    --register-bg: var(--neutral-100);
+    --register-surface: #fff8f3;
+    --register-surface-container: #f4ede6;
+    --register-surface-container-low: #faf2eb;
+    --register-surface-container-lowest: var(--neutral-0);
+    
+    --register-text-primary: var(--neutral-800);
+    --register-text-secondary: #4d4638;
+    --register-text-heading: #2a1e02;
+    --register-text-eyebrow: var(--gold-800);
+    
+    --register-gold-primary: var(--gold-800);
+    --register-spec-label-text: #735700;
+    --register-gold-variant: var(--gold-900);
+    
+    --register-outline: #7f7666;
+    
+    --register-border-primary: rgba(212, 175, 55, 0.35);
+    --register-border-secondary: rgba(197, 155, 39, 0.6);
+    --register-input-border: rgb(197 155 39 / 0.35);
+    --register-input-border-focus: var(--gold-600);
+    --register-input-bg: rgba(255, 255, 255, 0.9);
+    --register-input-bg-focus: var(--heritage-ivory-0);
+    --register-input-shadow-focus: var(--auth-input-shadow-focus);
+    
+    --register-btn-gradient: linear-gradient(135deg, #dbb13b 0%, var(--gold-600) 50%, #b3871d 100%);
+    --register-btn-border: rgba(255, 225, 130, 0.5);
+    --register-btn-text: #1f1c18;
+    --register-btn-shadow: 0 8px 20px rgba(197, 155, 39, 0.3);
+    --register-btn-shadow-hover: 0 12px 28px rgba(197, 155, 39, 0.4);
+    
+    /* Password strength indicator — industry standard (Google/Microsoft/Apple) */
+    --register-strength-bg: rgba(127, 118, 102, 0.4);
+    --register-strength-weak: #D32F2F;      /* Material Red 700 — < 8 chars */
+    --register-strength-fair: #F57C00;      /* Material Orange 700 — 8-11 chars */
+    --register-strength-good: #1976D2;      /* Material Blue 700 — 12-15 chars */
+    --register-strength-strong: #388E3C;    /* Material Green 700 — 16+ chars */
+
+    /* Validation errors (summary + inline messages) — built on the error primitives */
+    --register-error-text: var(--error-700);                    /* Message text */
+    --register-error-icon: var(--error-500);                    /* Leading icon */
+    --register-error-bg: rgba(var(--error-rgb), 0.08);          /* Summary / inline tint */
+    --register-error-border: rgba(var(--error-rgb), 0.35);     /* Summary border */
+    --register-error-input-border: var(--error-500);            /* Invalid control border */
+    --register-error-input-shadow: 0 0 0 3px rgba(var(--error-rgb), 0.15); /* Invalid control focus ring */
+    
+    /* Narrow screens (< 640px) — fluid values so single-line rows fit down to 320px */
+    --register-crest-line-width-mobile: clamp(16px, 10vw - 8px, 48px);  /* Crest ornament rules: 24px @320 → 48px from 560 */
+    --register-eyebrow-tracking-mobile: clamp(0.1em, 1.5vw - 2.8px, 0.22em); /* "✦ New Member Registration ✦" stays on 1 line */
+    --register-divider-tracking-mobile: clamp(0.1em, 1.6vw - 3px, 0.24em);   /* "✦ Alternative Accession ✦" stays on 1 line */
+    --register-submit-font-size-mobile: clamp(11px, 3.3vw, 13px);      /* CTA label on 1 line: 11px @320 → 13px from ~394 */
+    --register-submit-tracking-mobile: clamp(0px, 0.5vw - 1.6px, 0.52px); /* CTA tracking: 0 @320 → 0.04em from ~424 (0.14em on desktop) */
+    --register-showcase-eyebrow-size-mobile: clamp(10px, 3.1vw, 11px); /* "IV • Registration": 10px @320 → 11px from ~355 */
+    --register-showcase-eyebrow-tracking-mobile: clamp(0.06em, 2vw - 5.8px, 0.2em); /* Eases 0.2em → 0.06em @320 so eyebrow + badge share 1 row */
+    --register-member-badge-size-mobile: clamp(9px, 2.8vw, 10px);   /* "Member Benefits" pill: 9px @320 → 10px from ~357 */
+    --register-member-badge-padding-mobile: 4px 9px 4px 8px;        /* Pill padding < 640px (tight enough to share a row with the eyebrow @320) */
+    --register-member-badge-gap-mobile: 5px;                        /* Dot ↔ label gap < 640px */
+    --register-member-badge-tracking-mobile: 0.03em;                /* Label tracking < 640px */
+
+    /* "Member Benefits" badge (register) — ivory/gold glass pill, matches the login badge */
+    --register-member-badge-bg: linear-gradient(135deg, rgba(255, 253, 249, 0.95) 0%, rgba(var(--gold-rgb), 0.14) 100%);  /* Ivory → soft gold glass pill */
+    --register-member-badge-text: var(--gold-800);
+    --register-member-badge-border: rgba(var(--gold-rgb), 0.45);
+    --register-member-badge-shadow: 0 1px 2px rgba(var(--gold-rgb), 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.85);      /* Soft lift + top highlight */
+    --register-member-badge-blur: 6px;
+    --register-member-badge-font: 'Plus Jakarta Sans', sans-serif;
+    --register-member-badge-size-desktop: 11px;
+    --register-member-badge-padding-desktop: 5px 12px 5px 10px;
+    --register-member-badge-gap: 7px;
+    --register-member-badge-weight: 600;
+    --register-member-badge-tracking: 0.06em;
+
+    /* Register pulse-dot (status indicator): solid core + expanding halo ring */
+    --register-pulse-dot-size: 6px;
+    --register-pulse-dot-color: var(--gold-500);
+    --register-pulse-dot-halo: rgba(var(--gold-rgb), 0.45);
+    --register-pulse-dot-halo-size: 6px;                            /* Max halo spread at the end of the pulse */
+    --register-showcase-title-size-mobile: clamp(19px, 6vw, 22px);     /* "Welcome to Dragon Glow" on 1 line: 19px @320 → 22px from ~367 */
+    --register-privilege-title-size-mobile: clamp(12px, 3.75vw, 13px); /* Privilege card titles: 12px @320 → 13px from ~347 */
+    --register-privilege-title-tracking-mobile: 0.06em;                /* Card title tracking (0.08em on desktop) */
+    --register-panel-grid-margin-mobile: 8px;                          /* Filigree frame inset inside the glass panel */
+    --register-panel-grid-padding-mobile: 14px;                        /* Content padding inside the filigree frame */
+    --register-form-title-size-mobile: clamp(22px, 7.4vw, 26px);       /* "Create Your Account" on 1 line: ~23.7px @320 → 26px from ~351 */
+    --register-form-subtitle-size-mobile: clamp(11.5px, 3.6vw, 14px);  /* Subtitle in 3 lines: ~11.5px @320 → 14px from ~389 */
+    --register-form-subtitle-max-width-mobile: 340px;                  /* Caps the measure so wider phones still get 3 balanced lines (not 2) */
+    --register-checkbox-text-size-mobile: clamp(11px, 3.4vw, 12.5px);  /* Newsletter label in 2 lines: 11px @320 → 12.5px from ~368 */
+    --register-footer-padding-x-mobile: 28px;                          /* Heritage footer side padding: clears the 14px inner viewport frame + 14px air */
+    --register-footer-location-size-mobile: clamp(11px, 3.5vw, 13px);  /* Stacked location lines: 11px @320 → 13px from ~372 */
+    --register-footer-copyright-size-mobile: clamp(10px, 2.9vw, 11px); /* Copyright: 10px @320 → 11px from ~380 */
+    --register-footer-copyright-tracking-mobile: 0.06em;               /* Copyright tracking (0.1em on desktop) */
+
+    --register-card-bg: rgba(250, 242, 235, 0.7);
+    --register-card-border: rgba(212, 175, 55, 0.25);
+
+    /* Arched showcase frame — hover zoom effect */
+    --register-arch-border-gradient: linear-gradient(180deg, #E5C168 0%, rgba(184, 142, 40, 0.4) 50%, rgba(229, 193, 104, 0.2) 100%);
+    --register-arch-border-shadow: 0 4px 12px rgba(var(--gold-rgb), 0.1);
+    --register-arch-overlay-gradient: linear-gradient(to top, rgba(31, 28, 24, 0.6) 0%, transparent 50%);
+    --register-arch-label-eyebrow: #FFE8A3;
+    --register-arch-label-name: #FFF7EC;
+    --register-badge-bg: rgba(232, 193, 111, 0.4);
+    
+    --register-glow-tl: radial-gradient(circle at top left, 
+                        rgba(255, 223, 158, 0.25) 0%, 
+                        rgba(254, 206, 87, 0.1) 40%, 
+                        transparent 70%);
+    --register-glow-br: radial-gradient(circle at bottom right, 
+                        rgba(255, 223, 158, 0.2) 0%, 
+                        rgba(241, 225, 189, 0.1) 40%, 
+                        transparent 70%);
+    
+    --register-frame-outer: rgba(212, 175, 55, 0.4);
+    --register-frame-inner: rgba(197, 155, 39, 0.2);
+    --register-flourish: rgba(197, 155, 39, 0.6);
+
+    /* Trust badges (apothecary authentication micro-badge) */
+    --register-trust-font-family: var(--font-body);  /* Semantic: reference Layer 1 primitive for consistency */
+    --register-trust-text: #A67C1E;                  /* Gold-brown #8C6D23 */
+    --register-trust-text-opacity: 0.8;              /* 80% opacity */
+    --register-trust-icon-size: 16px;
+    --register-trust-font-size: 13px;
+    --register-trust-tracking: 0.2em;
+    --register-trust-gap: 1.5rem;                    /* 24px gap between badges */
+    --register-trust-badge-gap: 0.375rem;            /* 6px gap between icon and text */
+
+    /* ========== Toast Notification Component (Neon / Cyberpunk) ========== */
+    /* Site-wide toast system (window.DGToast) — glowing border + flicker,
+       bottom-right viewport. Primitive neon colors scoped to this component
+       only (deliberately off-brand per request — not gold/Luminous Ethereal). */
+    --toast-neon-success-rgb: 57, 255, 20;    /* #39ff14 */
+    --toast-neon-error-rgb: 255, 41, 117;     /* #ff2975 */
+    --toast-neon-info-rgb: 56, 189, 248;      /* #38bdf8 — info/neutral fallback */
+
+    --toast-bg: #0a0a0f;
+    --toast-text: #e8ffe8;
+    --toast-text-muted: rgba(232, 255, 232, 0.7);
+
+    --toast-border-success: rgba(var(--toast-neon-success-rgb), 1);
+    --toast-border-error: rgba(var(--toast-neon-error-rgb), 1);
+    --toast-border-info: rgba(var(--toast-neon-info-rgb), 1);
+
+    --toast-glow-success: 0 0 12px rgba(var(--toast-neon-success-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-success-rgb), 0.8) inset;
+    --toast-glow-error: 0 0 12px rgba(var(--toast-neon-error-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-error-rgb), 0.8) inset;
+    --toast-glow-info: 0 0 12px rgba(var(--toast-neon-info-rgb), 0.5), 0 0 2px rgba(var(--toast-neon-info-rgb), 0.8) inset;
+
+    --toast-glow-success-flicker: 0 0 18px rgba(var(--toast-neon-success-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-success-rgb), 1) inset;
+    --toast-glow-error-flicker: 0 0 18px rgba(var(--toast-neon-error-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-error-rgb), 1) inset;
+    --toast-glow-info-flicker: 0 0 18px rgba(var(--toast-neon-info-rgb), 0.7), 0 0 3px rgba(var(--toast-neon-info-rgb), 1) inset;
+
+    --toast-icon-success: #39ff14;
+    --toast-icon-error: #ff2975;
+    --toast-icon-info: #38bdf8;
+
+    --toast-radius: 10px;
+    --toast-gap: 12px;
+    --toast-viewport-offset: 24px;
+    --toast-viewport-width: 380px;
+
+    /* ========== Account Component ========== */
+    /* My Account dashboard — sidebar nav, glass cards, stat tiles */
+    --account-sidebar-width: 280px;
+    --account-radius: 24px;
+    --account-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
+    --account-border: rgba(255, 255, 255, 0.55);
+    
+    --account-bg-gradient-tl: rgba(212, 175, 55, 0.06);
+    --account-bg-gradient-br: rgba(244, 194, 194, 0.10);
+    
+    --account-hero-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.95), rgba(212, 175, 55, 0.95));
+    --account-hero-glow-top: rgba(255, 255, 255, 0.30);
+    --account-hero-glow-bottom: rgba(255, 255, 255, 0.20);
+    
+    --account-avatar-border: rgba(255, 255, 255, 0.85);
+    --account-avatar-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    
+    --account-tier-bg: rgba(0, 0, 0, 0.65);
+    --account-tier-lumiere: linear-gradient(135deg, #735c00, #d4af37);
+    --account-tier-aria: linear-gradient(135deg, #5c5d6e, #bba3c2);
+    --account-tier-glow: rgba(0, 0, 0, 0.6);
+    
+    --account-nav-bg: rgba(115, 92, 0, 0.06);
+    --account-nav-bg-active: linear-gradient(135deg, rgba(115, 92, 0, 0.12), rgba(212, 175, 55, 0.18));
+    --account-nav-border-active: rgba(115, 92, 0, 0.18);
+    --account-nav-bg-hover: rgba(115, 92, 0, 0.10);
+
+    /* ========== Address Card Component (Luxury Glassmorphism) ========== */
+    /* My Account → Addresses list cards (billing/shipping). Richer glass
+       surface than the base .dg-account-panel: layered ambient shadow,
+       gradient hairline border, inner glow icon badge. Billing = warm gold
+       accent, shipping = cool rose accent (kept from the original scheme). */
+    --address-card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.42));
+    --address-card-border: rgba(var(--gold-rgb), 0.22);
+    --address-card-radius: 24px;
+    --address-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 40px rgba(var(--gold-dark-rgb), 0.08);
+
+    --address-card-icon-size: 54px;
+    --address-card-icon-bg-shipping: linear-gradient(135deg, rgba(244, 194, 194, 0.60), rgba(var(--gold-rgb), 0.26));
+    --address-card-icon-color-shipping: #734e4e;
+
+    --address-card-badge-bg: linear-gradient(135deg, rgba(59, 122, 56, 0.14), rgba(76, 175, 80, 0.20));
+    --address-card-badge-text: #2e7d32;
+    --address-card-badge-border: rgba(76, 175, 80, 0.28);
+
+    --address-card-panel-bg: rgba(255, 255, 255, 0.42);
+    --address-card-panel-bg-hover: rgba(255, 255, 255, 0.58);
+    --address-card-panel-border: rgba(255, 255, 255, 0.55);
+    --address-card-label-width: 140px;
+    --address-card-label-color: var(--gold-600);
+    --address-card-action-primary-bg: linear-gradient(135deg, var(--gold-dark) 0%, var(--primary-800) 100%);
+    
+    --account-snapshot-label-color: var(--gold-600);
+    
+    --account-card-shadow: 0 12px 28px rgba(123, 84, 85, 0.08);
+    --account-card-shadow-hover: 0 8px 18px rgba(123, 84, 85, 0.06);
+    
+    --account-btn-primary-shadow: 0 6px 16px rgba(115, 92, 0, 0.20);
+    --account-btn-primary-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.28);
+    --account-btn-secondary-border: rgba(115, 92, 0, 0.30);
+    
+    --account-table-shadow: 0 4px 16px rgba(115, 92, 0, 0.08);
+
+    /* Orders table — mobile stacked card (<= 640px)
+       One card per order. The Order cell (a `<th scope="row">` in
+       WooCommerce) becomes the card header; the remaining cells become
+       label/value rows and the View button fills the card footer. */
+    --account-orders-card-radius: 16px;
+    --account-orders-card-border: rgba(115, 92, 0, 0.14);
+    --account-orders-card-bg: rgba(255, 255, 255, 0.55);
+    --account-orders-card-shadow: 0 4px 16px rgba(115, 92, 0, 0.08);
+    --account-orders-card-header-bg: rgba(255, 255, 255, 0.42);
+    --account-orders-card-header-divider: rgba(115, 92, 0, 0.16);
+    --account-orders-cell-divider: rgba(115, 92, 0, 0.08);
+    --account-orders-cell-min-height: 44px;
+    --account-orders-button-min-height: 44px;
+    /* Fixed label column on tablet (641-768px) so every value starts at
+       the same x position. */
+    --account-orders-label-width: 120px;
+    
+    --account-badge-shadow: 0 6px 18px rgba(115, 92, 0, 0.28);
+    --account-downloads-shadow: 0 14px 32px rgba(123, 84, 85, 0.10);
+    --account-downloads-badge-bg: linear-gradient(135deg, rgba(115, 92, 0, 0.18), rgba(212, 175, 55, 0.22));
+    --account-downloads-badge-bg-hover: linear-gradient(135deg, rgba(115, 92, 0, 0.20), rgba(212, 175, 55, 0.25));
+    --account-address-divider: rgba(115, 92, 0, 0.10);
+    --account-address-btn-shadow: 0 6px 14px rgba(115, 92, 0, 0.10);
+    --account-address-btn-shadow-focus: 0 4px 12px rgba(115, 92, 0, 0.18);
+    
+    --account-payment-border: rgba(115, 92, 0, 0.16);
+    --account-payment-bg-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.14), rgba(212, 175, 55, 0.22));
+
+    /* Orders pagination — compact layout (mobile + tablet) */
+    --account-pagination-gap: 8px;
+    --account-pagination-pill-min: 36px;
+    --account-pagination-pill-height: 36px;
+    --account-pagination-pill-font: 14px;
+    --account-pagination-ellipsis-color: var(--color-on-surface-variant);
+    --account-pagination-ellipsis-font: 14px;
+    --account-pagination-ellipsis-min: 22px;
+    
+    --account-subscription-border: rgba(115, 92, 0, 0.22);
+    --account-subscription-bg-hover: rgba(115, 92, 0, 0.08);
+    --account-subscription-shadow: 0 6px 16px rgba(115, 92, 0, 0.22);
+    --account-subscription-shadow-hover: 0 10px 22px rgba(115, 92, 0, 0.30);
+
+    /* ========== Account Sign-out Confirm (danger variant of confirm dialog) ========== */
+    --signout-icon-bg: linear-gradient(135deg, rgba(var(--error-rgb), 0.10), rgba(var(--error-rgb), 0.20)); /* Icon badge tint */
+    --signout-icon-color: var(--color-error);
+    --signout-eyebrow-color: var(--color-error);
+    --signout-btn-bg: linear-gradient(135deg, var(--error-500), var(--error-700)); /* Primary (destructive) action */
+    --signout-btn-shadow: 0 6px 16px rgba(var(--error-rgb), 0.24);
+    --signout-btn-shadow-hover: 0 10px 22px rgba(var(--error-rgb), 0.34);
+    --signout-focus-ring: var(--color-error);
+    --signout-nav-bg-hover: rgba(var(--error-rgb), 0.08);  /* Sidebar logout link hover */
+    --signout-user-bg: rgba(var(--gold-dark-rgb), 0.06);   /* "Signed in as" chip */
+    --signout-user-border: rgba(var(--gold-dark-rgb), 0.14);
+    --signout-overlay-bg: rgba(27, 28, 26, 0.48);
+    --signout-enter-duration: 0.32s;
+    --signout-exit-duration: 0.2s;
+    --signout-ease: cubic-bezier(0.22, 1, 0.36, 1);        /* Soft ease-out, no bounce */
+    --signout-dialog-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 230, 0.90)); /* Glass dialog surface */
+    --signout-dialog-border: rgba(var(--gold-dark-rgb), 0.16);
+    --signout-dialog-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 28px 56px rgba(27, 28, 26, 0.20);
+    --signout-btn-ghost-bg: rgba(255, 255, 255, 0.70);      /* "Stay signed in" button */
+    --signout-btn-ghost-border: rgba(var(--gold-dark-rgb), 0.22);
+    --signout-btn-ghost-bg-hover: rgba(var(--gold-dark-rgb), 0.08);
+    --account-rewards-empty-bg: rgba(115, 92, 0, 0.04);
+    
+    --account-review-shadow: 0 12px 32px rgba(115, 92, 0, 0.12);
+    --account-review-input-bg-focus: rgba(115, 92, 0, 0.15);
+    --account-loyalty-shadow: 0 8px 24px rgba(115, 92, 0, 0.06);
+    --account-loyalty-tier-border: rgba(115, 92, 0, 0.14);
+    --account-loyalty-tier-border-current: rgba(115, 92, 0, 0.45);
+    --account-referral-link-shadow: 0 4px 12px rgba(115, 92, 0, 0.16);
+    /* Wishlist page — hero banner, product cards, share modal */
+    --wl-glass-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);
+    --wl-hero-border: rgba(115, 92, 0, 0.20);
+    --wl-hero-gradient: linear-gradient(135deg, rgba(115, 92, 0, 0.94), rgba(212, 175, 55, 0.94));
+    
+    --wl-btn-shadow: 0 4px 16px rgba(115, 92, 0, 0.20);
+    --wl-btn-shadow-hover: 0 8px 22px rgba(115, 92, 0, 0.30);
+    --wl-btn-border: rgba(115, 92, 0, 0.55);
+    
+    --wl-chip-bg: rgba(115, 92, 0, 0.06);
+    --wl-chip-shadow-active: 0 2px 10px rgba(115, 92, 0, 0.30);
+    
+    --wl-share-border: rgba(115, 92, 0, 0.40);
+    
+    --wl-card-shadow: 0 2px 8px rgba(115, 92, 0, 0.06);
+    --wl-card-shadow-hover: 0 4px 16px rgba(115, 92, 0, 0.15);
+    --wl-card-shadow-focus: 0 6px 20px rgba(115, 92, 0, 0.18);
+    --wl-card-shadow-lift: 0 20px 48px rgba(115, 92, 0, 0.18);
+    --wl-card-badge-shadow: 0 2px 8px rgba(115, 92, 0, 0.08);
+    
+    --wl-modal-shadow: 0 24px 48px -20px rgba(123, 84, 85, 0.18);
+    --wl-modal-btn-shadow: 0 8px 20px rgba(115, 92, 0, 0.25);
+    
+    --wl-empty-border: rgba(115, 92, 0, 0.25);
+    --wl-empty-shadow: 0 12px 36px rgba(123, 84, 85, 0.16);
+    /* Empty-state bullets (mobile < 640px) — the desktop `padding-left: 105px`
+       is sized for the 540px centred column; on a phone it ate ~39% of the
+       available width and forced the text onto 2–3 lines. Mobile drops the
+       indent entirely and lets the icon lead the row. */
+    --wl-empty-bullets-indent-mobile: 0px;                  /* No indent on mobile — the 32px icon column is enough */
+    --wl-empty-bullets-icon-size-mobile: 28px;              /* Icon tile (desktop 32px) */
+    --wl-empty-bullets-gap-mobile: 10px;                    /* Icon ↔ text gap (desktop 12px) */
+    --wl-empty-bullets-row-gap-mobile: 12px;               /* Gap between bullet rows (desktop 14px) */
+    --wl-empty-bullets-font-size-mobile: 13px;             /* 13px bullet text (desktop 14px) */
+    
+    /* Wishlist no-result state (filter returns zero items) */
+    --wl-noresult-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)); /* frosted glass fill */
+    --wl-noresult-border: rgba(115, 92, 0, 0.25);                /* dashed outline, same as empty state */
+    --wl-noresult-shadow: 0 8px 32px rgba(123, 84, 85, 0.06);    /* soft rose lift */
+    --wl-noresult-icon-size: 72px;                               /* icon badge diameter */
+    --wl-noresult-icon-glyph-size: 32px;                         /* material symbol size */
+    --wl-noresult-icon-bg: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(212, 175, 55, 0.18));
+    --wl-noresult-icon-ring: rgba(212, 175, 55, 0.35);           /* badge outline */
+    --wl-noresult-icon-shadow: 0 8px 24px rgba(115, 92, 0, 0.14);
+    --wl-noresult-text-size: 15px;                               /* message font size */
+    
+    --wl-input-focus-ring: rgba(115, 92, 0, 0.12);
+    
+    --wl-fab-shadow: 0 16px 40px rgba(123, 84, 85, 0.18);
+    
+    /* ========== Shop Component ========== */
+    /* Shop page — filters, product grid, pagination */
+    --shop-hero-mobile-padding-top: 2.5rem;
+    --shop-hero-mobile-padding-bottom: 3.5rem;
+    --shop-scrollbar-thumb: rgba(115, 92, 0, 0.2);
+    --shop-scrollbar-thumb-hover: rgba(115, 92, 0, 0.4);
+    
+    --shop-shadow-luxury: 0 20px 60px rgba(115, 92, 0, 0.13);
+    --shop-shadow-card: 0 8px 30px -8px rgba(123, 84, 85, 0.08);
+    --shop-shadow-card-hover: 0 1px 4px rgba(123, 84, 85, 0.08);
+    
+    --shop-cat-divider: rgba(115, 92, 0, 0.35);
+    
+    --shop-pagination-shadow: 0 1px 4px rgba(123, 84, 85, 0.06);
+    /* Single product page — title, price, add to cart, tabs */
+    
+    --product-btn-gradient: linear-gradient(135deg, #c9a96e 0%, #e8d5a3 45%, #c9a96e 75%, #a07840 100%);
+    /* Khoảng cách trên của section #product-tabs ở mobile (ghi đè .mt-section-gap 120px) */
+    --product-tabs-gap-mobile: 48px;
+    
+    --product-qty-border: rgba(123, 84, 85, 0.12);
+    --product-qty-shadow: 0 1px 3px rgba(123, 84, 85, 0.06);
+    --product-qty-shadow-focus: 0 2px 6px rgba(123, 84, 85, 0.1);
+    --product-qty-btn-shadow: 0 1px 2px rgba(123, 84, 85, 0.08);
+    --product-qty-btn-shadow-hover: 0 1px 3px rgba(123, 84, 85, 0.06);
+    --product-qty-btn-shadow-active: 0 2px 8px rgba(123, 84, 85, 0.1);
+    /* Cart page — item list, coupon, summary */
+    --cart-shadow-card: 0 4px 24px rgba(115, 92, 0, 0.06);
+    --cart-shadow-lift: 0 12px 32px rgba(115, 92, 0, 0.18);
+    
+    --cart-input-border: rgba(115, 92, 0, 0.40);
+    --cart-input-focus-ring: rgba(115, 92, 0, 0.10);
+    
+    --cart-btn-gradient: linear-gradient(90deg, rgba(115, 92, 0, 0.04), transparent 70%);
+    
+    --cart-checkout-shadow: 0 18px 48px rgba(123, 84, 85, 0.22);
+    
+    --cart-coupon-border: rgba(115, 92, 0, 0.30);
+    --promo-input-bg: rgba(var(--gold-dark-rgb), 0.04);          /* Resting: faint gold tint */
+    --promo-input-bg-hover: rgba(var(--gold-dark-rgb), 0.07);    /* Hover: slightly deeper tint */
+    --promo-input-bg-focus: var(--neutral-0);                    /* Focus / filled: clean white */
+    --promo-input-border: var(--cart-coupon-border);             /* Resting border */
+    --promo-input-border-hover: var(--cart-input-border);        /* Hover border */
+    --promo-input-border-focus: var(--gold-dark);                /* Focus border */
+    --promo-input-focus-ring: 0 0 0 4px var(--cart-input-focus-ring);
+    --promo-input-text: var(--color-on-surface);
+    --promo-input-placeholder: var(--color-outline);
+    --promo-input-radius: 12px;
+    --promo-input-min-height: 44px;                              /* Touch-target minimum */
+    --promo-input-padding: 0 16px;
+    --promo-input-font-size: 14px;
+    --promo-input-font-weight: 600;
+    --promo-input-letter-spacing: 0.12em;                        /* Coupon codes read better tracked-out */
+    --promo-input-transition: 0.2s ease;
+    --cart-checkout-group-gap: 10px;
+
+    /* Shared pill metrics for the selection hint + "Clear selection" button,
+       so both rows render with identical height, padding and type scale */
+    --cart-cta-pill-padding: 10px 16px;
+    --cart-cta-pill-gap: 6px;
+    --cart-cta-pill-border-width: 1.5px;
+    --cart-cta-pill-font-size: 12px;
+    --cart-cta-pill-line-height: 1.4;
+    --cart-cta-pill-letter-spacing: 0.06em;
+    --cart-cta-pill-icon-size: 16px;
+
+    /* Selection hint pill — idle state (nothing ticked): compact prompt row */
+    --cart-hint-idle-padding: 6px 12px;
+    --cart-hint-idle-gap: 8px;
+    --cart-hint-idle-border-width: 1px;
+    --cart-hint-idle-font-size: 11px;
+    
+    /* ========== Checkout Component ========== */
+    /* Checkout page — forms, payment methods, order review */
+    /* Component-scoped: nguồn duy nhất cho cả checkout-payment.css và
+       thankyou.css — trước đây 2 file khai trùng nhau, sửa 1 chỗ không
+       sync được chỗ còn lại. Giá trị giống hệt, nên gom về đây an toàn. */
+    --color-payment-primary: var(--gold-dark);
+    --color-payment-primary-rgb: 115, 92, 0;
+    --color-payment-accent: var(--gold-400);
+    --color-payment-accent-rgb: 212, 175, 55;
+    --color-payment-on-primary: #ffffff;
+    
+    /* ========== Order Modal Component ========== */
+    /* Order review modal — items, totals, payment methods */
+    --order-modal-border: rgba(201, 162, 75, 0.3);
+    --order-modal-header-border: rgba(201, 162, 75, 0.2);
+    --order-modal-header-bg: linear-gradient(180deg, rgba(201, 162, 75, 0.1) 0%, rgba(201, 162, 75, 0.05) 100%);
+    
+    --order-modal-summary-bg: rgba(201, 162, 75, 0.05);
+    --order-modal-progress-fill: rgba(201, 162, 75, 0.5);
+    
+    --order-modal-number-font-family: 'Plus Jakarta Sans', sans-serif; /* Order # heading in modal */
+    
+    /* ========== Main Navigation & Header ========== */
+    /* Global header, navigation, announcement bar */
+    --main-header-shadow: 0 4px 30px rgba(123, 84, 85, 0.05);
+    --main-header-shadow-scroll: 0 20px 40px -15px rgba(123, 84, 85, 0.10);
+
+    /* Brand lockup — logo mark beside the site name */
+    --main-brand-gap: 0.625rem;                                   /* Space between mark and site name */
+    --main-brand-mark-size: 4rem;                                 /* 64px mark on desktop */
+    --main-brand-mark-size-mobile: 3rem;                          /* 48px mark below 640px */
+    --main-brand-mark-radius: 0.625rem;                           /* Focus ring corner radius */
+    --main-brand-mark-transition: transform 0.3s ease;
+    --main-brand-mark-scale-hover: 1.06;
+    
+    --main-dropdown-shadow: 0 2px 8px rgba(115, 92, 0, 0.12);
+    --main-dropdown-shadow-hover: 0 4px 16px rgba(115, 92, 0, 0.16);
+    /* Component-scoped: thin promo strip. Used ONLY by .dg-announcement-bar in header-nav.css. */
+    /* Dedicated tokens so changing the bar never touches nav / buttons / other pages. */
+    --announcement-bar-bg: var(--gold-dark);                      /* Dark-gold strip */
+    --announcement-bar-text: var(--gold-fixed);                   /* Light-gold label */
+    --announcement-bar-icon: var(--announcement-bar-text);        /* Leading icon of each message */
+    --announcement-bar-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);     /* Barely-there lift */
+    --announcement-bar-padding-y: 0.25rem;                        /* 4px */
+    --announcement-bar-gap: 0.5rem;                               /* Icon ↔ text */
+    --announcement-bar-item-padding-x: 1.5rem;                    /* 24px each side of a message (48px between messages) */
+    --announcement-bar-separator-size: 4px;                       /* Dot between messages */
+    --announcement-bar-separator-opacity: 0.5;                    /* Dot is a quiet divider, not a bullet */
+    --announcement-bar-duration: 60s;                             /* One full loop (right → left). Higher = slower */
+    --announcement-bar-font-family: var(--font-body);
+    --announcement-bar-font-size: 10px;
+    --announcement-bar-font-weight: 700;
+    --announcement-bar-line-height: 1.2;                          /* 12px at 10px */
+    --announcement-bar-letter-spacing: 0.1em;
+    --announcement-bar-icon-size: 14px;
+    
+    /* ========== WooCommerce Global ========== */
+    /* Shared WooCommerce elements across pages */
+    
+    --wc-input-shadow: 0 2px 8px rgba(123, 84, 85, 0.10);
+    --wc-input-shadow-focus: 0 4px 14px rgba(123, 84, 85, 0.16);
+    
+    --wc-tabs-shadow: 0 4px 10px rgba(115, 92, 0, 0.25);
+    
+    /* ========== Thank You Page Component ========== */
+    /* Order confirmation page after checkout */
+    
+    --thankyou-btn-shadow: 0 4px 12px rgba(115, 92, 0, 0.2);
+    --thankyou-btn-shadow-hover: 0 8px 24px rgba(115, 92, 0, 0.3);
+    
+    --thankyou-bacs-amount-font-family: var(--font-price); /* BACS QR amount value */
+    
+    /* ========== Responsive Component ========== */
+    /* Mobile-specific adjustments */
+    --responsive-modal-shadow: 0 4px 20px rgba(123, 84, 85, 0.1);
+    
+    /* ========== Careers Component ========== */
+    /* Careers page — job listings, application form */
+    /* (Placeholder — careers.css có 45 hard-coded values cần tokenize) */
+    
+    /* ========== Contact Form Component ========== */
+    /* Glassmorphism card + floating-label fields (contact page) */
+    --contact-panel-glow-gold: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.35), transparent);
+    --contact-panel-glow-rose: radial-gradient(closest-side, rgba(244, 194, 194, 0.55), transparent);
+
+    --contact-card-bg: rgba(255, 255, 255, 0.55);
+    --contact-card-bg-solid: var(--neutral-0);              /* Fallback when backdrop-filter is unsupported */
+    --contact-card-border: rgba(255, 255, 255, 0.7);
+    --contact-card-radius: 1.5rem;
+    --contact-card-shadow: 0 20px 50px rgba(var(--gold-dark-rgb), 0.12);
+    --contact-card-blur: blur(18px);
+
+    --contact-field-bg: rgba(255, 255, 255, 0.45);
+    --contact-field-bg-focus: rgba(255, 255, 255, 0.85);
+    --contact-field-border: rgba(var(--gold-rgb), 0.3);
+    --contact-field-border-focus: var(--gold-dark);
+    --contact-field-border-error: var(--color-error);
+    --contact-field-radius: 0.75rem;
+    --contact-field-ring: 0 0 0 4px rgba(var(--gold-rgb), 0.18);
+    --contact-field-text: var(--color-on-surface);
+
+    --contact-label-color: var(--color-on-surface-variant);
+    --contact-label-color-float: var(--gold-dark);
+
+    /* Gradient starts at gold-700 so white label text keeps AA contrast */
+    --contact-btn-bg: linear-gradient(135deg, var(--gold-700), var(--gold-dark));
+    --contact-btn-text: var(--color-on-primary);
+    --contact-btn-radius: 0.75rem;
+    --contact-btn-shadow: 0 8px 20px rgba(var(--gold-dark-rgb), 0.25);
+    --contact-btn-shadow-hover: 0 12px 28px rgba(var(--gold-dark-rgb), 0.35);
+
+    --contact-btn-bg-success: var(--color-success);
+    --contact-msg-success: var(--color-success);
+    --contact-msg-error: var(--color-error);
+    --contact-count-warn: var(--color-error);
+
+    /* Inquiry-type dropdown (select popup) — glass panel + option states */
+    --contact-menu-bg: rgba(255, 255, 255, 0.72);
+    --contact-menu-bg-solid: var(--neutral-0);              /* Fallback for native popup (no backdrop-filter) */
+    --contact-menu-border: rgba(var(--gold-rgb), 0.28);
+    --contact-menu-blur: blur(20px) saturate(160%);
+    --contact-menu-radius: 1rem;
+    --contact-menu-padding: 0.5rem;
+    --contact-menu-offset: 0.5rem;                          /* Gap between control and popup */
+    --contact-menu-shadow: 0 24px 48px rgba(var(--gold-dark-rgb), 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    --contact-menu-duration: 0.2s;
+
+    --contact-option-radius: 0.625rem;
+    --contact-option-padding: 0.75rem 1rem;
+    --contact-option-text: var(--color-on-surface);
+    --contact-option-text-muted: var(--color-on-surface-variant);
+    --contact-option-bg-hover: rgba(var(--gold-rgb), 0.12);
+    --contact-option-bg-selected: rgba(var(--gold-rgb), 0.2);
+    --contact-option-text-selected: var(--gold-dark);
+    --contact-option-check: var(--gold-dark);
+
+    /* ========== Header Navigation Component ========== */
+    /* Global nav + mobile drawer (header-nav.css) */
+    
+    /* Logo & Brand Name — Mobile Sizing */
+    --nav-logo-size-mobile: 2rem;
+    --nav-brand-name-font-size-mobile: 16px;
+    --nav-logo-brand-gap-mobile: 0.375rem;
+
+    /* Logged-in header (< 1024px) — brand name centered between logo and menu toggle */
+    --nav-logged-in-column-gap: 0.5rem;
+
+    /* Logged-in header — mobile only (< 768px): larger brand name + logo mark */
+    --nav-logged-in-brand-name-font-size-mobile: 22px;
+    --nav-logged-in-logo-size-mobile: 2.625rem;
+
+    /* Logged-in header — tablet only (768px–1023px): larger menu toggle icon */
+    --nav-logged-in-toggle-icon-size-tablet: 32px;
+
+    /* Logged-out header — tablet only (768px–1023px): logo/brand gap, matches desktop `lg:gap-3` */
+    --nav-brand-gap-tablet: 0.75rem;
+    
+    /* Container Padding — Responsive */
+    --nav-container-padding-x-mobile: 1rem;
+    --nav-container-padding-x-tablet: 1.5rem;
+    --nav-container-padding-x-desktop: 2rem;
+    --nav-container-padding-y: 1rem;
+    
+    /* Auth Buttons — Desktop */
+    --nav-auth-gap: 0.5rem;
+    --nav-auth-gap-mobile: 0.5rem;
+    --nav-auth-gap-tablet: 0.5rem;
+    --nav-auth-btn-padding: 0.5rem 1rem;
+    --nav-auth-btn-padding-mobile: 0.5rem 0.75rem;
+    --nav-auth-btn-font-size: 0.875rem;
+    --nav-auth-btn-font-size-mobile: 0.75rem;
+    --nav-auth-btn-font-weight: 600;
+    --nav-auth-btn-radius: 999px;
+    --nav-auth-login-text: var(--color-primary);
+    --nav-auth-login-bg: rgba(var(--primary-rgb), 0.08);
+    --nav-auth-login-bg-hover: rgba(var(--primary-rgb), 0.14);
+    --nav-auth-signup-text: var(--color-on-primary);
+    --nav-auth-signup-bg: var(--primary-800);
+    --nav-auth-signup-bg-hover: color-mix(in srgb, var(--primary-800) 85%, white 15%);
+    --nav-auth-focus-ring: var(--color-primary);
+
+    /* ========== Other Components ========== */
+    /* Contact, FAQ, Legal pages, etc. */
+    /* (Placeholder — 15 files còn lại có ~200 hard-coded values cần tokenize) */
+
+    /* ============================================================
+       COMPONENT TOKENS - MIGRATED FROM assets/css/*.css
+       Single source of truth: moi design token cua theme nam trong
+       :root nay. File CSS trang chi TIEU THU token bang var().
+       ============================================================ */
+
+    /* ========== Accessibility Statement Component ========== */
+    /* Token chuyển từ assets/css/accessibility-statement.css → style.css :root (single source of truth). */
+    --a11y-radius: 0.25rem;
+    --a11y-sidebar-w: 280px;
+    --a11y-content-w: 720px;
+    --a11y-gutter: 40px;
+
+    /* ========== Careers Component ========== */
+    /* Token chuyển từ assets/css/careers.css → style.css :root (single source of truth). */
+    --c-section-gap: clamp(5rem, 12vw, 10rem);
+    --c-margin-desk: 80px;
+    --c-margin-mob: 20px;
+    --c-gutter: 24px;
+    --c-page-max: 1280px;
+    --a-bg: var(--neutral-0);
+    --a-ink: var(--color-on-surface);
+    --a-ink-variant: var(--color-on-surface-variant);
+    --a-tertiary: var(--gold-600);
+    --a-surface-low: var(--neutral-warm-100);
+    --a-outline: var(--neutral-400);
+    --a-outline-strong: var(--neutral-500);
+    --a-radius: 8px;
+    --a-pad-x: clamp(24px, 5vw, 40px);
+    --a-pad-y: clamp(32px, 6vw, 48px);
+    --a-shadow: 0 24px 64px rgba(28, 27, 27, 0.18),
+	                  0 8px 24px rgba(28, 27, 27, 0.12);
+    --a-backdrop: rgba(28, 27, 27, 0.55);
+
+    /* ========== Cookie Policy Component ========== */
+    /* Token chuyển từ assets/css/cookie-policy.css → style.css :root (single source of truth). */
+    --cookie-radius: 0.25rem;
+    --cookie-sidebar-w: 280px;
+    --cookie-content-w: 720px;
+    --cookie-gutter: 40px;
+
+    /* ========== FAQ Component ========== */
+    /* Token chuyển từ assets/css/faq.css → style.css :root (single source of truth). */
+    --faq-surface: var(--color-surface, #fbf9f5);
+    --faq-ink: var(--color-on-surface, #1b1c1a);
+    --faq-muted: var(--color-on-surface-variant, #504444);
+    --faq-line: var(--color-outline-variant, #d4c2c2);
+    --faq-gold: var(--color-tertiary, var(--gold-dark));
+    --faq-radius: 0.75rem; /* ── Alpha / opacity variants (derive từ --color-tertiary-container / --color-surface) ── */
+    --faq-line-soft: rgba(212, 194, 194, 0.5); /* --color-outline-variant @50% */
+    --faq-gold-bright: var(--gold-400); /* brand gold accent, không có trong :root */
+    --faq-glass: rgba(251, 249, 245, 0.8); /* --color-surface @80% */
+    --faq-card-border-left-hover: rgba(var(--gold-rgb), 0.4); /* --color-accent-gold @40% */
+    --faq-card-bg-open: linear-gradient(90deg, rgba(var(--gold-rgb), 0.06) 0%, var(--faq-surface) 40%);
+    --faq-card-shadow-open: 0 4px 20px rgba(var(--gold-rgb), 0.1);
+    --faq-q-color-open: var(--color-primary, var(--gold-dark));
+    --faq-cta-btn-pad-x-mobile: 1rem;
+    --faq-cta-btn-tracking-mobile: 0.1em;
+
+    /* ========== Gift Cards Component ========== */
+    /* Token chuyển từ assets/css/gift-cards.css → style.css :root (single source of truth). */
+    --gift-bg: var(--color-background);
+    --gift-surface: var(--color-surface);
+    --gift-surface-low: var(--color-surface-container-low);
+    --gift-surface-container: var(--color-surface-container);
+    --gift-ink: var(--color-on-surface);
+    --gift-muted: var(--color-on-surface-variant);
+    --gift-line: var(--color-outline-variant);
+    --gift-line-soft: rgba(229, 226, 225, 0.5);
+    --gift-pink: var(--color-secondary);
+    --gift-pink-soft: rgba(185, 7, 96, 0.06);
+    --gift-pink-glow: rgba(185, 7, 96, 0.08);
+    --gift-gold: var(--color-primary);
+    --gift-gold-soft-bg: var(--color-primary-container);
+    --gift-gold-soft-ink: var(--color-on-primary-container);
+    --gift-tag-bg: rgba(255, 255, 255, 0.82);
+    --gift-tag-border: rgba(var(--gold-rgb), 0.4);
+    --gift-tag-ink: var(--gift-gold-soft-ink);
+    --gift-glass-bg-strong: rgba(255, 255, 255, 0.8); /* input focus */
+    --gift-error-glow: rgba(186, 26, 26, 0.08); /* error ring */
+    --gift-radius-md: 0.5rem;
+    --gift-radius-lg: 0.75rem;
+    --gift-radius-full: 9999px;
+    --gift-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --gift-duration: 500ms;
+
+    /* ========== Shared Image Lightbox Component ========== */
+    /* Token dùng chung cho lightbox ảnh (single product + gift cards).
+       Nguồn: assets/css/zoom-lightbox.css */
+    --zoom-z-index: 9999;
+    --zoom-backdrop: rgba(0, 0, 0, 0.9);
+    --zoom-backdrop-blur: 16px;
+    --zoom-control-bg: rgba(255, 255, 255, 0.1);
+    --zoom-control-bg-hover: rgba(255, 255, 255, 0.2);
+    --zoom-control-ink: #ffffff;
+    --zoom-control-size: 3rem;
+    --zoom-control-offset: 1rem;
+    --zoom-counter-padding-y: 0.5rem;
+    --zoom-counter-padding-x: 1rem;
+    --zoom-counter-font-size: 0.875rem;
+    --zoom-counter-gap: 1.25rem;
+    --zoom-stage-padding: 1rem;
+    --zoom-radius: 0.75rem;
+    --zoom-image-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    --zoom-duration: 300ms;
+    --zoom-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --zoom-focus-ring: var(--color-primary);
+
+    /* ========== Help Center Component ========== */
+    /* Token chuyển từ assets/css/help-center.css → style.css :root (single source of truth). */
+    --hc-radius-sm: 0.25rem;
+    --hc-radius-md: 0.5rem;
+    --hc-shadow-hover: 0 20px 40px rgba(45, 45, 45, 0.03);
+    --hc-shadow-icon: 0 10px 20px rgba(45, 45, 45, 0.02);
+    --hc-gutter: 32px;
+    --hc-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* ========== Our Ingredients Component ========== */
+    /* Token chuyển từ assets/css/our-ingredients.css → style.css :root (single source of truth). */
+    --oi-margin-mobile: 20px;
+    --oi-margin-desktop: 64px;
+    --oi-gutter: 24px;
+    --oi-section-gap: 120px;
+
+    /* Traceable — text sits directly on the photo (no card, no overlay).
+       Readability relies on a light halo around the glyphs: the photo is not
+       uniform (cream backdrop on the left, dark serum bottle in the middle). */
+    --oi-traceable-halo: 0 0 8px rgba(252, 249, 248, 1), 0 0 18px rgba(252, 249, 248, 0.95), 0 0 32px rgba(252, 249, 248, 0.8);
+    --oi-traceable-halo-wide: 0 0 10px rgba(252, 249, 248, 1), 0 0 24px rgba(252, 249, 248, 0.95), 0 0 48px rgba(252, 249, 248, 0.85);
+    --oi-traceable-text: var(--color-on-surface);
+    --oi-traceable-text-muted: var(--color-on-surface-variant);
+    --oi-traceable-rule: rgba(28, 27, 27, 0.35);
+    --oi-traceable-footnote: rgba(28, 27, 27, 0.92);
+
+    /* ========== Privacy Policy Component ========== */
+    /* Token chuyển từ assets/css/privacy-policy.css → style.css :root (single source of truth). */
+    --priv-radius: 0.25rem;
+    --priv-sidebar-width: 280px;
+    --priv-content-width: 720px;
+    --priv-gutter: 40px;
+
+    /* ========== Shipping & Returns Component ========== */
+    /* Token chuyển từ assets/css/shipping-returns.css → style.css :root (single source of truth). */
+    --sr-faq-icon-size: 1.5rem; /* 24px glyph box */
+    --sr-faq-icon-gap: 1rem; /* question → chevron breathing room */
+    --sr-faq-icon-duration: 320ms;
+    --sr-faq-icon-ease: cubic-bezier(0.2, 0, 0, 1);
+    /* Scrollbar của modal Return — cùng bảng màu với modal Apply (Careers). */
+    --sr-scrollbar-size: 8px;
+    --sr-scrollbar-track: var(--neutral-warm-100);
+    --sr-scrollbar-thumb: var(--neutral-400);
+    --sr-scrollbar-thumb-hover: var(--neutral-500);
+
+    /* ========== Shop Component ========== */
+    /* Token chuyển từ assets/css/shop.css → style.css :root (single source of truth). */
+    --luxury-bezier: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ========== Sustainability Component ========== */
+    /* Token chuyển từ assets/css/sustainability.css → style.css :root (single source of truth). */
+    --sus-margin-mobile: 24px;
+    --sus-margin-desktop: 64px;
+    --sus-gutter: 24px;
+    --sus-section-gap: 120px;
+    --sus-container-max: 1440px;
+    /* Padding-top riêng cho hero trên MOBILE (<768px).
+       Hero là khối đầu tiên của trang nên không cần dồn khoảng trắng section-gap
+       phía trên như các section sau — trước đây dùng chung calc(--sus-section-gap
+       * 0.75) = 90px, gây khoảng hở lớn giữa header và ảnh hero trên màn
+       hình nhỏ. Giảm còn 32px, khớp với nhịp 8px của design system.
+       Tablet/desktop KHÔNG dùng token này (hero-inner tại ≥768px giữ padding
+       dọc của --sus-section-gap như trước). */
+    --sus-hero-pad-top-mobile: 32px;
+    /* Numbers strip (Sustainability) — tham số riêng cho MOBILE.
+       Ở <768px strip chuyển sang lưới 5 cột [stat]•[stat]•[stat] để dot
+       separator nằm NGANG đúng vai trò như ở ≥768px (4 stat 16px cần 787px
+       > bề rộng màn hình → không thể 1 hàng ngang ở 4 stat; ở mobile chỉ
+       hiển thị 3 stat, stat thứ 4 + dot thứ 3 bị ẩn bằng display:none —
+       xem .dg-sus-numbers-item:nth-child(7) trong
+       assets/css/sustainability.css).
+       - font: 16px → 12px để 3 stat + 2 dot vừa 1 hàng từ 320px trở lên
+         mà không cuộn ngang (đã đo: không tràn ở 320/360/390/430px).
+       - letter-spacing 0.05em → 0.04em, line-height 1.0 → 1.25 để chữ 2-3
+         dòng vẫn dễ đọc. */
+    --sus-numbers-font-mobile: 12px;
+    --sus-numbers-tracking-mobile: 0.04em;
+    --sus-numbers-gap-mobile: 1.25rem;
+    --sus-numbers-dot-gap-mobile: 0.5rem;
+
+    /* ========== Terms of Service Component ========== */
+    /* Token chuyển từ assets/css/terms-of-service.css → style.css :root (single source of truth). */
+    --terms-radius: 0.25rem;
+    --terms-sidebar-width: 280px;
+    --terms-content-width: 720px;
+    --terms-gutter: 40px;
+
+    /* ========== Thank You Component ========== */
+    /* Token chuyển từ assets/css/thankyou.css → style.css :root (single source of truth). */
+    --dg-bacs-qr-accent: var(--color-payment-accent);
+    --dg-bacs-qr-accent-rgb: var(--color-payment-accent-rgb);
+    --dg-bacs-qr-primary-rgb: var(--color-payment-primary-rgb);
+
+    /* ========== Wishlist Component ========== */
+    /* Token chuyển từ assets/css/wishlist.css → style.css :root (single source of truth). */
+    --wl-bg: var(--color-background);
+    --wl-surface: var(--color-surface);
+    --wl-ink: var(--color-on-surface);
+    --wl-muted: var(--color-on-surface-variant);
+    --wl-line: var(--color-outline-variant);
+    --wl-error: var(--color-error);
+    --wl-primary: var(--color-primary);
+    --wl-on-primary: var(--color-on-primary);
+    --wl-primary-container: var(--color-primary-container);
+    --wl-on-primary-container: var(--color-on-primary-container);
+    --wl-surface-container: var(--color-surface-container); /* Component tokens — checkbox (toolbar + card share the same palette). */
+    --wl-checkbox-bg: #fff; /* unchecked fill */
+    --wl-checkbox-border: rgba(115, 92, 0, 0.40); /* unchecked border */
+    --wl-checkbox-mark-color: var(--wl-on-primary, #fff); /* check glyph ink */
+    --wl-checkbox-mark-font: system-ui, 'Segoe UI Symbol', 'Apple Symbols', sans-serif; /* pinned so the glyph renders identically in toolbar + card */
+    --wl-checkbox-size: 18px; /* input box edge, also the toolbar mark box */
+    --wl-checkbox-dash-width: 10px; /* indeterminate bar length */
+    --wl-checkbox-dash-height: 2px; /* indeterminate bar thickness */
+    --wl-focus-ring: rgba(201, 162, 75, 0.35); /* keyboard focus ring */
+    --wl-glass-bg: rgba(255, 255, 255, 0.55);
+    --wl-glass-bg-strong: rgba(255, 255, 255, 0.78);
+    --wl-glass-border: rgba(255, 255, 255, 0.55);
+    --wl-radius-sm: 12px;
+    --wl-radius-md: 18px;
+    --wl-radius-lg: 24px;
+    --wl-radius-xl: 32px;
+    --wl-radius-full: 9999px;
+    --wl-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================
+   BASE RESET & GLOBAL STYLES
+   ========================================= */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-on-background);
+    background-color: var(--color-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
+    color: var(--color-primary);
+}
+
+p {
+    margin: 0 0 1rem 0;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-on-primary-container);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul, ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* =========================================
+   UTILITY CLASSES
+   ========================================= */
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 0 64px;
+    }
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* =========================================
+   FOCUS & INTERACTION STATES
+   ========================================= */
+
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+}
+
+input[type="checkbox"]:focus,
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus,
+input[type="radio"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+    outline-offset: 2px;
+}
+
+/* =========================================
+   BROWSER AUTOFILL OVERRIDE (GLOBAL FALLBACK)
+   Chrome/Edge/Safari paint a yellow background on
+   autofilled/suggested inputs. Neutralize it using the
+   long-transition-delay trick so native theme colors show
+   instead. Scoped per-component overrides (using each
+   component's own tokens) live next to that input's base
+   rule in its page CSS file; this is only the generic
+   fallback for inputs without a dedicated component class.
+   ========================================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-on-surface);
+    caret-color: var(--color-on-surface);
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+
+::selection {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+}
+
+/* =========================================
+   TYPOGRAPHY UTILITY CLASSES
+   Custom font classes for labels + headlines (not in Tailwind's base)
+   ========================================= */
+
+.font-label-sm,
+.text-label-sm {
+    font-size: 12px;
+    line-height: 1.0;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
+
+.font-headline-sm,
+.text-headline-sm {
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 600;
+}

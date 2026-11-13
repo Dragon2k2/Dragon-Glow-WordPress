@@ -38,10 +38,21 @@ function dg_enqueue_styles(): void {
     // and the woff2 is preloaded in dg_preload_assets() (inc/enqueue.php).
 
     // Main theme CSS
+	wp_enqueue_style(
+		'dg-main',
+		DG_URI . '/assets/css/main.css',
+		array( 'dg-style', 'dg-google-fonts' ),
+		DG_VERSION
+	);
+
+    // Shared image lightbox — used by the single product gallery and the
+    // gift cards preview. Enqueued globally because the trigger markup is
+    // rendered by more than one template; the stylesheet is small and the
+    // rules are all scoped to `.dg-zoom-modal*` / `.dg-zoom-trigger`.
     wp_enqueue_style(
-        'dg-main',
-        DG_URI . '/assets/css/main.css',
-        array( 'dg-style', 'dg-google-fonts' ),
+        'dg-zoom-lightbox',
+        DG_URI . '/assets/css/zoom-lightbox.css',
+        array( 'dg-main' ),
         DG_VERSION
     );
 

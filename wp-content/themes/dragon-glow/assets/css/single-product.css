@@ -351,54 +351,17 @@
 /* =========================================
    Image Zoom Modal — Lightbox Overlay
    ========================================= */
+/* Lightbox dùng chung → assets/css/zoom-lightbox.css (class .dg-zoom-modal).
+   Ở đây chỉ giữ rule riêng cho ảnh chính (trigger) của trang single product. */
 
-#dg-zoom-modal {
-	position: fixed;
-	inset: 0;
-	z-index: 9999;
-	background: rgba(0, 0, 0, 0.9);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
-	cursor: zoom-out;
+#dg-main-image {
+	cursor: zoom-in;
 }
 
-#dg-zoom-modal img {
-	cursor: default;
-	user-select: none;
-	-webkit-user-select: none;
+#dg-main-image:focus-visible {
+	outline: 2px solid var(--zoom-focus-ring);
+	outline-offset: 2px;
 }
-
-#dg-zoom-modal button {
-	cursor: pointer;
-}
-
-/* Navigation buttons hover effect */
-#dg-zoom-prev:hover,
-#dg-zoom-next:hover {
-	background: rgba(255, 255, 255, 0.2);
-	transform: scale(1.05);
-}
-
-#dg-zoom-prev:active,
-#dg-zoom-next:active {
-	transform: scale(0.95);
-}
-
-/* Image counter badge */
-#dg-zoom-counter {
-	font-variant-numeric: tabular-nums;
-}
-
-/* Reduce motion support */
-@media (prefers-reduced-motion: reduce) {
-	#dg-zoom-modal,
-	#dg-zoom-image,
-	#dg-zoom-prev,
-	#dg-zoom-next {
-		transition: none !important;
-	}
-}
-
 /* =========================================
    Product Gallery Layout — Prevent Main Image Overlap
    ========================================= */

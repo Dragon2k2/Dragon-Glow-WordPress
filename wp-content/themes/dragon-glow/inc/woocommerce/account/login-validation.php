@@ -192,12 +192,15 @@ add_action( 'wp_login_failed', 'dg_login_capture_failure', 10, 2 );
 /**
  * Get every error to render on the sign-in form.
  *
- * Returns the field-tagged errors from the validator. When none were tagged
- * (expired nonce, lockout / anti-spam plugins, social-login failures), the
- * remaining WooCommerce error notices are converted to untagged ("form")
- * errors instead. Error notices are removed from WC's queue so they are not
- * printed a second time by `wc_print_notices()`; success/info notices (for
- * example "password reset") are left alone.
+ * Returns the field-tagged errors from the validator and the failed sign-in
+ * attempt (`wp_login_failed` fires before this template runs). When neither
+ * produced anything (expired nonce, lockout / anti-spam plugins,
+ * social-login failures), the remaining WooCommerce error notices are
+ * converted to untagged ("form") errors instead — otherwise a failed sign-in
+ * re-renders the form with NO message at all (silent reload). Error notices
+ * are removed from WC's queue so they are not printed a second time by
+ * `wc_print_notices()`; success/info notices (for example "password reset")
+ * are left alone.
  *
  * @return array<int,array{code:string,field:string,message:string}>
  */

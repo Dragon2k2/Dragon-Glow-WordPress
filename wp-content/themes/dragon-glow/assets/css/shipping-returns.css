@@ -609,11 +609,33 @@
 	box-shadow: 0 24px 80px rgba(28, 27, 27, 0.18), 0 8px 24px rgba(28, 27, 27, 0.08);
 }
 
+/* Scrollbar của dialog — đồng bộ với modal Apply (.dg-apply-dialog). */
+.dg-rm-dialog::-webkit-scrollbar {
+	width: var(--sr-scrollbar-size);
+}
+
+.dg-rm-dialog::-webkit-scrollbar-track {
+	background: var(--sr-scrollbar-track);
+	border-radius: 4px;
+}
+
+.dg-rm-dialog::-webkit-scrollbar-thumb {
+	background: var(--sr-scrollbar-thumb);
+	border-radius: 4px;
+	transition: background 0.25s ease;
+}
+
+.dg-rm-dialog::-webkit-scrollbar-thumb:hover {
+	background: var(--sr-scrollbar-thumb-hover);
+}
+
 /* Close button */
 .dg-rm-close {
 	position: absolute;
 	top: 1rem;
 	right: 1rem;
+	/* Nút nằm trên header (header dùng position:relative) để không bị chặn click. */
+	z-index: 2;
 	width: 2rem;
 	height: 2rem;
 	display: flex;

@@ -5,10 +5,15 @@
  * Gồm:
  *  - Reveal: stagger các phần tử data-sr (Motion inView + animate + stagger).
  *  - Format toggle: Digital ↔ Physical, đổi preview tag + active state.
- *  - Value chips: chọn $50/$100/$250/$500, đồng bộ label "Add to Bag — $X".
  *  - Form submit:
  *      · WC bật  → DGCart.add({productId, size: 'digital|physical-amount'})
  *      · WC tắt  → push vào localStorage giỏ mock + điều hướng /cart/.
+ *
+ * Value chips ($50/$100/$250/$500) KHÔNG ở đây — logic mệnh giá do
+ * `assets/js/lib/gift-value.js` sở hữu (classic script local, không phụ thuộc
+ * CDN nên chip vẫn hoạt động kể cả khi ES module này bị skip do Motion CDN
+ * lỗi/chậm). Module state đó cũng được lightbox (`gift-cards-zoom.js`) dùng
+ * để đồng bộ mệnh giá khi user chuyển ảnh trong modal.
  *
  * Tôn trọng prefers-reduced-motion.
  *
@@ -30,7 +35,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 
 	initReveal();
 	initFormatToggle();
-	initValueChips();
 	initSubmit();
 
 	/* ── Reveal: stagger các phần tử data-sr ───────────────────────────────── */
@@ -97,49 +101,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@11
 		preview.querySelectorAll('[data-tag-for]').forEach(function (tag) {
 			tag.classList.toggle('is-hidden', tag.getAttribute('data-tag-for') !== format);
 		});
-	}
-
-	/* ── Value chips ────────────────────────────────────────────────────────── */
-	function initValueChips() {
-		const valueButtons = root.querySelectorAll('[data-amount]');
-		const hiddenInput = root.querySelector('input[name="value"]');
-		const submitValue = root.querySelector('.dg-gift-submit-value');
-		const previewImg = root.querySelector('.dg-gift-card-image');
-		const previewBox = root.querySelector('.dg-gift-card-preview');
-		if (!valueButtons.length || !hiddenInput) {
-			return;
-		}
-
-		valueButtons.forEach(function (btn) {
-			btn.addEventListener('click', function () {
-				const amount = parseInt(btn.getAttribute('data-amount'), 10);
-				if (!amount) {
-					return;
-				}
-				valueButtons.forEach(function (b) {
-					const active = b === btn;
-					b.classList.toggle('is-active', active);
-					b.setAttribute('aria-checked', active ? 'true' : 'false');
-				});
-				hiddenInput.value = String(amount);
-				if (submitValue) {
-					submitValue.textContent = '$' + amount.toLocaleString('en-US');
-				}
-				swapCardImage(previewImg, previewBox, amount);
-			});
-		});
-	}
-
-	/* Đổi ảnh preview theo mệnh giá — đọc data-card-{amount} trên container. */
-	function swapCardImage(img, box, amount) {
-		if (!img || !box) {
-			return;
-		}
-		const next = box.getAttribute('data-card-' + amount);
-		if (!next || img.getAttribute('src') === next) {
-			return;
-		}
-		img.src = next;
 	}
 
 	/* ── Submit ─────────────────────────────────────────────────────────────── */

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Dragon Glow — Product Page JS
  * Gallery image swap (cache-aware, instant), thumbnail active state,
  * tab switching, qty +/-, star rating, sticky bar, review form.
@@ -13,7 +13,7 @@
     // Collect all data-full URLs from thumbnails; skip the first
     // thumbnail because its image is already loaded on the page.
     (function preloadGalleryImages() {
-        var thumbs = document.querySelectorAll('.thumbnail-btn');
+        var thumbs = document.querySelectorAll('[data-dg-thumb]');
         if (!thumbs.length) return;
 
         var toPreload = [];
@@ -54,7 +54,7 @@
     //  4. If the user clicks a different thumbnail while a transition
     //     is still running, the pending transition is cancelled and a
     //     fresh one starts immediately.
-    window.dgChangeImage = function (btn) {
+    function dgChangeImage(btn) {
         var fullSrc   = btn.dataset.full;
         var mainImg   = document.getElementById('dg-main-image');
         if (!mainImg || !fullSrc) return;
@@ -74,7 +74,7 @@
         }
 
         // ── Update thumbnail active states (immediate, no animation) ──
-        var thumbnails = document.querySelectorAll('.thumbnail-btn');
+        var thumbnails = document.querySelectorAll('[data-dg-thumb]');
         for (var i = 0; i < thumbnails.length; i++) {
             var thumb = thumbnails[i];
             thumb.classList.remove(
@@ -108,7 +108,16 @@
             };
             mainImg.addEventListener('load', mainImg._dgSwapLoadHandler);
         }
-    };
+    }
+
+    // Delegated listener — keeps working regardless of where the
+    // thumbnails live in the DOM (no inline `onclick` handlers).
+    document.addEventListener('click', function (e) {
+        var thumb = e.target.closest('[data-dg-thumb]');
+        if (!thumb) return;
+        e.preventDefault();
+        dgChangeImage(thumb);
+    });
 
     // ── Tab Switching ─────────────────────────────────────────
     window.dgSwitchTab = function (tabId) {
@@ -495,175 +504,95 @@
     }
 
     // ── Image Zoom Lightbox with Gallery Navigation ───────────
-    var dgZoomState = {
-        currentIndex: 0,
-        images: []
-    };
-
-    window.dgOpenZoom = function () {
+    // Dùng chung controller với trang Gift Cards
+    // (assets/js/lib/zoom-lightbox.js → window.DGZoomLightbox).
+    //
+    // Trigger: ảnh chính `#dg-main-image` + nút zoom `.dg-zoom-btn`
+    // (đánh dấu bằng `data-dg-zoom-trigger`, listener được delegate ở lib).
+    (function initZoomLightbox() {
+        var modal = document.querySelector('[data-dg-zoom-root]');
         var mainImg = document.getElementById('dg-main-image');
-        var modal = document.getElementById('dg-zoom-modal');
-        var zoomImg = document.getElementById('dg-zoom-image');
-        var counter = document.getElementById('dg-zoom-counter');
-        var prevBtn = document.getElementById('dg-zoom-prev');
-        var nextBtn = document.getElementById('dg-zoom-next');
+        if (!modal || !mainImg || !window.DGZoomLightbox) return;
 
-        if (!mainImg || !modal || !zoomImg) return;
+        // Gallery = ảnh đầy đủ của mọi thumbnail.
+        var items = [];
+        var thumbs = document.querySelectorAll('[data-dg-thumb]');
 
-        // Collect all images from thumbnails
-        var thumbnails = document.querySelectorAll('.thumbnail-btn');
-        dgZoomState.images = [];
-        dgZoomState.currentIndex = 0;
-
-        for (var i = 0; i < thumbnails.length; i++) {
-            var fullSrc = thumbnails[i].dataset.full;
-            var alt = thumbnails[i].querySelector('img').alt;
-            dgZoomState.images.push({ src: fullSrc, alt: alt });
-
-            // Find current image index
-            if (fullSrc === mainImg.src) {
-                dgZoomState.currentIndex = i;
-            }
+        for (var i = 0; i < thumbs.length; i++) {
+            var fullSrc = thumbs[i].dataset.full;
+            if (!fullSrc) continue;
+            var thumbImg = thumbs[i].querySelector('img');
+            items.push({
+                src: fullSrc,
+                alt: thumbImg ? thumbImg.alt : '',
+                // Giữ tham chiếu tới thumbnail để đồng bộ ảnh ngoài lightbox.
+                thumb: thumbs[i]
+            });
         }
 
-        // If no thumbnails, use main image only
-        if (dgZoomState.images.length === 0) {
-            dgZoomState.images.push({ src: mainImg.src, alt: mainImg.alt });
-            dgZoomState.currentIndex = 0;
+        // Không có thumbnail → lightbox chỉ hiển thị ảnh chính.
+        if (items.length === 0) {
+            items.push({ src: mainImg.getAttribute('src') || mainImg.src, alt: mainImg.alt });
         }
 
-        // Update counter
-        if (counter) {
-            counter.textContent = (dgZoomState.currentIndex + 1) + ' / ' + dgZoomState.images.length;
-        }
-
-        // Show/hide navigation buttons
-        if (dgZoomState.images.length <= 1) {
-            if (prevBtn) prevBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
-            if (counter) counter.style.display = 'none';
-        } else {
-            if (prevBtn) prevBtn.style.display = 'flex';
-            if (nextBtn) nextBtn.style.display = 'flex';
-            if (counter) counter.style.display = 'block';
-        }
-
-        // Set zoom image source
-        var currentImage = dgZoomState.images[dgZoomState.currentIndex];
-        zoomImg.src = currentImage.src;
-        zoomImg.alt = currentImage.alt;
-
-        // Show modal
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-
-        // Animate modal entrance
-        modal.style.opacity = '0';
-        setTimeout(function () {
-            modal.style.transition = 'opacity 0.3s ease-out';
-            modal.style.opacity = '1';
-        }, 10);
-
-        // Animate image entrance
-        zoomImg.style.opacity = '0';
-        zoomImg.style.transform = 'scale(0.9)';
-        setTimeout(function () {
-            zoomImg.style.transition = 'opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-            zoomImg.style.opacity = '1';
-            zoomImg.style.transform = 'scale(1)';
-        }, 10);
-
-        // Trap focus in modal
-        modal.focus();
-    };
-
-    window.dgZoomPrev = function () {
-        if (dgZoomState.images.length <= 1) return;
-
-        dgZoomState.currentIndex = (dgZoomState.currentIndex - 1 + dgZoomState.images.length) % dgZoomState.images.length;
-        dgUpdateZoomImage();
-    };
-
-    window.dgZoomNext = function () {
-        if (dgZoomState.images.length <= 1) return;
-
-        dgZoomState.currentIndex = (dgZoomState.currentIndex + 1) % dgZoomState.images.length;
-        dgUpdateZoomImage();
-    };
-
-    function dgUpdateZoomImage() {
-        var zoomImg = document.getElementById('dg-zoom-image');
-        var counter = document.getElementById('dg-zoom-counter');
-
-        if (!zoomImg) return;
-
-        var currentImage = dgZoomState.images[dgZoomState.currentIndex];
-
-        // Animate image change
-        zoomImg.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
-        zoomImg.style.opacity = '0';
-        zoomImg.style.transform = 'scale(0.95)';
-
-        setTimeout(function () {
-            zoomImg.src = currentImage.src;
-            zoomImg.alt = currentImage.alt;
-
-            // Update counter
-            if (counter) {
-                counter.textContent = (dgZoomState.currentIndex + 1) + ' / ' + dgZoomState.images.length;
+        /**
+         * Index của ảnh đang hiển thị ở #dg-main-image — đảm bảo mở lightbox
+         * đúng ảnh user đang xem (bộ đếm & prev/next đồng bộ với gallery).
+         *
+         * Nguồn chuẩn là thumbnail active (state hiển thị của trang) — đọc
+         * `src` của ảnh chính chỉ là fallback, vì `src` có thể chưa kịp cập
+         * nhật nếu ảnh chưa load xong.
+         *
+         * @return {number} Index trong `items`, -1 nếu không khớp.
+         */
+        function resolveCurrentIndex() {
+            // 1. Theo thumbnail active (state hiển thị của trang).
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].thumb && items[i].thumb.classList.contains('is-active')) {
+                    return i;
+                }
             }
 
-            // Fade in new image
-            setTimeout(function () {
-                zoomImg.style.transition = 'opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-                zoomImg.style.opacity = '1';
-                zoomImg.style.transform = 'scale(1)';
-            }, 50);
-        }, 200);
-    }
+            // 2. Theo `src` của ảnh chính.
+            var current = mainImg.getAttribute('src') || mainImg.currentSrc || mainImg.src;
+            for (var j = 0; j < items.length; j++) {
+                if (items[j].src === current) {
+                    return j;
+                }
+            }
 
-    window.dgCloseZoom = function (event) {
-        // If event is passed and not clicking backdrop or close button, ignore
-        if (event && event.target.id !== 'dg-zoom-modal' && !event.target.closest('button')) {
-            return;
+            return -1;
         }
 
-        var modal = document.getElementById('dg-zoom-modal');
-        var zoomImg = document.getElementById('dg-zoom-image');
+        window.DGZoomLightbox.create({
+            root: modal,
+            scope: document,
+            items: items,
+            resolveIndex: resolveCurrentIndex,
 
-        if (!modal || !zoomImg) return;
+            /**
+             * Đồng bộ ảnh ngoài lightbox theo ảnh đang xem bên trong.
+             *
+             * Khi user chuyển ảnh trong lightbox (prev/next), ảnh chính
+             * `#dg-main-image` + thumbnail active phải theo kịp — nếu không,
+             * user thoát lightbox sẽ thấy ảnh khác với ảnh vừa xem.
+             * Dùng lại `dgChangeImage()` để giữ đúng hành vi cache-aware
+             * (fade khi ảnh chưa load) + cập nhật trạng thái thumbnail.
+             *
+             * @param {number} index Index hiện tại trong `items`.
+             * @param {Object} item  Item của gallery.
+             */
+            onChange: function (index, item) {
+                if (!item.thumb) return;
 
-        // Animate modal exit
-        modal.style.transition = 'opacity 0.2s ease-out';
-        modal.style.opacity = '0';
+                // Ảnh ngoài đã đúng ảnh này → không cần swap (tránh load lại
+                // không cần thiết, và tránh đổi ảnh ngoài khi lightbox mở
+                // ở ảnh fallback do không khớp thumbnail nào).
+                var current = mainImg.getAttribute('src') || mainImg.currentSrc || mainImg.src;
+                if (current === item.src) return;
 
-        // Animate image exit
-        zoomImg.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
-        zoomImg.style.opacity = '0';
-        zoomImg.style.transform = 'scale(0.95)';
-
-        setTimeout(function () {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = '';
-        }, 200);
-    };
-
-    // Keyboard navigation for zoom modal
-    document.addEventListener('keydown', function (e) {
-        var modal = document.getElementById('dg-zoom-modal');
-        if (!modal || modal.classList.contains('hidden')) return;
-
-        if (e.key === 'Escape' || e.key === 'Esc') {
-            dgCloseZoom();
-        } else if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            dgZoomPrev();
-        } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            dgZoomNext();
-        }
-    });
-
+                dgChangeImage(item.thumb);
+            }
+        });
+    })();
 })();
