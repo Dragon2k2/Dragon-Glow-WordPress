@@ -119,17 +119,40 @@ function dg_ajax_update_cart(): void {
 		wp_send_json_error( array( 'message' => __( 'Invalid cart item.', 'dragon-glow' ) ) );
 	}
 
-	if ( $quantity < 1 ) {
-		WC()->cart->remove_cart_item( $cart_item_key );
-	} else {
-		WC()->cart->set_quantity( $cart_item_key, $quantity );
+	$item    = WC()->cart->get_cart_item( $cart_item_key );
+	$product = $item['data'] ?? null;
+	if ( ! $product || $quantity < 1 ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid cart item or quantity.', 'dragon-glow' ) ) );
+	}
+	$maximum = $product->get_max_purchase_quantity();
+	if ( ( $maximum > 0 && $quantity > $maximum ) ||
+		! apply_filters( 'woocommerce_update_cart_validation', true, $cart_item_key, $item, $quantity ) ) {
+		wp_send_json_error( array( 'message' => __( 'The requested quantity is not available.', 'dragon-glow' ) ) );
+	}
+	if ( ! WC()->cart->set_quantity( $cart_item_key, $quantity ) ) {
+		wp_send_json_error( array( 'message' => __( 'Could not update quantity. Please try again.', 'dragon-glow' ) ) );
 	}
 
+	ob_start();
+	get_template_part( 'template-parts/cart/summary-totals' );
+	$summary = ob_get_clean();
+	ob_start();
+	wc_cart_totals_order_total_html();
+	$total = ob_get_clean();
+	$lines = array();
+	foreach ( WC()->cart->get_cart() as $key => $line ) {
+		$lines[ $key ] = WC()->cart->get_product_subtotal( $line['data'], $line['quantity'] );
+	}
 	wp_send_json_success( array(
-		'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
+		'quantity'      => WC()->cart->get_cart_item( $cart_item_key )['quantity'],
+		'summary_html'  => $summary,
+		'total_html'    => $total,
+		'line_totals'   => $lines,
+		'cart_count'    => WC()->cart->get_cart_contents_count(),
 	) );
 }
 add_action( 'wp_ajax_dg_ajax_update_cart', 'dg_ajax_update_cart' );
+add_action( 'wp_ajax_nopriv_dg_ajax_update_cart', 'dg_ajax_update_cart' );
 
 /**
  * AJAX: Get current cart count.

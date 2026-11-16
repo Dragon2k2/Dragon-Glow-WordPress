@@ -11,6 +11,37 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Numeric pricing snapshot for immediate quantity feedback.
+ * WooCommerce remains authoritative for discounts, shipping, fees and taxes.
+ *
+ * @return array
+ */
+function dg_cart_quantity_pricing(): array {
+    $cart  = WC()->cart;
+    $lines = array();
+    foreach ( $cart->get_cart() as $key => $item ) {
+        $quantity = max( 1, (int) $item['quantity'] );
+        $subtotal = (float) $item['line_subtotal'];
+        if ( $cart->display_prices_including_tax() ) {
+            $subtotal += (float) $item['line_subtotal_tax'];
+        }
+        $lines[ $key ] = array(
+            'quantity' => $quantity,
+            'subtotal' => $subtotal,
+            'total'    => (float) $item['line_total'] + (float) $item['line_tax'],
+        );
+    }
+    return array(
+        'subtotal' => (float) $cart->get_displayed_subtotal(),
+        'total'    => (float) $cart->get_total( 'edit' ),
+        'decimals' => wc_get_price_decimals(),
+        'decimal'  => wc_get_price_decimal_separator(),
+        'thousand' => wc_get_price_thousand_separator(),
+        'lines'    => $lines,
+    );
+}
+
+/**
  * Cart fragments for AJAX updates.
  *
  * @param array $fragments Fragments array.

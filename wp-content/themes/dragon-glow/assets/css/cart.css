@@ -1152,6 +1152,30 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .dg-cart-checkout-group .dg-cart-checkout-cta__hint {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 1023px) {
+    /* Expose the product panel and badges as grid items without duplicating
+       content. Desktop keeps its original two-column wrapper and spacing. */
+    .dg-cart-products {
+        display: contents;
+    }
+
+    .dg-cart-summary {
+        grid-row: 2;
+    }
+
+    .dg-cart-products > .dg-cart-trust-badges {
+        grid-row: 3;
+        margin-block: 0;
+    }
+}
+
 @media (max-width: 1024px) {
     .dg-cart-blob-1,
     .dg-cart-blob-2 {
@@ -1160,14 +1184,234 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
     }
 }
 
+.dg-cart-select-all-text {
+    display: none;
+}
+
+/* Separate table rows into cards while retaining native column alignment. */
+@media (min-width: 641px) {
+    .dg-cart-products > .dg-glass-panel {
+        --cart-panel-padding: var(--cart-panel-tablet-padding);
+        padding: var(--cart-panel-padding);
+    }
+
+    #dg-cart-table > thead > tr {
+        position: relative;
+        border-bottom: 0;
+    }
+
+    #dg-cart-table > thead > tr > th {
+        border-bottom: 0;
+    }
+
+    /* One continuous divider across all columns, extending to the panel edges. */
+    #dg-cart-table > thead > tr::after {
+        content: "";
+        position: absolute;
+        inset-inline: calc(-1 * (var(--cart-panel-padding) + var(--cart-header-divider-bleed)));
+        bottom: 0;
+        border-bottom: var(--cart-row-card-border-width) solid var(--cart-header-divider-color);
+        pointer-events: none;
+    }
+
+    #dg-cart-table {
+        border-collapse: separate;
+        border-spacing: 0 var(--cart-row-card-gap);
+    }
+
+    #dg-cart-items > .dg-cart-row {
+        background: none;
+        box-shadow: none;
+        border: 0;
+    }
+
+    #dg-cart-items > .dg-cart-row > td {
+        background: var(--cart-row-card-bg);
+        border-top: var(--cart-row-card-border-width) solid var(--cart-row-card-border);
+        border-bottom: var(--cart-row-card-border-width) solid var(--cart-row-card-border);
+    }
+
+    #dg-cart-items > .dg-cart-row > .dg-cart-row__select-cell {
+        padding-left: var(--cart-row-card-padding);
+        border-left: var(--cart-row-card-border-width) solid var(--cart-row-card-border);
+        border-radius: var(--cart-row-card-radius) 0 0 var(--cart-row-card-radius);
+    }
+
+    #dg-cart-items > .dg-cart-row > .dg-cart-row__price-cell {
+        padding-right: var(--cart-row-card-padding);
+        border-right: var(--cart-row-card-border-width) solid var(--cart-row-card-border);
+        border-radius: 0 var(--cart-row-card-radius) var(--cart-row-card-radius) 0;
+    }
+
+    #dg-cart-items > .dg-cart-row.is-selected > td {
+        background: var(--cart-row-card-bg-selected);
+        border-color: var(--cart-row-card-border-selected);
+    }
+
+    /* Table cells own the surface; mirror the mobile card's selected accent. */
+    #dg-cart-items > .dg-cart-row.is-selected > .dg-cart-row__select-cell {
+        box-shadow: var(--cart-row-card-selected-accent);
+    }
+}
+
+@media (min-width: 768px) {
+    .dg-cart-products > .dg-glass-panel {
+        --cart-panel-padding: var(--cart-panel-desktop-padding);
+    }
+}
+
 @media (max-width: 640px) {
+    #dg-cart-table > thead,
+    #dg-cart-table > thead > tr,
+    #dg-cart-table > thead > tr > th:first-child {
+        display: block;
+    }
+
+    /* Outrank the runtime Tailwind p-6 utility so the divider offset matches. */
+    .dg-cart-products > .dg-glass-panel {
+        padding: var(--cart-panel-mobile-padding);
+    }
+
+    /* Separate the select-all divider from the first product card. */
+    #dg-cart-table > thead {
+        margin-bottom: var(--cart-row-card-gap);
+    }
+
+    #dg-cart-table > thead > tr {
+        border: 0;
+    }
+
+    #dg-cart-table > thead > tr > th:first-child {
+        position: relative;
+        width: auto;
+        padding: 0 0 var(--cart-row-card-gap);
+        border-bottom: 0;
+    }
+
+    /* Extend through the padding and panel border to avoid a hairline gap. */
+    #dg-cart-table > thead > tr > th:first-child::after {
+        content: "";
+        position: absolute;
+        inset-inline: calc(-1 * (var(--cart-panel-mobile-padding) + var(--cart-select-all-mobile-divider-bleed)));
+        bottom: 0;
+        border-bottom: var(--cart-row-card-border-width) solid var(--cart-select-all-mobile-divider);
+        pointer-events: none;
+    }
+
+    #dg-cart-table > thead > tr > th:not(:first-child) {
+        display: none;
+    }
+
+    #dg-cart-table .dg-cart-select-all-label {
+        width: 100%;
+        min-height: var(--cart-row-mobile-touch-size);
+        height: auto;
+        justify-content: flex-start;
+        gap: var(--cart-row-mobile-gap);
+    }
+
+    #dg-cart-table .dg-cart-select-all:checked:not(:indeterminate) + .dg-cart-select-all-mark::after {
+        left: var(--cart-select-all-mobile-check-left);
+    }
+
+    #dg-cart-table .dg-cart-select-all:indeterminate + .dg-cart-select-all-mark::after {
+        left: var(--cart-select-all-mobile-indeterminate-left);
+    }
+
+    #dg-cart-table .dg-cart-row__select:checked + .dg-cart-row__select-mark::after {
+        left: var(--cart-row-mobile-check-left);
+    }
+
+    #dg-cart-table .dg-cart-select-all-text {
+        display: inline;
+        font-size: var(--cart-row-mobile-label-size);
+        color: var(--color-on-surface);
+    }
+
+    #dg-cart-table,
+    #dg-cart-items {
+        display: block;
+        width: 100%;
+    }
+
+    #dg-cart-items > .dg-cart-row {
+        display: grid;
+        grid-template-columns: var(--cart-row-mobile-select-width) minmax(0, 1fr);
+        gap: var(--cart-row-mobile-gap) 0;
+        padding: var(--cart-row-mobile-padding) var(--cart-row-card-padding);
+        background: var(--cart-row-card-bg);
+        border: var(--cart-row-card-border-width) solid var(--cart-row-card-border);
+        border-radius: var(--cart-row-card-radius);
+    }
+
+    #dg-cart-items > .dg-cart-row ~ .dg-cart-row {
+        margin-top: var(--cart-row-card-gap);
+    }
+
+    #dg-cart-items > .dg-cart-row.is-selected {
+        background: var(--cart-row-card-bg-selected);
+        border-color: var(--cart-row-card-border-selected);
+    }
+
+    .dg-cart-row > .dg-cart-row__select-cell,
+    .dg-cart-row > .dg-cart-row__product-cell,
+    .dg-cart-row > .dg-cart-row__quantity-cell,
+    .dg-cart-row > .dg-cart-row__price-cell {
+        min-width: 0;
+        padding: 0;
+    }
+
+    /* Keep cell dividers clear of the product, stepper and line price. */
+    .dg-cart-row > .dg-cart-row__product-cell,
+    .dg-cart-row > .dg-cart-row__quantity-cell,
+    .dg-cart-row > .dg-cart-row__price-cell {
+        padding-bottom: var(--cart-row-mobile-gap);
+    }
+
+    .dg-cart-row__product {
+        gap: var(--cart-row-mobile-gap);
+        align-items: flex-start;
+    }
+
+    .dg-cart-row__details {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .dg-cart-row > .dg-cart-row__quantity-cell,
+    .dg-cart-row > .dg-cart-row__price-cell {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--cart-row-mobile-gap);
+        text-align: right;
+    }
+
+    .dg-cart-row__quantity-cell::before,
+    .dg-cart-row__price-cell::before {
+        content: attr(data-label);
+        font-size: var(--cart-row-mobile-label-size);
+        color: var(--color-on-surface-variant);
+    }
+
+    .dg-cart-row__quantity-cell .dg-qty-stepper {
+        margin-inline: 0;
+        gap: 0;
+    }
+
+    .dg-cart-row__quantity-cell .dg-qty-stepper-btn {
+        width: var(--cart-row-mobile-touch-size);
+        height: var(--cart-row-mobile-touch-size);
+    }
+
     .dg-cart-img-wrap {
         width: 68px;
         height: 88px;
     }
 
     .dg-glass-panel {
-        padding: 1.25rem;
+        padding: var(--cart-panel-mobile-padding);
     }
 
     .dg-cart-trust-badges {

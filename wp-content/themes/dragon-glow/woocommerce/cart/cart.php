@@ -56,7 +56,7 @@ $has_items  = ! empty( $cart_items );
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start" id="dg-cart-view">
 
         <!-- LEFT COL: Product table + trust badges (8 / 12) -->
-        <div class="lg:col-span-8 space-y-6">
+        <div class="dg-cart-products lg:col-span-8 space-y-6">
 
             <!-- Glass product panel -->
             <div class="dg-glass-panel rounded-3xl p-6 md:p-8 overflow-hidden">
@@ -81,6 +81,7 @@ $has_items  = ! empty( $cart_items );
                                                autocomplete="off"
                                                aria-label="<?php esc_attr_e( 'Select all items', 'dragon-glow' ); ?>" />
                                         <span aria-hidden="true" class="dg-cart-select-all-mark"></span>
+                                        <span class="dg-cart-select-all-text"><?php esc_html_e( 'Select all items', 'dragon-glow' ); ?></span>
                                     </label>
                                 </th>
                                 <th class="pb-5 font-label-sm text-label-sm text-on-surface-variant uppercase">
@@ -156,8 +157,8 @@ $has_items  = ! empty( $cart_items );
                             </td>
 
                             <!-- Product: image + name/variant -->
-                            <td class="py-7 pr-4">
-                                <div class="flex items-center gap-5">
+                            <td class="dg-cart-row__product-cell py-7 pr-4">
+                                <div class="dg-cart-row__product flex items-center gap-5">
 
                                     <!-- Thumbnail -->
                                     <div class="dg-cart-img-wrap">
@@ -177,7 +178,7 @@ $has_items  = ! empty( $cart_items );
                                     </div>
 
                                     <!-- Name + variant -->
-                                    <div>
+                                    <div class="dg-cart-row__details">
                                         <?php if ( $product_permalink ) : ?>
                                             <a href="<?php echo esc_url( $product_permalink ); ?>"
                                                class="font-headline text-[18px] text-on-surface hover:text-primary transition-colors mb-1 block italic">
@@ -212,7 +213,7 @@ $has_items  = ! empty( $cart_items );
                             </td>
 
                             <!-- Quantity stepper (AJAX, no page reload) -->
-                            <td class="py-7 text-center">
+                            <td class="dg-cart-row__quantity-cell py-7 text-center" data-label="<?php esc_attr_e( 'Quantity', 'dragon-glow' ); ?>">
                                 <div class="dg-qty-stepper mx-auto w-fit"
                                      data-cart-key="<?php echo esc_attr( $cart_item_key ); ?>"
                                      data-qty="<?php echo esc_attr( $current_qty ); ?>">
@@ -232,7 +233,7 @@ $has_items  = ! empty( $cart_items );
                             </td>
 
                             <!-- Price (subtotal for this line) -->
-                            <td class="py-7 text-right">
+                            <td class="dg-cart-row__price-cell py-7 text-right" data-label="<?php esc_attr_e( 'Price', 'dragon-glow' ); ?>">
                                 <span class="font-body text-[18px] text-primary">
                                     <?php echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
                                 </span>
@@ -283,7 +284,7 @@ $has_items  = ! empty( $cart_items );
         </div><!-- end col-span-8 -->
 
         <!-- RIGHT COL: Order summary sidebar (4 / 12) -->
-        <aside class="lg:col-span-4 lg:sticky lg:top-28">
+        <aside class="dg-cart-summary lg:col-span-4 lg:sticky lg:top-28">
             <div class="dg-glass-panel rounded-3xl p-6 md:p-8 flex flex-col gap-6">
 
                 <h2 class="font-headline text-headline-md text-primary">
@@ -291,41 +292,8 @@ $has_items  = ! empty( $cart_items );
                 </h2>
 
                 <!-- Subtotal + Shipping rows -->
-                <div class="space-y-3 border-b border-outline-variant/25 pb-5">
-
-                    <div class="flex justify-between items-center text-on-surface-variant font-body-md text-sm">
-                        <span><?php esc_html_e( 'Subtotal', 'dragon-glow' ); ?></span>
-                        <span class="font-medium text-on-surface" id="dg-cart-subtotal">
-                            <?php wc_cart_totals_subtotal_html(); ?>
-                        </span>
-                    </div>
-
-                    <?php
-                    // Applied coupons
-                    foreach ( WC()->cart->get_coupons() as $code => $coupon ) :
-                    ?>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-on-surface-variant"><?php wc_cart_totals_coupon_label( $coupon ); ?></span>
-                        <span class="text-primary font-semibold"><?php wc_cart_totals_coupon_html( $coupon ); ?></span>
-                    </div>
-                    <?php endforeach; ?>
-
-                    <?php if ( WC()->cart->needs_shipping() && WC()->cart->show_shipping() ) : ?>
-                        <?php wc_cart_totals_shipping_html(); ?>
-                    <?php else : ?>
-                    <div class="flex justify-between items-center text-sm italic">
-                        <span class="text-on-surface-variant"><?php esc_html_e( 'Shipping', 'dragon-glow' ); ?></span>
-                        <span class="text-on-surface-variant opacity-70"><?php esc_html_e( 'Calculated at next step', 'dragon-glow' ); ?></span>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php foreach ( WC()->cart->get_fees() as $fee ) : ?>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-on-surface-variant"><?php echo esc_html( $fee->name ); ?></span>
-                        <span><?php wc_cart_totals_fee_html( $fee ); ?></span>
-                    </div>
-                    <?php endforeach; ?>
-
+                <div class="space-y-3 border-b border-outline-variant/25 pb-5" id="dg-cart-summary-totals" aria-live="polite">
+                    <?php get_template_part( 'template-parts/cart/summary-totals' ); ?>
                 </div>
 
                 <!-- Promo code (submits cart form via JS) -->

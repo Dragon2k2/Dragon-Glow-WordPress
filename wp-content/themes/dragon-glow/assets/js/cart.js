@@ -245,12 +245,12 @@
     }
 
     function updateBulkBar() {
+        refreshSelectedPricing();
         var bar = document.querySelector('[data-dg-cart-bulkbar]');
-        if (!bar) return;
         var countEl = document.querySelector('[data-dg-cart-bulk-count]');
         var keys    = getSelectedKeys();
         if (countEl) countEl.textContent = String(keys.length);
-        bar.classList.toggle('is-visible', keys.length > 0);
+        if (bar) bar.classList.toggle('is-visible', keys.length > 0);
         // Keep the "Checkout with selected" CTA in sync — same selection state
         // powers both UI surfaces.
         updateSelectionCta(keys);
@@ -404,6 +404,7 @@
         // "Proceed to checkout" right after restoring the page
         // without racing the 250ms debounce window.
         var canonical = getSelectedKeys();
+        refreshSelectedPricing();
         updateSelectionCta(canonical);
         syncSelectionStateNow(canonical);
     }
@@ -985,9 +986,158 @@
         confirmPrevFocus = null;
     }
 
-    // ── Quantity steppers (unchanged happy path) ───────────────────────────
+    // ── Quantity steppers: immediate feedback, serialized background writes ──
+    var qtyStates = new Map();
+    var qtyTimer;
+    var qtySending = false;
+    var qtyBound = false;
+    var qtyLockedControls = [];
+    var qtyPricing = null;
+
+    function readQtyPricing() {
+        var subtotal = document.getElementById('dg-cart-subtotal');
+        try {
+            return subtotal ? JSON.parse(subtotal.dataset.qtyPricing || 'null') : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    /** Replace only the amount text, preserving WooCommerce currency and tax markup. */
+    function paintMoney(container, value) {
+        if (!container || !qtyPricing) return;
+        var parts = Math.max(0, value).toFixed(qtyPricing.decimals).split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, qtyPricing.thousand);
+        var formatted = parts.join(qtyPricing.decimal);
+        var amount = container.querySelector('.woocommerce-Price-amount');
+        if (!amount) return;
+        var walker = document.createTreeWalker(amount, NodeFilter.SHOW_TEXT);
+        var node;
+        while ((node = walker.nextNode())) {
+            if (!node.parentElement.closest('.woocommerce-Price-currencySymbol') && /\d/.test(node.nodeValue)) {
+                node.nodeValue = node.nodeValue.replace(/[\d][\s\S]*[\d]|\d/, formatted);
+                break;
+            }
+        }
+    }
+
+    function refreshSelectedPricing() {
+        if (!qtySending && !qtyLockedControls.length) {
+            qtyPricing = readQtyPricing();
+            qtyStates.clear();
+        }
+        paintQtyPricing();
+    }
+
+    /** Project checked lines from server numbers, keeping each row's own price visible. */
+    function paintQtyPricing() {
+        if (!qtyPricing) return;
+        var subtotal = 0;
+        var total = 0;
+        var selected = new Set(getSelectedKeys());
+        Object.keys(qtyPricing.lines).forEach(function (key) {
+            var line = qtyPricing.lines[key];
+            if (!line.quantity) return;
+            var state = qtyStates.get(key);
+            var quantity = state ? state.wanted : line.quantity;
+            var lineSubtotal = line.subtotal / line.quantity * quantity;
+            var row = document.getElementById('dg-row-' + key);
+            paintMoney(row && row.querySelector('.dg-cart-row__price-cell > span'), lineSubtotal);
+            if (selected.has(key)) {
+                subtotal += lineSubtotal;
+                total += line.total / line.quantity * quantity;
+            }
+        });
+        paintMoney(document.getElementById('dg-cart-subtotal'), subtotal);
+        paintMoney(document.getElementById('dg-cart-total'), total);
+    }
+
+    function paintQty(state, quantity) {
+        state.stepper.dataset.qty = quantity;
+        state.stepper.querySelector('.dg-qty-value').textContent = quantity;
+        var row = state.stepper.closest('.dg-cart-row');
+        if (row) row.dataset.quantity = quantity;
+        var decrease = state.stepper.querySelector('.dg-qty-decrease');
+        if (decrease) decrease.disabled = quantity <= 1;
+    }
+
+    function setQtyPending(pending) {
+        if (pending && !qtyLockedControls.length) {
+            document.querySelectorAll('[data-dg-cart-checkout-with-selected], [data-dg-cart-clear-selection], [data-dg-cart-bulk-remove], [data-dg-cart-clear-all], [data-dg-cart-select], [data-dg-cart-select-all], .dg-promo-apply-btn').forEach(function (button) {
+                qtyLockedControls.push({ button: button, disabled: button.disabled });
+                button.disabled = true;
+            });
+        } else if (!pending) {
+            qtyLockedControls.forEach(function (entry) { entry.button.disabled = entry.disabled; });
+            qtyLockedControls = [];
+        }
+        var summary = document.querySelector('.dg-cart-summary');
+        if (summary) {
+            if (pending) summary.setAttribute('aria-busy', 'true');
+            else summary.removeAttribute('aria-busy');
+        }
+    }
+
+    function sendQty() {
+        if (qtySending) return;
+        var state;
+        qtyStates.forEach(function (candidate) {
+            if (!state && candidate.wanted !== candidate.confirmed) state = candidate;
+        });
+        if (!state) { setQtyPending(false); return; }
+        qtySending = true;
+        var sent = state.wanted;
+        var fd = new FormData();
+        fd.append('action', 'dg_ajax_update_cart');
+        fd.append('nonce', getNonce());
+        fd.append('cart_item_key', state.stepper.dataset.cartKey);
+        fd.append('quantity', sent);
+        fetch(getAjaxUrl(), { method: 'POST', body: fd, credentials: 'same-origin' })
+            .then(function (response) {
+                if (!response.ok) throw new Error(i18n.network || 'Network error. Please try again.');
+                return response.json();
+            })
+            .then(function (response) {
+                var data = response && response.data;
+                if (!response.success || !data || data.quantity === undefined || typeof data.summary_html !== 'string' || typeof data.total_html !== 'string') {
+                    throw new Error((data && data.message) || i18n.network || 'Could not update quantity. Please try again.');
+                }
+                state.confirmed = Number(data.quantity);
+                if (state.wanted === sent) {
+                    state.wanted = state.confirmed;
+                    paintQty(state, state.confirmed);
+                }
+                var summary = document.getElementById('dg-cart-summary-totals');
+                var total = document.getElementById('dg-cart-total');
+                if (summary) summary.innerHTML = data.summary_html;
+                if (total) total.innerHTML = data.total_html;
+                Object.keys(data.line_totals || {}).forEach(function (key) {
+                    var row = document.getElementById('dg-row-' + key);
+                    var price = row && row.querySelector('.dg-cart-row__price-cell > span');
+                    if (price) price.innerHTML = data.line_totals[key];
+                });
+                qtyPricing = readQtyPricing();
+                paintQtyPricing();
+                if (data.cart_count !== undefined) updateCartCountBadge(data.cart_count);
+            })
+            .catch(function (error) {
+                state.wanted = state.confirmed;
+                paintQtyPricing();
+                paintQty(state, state.confirmed);
+                showToast(error.message || i18n.network || 'Network error. Please try again.', 'error');
+            })
+            .finally(function () {
+                qtySending = false;
+                sendQty();
+            });
+    }
 
     function bindQtySteppers() {
+        if (qtyBound) return;
+        qtyBound = true;
+        document.addEventListener('submit', function (event) {
+            if (event.target.id === 'dg-cart-form' && (qtySending || qtyLockedControls.length)) event.preventDefault();
+        });
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('.dg-qty-stepper-btn');
             if (!btn) return;
@@ -1005,50 +1155,23 @@
         });
     }
 
-    /**
-     * Optimistically update displayed qty, then AJAX update.
-     * On success: reload page so order summary totals are accurate.
-     */
+    /** Queue the latest quantity; clicks remain responsive during a request. */
     function updateQty(stepper, cartKey, newQty) {
-        // Optimistic UI: update display immediately
-        stepper.dataset.qty = newQty;
-        var display = stepper.querySelector('.dg-qty-value');
-        if (display) { display.textContent = newQty; }
-
-        // Disable stepper during request
-        stepper.querySelectorAll('.dg-qty-stepper-btn').forEach(function (b) {
-            b.disabled = true;
-        });
-
-        var formData = new FormData();
-        formData.append('action',        'dg_ajax_update_cart');
-        formData.append('nonce',         getNonce());
-        formData.append('cart_item_key', cartKey);
-        formData.append('quantity',      newQty);
-
-        fetch(getAjaxUrl(), {
-            method: 'POST',
-            body:   formData,
-            credentials: 'same-origin'
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.success) {
-                // Reload to refresh totals sidebar (qty update changes
-                // both line subtotal and the order summary).
-                window.location.reload();
-            } else {
-                stepper.querySelectorAll('.dg-qty-stepper-btn').forEach(function (b) {
-                    b.disabled = false;
-                });
-                dgLog('warn', '[Dragon Glow] Qty update failed');
-            }
-        })
-        .catch(function () {
-            stepper.querySelectorAll('.dg-qty-stepper-btn').forEach(function (b) {
-                b.disabled = false;
-            });
-        });
+        if (!qtySending && !qtyLockedControls.length) {
+            qtyPricing = readQtyPricing();
+            qtyStates.clear();
+        }
+        var state = qtyStates.get(cartKey);
+        if (!state) {
+            state = { stepper: stepper, confirmed: parseInt(stepper.dataset.qty, 10) || 1 };
+            qtyStates.set(cartKey, state);
+        }
+        state.wanted = newQty;
+        paintQty(state, newQty);
+        paintQtyPricing();
+        setQtyPending(true);
+        clearTimeout(qtyTimer);
+        qtyTimer = setTimeout(sendQty, 180);
     }
 
     // ── Toasts (shared layer, mirrors wishlist + signup patterns) ─────────
