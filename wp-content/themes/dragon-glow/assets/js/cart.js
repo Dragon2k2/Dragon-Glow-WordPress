@@ -459,7 +459,22 @@
         }
         btn.disabled = true;
         var originalLabel = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;">progress_activity</span> ' + (i18n.processing || 'Processing…');
+        btn.setAttribute('aria-busy', 'true');
+        btn.innerHTML = '<span class="material-symbols-outlined dg-cart-checkout__spinner" aria-hidden="true">progress_activity</span> ' + (i18n.processing || 'Processing…');
+
+        function restoreButton() {
+            btn.disabled = false;
+            btn.innerHTML = originalLabel;
+            btn.removeAttribute('aria-busy');
+            window.removeEventListener('pageshow', onPageShow);
+        }
+
+        function onPageShow(event) {
+            // A bfcache restore preserves the disabled button from before navigation.
+            if (event.persisted) restoreButton();
+        }
+
+        window.addEventListener('pageshow', onPageShow);
 
         var fd = new FormData();
         fd.append('action',         'dg_ajax_apply_cart_selection');
@@ -469,19 +484,18 @@
         fetch(getAjaxUrl(), { method: 'POST', body: fd, credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                btn.disabled = false;
-                btn.innerHTML = originalLabel;
                 if (!data || !data.success) {
+                    restoreButton();
                     var msg = (data && data.data && data.data.message) || i18n.bagUnavailable || 'Could not start checkout.';
                     showToast(msg, 'error');
                     return;
                 }
                 var redirect = (data && data.data && data.data.redirect) || '/checkout/';
+                // Keep feedback active while the destination document is loading.
                 window.location.href = redirect;
             })
             .catch(function (err) {
-                btn.disabled = false;
-                btn.innerHTML = originalLabel;
+                restoreButton();
                 showToast(i18n.network || 'Network error. Please try again.', 'error');
             });
     }

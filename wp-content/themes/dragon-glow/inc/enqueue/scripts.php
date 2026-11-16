@@ -256,6 +256,7 @@ function dg_enqueue_scripts_assets(): void {
                         'network'      => __( 'Network error. Please try again.', 'dragon-glow' ),
                         'bagUnavailable' => __( 'Your bag is currently unavailable. Please try again later.', 'dragon-glow' ),
                         'cleared'      => __( 'Showing every item in your bag.', 'dragon-glow' ),
+                        'processing'   => __( 'Processing…', 'dragon-glow' ),
                     ),
                 )
             );

@@ -36,6 +36,9 @@ function dg_render_account_signed_out(): void {
 	// login-validation.php). Drives the summary + inline messages below.
 	$login_errors  = dg_login_get_errors();
 	$login_grouped = dg_login_group_errors( $login_errors );
+	$remember_me   = isset( $_POST['login'], $_POST['rememberme'] ) && ! isset( $_POST['register'] ) && is_scalar( $_POST['rememberme'] )
+		? sanitize_text_field( wp_unslash( (string) $_POST['rememberme'] ) )
+		: '';
 	?>
 	<!-- Viewport outer double-gold pinstripe frame -->
 	<div class="dg-account-auth__viewport-frame dg-account-auth__viewport-frame--outer" aria-hidden="true"></div>
@@ -238,7 +241,7 @@ function dg_render_account_signed_out(): void {
 
 					<div class="dg-account-field__row">
 						<label class="dg-account-checkbox">
-							<input type="checkbox" name="rememberme" value="forever" />
+							<input type="checkbox" name="rememberme" value="forever" <?php checked( 'forever', $remember_me ); ?> />
 							<span><?php esc_html_e( 'Keep me signed in', 'dragon-glow' ); ?></span>
 						</label>
 					</div>

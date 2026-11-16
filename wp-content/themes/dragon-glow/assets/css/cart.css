@@ -5,6 +5,24 @@
    Shared WooCommerce styles come from woocommerce.css.
    ============================================================ */
 
+/* Checkout feedback uses compositor-friendly rotation, independent of CDN utilities. */
+.dg-cart-checkout__spinner {
+    font-size: var(--cart-checkout-spinner-size);
+    flex-shrink: 0;
+    transform-origin: center;
+    animation: dg-cart-checkout-spin var(--cart-checkout-spinner-duration) linear infinite;
+}
+
+@keyframes dg-cart-checkout-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-cart-checkout__spinner {
+        animation: none;
+    }
+}
+
 /* ── Cart page heading icon ─────────────────────────────── */
 .dg-cart-title {
     display: flex;
@@ -1154,6 +1172,15 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
 
     .dg-cart-trust-badges {
         justify-content: center;
+    }
+
+    /* Reserve space inside the selected checkout CTA on narrow screens. */
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn {
+        padding-inline: var(--cart-checkout-mobile-padding-inline);
+    }
+
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn > .material-symbols-outlined {
+        flex-shrink: 0;
     }
 
     /* Mobile-only: bulkbar gọn + tinh tế (2 nút 1 hàng, không rớt 2 dòng). */

@@ -422,6 +422,22 @@
    not match. We target by class `.dg-place-order` (current DOM) and keep
    the ID selector as a defensive fallback in case WC moves it back. */
 .woocommerce-checkout #payment div.place-order,
+.dg-place-order__spinner {
+    animation: dg-place-order-spin var(--checkout-order-spinner-duration) linear infinite;
+    transform-origin: center;
+    flex-shrink: 0;
+}
+
+@keyframes dg-place-order-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dg-place-order__spinner {
+        animation: none;
+    }
+}
+
 .woocommerce-checkout .dg-place-order-wrap {
     padding: 1rem 0 0;
 }

@@ -34,14 +34,20 @@ function dg_enqueue_styles(): void {
         null
     );
 
-    // Material Symbols is self-hosted: @font-face lives in main.css (section 13)
-    // and the woff2 is preloaded in dg_preload_assets() (inc/enqueue.php).
+    // Keep icon font bytes in the render-blocking stylesheet: no separate font
+    // request, CDN dependency or blank glyph interval during page loading.
+    wp_enqueue_style(
+        'dg-material-symbols',
+        DG_URI . '/assets/css/material-symbols.css',
+        array(),
+        DG_VERSION
+    );
 
     // Main theme CSS
 	wp_enqueue_style(
 		'dg-main',
 		DG_URI . '/assets/css/main.css',
-		array( 'dg-style', 'dg-google-fonts' ),
+		array( 'dg-style', 'dg-google-fonts', 'dg-material-symbols' ),
 		DG_VERSION
 	);
 
@@ -78,18 +84,8 @@ function dg_enqueue_styles(): void {
     wp_enqueue_style(
         'dg-header-nav',
         DG_URI . '/assets/css/header-nav.css',
-        array( 'dg-main', 'dg-material-symbols-nav' ),
+        array( 'dg-main' ),
         DG_VERSION
-    );
-
-    // Material Symbols Outlined from Google CDN (full icon set for mobile menu icons)
-    // Loaded globally to ensure all icon names are available (home, shopping_bag, info, mail)
-    // The self-hosted subset in main.css has limited glyphs, so we need the full CDN set.
-    wp_enqueue_style(
-        'dg-material-symbols-nav',
-        'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
-        array(),
-        null
     );
 
     // WooCommerce CSS (chỉ load khi có WooCommerce).
@@ -154,14 +150,6 @@ function dg_enqueue_styles(): void {
 				array(),
 				null
 			);
-			// Material Symbols Outlined (Google CDN) — full icon set for trust badges
-			// Includes cruelty_free icon not available in self-hosted subset
-			wp_enqueue_style(
-				'dg-material-symbols-cdn',
-				'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
-				array(),
-				null
-			);
 			wp_enqueue_style(
 				'dg-login',
 				DG_URI . '/assets/css/login.css',
@@ -179,14 +167,6 @@ function dg_enqueue_styles(): void {
 			wp_enqueue_style(
 				'dg-cormorant-garamond',
 				'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap',
-				array(),
-				null
-			);
-			// Material Symbols Outlined (Google CDN) — full icon set for trust badges
-			// Includes cruelty_free icon not available in self-hosted subset
-			wp_enqueue_style(
-				'dg-material-symbols-cdn',
-				'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block',
 				array(),
 				null
 			);

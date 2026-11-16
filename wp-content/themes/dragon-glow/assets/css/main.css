@@ -514,21 +514,9 @@ body.dg-hide-site-chrome #dg-mobile-menu-backdrop {
    13. MATERIAL SYMBOLS
    ========================================= */
 
-/* Self-hosted icon font (subset of the icons the theme uses, variable axes
-   opsz/wght/FILL/GRAD). Served from the theme and preloaded in <head>
-   (dg_preload_assets in inc/enqueue.php), so it is available from the browser
-   cache on reload instead of waiting on fonts.googleapis.com / gstatic.
-   font-display: block keeps ligature names (e.g. "shopping_bag") invisible,
-   never painted as plain text, in the rare case the font is still loading.
-   The woff2 is a subset: a NEW icon name must be added to it, otherwise that
-   icon renders as plain text. */
-@font-face {
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    font-weight: 100 700;
-    font-display: block;
-    src: url('../fonts/material-symbols-outlined.woff2') format('woff2');
-}
+/* The self-hosted variable font is embedded in material-symbols.css, loaded
+   before this file. Rebuild it with scripts/build-icon-font.py when adding
+   icon names; no Google Fonts request or runtime JavaScript is needed. */
 
 /* Base icon rules (previously supplied by the Google Fonts stylesheet). */
 .material-symbols-outlined {

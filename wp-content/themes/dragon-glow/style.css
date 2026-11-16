@@ -1124,6 +1124,10 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --cart-cta-pill-font-size: 12px;
     --cart-cta-pill-line-height: 1.4;
     --cart-cta-pill-letter-spacing: 0.06em;
+    --cart-checkout-mobile-padding-inline: 1rem;
+    --cart-checkout-spinner-size: 1.25rem;
+    --cart-checkout-spinner-duration: 800ms;
+    --checkout-order-spinner-duration: 800ms;
     --cart-cta-pill-icon-size: 16px;
 
     /* Selection hint pill — idle state (nothing ticked): compact prompt row */

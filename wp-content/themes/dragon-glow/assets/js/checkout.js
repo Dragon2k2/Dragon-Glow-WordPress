@@ -168,6 +168,62 @@
         });
     }
 
+    // Follow WooCommerce's accepted submission, including payment gateway validation.
+    function bindPlaceOrderLoading() {
+        var form = document.querySelector('form.checkout');
+        if (!form) return;
+
+        var originals = new WeakMap();
+        var active = false;
+
+        function render() {
+            var button = form.querySelector('#place_order.dg-place-order');
+            if (!button) return;
+
+            if (active) {
+                if (button.hasAttribute('data-dg-order-loading')) return;
+                originals.set(button, button.innerHTML);
+                var icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined dg-place-order__spinner';
+                icon.setAttribute('aria-hidden', 'true');
+                icon.textContent = 'progress_activity';
+                var strings = (window.dgCheckoutSelection && window.dgCheckoutSelection.i18n) || {};
+                button.replaceChildren(icon, document.createTextNode(' ' + (strings.processing || 'Processing…')));
+                button.setAttribute('data-dg-order-loading', '');
+                button.setAttribute('aria-busy', 'true');
+                button.setAttribute('aria-disabled', 'true');
+                // Keep name/value available to WooCommerce and gateway serialization.
+            } else if (button.hasAttribute('data-dg-order-loading')) {
+                button.innerHTML = originals.get(button);
+                originals.delete(button);
+                button.removeAttribute('data-dg-order-loading');
+                button.removeAttribute('aria-busy');
+                button.removeAttribute('aria-disabled');
+            }
+        }
+
+        var observer = new MutationObserver(function () {
+            active = form.classList.contains('processing');
+            render();
+        });
+        observer.observe(form, { attributes: true, attributeFilter: ['class'], childList: true, subtree: true });
+
+        if (typeof jQuery !== 'undefined') {
+            jQuery(document.body).on('checkout_error', function () {
+                active = false;
+                render();
+            });
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (!event.persisted) return;
+            form.classList.remove('processing');
+            active = false;
+            render();
+        });
+        active = form.classList.contains('processing');
+        render();
+    }
+
     // ── Re-bind after each WooCommerce AJAX refresh ──────────────────────
     function bindWooCommerceEvents() {
         if (typeof jQuery === 'undefined') {
@@ -190,6 +246,7 @@
         customizeSelect2Placeholders();
         bindNumericOnly();
         bindCheckoutSelectionBar();
+        bindPlaceOrderLoading();
     });
 
     /* ── "Show all items" affordance on the Order Summary ──────────────
