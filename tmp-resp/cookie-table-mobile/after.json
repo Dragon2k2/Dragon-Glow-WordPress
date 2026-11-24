@@ -1,0 +1,4013 @@
+[
+  {
+    "width": 320,
+    "wrapper": 280,
+    "scrollWidth": 280,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            37,
+            246,
+            84.63
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            37,
+            246,
+            84.63
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            37,
+            246,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            37,
+            246,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            37,
+            246,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            37,
+            246,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      20,
+      280,
+      3073.39
+    ],
+    "hint": "none"
+  },
+  {
+    "width": 390,
+    "wrapper": 350,
+    "scrollWidth": 350,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            37,
+            316,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            37,
+            316,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            37,
+            316,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            37,
+            316,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      20,
+      350,
+      3035.7
+    ],
+    "hint": "none"
+  },
+  {
+    "width": 640,
+    "wrapper": 600,
+    "scrollWidth": 600,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            37,
+            566,
+            32.3
+          ],
+          "display": "block",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Provider\"",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            37,
+            566,
+            65.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Purpose\"",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            37,
+            566,
+            71.44
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Type\"",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            37,
+            566,
+            53.78
+          ],
+          "display": "grid",
+          "position": "static",
+          "label": "\"Duration\"",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      20,
+      600,
+      3035.7
+    ],
+    "hint": "none"
+  },
+  {
+    "width": 641,
+    "wrapper": 599,
+    "scrollWidth": 760,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            21,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            359.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            493.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            677.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            21,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            359.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            493.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            677.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            21,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            359.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            493.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            677.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            21,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            359.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            493.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            677.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            21,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            359.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            493.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            677.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            21,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            257.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            359.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            493.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            677.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            21,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            257.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            359.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            493.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            677.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            21,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            257.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            359.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            493.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            677.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            21,
+            236.22,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "sticky",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            257.22,
+            102.72,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            359.94,
+            133.17,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            493.11,
+            184.66,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            677.77,
+            103.23,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      21,
+      760,
+      853.72
+    ],
+    "hint": "inline-flex"
+  },
+  {
+    "width": 768,
+    "wrapper": 686,
+    "scrollWidth": 760,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            41,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            379.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            513.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            697.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            41,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            379.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            513.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            697.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            41,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            379.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            513.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            697.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            41,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            379.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            513.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            697.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            41,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            379.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            513.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            697.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            41,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            277.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            379.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            513.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            697.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            41,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            277.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            379.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            513.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            697.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            41,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            277.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            379.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            513.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            697.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            41,
+            236.22,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            277.22,
+            102.72,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            379.94,
+            133.17,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            513.11,
+            184.66,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            697.77,
+            103.23,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      41,
+      760,
+      853.72
+    ],
+    "hint": "none"
+  },
+  {
+    "width": 1024,
+    "wrapper": 622,
+    "scrollWidth": 760,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            361,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            699.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            833.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1017.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            361,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            699.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            833.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1017.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            361,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            699.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            833.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            1017.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            361,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            699.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            833.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1017.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            361,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            699.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            833.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            1017.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            361,
+            236.22,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            597.22,
+            102.72,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            699.94,
+            133.17,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            833.11,
+            184.66,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            1017.77,
+            103.23,
+            108.38
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            361,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            597.22,
+            102.72,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            699.94,
+            133.17,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            833.11,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            1017.77,
+            103.23,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            361,
+            236.22,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            597.22,
+            102.72,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            699.94,
+            133.17,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            833.11,
+            184.66,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            1017.77,
+            103.23,
+            89.53
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            361,
+            236.22,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            597.22,
+            102.72,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            699.94,
+            133.17,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            833.11,
+            184.66,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            1017.77,
+            103.23,
+            89.03
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      361,
+      760,
+      853.72
+    ],
+    "hint": "none"
+  },
+  {
+    "width": 1440,
+    "wrapper": 878,
+    "scrollWidth": 878,
+    "overflow": 0,
+    "rows": 9,
+    "cells": [
+      [
+        {
+          "text": "woocommerce_cart_hash",
+          "rect": [
+            441,
+            236.22,
+            57.5
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            57.5
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Stores the contents of your cart",
+          "rect": [
+            794.05,
+            223.66,
+            57.5
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            1017.7,
+            184.66,
+            57.5
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1202.36,
+            116.64,
+            57.5
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "woocommerce_items_in_cart",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Tracks the number of items in your cart",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wp_woocommerce_session_*",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Links your device to your cart and checkout data",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "2 days",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "wordpress_logged_in_*",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Keeps you signed in to your account",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Session",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_cookie_consent",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your cookie choices",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "STRICTLY NECESSARY",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "dg_currency",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Dragon Glow",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Remembers your selected currency and region",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "FUNCTIONAL",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "12 months",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_ga / _ga_*",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures site usage and visits",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Up to 24 months",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_gid",
+          "rect": [
+            441,
+            236.22,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Google Analytics",
+          "rect": [
+            677.22,
+            116.83,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Distinguishes users for usage reporting",
+          "rect": [
+            794.05,
+            223.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ANALYTICS",
+          "rect": [
+            1017.7,
+            184.66,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "24 hours",
+          "rect": [
+            1202.36,
+            116.64,
+            70.69
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ],
+      [
+        {
+          "text": "_fbp",
+          "rect": [
+            441,
+            236.22,
+            70.19
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Meta",
+          "rect": [
+            677.22,
+            116.83,
+            70.19
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "Measures and personalises advertising",
+          "rect": [
+            794.05,
+            223.66,
+            70.19
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "ADVERTISING",
+          "rect": [
+            1017.7,
+            184.66,
+            70.19
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        },
+        {
+          "text": "3 months",
+          "rect": [
+            1202.36,
+            116.64,
+            70.19
+          ],
+          "display": "table-cell",
+          "position": "static",
+          "label": "none",
+          "clipped": false
+        }
+      ]
+    ],
+    "table": [
+      441,
+      878,
+      670.94
+    ],
+    "hint": "none"
+  }
+]

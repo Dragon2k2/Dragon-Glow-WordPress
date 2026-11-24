@@ -69,7 +69,7 @@
 		var productId = parseInt(btn.dataset.productId, 10) || 0;
 		var slug      = btn.dataset.productSlug || '';
 		var size      = getSelectedSize();
-		var quantity  = getQuantity();
+		var quantity  = getQuantity(btn);
 
 		// Disable + show loading.
 		setBuyNowLoading(btn, true);
@@ -147,7 +147,7 @@
 		var productId = parseInt(btn.dataset.productId, 10) || 0;
 		var slug      = btn.dataset.productSlug || '';
 		var size      = getSelectedSize();
-		var quantity  = getQuantity();
+		var quantity  = getQuantity(btn);
 
 		// Capture original label text — prefer the dedicated label element when present,
 		// otherwise fall back to the second child (icon-span + text-node markup).
@@ -232,7 +232,10 @@
 	 *
 	 * @return {number}
 	 */
-	function getQuantity() {
+	function getQuantity(btn) {
+		var form = btn.closest('form.cart');
+		var input = form ? form.querySelector('[name="quantity"]') : null;
+		if (input) { return Math.max(1, parseInt(input.value, 10) || 1); }
 		var display = document.getElementById('dg-qty-display');
 		return parseInt(display ? display.textContent : '1', 10) || 1;
 	}
@@ -248,6 +251,11 @@
 		var label = btn.querySelector('.dg-buy-now-label');
 
 		btn.disabled = loading;
+		if (loading) {
+			btn.setAttribute('aria-busy', 'true');
+		} else {
+			btn.removeAttribute('aria-busy');
+		}
 
 		if (loading) {
 			if (icon) {

@@ -978,7 +978,7 @@
    .dg-careers-closing .dg-careers-btn--primary`). Ở đây chỉ giữ phần
    layout riêng của section closing. */
 .dg-careers-closing .dg-careers-btn--primary {
-	margin-bottom: 1rem;
+	margin-bottom: var(--c-closing-button-margin-bottom);
 }
 
 .dg-careers-closing-email {

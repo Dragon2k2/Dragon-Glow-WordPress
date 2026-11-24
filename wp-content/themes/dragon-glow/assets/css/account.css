@@ -4155,6 +4155,39 @@ html.dg-signout-open {
 	border-color: var(--color-error);
 }
 
+.dg-account-form__password-feedback {
+	margin: 0;
+	font-size: var(--account-password-feedback-size);
+	line-height: 1.5;
+}
+
+.dg-account-form__password-feedback:has([hidden] + [hidden]) {
+	display: none;
+}
+
+.dg-account-form__password-match {
+	display: flex;
+	align-items: center;
+	gap: var(--account-password-feedback-gap);
+	color: var(--account-password-match-color);
+}
+
+.dg-account-form__password-match .material-symbols-outlined {
+	font-size: var(--account-password-feedback-icon-size);
+}
+
+.dg-account-form__password-error {
+	color: var(--account-password-error-color);
+}
+
+.dg-account-form__password-feedback [hidden] {
+	display: none;
+}
+
+.dg-account-form .dg-account-form__input[aria-invalid="true"] {
+	border-color: var(--account-password-error-color);
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
 	.dg-account-form__section {

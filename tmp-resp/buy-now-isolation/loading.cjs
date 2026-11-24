@@ -1,0 +1,21 @@
+const {chromium}=require('playwright');
+const path=require('node:path');
+const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({channel:'chrome'});try{
+ const page=await browser.newPage();
+ await page.setContent('<form class="cart"><input name="quantity" value="1"><button type="submit" class="single_add_to_cart_button" value="47">Add to cart</button><button type="button" class="dg-buy-now-btn" data-buy-now data-product-id="47"><span class="material-symbols-outlined dg-buy-now-icon" aria-hidden="true">shopping_cart_checkout</span><span class="dg-buy-now-label">Buy Now</span></button></form>');
+ await page.evaluate(()=>{window.dgAjax={url:'https://buy-now.test/ajax',nonce:'test'};window.requests=[];window.fetch=(url,options)=>{window.requests.push({url,action:options.body.get('action')});return new Promise(resolve=>{window.finish=()=>resolve({json:async()=>({success:false,data:{message:'Try again'}})});});};});
+ for(const file of ['product.js','buy-now.js'])await page.addScriptTag({path:path.resolve(__dirname,'../../wp-content/themes/dragon-glow/assets/js',file)});
+ await page.evaluate(()=>document.dispatchEvent(new Event('DOMContentLoaded')));
+ await page.locator('[data-buy-now]').click();
+ assert.equal(await page.evaluate(()=>window.requests.length),1,'One click must issue exactly one purchase request');
+ assert.equal(await page.locator('.dg-buy-now-icon').textContent(),'sync');
+ assert.equal(await page.locator('.dg-buy-now-label').textContent(),'Processing...');
+ assert.equal(await page.locator('[data-buy-now]').getAttribute('aria-busy'),'true');
+ await page.evaluate(()=>window.finish());
+ await page.waitForFunction(()=>!document.querySelector('[data-buy-now]').disabled);
+ assert.equal(await page.locator('.dg-buy-now-icon').textContent(),'shopping_cart_checkout');
+ assert.equal(await page.locator('.dg-buy-now-label').textContent(),'Buy Now');
+ assert.equal(await page.locator('[data-buy-now]').evaluate(el=>el.hasAttribute('aria-busy')),false);
+ console.log('PASS: single request, preserved icon/label markup, busy state, error restores button');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

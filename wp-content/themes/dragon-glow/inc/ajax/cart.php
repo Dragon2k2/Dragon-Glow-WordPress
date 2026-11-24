@@ -43,20 +43,18 @@ function dg_ajax_add_to_cart(): void {
 	) );
 
 	if ( $result['success'] ) {
-		$cart_item_key = '';
-		if ( dg_is_woocommerce_active() && WC()->cart ) {
-			foreach ( WC()->cart->get_cart() as $key => $item ) {
-				if ( (int) $item['product_id'] === $product_id ) {
-					$cart_item_key = $key;
-					break;
-				}
-			}
-		}
+		// Use the actual added line, including its variation and custom cart data.
+		$cart_item_key = $result['cart_item_key'] ?? '';
+		$cart_item     = dg_is_woocommerce_active() && isset( WC()->cart )
+			? WC()->cart->get_cart_item( $cart_item_key )
+			: array();
 
 		$payload = array(
 			'message'       => __( 'Added to bag!', 'dragon-glow' ),
 			'redirect'      => $result['redirect'] ?? dg_get_cart_url(),
-			'cart_item_key' => $cart_item_key,
+			'cart_item_key'      => $cart_item_key,
+			// Removal deletes the whole line, including any pre-existing quantity.
+			'cart_item_quantity' => (int) ( $cart_item['quantity'] ?? $quantity ),
 			// Authoritative cart count AFTER the add. Lets the client
 			// reconcile its optimistic badge without a second round-trip
 			// (`dg_ajax_get_cart_count`), which is what made the quick-add

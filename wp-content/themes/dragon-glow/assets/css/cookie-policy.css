@@ -781,6 +781,164 @@ html:not(.dg-js) .dg-cookie-toc-list {
 	}
 }
 
+/* Tablet: fit all five columns inside the content area. */
+@media (min-width: 641px) and (max-width: 1023px) {
+	.dg-cookie-table-hint {
+		display: none;
+	}
+
+	.dg-cookie-table {
+		min-width: 0;
+		table-layout: fixed;
+	}
+
+	.dg-cookie-table thead th,
+	.dg-cookie-table tbody th[scope="row"],
+	.dg-cookie-table tbody td {
+		padding: var(--cookie-table-tablet-cell-padding);
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.dg-cookie-table thead th.dg-cookie-table-col-provider,
+	.dg-cookie-table thead th.dg-cookie-table-col-duration {
+		white-space: nowrap;
+		overflow-wrap: normal;
+		font-size: var(--cookie-table-tablet-header-size);
+		letter-spacing: var(--cookie-table-tablet-header-tracking);
+		padding-inline: var(--cookie-table-tablet-header-padding-inline);
+	}
+
+	.dg-cookie-table-col-name {
+		width: var(--cookie-table-tablet-name-width);
+	}
+
+	.dg-cookie-table-col-provider {
+		width: var(--cookie-table-tablet-provider-width);
+	}
+
+	.dg-cookie-table-col-purpose {
+		width: var(--cookie-table-tablet-purpose-width);
+	}
+
+	.dg-cookie-table-col-type {
+		width: var(--cookie-table-tablet-type-width);
+	}
+
+	.dg-cookie-table-col-duration {
+		width: var(--cookie-table-tablet-duration-width);
+	}
+
+	.dg-cookie-table .dg-cookie-table-col-name {
+		position: static;
+		box-shadow: none;
+	}
+
+	.dg-cookie-table-name {
+		white-space: nowrap;
+		overflow-wrap: normal;
+	}
+
+	.dg-cookie-table-type {
+		white-space: normal;
+		overflow-wrap: normal;
+		word-break: normal;
+		max-width: min(100%, var(--cookie-table-tablet-type-max-width));
+	}
+}
+
+/* Mobile: expose every field without horizontal scrolling.
+ * Keep the column headers available to assistive technology. */
+@media (max-width: 640px) {
+	.dg-cookie-table-hint {
+		display: none;
+	}
+
+	.dg-cookie-table-scroll {
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		overflow: visible;
+	}
+
+	.dg-cookie-table {
+		min-width: 0;
+	}
+
+	.dg-cookie-table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.dg-cookie-table tbody {
+		display: grid;
+		gap: var(--cookie-table-mobile-gap);
+	}
+
+	.dg-cookie-table tbody tr {
+		display: block;
+		min-width: 0;
+		padding: var(--cookie-table-mobile-padding);
+		border: 1px solid var(--cookie-table-mobile-border);
+		border-radius: var(--cookie-radius);
+		background: var(--cookie-table-mobile-bg);
+	}
+
+	.dg-cookie-table tbody th[scope="row"],
+	.dg-cookie-table tbody td {
+		position: static;
+		display: block;
+		padding: 0;
+		border: 0;
+		box-shadow: none;
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.dg-cookie-table tbody th[scope="row"] {
+		padding-bottom: var(--cookie-table-mobile-field-padding);
+	}
+
+	.dg-cookie-table tbody td {
+		display: grid;
+		gap: var(--cookie-table-mobile-field-gap);
+		padding-top: var(--cookie-table-mobile-field-padding);
+		padding-bottom: var(--cookie-table-mobile-field-padding);
+		border-top: 1px solid var(--cookie-table-mobile-border);
+	}
+
+	.dg-cookie-table tbody td:last-child {
+		padding-bottom: 0;
+	}
+
+	.dg-cookie-table tbody td::before {
+		content: attr(data-label);
+		font-family: inherit;
+		font-size: var(--cookie-table-mobile-label-size);
+		font-weight: 600;
+		letter-spacing: var(--cookie-table-mobile-label-tracking);
+		text-transform: uppercase;
+		color: var(--cookie-table-mobile-text);
+	}
+
+	.dg-cookie-table-name,
+	.dg-cookie-table-type {
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.dg-cookie-table-type {
+		justify-self: start;
+		max-width: 100%;
+	}
+}
+
 /* ═══════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════ */

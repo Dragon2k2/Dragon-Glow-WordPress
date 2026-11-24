@@ -15,6 +15,41 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Check the signed-in user's current password without changing account data.
+ *
+ * @return void
+ */
+function dg_ajax_check_current_password(): void {
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( null, 401 );
+	}
+	check_ajax_referer( 'dg_check_current_password', 'nonce' );
+	if ( ! isset( $_POST['password_current'] ) || ! is_string( $_POST['password_current'] ) ) {
+		wp_send_json_error( null, 400 );
+	}
+	$password = wp_unslash( $_POST['password_current'] );
+	if ( '' === $password || strlen( $password ) > 4096 ) {
+		wp_send_json_error( null, 400 );
+	}
+
+	// Bound expensive password checks per account; never cache the password.
+	$user = wp_get_current_user();
+	$key = 'dg_password_checks_' . $user->ID;
+	$limit = get_transient( $key );
+	if ( ! is_array( $limit ) || $limit['until'] <= time() ) {
+		$limit = array( 'count' => 0, 'until' => time() + MINUTE_IN_SECONDS );
+	}
+	if ( $limit['count'] >= 10 ) {
+		wp_send_json_error( null, 429 );
+	}
+	++$limit['count'];
+	set_transient( $key, $limit, max( 1, $limit['until'] - time() ) );
+
+	wp_send_json_success( array( 'valid' => wp_check_password( $password, $user->user_pass, $user->ID ) ) );
+}
+add_action( 'wp_ajax_dg_check_current_password', 'dg_ajax_check_current_password' );
+
+/**
  * AJAX handler: load account panel content.
  *
  * Action: `wp_ajax_dg_load_account_panel`

@@ -24,6 +24,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $user = wp_get_current_user();
+$current_password_invalid = dg_account_current_password_invalid();
 
 do_action( 'woocommerce_before_edit_account_form' ); ?>
 
@@ -279,7 +280,25 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 				name="password_current"
 				id="password_current"
 				autocomplete="current-password"
+				<?php if ( $current_password_invalid ) : ?>
+					aria-invalid="true"
+					aria-describedby="dg-current-password-error"
+				<?php endif; ?>
 			/>
+			<p id="dg-current-password-error" class="dg-account-form__password-feedback dg-account-form__password-error" role="status" aria-live="polite"
+				data-check-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>"
+				data-check-nonce="<?php echo esc_attr( wp_create_nonce( 'dg_check_current_password' ) ); ?>"
+				data-check-pending="<?php esc_attr_e( 'Checking current password…', 'dragon-glow' ); ?>"
+				data-check-error="<?php esc_attr_e( 'Your current password is incorrect. Please try again.', 'dragon-glow' ); ?>"
+				data-check-unavailable="<?php esc_attr_e( 'Unable to check your password right now. Please try again shortly or save your changes to verify it.', 'dragon-glow' ); ?>"
+				<?php if ( ! $current_password_invalid ) : ?>hidden<?php endif; ?>
+			><?php if ( $current_password_invalid ) { esc_html_e( 'Your current password is incorrect. Please try again.', 'dragon-glow' ); } ?></p>
+			<p id="dg-current-password-success" class="dg-account-form__password-feedback" role="status" aria-live="polite" hidden>
+				<span class="dg-account-form__password-match">
+					<span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+					<?php esc_html_e( 'Current password is correct.', 'dragon-glow' ); ?>
+				</span>
+			</p>
 		</div>
 
 		<div class="dg-account-form__row">
@@ -294,7 +313,15 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 					name="password_1"
 					id="password_1"
 					autocomplete="new-password"
+					aria-describedby="dg-new-password-feedback"
 				/>
+				<p id="dg-new-password-feedback" class="dg-account-form__password-feedback" aria-live="polite" aria-atomic="true">
+					<span class="dg-account-form__password-match" hidden>
+						<span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+						<?php esc_html_e( 'New password is different from your current password.', 'dragon-glow' ); ?>
+					</span>
+					<span class="dg-account-form__password-error" hidden><?php esc_html_e( 'Your new password must be different from your current password.', 'dragon-glow' ); ?></span>
+				</p>
 			</div>
 
 			<div class="dg-account-form__field">
@@ -308,7 +335,15 @@ do_action( 'woocommerce_before_edit_account_form' ); ?>
 					name="password_2"
 					id="password_2"
 					autocomplete="new-password"
+					aria-describedby="dg-password-confirmation-feedback"
 				/>
+				<p id="dg-password-confirmation-feedback" class="dg-account-form__password-feedback" aria-live="polite" aria-atomic="true">
+					<span class="dg-account-form__password-match" hidden>
+						<span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+						<?php esc_html_e( 'Passwords match.', 'dragon-glow' ); ?>
+					</span>
+					<span class="dg-account-form__password-error" hidden><?php esc_html_e( 'Passwords do not match. Please confirm your new password.', 'dragon-glow' ); ?></span>
+				</p>
 			</div>
 		</div>
 	</div>

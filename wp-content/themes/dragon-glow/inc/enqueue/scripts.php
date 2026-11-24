@@ -176,7 +176,13 @@ function dg_enqueue_scripts_assets(): void {
     // Page-specific JS (WooCommerce conditionals)
     if ( dg_is_woocommerce_active() ) {
         if ( is_product() ) {
-            wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main', 'dg-zoom-lightbox' ), DG_VERSION, true );
+            wp_enqueue_script( 'dg-product', DG_URI . '/assets/js/product.js', array( 'dg-main', 'dg-zoom-lightbox', 'dg-cart-api', 'dg-cart-badge' ), DG_VERSION, true );
+            wp_localize_script( 'dg-product', 'dgProduct', array(
+                'i18n' => array(
+                    'adding'   => __( 'Adding...', 'dragon-glow' ),
+                    'removing' => __( 'Removing...', 'dragon-glow' ),
+                ),
+            ) );
         }
         if ( is_cart() ) {
             wp_enqueue_style(
@@ -223,7 +229,7 @@ function dg_enqueue_scripts_assets(): void {
                         // to show feedback for "Checkout with selected" / "Clear selection".
                         'processing'         => __( 'Processing…', 'dragon-glow' ),
                         'selectedHintN'      => _n( '%d item selected for checkout', '%d items selected for checkout', 0, 'dragon-glow' ),
-                        'selectedHintNone'   => __( 'Please select one or more products to proceed to checkout.', 'dragon-glow' ),
+                        'selectedHintNone'   => __( 'Please select one or more products to proceed to checkout', 'dragon-glow' ),
                     ),
                 )
             );

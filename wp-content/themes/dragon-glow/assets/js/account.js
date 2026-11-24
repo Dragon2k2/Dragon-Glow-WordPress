@@ -101,6 +101,159 @@
 		});
 	}
 
+	function initCurrentPasswordCheck() {
+		let controller;
+		let revision = 0;
+		function clear(input) {
+			revision++;
+			if (controller) controller.abort();
+			input.removeAttribute('aria-busy');
+			input.removeAttribute('aria-invalid');
+			input.removeAttribute('aria-describedby');
+			const feedback = input.form.querySelector('#dg-current-password-error');
+			if (feedback) feedback.hidden = true;
+			const success = input.form.querySelector('#dg-current-password-success');
+			if (success) success.hidden = true;
+		}
+		document.addEventListener('input', function (event) {
+			if (event.target.matches('.edit-account #password_current')) clear(event.target);
+		});
+		document.addEventListener('focusout', async function (event) {
+			const input = event.target;
+			if (!input.matches('.edit-account #password_current')) return;
+			clear(input);
+			const feedback = input.form.querySelector('#dg-current-password-error');
+			if (!input.value || !feedback || !feedback.dataset.checkUrl) return;
+			const requestRevision = revision;
+			controller = new AbortController();
+			input.setAttribute('aria-busy', 'true');
+			input.setAttribute('aria-describedby', feedback.id);
+			feedback.textContent = feedback.dataset.checkPending;
+			feedback.hidden = false;
+			try {
+				const response = await fetch(feedback.dataset.checkUrl, {
+					method: 'POST', credentials: 'same-origin', cache: 'no-store',
+					signal: controller.signal,
+					body: new URLSearchParams({action: 'dg_check_current_password', nonce: feedback.dataset.checkNonce, password_current: input.value})
+				});
+				if (!response.ok) throw new Error('Password check unavailable');
+				const result = await response.json();
+				if (!result.success || typeof result.data?.valid !== 'boolean') throw new Error('Invalid response');
+				if (requestRevision !== revision || !input.isConnected) return;
+				feedback.hidden = result.data.valid;
+				feedback.textContent = result.data.valid ? '' : feedback.dataset.checkError;
+				const success = input.form.querySelector('#dg-current-password-success');
+				if (success) {
+					success.hidden = !result.data.valid;
+					if (result.data.valid) input.setAttribute('aria-describedby', success.id);
+				}
+				if (!result.data.valid) input.setAttribute('aria-invalid', 'true');
+			} catch (error) {
+				if (error.name === 'AbortError' || requestRevision !== revision || !input.isConnected) return;
+				feedback.hidden = false;
+				feedback.textContent = feedback.dataset.checkUnavailable;
+			} finally {
+				if (requestRevision === revision) input.removeAttribute('aria-busy');
+			}
+		});
+		document.addEventListener('reset', function (event) {
+			const input = event.target.querySelector('.edit-account #password_current');
+			if (input) clear(input);
+		});
+	}
+
+	function initNewPasswordCheck() {
+		function validate(form) {
+			const current = form.querySelector('#password_current');
+			const password = form.querySelector('#password_1');
+			const feedback = form.querySelector('#dg-new-password-feedback');
+			if (!current || !password || !feedback) return true;
+			const active = current.value !== '' && password.value !== '';
+			const same = active && current.value === password.value;
+			const error = feedback.querySelector('.dg-account-form__password-error');
+			feedback.querySelector('.dg-account-form__password-match').hidden = !active || same;
+			error.hidden = !same;
+			password.setCustomValidity(same ? error.textContent.trim() : '');
+			if (same) password.setAttribute('aria-invalid', 'true');
+			else password.removeAttribute('aria-invalid');
+			return !same;
+		}
+		function handle(event) {
+			if (!event.target.matches('.edit-account #password_current, .edit-account #password_1')) return;
+			const form = event.target.form;
+			if (event.type === 'focusout' && event.target.id === 'password_1') form.dataset.dgNewPasswordChecked = 'true';
+			if (form.dataset.dgNewPasswordChecked === 'true') validate(form);
+		}
+		document.addEventListener('input', handle);
+		document.addEventListener('change', handle);
+		document.addEventListener('focusout', handle);
+		document.addEventListener('submit', function (event) {
+			if (!event.target.matches('form.edit-account')) return;
+			event.target.dataset.dgNewPasswordChecked = 'true';
+			if (!validate(event.target)) {
+				event.preventDefault();
+				event.target.querySelector('#password_1').focus();
+			}
+		}, true);
+		document.addEventListener('reset', function (event) {
+			if (!event.target.matches('form.edit-account')) return;
+			delete event.target.dataset.dgNewPasswordChecked;
+			setTimeout(function () { validate(event.target); }, 0);
+		});
+	}
+
+	function initPasswordConfirmation() {
+		// Delegate once so AJAX-loaded account panels use the same validation.
+		function validate(form) {
+			const password = form.querySelector('#password_1');
+			const confirmation = form.querySelector('#password_2');
+			const feedback = form.querySelector('#dg-password-confirmation-feedback');
+			if (!password || !confirmation || !feedback) return true;
+
+			const active = password.value !== '' || confirmation.value !== '';
+			const matches = active && password.value === confirmation.value;
+			const invalid = active && !matches;
+			const error = feedback.querySelector('.dg-account-form__password-error');
+			feedback.querySelector('.dg-account-form__password-match').hidden = !matches;
+			error.hidden = !invalid;
+			confirmation.setCustomValidity(invalid ? error.textContent.trim() : '');
+			if (invalid) {
+				confirmation.setAttribute('aria-invalid', 'true');
+			} else {
+				confirmation.removeAttribute('aria-invalid');
+			}
+			return !invalid;
+		}
+
+		function handleField(event) {
+			if (!event.target.matches('.edit-account #password_1, .edit-account #password_2')) return;
+			const form = event.target.form;
+			if (event.type === 'focusout' && event.target.id === 'password_2') {
+				form.dataset.dgPasswordChecked = 'true';
+			}
+			if (form.dataset.dgPasswordChecked === 'true') validate(form);
+		}
+
+		document.addEventListener('input', handleField);
+		document.addEventListener('change', handleField);
+		document.addEventListener('focusout', handleField);
+		document.addEventListener('submit', function (event) {
+			const form = event.target;
+			if (!form.matches('form.edit-account')) return;
+			form.dataset.dgPasswordChecked = 'true';
+			if (!validate(form)) {
+				event.preventDefault();
+				form.querySelector('#password_2').focus();
+			}
+		}, true);
+		document.addEventListener('reset', function (event) {
+			const form = event.target;
+			if (!form.matches('form.edit-account')) return;
+			delete form.dataset.dgPasswordChecked;
+			setTimeout(function () { validate(form); }, 0);
+		});
+	}
+
 	function initScrollReveal() {
 		if (!root) return;
 		const targets = root.querySelectorAll('[data-sr]');
@@ -857,6 +1010,9 @@
 	function init() {
 		initNavToggle();
 		initPasswordToggle();
+		initNewPasswordCheck();
+		initPasswordConfirmation();
+		initCurrentPasswordCheck();
 		initScrollReveal();
 		initCountUp();
 		initAjaxNavigation();

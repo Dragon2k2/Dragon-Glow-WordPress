@@ -1,0 +1,120 @@
+const { chromium } = require('playwright');
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const theme = path.resolve(__dirname, '../../wp-content/themes/dragon-glow');
+const read = p => fs.readFileSync(path.join(theme, p), 'utf8');
+const template = read('woocommerce/myaccount/form-edit-account.php');
+const html = template.replace(/<\?php\s+esc_html_e\(\s*'([^']*)'[^?]*\?>/g, '$1').replace(/<\?[\s\S]*?\?>/g, '');
+(async () => {
+ const browser = await chromium.launch({channel:'chrome'});
+ const page = await browser.newPage();
+ await page.setContent('<!doctype html><html><head></head><body>' + html + '</body></html>');
+ await page.addStyleTag({content: read('style.css') + read('assets/css/account.css')});
+ await page.addScriptTag({content: read('assets/js/account.js')});
+ const state = () => page.evaluate(() => {
+  const c = document.querySelector('#password_2');
+  return {match: !document.querySelector('#dg-password-confirmation-feedback .dg-account-form__password-match').hidden, error: !document.querySelector('#dg-password-confirmation-feedback .dg-account-form__password-error').hidden, invalid: c.getAttribute('aria-invalid'), customError: c.validity.customError};
+ });
+ assert.deepEqual(await state(), {match:false,error:false,invalid:null,customError:false});
+ await page.locator('#password_1').fill('Example-pass123!');
+ await page.locator('#password_2').fill('wrong');
+ assert.equal((await state()).error, false, 'Do not flag mismatch before finishing confirmation');
+ await page.locator('#password_2').blur();
+ assert.deepEqual(await state(), {match:false,error:true,invalid:'true',customError:true});
+ await page.locator('#password_2').fill('Example-pass123!');
+ assert.deepEqual(await state(), {match:true,error:false,invalid:null,customError:false});
+ await page.locator('#password_1').fill('Changed-pass123!');
+ assert.equal((await state()).error, true, 'Changing the source password updates confirmation');
+ await page.locator('#password_1').fill('');
+ await page.locator('#password_2').fill('');
+ assert.deepEqual(await state(), {match:false,error:false,invalid:null,customError:false});
+ await page.locator('#password_1').fill('Example-pass123!');
+ await page.evaluate(() => {
+  const f=document.querySelector('form.edit-account');
+  window.submitBlocked=!f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+ });
+ assert.equal(await page.evaluate(() => window.submitBlocked), true);
+ assert.equal((await state()).error, true);
+ await page.evaluate(() => {
+  const f=document.querySelector('form.edit-account');
+  f.replaceWith(f.cloneNode(true));
+ });
+ await page.locator('#password_1').fill('Reloaded-pass123!');
+ await page.locator('#password_2').fill('Reloaded-pass123!');
+ await page.locator('#password_2').blur();
+ assert.equal((await state()).match, true, 'Validation survives AJAX panel replacement');
+ for (const width of [320,640,768,1024]) {
+  await page.setViewportSize({width,height:900});
+  const result=await page.evaluate(() => {const p=document.querySelector('#dg-password-confirmation-feedback'); return {visible:getComputedStyle(p.querySelector('.dg-account-form__password-match')).display!=='none', overflow:p.scrollWidth>p.clientWidth};});
+  assert.equal(result.visible,true); assert.equal(result.overflow,false);
+ }
+ await page.evaluate(() => {
+  const current=document.querySelector('#password_current');
+  current.setAttribute('aria-invalid','true');
+  current.setAttribute('aria-describedby','dg-current-password-error');
+  const error=document.querySelector('#dg-current-password-error');
+  error.hidden=false;
+ });
+ await page.locator('#password_current').fill('Replacement-password!');
+ assert.equal(await page.locator('#password_current').getAttribute('aria-invalid'),null);
+ assert.equal(await page.locator('#dg-current-password-error').evaluate(el=>el.hidden),true);
+ await page.route('https://account-check.test/check', async route => {
+  const value=new URLSearchParams(route.request().postData()).get('password_current');
+  if(value==='network-error') return route.fulfill({status:503,body:'unavailable'});
+  if(value==='slow-wrong') await new Promise(resolve=>setTimeout(resolve,150));
+  await route.fulfill({contentType:'application/json',body:JSON.stringify({success:true,data:{valid:value==='correct'}})}).catch(()=>{});
+ });
+ await page.evaluate(() => {
+  const f=document.querySelector('#dg-current-password-error');
+  Object.assign(f.dataset,{checkUrl:'https://account-check.test/check',checkNonce:'test',checkPending:'Checking',checkError:'Incorrect password',checkUnavailable:'Unable to check'});
+ });
+ const current=page.locator('#password_current');
+ await current.fill('wrong'); await current.blur();
+ await page.waitForFunction(()=>document.querySelector('#password_current').getAttribute('aria-invalid')==='true');
+ assert.equal(await page.locator('#dg-current-password-error').textContent(),'Incorrect password');
+ await current.fill('correct'); await current.blur();
+ await page.waitForFunction(()=>!document.querySelector('#password_current').hasAttribute('aria-busy'));
+ assert.equal(await current.getAttribute('aria-invalid'),null);
+ assert.equal(await page.locator('#dg-current-password-error').evaluate(el=>el.hidden),true);
+ assert.equal(await page.locator('#dg-current-password-success').evaluate(el=>el.hidden),false);
+ assert.equal(await current.getAttribute('aria-describedby'),'dg-current-password-success');
+ for (const width of [320,640,768,1024]) {
+  await page.setViewportSize({width,height:900});
+  assert.equal(await page.locator('#dg-current-password-success .material-symbols-outlined').isVisible(),true);
+ }
+ await current.fill('network-error');
+ assert.equal(await page.locator('#dg-current-password-success').evaluate(el=>el.hidden),true);
+ await current.blur();
+ await page.waitForFunction(()=>document.querySelector('#dg-current-password-error').textContent==='Unable to check');
+ assert.equal(await current.getAttribute('aria-invalid'),null);
+ await current.fill('slow-wrong'); await current.blur(); await current.fill('correct'); await current.blur();
+ await page.waitForFunction(()=>!document.querySelector('#password_current').hasAttribute('aria-busy'));
+ assert.equal(await current.getAttribute('aria-invalid'),null);
+ await current.fill(''); await current.blur();
+ assert.equal(await page.locator('#dg-current-password-error').evaluate(el=>el.hidden),true);
+ console.log('PASS: async blur mismatch, correct password, unavailable response, stale response cancellation, empty field');
+ await current.fill('Same-pass123!');
+ await page.locator('#password_1').fill('Same-pass123!');
+ await page.locator('#password_2').fill('Same-pass123!');
+ await page.locator('#password_1').focus(); await page.locator('#password_1').blur();
+ assert.equal(await page.locator('#password_1').getAttribute('aria-invalid'),'true');
+ assert.equal(await page.locator('#password_1').evaluate(el=>el.validity.customError),true);
+ assert.equal(await page.locator('#dg-new-password-feedback .dg-account-form__password-error').isVisible(),true);
+ await page.locator('#password_1').fill('Different-pass123!');
+ assert.equal(await page.locator('#password_1').getAttribute('aria-invalid'),null);
+ assert.equal(await page.locator('#dg-new-password-feedback .dg-account-form__password-match').isVisible(),true);
+ await current.fill('Different-pass123!');
+ assert.equal(await page.locator('#password_1').getAttribute('aria-invalid'),'true');
+ await current.fill('');
+ assert.equal(await page.locator('#dg-new-password-feedback .dg-account-form__password-match').isVisible(),false);
+ assert.equal(await page.locator('#password_1').evaluate(el=>el.validity.customError),false);
+ await page.locator('#password_1').fill('Reloaded-pass123!');
+ await page.locator('#password_2').fill('Reloaded-pass123!');
+ await page.locator('#password_2').blur();
+ console.log('PASS: reused password error, different password check icon, current edits, empty current stays neutral');
+ await page.emulateMedia({reducedMotion:'reduce'});
+ assert.equal((await state()).match,true);
+ await browser.close();
+ console.log('PASS: neutral, blur mismatch, match icon, source edits, empty fields, blocked mismatch submit, AJAX replacement, responsive 320/640/768/1024, reduced motion');
+})().catch(e=>{console.error(e);process.exitCode=1;});

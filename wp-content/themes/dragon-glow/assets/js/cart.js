@@ -448,7 +448,7 @@
                 var template = (i18n.selectedHintN) || '%d items selected for checkout';
                 hintTarget.textContent = template.replace('%d', String(count));
             } else {
-                hintTarget.textContent = i18n.selectedHintNone || 'Please select one or more products to proceed to checkout.';
+                hintTarget.textContent = i18n.selectedHintNone || 'Please select one or more products to proceed to checkout';
             }
         }
     }

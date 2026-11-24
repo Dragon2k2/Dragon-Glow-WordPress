@@ -2,9 +2,8 @@
 /**
  * Template part — Cookie Policy / Specific Cookies Table
  *
- * Render bảng 5 cột × N hàng. Trên mobile, cột NAME sticky-left, các cột còn
- * lại cho scroll ngang. Có ARIA hint ẩn ở ≥768px để screen reader biết bảng
- * có thể scroll ngang.
+ * Render a five-column table with stacked, labelled rows on mobile.
+ * Tablet and desktop retain the original horizontally scrollable table.
  *
  * @package Dragon_Glow
  */
@@ -46,14 +45,14 @@ $type_modifier_map = array(
 				?>
 				<tr>
 					<th scope="row" class="dg-cookie-table-col-name"><code class="dg-cookie-table-name"><?php echo esc_html( $row['name'] ); ?></code></th>
-					<td class="dg-cookie-table-col-provider"><?php echo esc_html( $row['provider'] ); ?></td>
-					<td class="dg-cookie-table-col-purpose"><?php echo esc_html( $row['purpose'] ); ?></td>
-					<td class="dg-cookie-table-col-type">
+					<td class="dg-cookie-table-col-provider" data-label="<?php esc_attr_e( 'Provider', 'dragon-glow' ); ?>"><?php echo esc_html( $row['provider'] ); ?></td>
+					<td class="dg-cookie-table-col-purpose" data-label="<?php esc_attr_e( 'Purpose', 'dragon-glow' ); ?>"><?php echo esc_html( $row['purpose'] ); ?></td>
+					<td class="dg-cookie-table-col-type" data-label="<?php esc_attr_e( 'Type', 'dragon-glow' ); ?>">
 						<span class="dg-cookie-table-type dg-cookie-table-type--<?php echo esc_attr( $modifier ); ?>">
 							<?php echo esc_html( $row['type'] ); ?>
 						</span>
 					</td>
-					<td class="dg-cookie-table-col-duration"><?php echo esc_html( $row['duration'] ); ?></td>
+					<td class="dg-cookie-table-col-duration" data-label="<?php esc_attr_e( 'Duration', 'dragon-glow' ); ?>"><?php echo esc_html( $row['duration'] ); ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

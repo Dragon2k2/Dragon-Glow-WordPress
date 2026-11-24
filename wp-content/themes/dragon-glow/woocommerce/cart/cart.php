@@ -25,7 +25,7 @@ $has_items  = ! empty( $cart_items );
     <div class="dg-cart-blob-2"></div>
 </div>
 
-<div class="min-h-screen relative pb-section-gap">
+<div class="dg-cart-page min-h-screen relative pb-section-gap">
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
 
     <!-- Page heading -->
@@ -353,7 +353,7 @@ $has_items  = ! empty( $cart_items );
                     <p class="dg-cart-checkout-cta__hint" aria-live="polite">
                         <span class="material-symbols-outlined dg-cart-checkout-cta__hint-icon" aria-hidden="true">checklist</span>
                         <span data-dg-cart-selected-count-hint>
-                            <?php esc_html_e( 'Please select one or more products to proceed to checkout.', 'dragon-glow' ); ?>
+                            <?php esc_html_e( 'Please select one or more products to proceed to checkout', 'dragon-glow' ); ?>
                         </span>
                     </p>
 
@@ -382,7 +382,7 @@ $has_items  = ! empty( $cart_items );
 
                 <!-- SSL trust notice -->
                 <div class="flex flex-col items-center gap-3 text-center mt-1">
-                    <p class="text-[11px] text-on-surface-variant/60 leading-relaxed max-w-[220px]">
+                    <p class="dg-cart-secure-notice text-[11px] text-on-surface-variant/60 leading-relaxed max-w-[220px]">
                         <?php esc_html_e( 'Secure Checkout with SSL encryption. We accept Visa, Mastercard, and Apple Pay.', 'dragon-glow' ); ?>
                     </p>
                     <div class="flex gap-3 opacity-35">

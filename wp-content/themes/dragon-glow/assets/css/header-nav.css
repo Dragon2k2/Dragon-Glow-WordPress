@@ -417,9 +417,9 @@
    `DGCartBadge.paint()` writes the cart count into every `.dg-cart-count`
    element and would overwrite the combined total.
 
-   Every rule is scoped to `.dg-nav-toggle` on purpose: the desktop cart and
-   wishlist badges keep their existing look and behaviour (no animation),
-   exactly as before this change.
+   Layout rules are scoped to `.dg-nav-toggle`. The desktop cart badge in
+   `.dg-nav-actions` shares the same animation states and keyframes, so cart
+   count updates give consistent feedback across breakpoints.
 
    Animation contract mirrors the wishlist badge (`.dg-wishlist-count` in
    woocommerce.css):
@@ -456,10 +456,12 @@
 	display: none;
 }
 
+.dg-nav-actions .dg-cart-count.is-pulse,
 .dg-nav-toggle .dg-nav-badge.is-pulse {
 	animation: dgCartBadgePop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.dg-nav-actions .dg-cart-count.is-first-show,
 .dg-nav-toggle .dg-nav-badge.is-first-show {
 	animation: dgCartBadgeFirstShow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -479,6 +481,8 @@
 
 /* Reduced motion — disable all badge animations (CLAUDE.md §8). */
 @media (prefers-reduced-motion: reduce) {
+	.dg-nav-actions .dg-cart-count.is-pulse,
+	.dg-nav-actions .dg-cart-count.is-first-show,
 	.dg-nav-toggle .dg-nav-badge.is-pulse,
 	.dg-nav-toggle .dg-nav-badge.is-first-show {
 		animation: none;

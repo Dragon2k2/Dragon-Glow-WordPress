@@ -110,7 +110,7 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 
 			<!-- Thumbnails — cột bên trái trên desktop, hàng ngang dưới cùng trên mobile -->
 			<?php if ( ! empty( $thumbnails ) ) : ?>
-			<div class="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 md:max-h-[600px] custom-scrollbar">
+			<div class="dg-product-thumbnails flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 md:max-h-[600px] custom-scrollbar">
 				<?php foreach ( $thumbnails as $i => $thumb ) : ?>
 					<button type="button"
 							class="dg-thumb-btn flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all <?php echo 0 === $i ? 'is-active border-primary ring-2 ring-primary-container/20' : 'border-outline-variant/30 opacity-60 hover:opacity-100'; ?>"
@@ -240,14 +240,18 @@ if ( 'project' === $use_source && ! empty( $detail_shots ) ) {
 		</div>
 
 		<!-- Trust badges -->
-		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-outline-variant/20">
-			<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+		<div class="dg-product-trust grid grid-cols-1 gap-4 pt-6 border-t border-outline-variant/20">
+			<div class="dg-product-trust__item flex items-center gap-3 text-sm text-on-surface-variant">
 				<span class="material-symbols-outlined text-primary">local_shipping</span>
 				<span><?php esc_html_e( 'Free Shipping on orders $75+', 'dragon-glow' ); ?></span>
 			</div>
-			<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+			<div class="dg-product-trust__item flex items-center gap-3 text-sm text-on-surface-variant">
 				<span class="material-symbols-outlined text-primary">verified</span>
 				<span><?php esc_html_e( '30-Day Ritual Trial', 'dragon-glow' ); ?></span>
+			</div>
+			<div class="dg-product-trust__item flex items-center gap-3 text-sm text-on-surface-variant">
+				<span class="material-symbols-outlined text-primary" aria-hidden="true">lock</span>
+				<span><?php esc_html_e( 'Secure checkout', 'dragon-glow' ); ?></span>
 			</div>
 		</div>
 	</div>

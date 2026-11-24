@@ -317,17 +317,87 @@
     var addToCartBtn = document.querySelector('.single_add_to_cart_button');
     
     if (cartForm && addToCartBtn) {
+        var originalText = addToCartBtn.textContent;
+        var addedCartItemKey = '';
+        var addedCartItemQuantity = 0;
+
+        function showCartLoading(label) {
+            var icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined dg-product-cart__loading-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = 'sync';
+            var text = document.createElement('span');
+            text.className = 'dg-product-cart__loading-label';
+            text.textContent = label;
+            addToCartBtn.replaceChildren(icon, text);
+            addToCartBtn.classList.add('loading');
+            addToCartBtn.disabled = true;
+            addToCartBtn.setAttribute('aria-busy', 'true');
+        }
+
+        function reconcileCartBadge(data) {
+            var count = data && data.count;
+            if (typeof count === 'number' && isFinite(count) && count >= 0) {
+                window.DGCartBadge.paint(count);
+            } else {
+                window.DGCart.refreshCount();
+            }
+        }
+
+        function removeAddedItem() {
+            if (addToCartBtn.classList.contains('loading')) return;
+
+            var addedText = addToCartBtn.textContent;
+            showCartLoading((window.dgProduct && window.dgProduct.i18n && window.dgProduct.i18n.removing) || 'Removing...');
+            var removedQuantity = addedCartItemQuantity;
+            window.DGCartBadge.bump(-removedQuantity);
+
+            window.DGCart.removeMany({ cartItemKeys: [addedCartItemKey] })
+            .then(function (data) {
+                if (!data || !data.success) {
+                    throw new Error(data && data.data && data.data.message || 'Could not remove item. Please try again.');
+                }
+
+                addToCartBtn.classList.remove('added');
+                addToCartBtn.textContent = originalText;
+                addedCartItemKey = '';
+                addedCartItemQuantity = 0;
+                reconcileCartBadge(data.data);
+                document.body.dispatchEvent(new CustomEvent('removed_from_cart'));
+            })
+            .catch(function (error) {
+                window.DGCartBadge.bump(removedQuantity);
+                addToCartBtn.textContent = addedText;
+                alert(error.message || 'Unable to remove item. Please try again.');
+            })
+            .finally(function () {
+                addToCartBtn.classList.remove('loading');
+                addToCartBtn.disabled = false;
+                addToCartBtn.removeAttribute('aria-busy');
+            });
+        }
+
+        // Remove the confirmed line even if form fields are currently invalid.
+        addToCartBtn.addEventListener('click', function (e) {
+            if (!addToCartBtn.classList.contains('added')) return;
+            e.preventDefault();
+            removeAddedItem();
+        });
+
         cartForm.addEventListener('submit', function (e) {
             e.preventDefault();
+
+            // Also handle implicit submissions from a form field while confirmed.
+            if (addToCartBtn.classList.contains('added')) {
+                removeAddedItem();
+                return;
+            }
             
             // Prevent double-submit
             if (addToCartBtn.classList.contains('loading')) return;
             
             // Show loading state
-            addToCartBtn.classList.add('loading');
-            addToCartBtn.disabled = true;
-            var originalText = addToCartBtn.textContent;
-            addToCartBtn.textContent = addToCartBtn.textContent.includes('Add') ? 'Adding...' : 'Đang thêm...';
+            showCartLoading((window.dgProduct && window.dgProduct.i18n && window.dgProduct.i18n.adding) || 'Adding...');
             
             // Get product data from form
             var productId = addToCartBtn.value || cartForm.querySelector('[name="add-to-cart"]').value;
@@ -355,6 +425,10 @@
                 }
             }
             
+            // Paint immediately; reconcile with the response or roll back on failure.
+            var addedQuantity = Math.max(1, parseInt(quantity, 10) || 1);
+            window.DGCartBadge.bump(addedQuantity);
+
             // AJAX add to cart via theme endpoint
             fetch(window.dgAjax.url, {
                 method: 'POST',
@@ -365,6 +439,9 @@
             })
             .then(function (data) {
                 if (data.success) {
+                    addedCartItemKey = data.data.cart_item_key;
+                    addedCartItemQuantity = parseInt(data.data.cart_item_quantity, 10) || addedQuantity;
+                    reconcileCartBadge(data.data);
                     // Trigger WooCommerce added_to_cart event
                     document.body.dispatchEvent(new CustomEvent('added_to_cart', {
                         detail: { 
@@ -373,14 +450,11 @@
                         }
                     }));
                     
-                    // Update cart count badge
-                    if (window.DGCartFeedback && window.DGCartFeedback.updateCartCount) {
-                        window.DGCartFeedback.updateCartCount();
-                    }
-                    
                     // Show success state
                     addToCartBtn.classList.remove('loading');
                     addToCartBtn.classList.add('added');
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.removeAttribute('aria-busy');
                     addToCartBtn.textContent = data.data.message || (addToCartBtn.textContent.includes('Add') ? 'Added!' : 'Đã thêm!');
                     
                     // Show mini cart if exists
@@ -391,13 +465,6 @@
                             miniCart.classList.remove('is-open');
                         }, 3000);
                     }
-                    
-                    // Reset button after 2s
-                    setTimeout(function () {
-                        addToCartBtn.classList.remove('added');
-                        addToCartBtn.disabled = false;
-                        addToCartBtn.textContent = originalText;
-                    }, 2000);
                 } else {
                     // Error from server
                     throw new Error(data.data.message || 'Could not add to cart.');
@@ -405,10 +472,12 @@
             })
             .catch(function (error) {
                 console.error('Add to cart error:', error);
+                window.DGCartBadge.bump(-addedQuantity);
                 
                 // Restore button state
                 addToCartBtn.classList.remove('loading');
                 addToCartBtn.disabled = false;
+                addToCartBtn.removeAttribute('aria-busy');
                 addToCartBtn.textContent = originalText;
                 
                 // Show error message
@@ -417,54 +486,7 @@
         });
     }
 
-    // ── Buy Now Button ────────────────────────────────────────
-    // Add to cart + redirect to checkout immediately
-    var buyNowBtn = document.querySelector('.dg-buy-now-btn');
-    if (buyNowBtn && cartForm && addToCartBtn) {
-        buyNowBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            // Disable Buy Now button and show loading state
-            buyNowBtn.disabled = true;
-            buyNowBtn.classList.add('is-loading');
-            var originalText = buyNowBtn.innerHTML;
-            buyNowBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" aria-hidden="true">progress_activity</span> ' + 
-                                  (buyNowBtn.textContent.replace('Buy Now', 'Processing...').replace('Mua Ngay', 'Đang xử lý...'));
-            
-            // Get form data
-            var formData = new FormData(cartForm);
-            
-            // AJAX add to cart
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function (response) {
-                if (response.ok) {
-                    // Redirect to checkout
-                    window.location.href = wc_add_to_cart_params && wc_add_to_cart_params.checkout_url 
-                        ? wc_add_to_cart_params.checkout_url 
-                        : '/checkout/';
-                } else {
-                    throw new Error('Failed to add to cart');
-                }
-            })
-            .catch(function (error) {
-                console.error('Buy Now error:', error);
-                
-                // Restore button state
-                buyNowBtn.disabled = false;
-                buyNowBtn.classList.remove('is-loading');
-                buyNowBtn.innerHTML = originalText;
-                
-                // Show error message
-                alert('Unable to process Buy Now. Please try again.');
-            });
-        });
-    }
+    // Buy Now requests and button states are owned by buy-now.js.
 
     // ── Review Form Submit ───────────────────────────────────
     var reviewForm = document.getElementById('dg-review-form');

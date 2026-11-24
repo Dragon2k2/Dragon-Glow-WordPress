@@ -191,7 +191,7 @@ add_filter( 'woocommerce_has_block_template', 'dg_force_classic_checkout_templat
  */
 function dg_render_wc_checkout(): void {
 	?>
-	<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+	<main class="dg-checkout max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
 		<h1 class="dg-checkout-title font-headline text-headline-lg text-primary mb-8">
 			<span class="dg-checkout-title__icon dg-checkout-title__icon--gold" aria-hidden="true">
 				<svg width="1em" height="1em" viewBox="0 0 32 32" fill="none" focusable="false">

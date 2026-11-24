@@ -24,6 +24,36 @@ function dg_account_edit_url(): string {
 }
 
 /**
+ * Identify an incorrect current password on a verified account-form POST.
+ *
+ * WooCommerce remains responsible for rejecting the save. This read-only
+ * check supplies field-level feedback when the failed form is rendered.
+ * Passwords are never sanitized, trimmed, stored, or included in the response.
+ *
+ * @return bool
+ */
+function dg_account_current_password_invalid(): bool {
+	if ( ! is_user_logged_in()
+		|| ! isset( $_POST['action'], $_POST['save-account-details-nonce'], $_POST['password_current'] )
+		|| ! is_string( $_POST['action'] )
+		|| 'save_account_details' !== wp_unslash( $_POST['action'] )
+		|| ! is_string( $_POST['save-account-details-nonce'] )
+		|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['save-account-details-nonce'] ) ), 'save_account_details' )
+		|| ! is_string( $_POST['password_current'] )
+	) {
+		return false;
+	}
+
+	$password = wp_unslash( $_POST['password_current'] );
+	if ( '' === $password ) {
+		return false;
+	}
+
+	$user = wp_get_current_user();
+	return ! wp_check_password( $password, $user->user_pass, $user->ID );
+}
+
+/**
  * Render the edit-account form view.
  *
  * Wraps WC's `myaccount/form-edit-account.php` — theme override includes
@@ -87,6 +117,29 @@ function dg_save_account_custom_fields( int $user_id ): void {
 	}
 }
 add_action( 'woocommerce_save_account_details', 'dg_save_account_custom_fields' );
+
+/**
+ * Prevent reusing the existing password, including when JavaScript is disabled.
+ *
+ * WooCommerce invokes this hook inside its authenticated, nonce-verified save.
+ *
+ * @param WP_Error $errors Validation errors.
+ * @param WP_User  $user   Account being updated.
+ * @return void
+ */
+function dg_account_validate_new_password( WP_Error $errors, WP_User $user ): void {
+	if ( ! is_user_logged_in() || (int) $user->ID !== get_current_user_id()
+		|| ! isset( $_POST['password_1'] ) || ! is_string( $_POST['password_1'] )
+	) {
+		return;
+	}
+	$password = wp_unslash( $_POST['password_1'] );
+	$current_user = wp_get_current_user();
+	if ( '' !== $password && wp_check_password( $password, $current_user->user_pass, $current_user->ID ) ) {
+		$errors->add( 'dg_password_reused', __( 'Your new password must be different from your current password.', 'dragon-glow' ) );
+	}
+}
+add_action( 'woocommerce_save_account_details_errors', 'dg_account_validate_new_password', 10, 2 );
 
 /**
  * Render the `/my-account/edit-account/` panel — the actual edit form.

@@ -50,7 +50,7 @@ function dg_wc_add_to_cart( int $product_id, int $quantity = 1, int $variation_i
  *     @type array  $variation_attributes Optional — attribute slug => value.
  *     @type array  $cart_item_data      Optional — extra cart-item metadata.
  * }
- * @return array{success: bool, message?: string, redirect?: string}
+ * @return array{success: bool, message?: string, redirect?: string, cart_item_key?: string}
  */
 function dg_add_to_cart_silently( array $args ): array {
 	$product_id          = absint( $args['product_id'] ?? 0 );
@@ -73,8 +73,9 @@ function dg_add_to_cart_silently( array $args ): array {
 	$added = dg_wc_add_to_cart( $product_id, $quantity, $variation_id, $variation_attributes, $cart_item_data );
 	if ( $added ) {
 		return array(
-			'success'  => true,
-			'redirect' => dg_get_cart_url(),
+			'success'       => true,
+			'redirect'      => dg_get_cart_url(),
+			'cart_item_key' => $added,
 		);
 	}
 

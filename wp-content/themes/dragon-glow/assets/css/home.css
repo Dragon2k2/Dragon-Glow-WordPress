@@ -403,6 +403,14 @@
     }
 }
 
+/* Laptop preset only: the taller copy must not vertically centre the image
+   below the hero badge. Other viewport widths retain their existing alignment. */
+@media (width: 1024px) {
+    .dg-home-hero .dg-home-hero__visual {
+        align-self: start;
+    }
+}
+
 /* Gradient headline text */
 .dg-home-hero h1 {
     text-wrap: balance;

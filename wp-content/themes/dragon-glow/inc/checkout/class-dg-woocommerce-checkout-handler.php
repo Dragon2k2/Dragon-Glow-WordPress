@@ -101,6 +101,19 @@ class DG_WooCommerce_Checkout_Handler {
 		}
 
 		if ( $added ) {
+			// A new Buy Now replaces the previous checkout intent, not the cart.
+			// Keep other lines intact, but do not let their old flags select them.
+			foreach ( WC()->cart->get_cart() as $key => $item ) {
+				if ( $key !== $added && ! empty( $item['dg_is_buy_now'] ) ) {
+					unset( WC()->cart->cart_contents[ $key ]['dg_is_buy_now'] );
+				}
+			}
+
+			// WooCommerce merges matching lines; Buy Now uses the requested amount.
+			WC()->cart->set_quantity( $added, $quantity, false );
+			dg_clear_session_selection();
+			WC()->cart->set_session();
+
 			return array(
 				'success'  => true,
 				'redirect' => wc_get_checkout_url(),

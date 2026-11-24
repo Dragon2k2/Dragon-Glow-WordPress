@@ -59,6 +59,11 @@
    Two-column structure: billing/shipping fields (left) + order summary card (right).
    ========================================= */
 
+/* Keep specificity above Tailwind's runtime .py-12 utility. */
+main.dg-checkout {
+    padding-bottom: var(--checkout-page-padding-bottom);
+}
+
 /* ── Card containers for billing/shipping blocks ── */
 .woocommerce-checkout .woocommerce-billing-fields > h3,
 .woocommerce-checkout .woocommerce-shipping-fields > h3,

@@ -1152,7 +1152,20 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    /* Center wrapped hint text inside the desktop summary panel. */
+    .dg-cart-checkout-group .dg-cart-checkout-cta__hint {
+        text-align: center;
+    }
+}
+
 @media (min-width: 641px) and (max-width: 1023px) {
+    /* Release the narrow text measure only in the single-column tablet layout.
+       Scope specificity above the runtime Tailwind max-width utility. */
+    .dg-cart-summary .dg-cart-secure-notice {
+        max-width: none;
+    }
+
     .dg-cart-checkout-group .dg-cart-checkout-cta__hint {
         justify-content: center;
         text-align: center;
@@ -1160,6 +1173,12 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
 }
 
 @media (max-width: 1023px) {
+    /* Keep the inner container's bottom spacing; reduce only the outer padding.
+       Match both classes to outrank the runtime Tailwind utility. */
+    .dg-cart-page.pb-section-gap {
+        padding-bottom: var(--cart-page-padding-bottom-compact);
+    }
+
     /* Expose the product panel and badges as grid items without duplicating
        content. Desktop keeps its original two-column wrapper and spacing. */
     .dg-cart-products {
@@ -1261,6 +1280,20 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
 }
 
 @media (max-width: 640px) {
+    /* Keep the idle prompt readable on two lines, including narrow phones. */
+    body:not(.dg-has-selection) .dg-cart-checkout-group .dg-cart-checkout-cta__hint {
+        justify-content: center;
+        gap: var(--cart-hint-mobile-gap);
+        padding-inline: var(--cart-hint-mobile-padding-inline);
+        font-size: var(--cart-hint-mobile-font-size);
+        letter-spacing: 0;
+        text-align: center;
+    }
+
+    body:not(.dg-has-selection) .dg-cart-checkout-cta__hint [data-dg-cart-selected-count-hint] {
+        max-width: var(--cart-hint-mobile-text-width);
+    }
+
     #dg-cart-table > thead,
     #dg-cart-table > thead > tr,
     #dg-cart-table > thead > tr > th:first-child {
