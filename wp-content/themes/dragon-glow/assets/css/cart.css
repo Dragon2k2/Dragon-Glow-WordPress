@@ -1151,6 +1151,32 @@ body.dg-has-selection .dg-cart-checkout-cta--all {
     }
 }
 
+/* Laptop and desktop: reserve an inner gutter for both checkout icons. */
+@media (min-width: 1024px) {
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn {
+        padding-inline: var(--cart-checkout-laptop-padding-inline);
+    }
+
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn > .material-symbols-outlined {
+        flex-shrink: 0;
+    }
+}
+
+/* Keep the compact label size limited to the 1024px laptop preset. */
+@media (width: 1024px) {
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn {
+        font-size: var(--cart-checkout-laptop-font-size);
+    }
+}
+
+/* The desktop summary has room for a single-line label with both icon gutters. */
+@media (min-width: 1280px) {
+    .dg-cart-checkout-cta--selected .dg-shimmer-btn {
+        font-size: var(--cart-checkout-desktop-font-size);
+        white-space: nowrap;
+    }
+}
+
 /* ── Responsive ──────────────────────────────────────────── */
 @media (min-width: 1024px) {
     /* Center wrapped hint text inside the desktop summary panel. */

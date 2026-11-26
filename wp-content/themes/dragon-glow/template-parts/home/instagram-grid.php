@@ -30,7 +30,7 @@ $reels  = dg_instagram_reels_cards_data();
 				<h2 class="dg-home-instagram-header__headline font-headline-lg text-headline-lg font-medium">
 					<?php echo esc_html( $header['headline'] ); ?>
 				</h2>
-				<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+				<p class="dg-home-instagram-header__description font-body-md text-body-md text-on-surface-variant mt-1">
 					<?php echo esc_html( $header['description'] ); ?>
 				</p>
 			</div>

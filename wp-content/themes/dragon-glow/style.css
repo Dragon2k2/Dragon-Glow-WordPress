@@ -341,6 +341,12 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     /* Increased to 44px (60% of 72px headline) for visual prominence */
     --emoji-accent-size: 72px;                          /* font-size for sparkle emoji */
 
+    /* Home hero frame: match the full-size desktop height at the 1024px laptop preset. */
+    --hero-frame-height-laptop: 40.625rem;
+    --hero-visual-inset-laptop: 3rem;
+    --hero-orb-size-laptop: 5rem;
+    --hero-orb-font-size-laptop: 0.625rem;
+
     /* ========== Home — Hero Responsive (mobile + tablet, < 1024px only) ========== */
     /* Component-scoped: consumed only by the "HERO — RESPONSIVE" block in home.css. Desktop is untouched. */
     --hero-title-size-compact: clamp(2rem, 8vw, 3.75rem);       /* 32px (≤400px) → 60px (≥750px); desktop keeps 72px via lg:text-[72px] */
@@ -477,6 +483,8 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --instagram-header-eyebrow-font-size: 0.75rem;               /* text-label-md (12px) */
     --instagram-header-eyebrow-font-weight: 600;                 /* font-semibold */
     --instagram-header-eyebrow-letter-spacing: 0.2em;             /* tracking-[0.2em] */
+    --instagram-header-description-size-laptop: 0.875rem;
+    --instagram-header-cta-size-laptop: 0.5625rem;
     --instagram-header-cta-font-size: 0.625rem;                  /* text-label-lg (14px) */
     --instagram-header-cta-font-weight: 600;                     /* font-semibold */
     --instagram-header-cta-letter-spacing: 0.125em;              /* tracking-wider */
@@ -1172,6 +1180,9 @@ Tags:       e-commerce, woocommerce, luxury, skincare, custom-header, custom-men
     --cart-row-mobile-touch-size: 2.75rem;
     --cart-row-mobile-select-width: 1.75rem;
     --cart-checkout-mobile-padding-inline: 1rem;
+    --cart-checkout-laptop-padding-inline: 1rem;
+    --cart-checkout-laptop-font-size: 0.625rem;
+    --cart-checkout-desktop-font-size: 0.625rem;
     --cart-checkout-spinner-size: 1.25rem;
     --cart-checkout-spinner-duration: 800ms;
     --checkout-order-spinner-duration: 800ms;
